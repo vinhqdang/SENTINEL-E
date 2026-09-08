@@ -109,9 +109,12 @@ guarantee --- with e-BH combining evidence under arbitrary dependence.
 On recurring episodes the episodic mixture cuts the missed-detection rate from
 \EpiManyCpMiss{} to \EpiManyEpiMiss{} against the changepoint mixture; on a
 single persistent change the two agree, as a strict generalisation should.
-SENTINEL-E is the only method examined whose realised false-alarm rate never
-exceeds its nominal level, and it costs \CostSentinelUs\,\textmu s per frame,
-\CostSentinelPct\% of the detector it wraps.
+Across the baseline comparison SENTINEL-E is the only method that holds its
+nominal false-alarm level at all, and it costs \CostSentinelUs\,\textmu s per
+frame, \CostSentinelPct\% of the detector it wraps. We also report where it
+stops holding: a shift in an unmodelled covariate beyond
+$\times\ShiftResidualBreaks$ inflates the rate unless the shift-weighting
+safeguard is engaged, which restores validity at a steep cost in power.
 \end{abstract}
 
 \vspace{0.5em}
@@ -968,24 +971,51 @@ assumptions their thresholds rest on do not hold.
 \inputtable{tab5_activity}
 
 Two kinds of mismatch, both routine between the week a calibration set is
-labelled and the month a camera is monitored. When deployment activity is
-\ShiftMaxRatio$\times$ the labelling window's, pooled calibration reaches
-\ShiftPooledPfa{} and Mondrian calibration \ShiftMondrianPfa, while the residual
-construction holds at \ShiftResidualPfa{} (\cref{fig:shift},
-\cref{tab:activity}). The Mondrian failure is instructive rather than
-embarrassing: it is exactly group-conditional on the variables it bins, and scene
-activity is not one of them. An operator cannot bin on every covariate that
-matters, which is the argument for \cref{eq:residual}.
+labelled and the month a camera is monitored, and the more interesting of the
+two produces the clearest limitation in this paper.
+
+\Cref{tab:activity} and \cref{fig:shift} shift an \emph{unbinned} covariate:
+deployment scene activity is a multiple of the labelling window's. Pooled and
+Mondrian calibration lose control immediately --- both reach
+\ShiftPooledPfa{} and \ShiftMondrianPfa{} at the largest shift --- and the
+Mondrian failure is instructive rather than embarrassing, since it is exactly
+group-conditional on the variables it bins and activity is not one of them. An
+operator cannot bin on every covariate that matters, which is the argument for
+\cref{eq:residual}.
+
+The residual construction does far better but it does not hold indefinitely.
+It stays at or below the nominal level up to a
+$\times\ShiftResidualSafeUpTo$ shift, and at $\times\ShiftResidualBreaks$ its
+realised rate rises to \ShiftBreakResidualPfa{} --- twice nominal. We report this
+plainly because it is the honest boundary of the method: normalising by a fitted
+$\hat g$ and $\hat\sigma$ absorbs a shift in $P(c)$ only while the model stays
+adequate, and a large enough move in an unmodelled direction breaks it.
+
+This is where the likelihood-ratio weighting of \cref{sec:layer1} earns its
+place, and where our own expectation was wrong. Weighting holds the realised
+rate at \ShiftBreakWeightedPfa{} at every shift level tested, including the ones
+where the plain residual construction fails --- but it does so by becoming
+drastically conservative, with the miss rate rising from
+\ShiftBreakResidualMiss{} to \ShiftBreakWeightedMiss{} at
+$\times\ShiftResidualBreaks$. It buys validity with power, which is the correct
+trade for a guarantee and a poor one for a detector.
+
+The practical recommendation follows directly and is implemented in the library:
+run the classifier two-sample test continuously, use the plain residual
+construction while it reports no detectable shift, and enable weighting once it
+does --- accepting that the camera has become a conservative detector and that
+the operator should be told the calibration set no longer covers the conditions.
+An abstention or miss rate that jumps is a signal to recalibrate, not a defect
+to hide.
 
 \Cref{tab:coverage} varies coverage instead. Validity survives all three
 regimes, but power does not, and it should not: with calibration from a single
 daytime window the miss rate reaches \CoverDaytimeMiss{} and the abstention rate
-\CoverDaytimeAbstain\%. We regard this as the correct behaviour and the honest
-report of it as part of the contribution --- degradation appears in the
-abstention and miss columns, where an operator can see it, rather than silently
-in the alarm rate, where they cannot. The operational implication is a
-requirement, not a caveat: the calibration set must span the conditions you
-intend to monitor, and the abstention rate tells you whether it does.
+\CoverDaytimeAbstain\%. Degradation appears in the abstention and miss columns,
+where an operator can see it, rather than silently in the alarm rate, where they
+cannot. The operational implication is a requirement rather than a caveat: the
+calibration set must span the conditions you intend to monitor, and the
+abstention rate tells you whether it does.
 
 \subsection{The camera network}
 \label{sec:network}
@@ -1108,13 +1138,19 @@ is available for the cases where a single context variable dominates, and the
 support check bounds the damage from extrapolation but does not detect
 misspecification inside the support.
 
-\paragraph{Weighted conformal calibration did not help here.}
-We implemented likelihood-ratio weighting \citep{tibshirani2019covariate}
-expecting it to be the answer to covariate shift, and in our setting the residual
-construction dominates it. We report this because it is what we found. The
-explanation we believe is that reweighting corrects the marginal context
-distribution while a sequential test is broken by conditional miscalibration,
-but we have not established that this is the whole story.
+\paragraph{Calibration robustness has a measured breaking point.}
+The residual construction holds the nominal level up to a
+$\times\ShiftResidualSafeUpTo$ shift in an unmodelled covariate and exceeds it
+at $\times\ShiftResidualBreaks$ (\cref{tab:activity}). Likelihood-ratio
+weighting restores validity at every level we tested but costs most of the
+power. So the honest summary is that SENTINEL-E's false-alarm guarantee is
+robust to the shift a well-specified residual model can absorb and to anything
+the two-sample test catches, and is \emph{not} unconditionally robust: a large
+shift in a direction the model does not capture, arriving faster than the
+shift test can react, will inflate the rate. We know of no distribution-free
+method for which this is not true, but that does not make it a non-issue, and an
+operator should treat a rising abstention or miss rate as a prompt to
+recalibrate.
 
 \paragraph{The episode model is a model.}
 The two-state chain of \cref{eq:episodic} assumes episodes with geometric
@@ -1155,9 +1191,10 @@ inequality applies unchanged, costs $O(1)$ per frame, and contains the
 changepoint mixture exactly as the boundary case $\eta = 0$. Around it, conformal calibration conditional on
 observable context makes the p-values honest, and a graph layer whose learned
 component enters only predictably shortens delay without touching the guarantee.
-The result is the only method in our comparison whose realised false-alarm rate
-never exceeds its nominal one, at \CostSentinelPct\% of the cost of the backbone
-it wraps.
+The result is the only method in our comparison that holds its nominal
+false-alarm level, at \CostSentinelPct\% of the cost of the backbone it wraps ---
+with a measured boundary, reported rather than elided, beyond which a shift in an
+unmodelled covariate breaks it unless the conservative safeguard is engaged.
 
 Two directions follow. The first is empirical and we would prioritise it:
 running this protocol on real per-frame scores from Mivia-IWDD and from an

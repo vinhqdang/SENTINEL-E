@@ -128,6 +128,28 @@ def collect() -> Dict[str, str]:
             m[f"Shift{tag}Delay"] = _fmt(
                 None if r.get("add_censored") is None else r["add_censored"] / FPS, 1)
             m[f"Shift{tag}Miss"] = _fmt(r["miss_rate"], 2)
+        # The level at which the unweighted residual construction first exceeds
+        # the nominal rate, and what weighting costs to hold it.
+        alpha_nom = 0.01
+        broke = None
+        for k in keys:
+            r = next(x for x in act[k] if x["variant"] == "residual")
+            if r["pfa"] > alpha_nom + 1e-12:
+                broke = k
+                break
+        m["ShiftResidualBreaks"] = _fmt(float(broke), 1) if broke else "--"
+        if broke:
+            r = next(x for x in act[broke] if x["variant"] == "residual")
+            w = next(x for x in act[broke] if x["variant"] == "residual + LR wts")
+            m["ShiftBreakResidualPfa"] = _fmt(r["pfa"], 3)
+            m["ShiftBreakResidualMiss"] = _fmt(r["miss_rate"], 2)
+            m["ShiftBreakWeightedPfa"] = _fmt(w["pfa"], 3)
+            m["ShiftBreakWeightedMiss"] = _fmt(w["miss_rate"], 2)
+        # Largest shift at which the unweighted construction still holds.
+        ok = [k for k in keys
+              if next(x for x in act[k] if x["variant"] == "residual")["pfa"]
+              <= alpha_nom + 1e-12]
+        m["ShiftResidualSafeUpTo"] = _fmt(float(max(ok, key=float)), 1) if ok else "--"
         cov = e3["coverage"]
         for reg, tag in (("representative", "Rep"), ("full_cycle_benign", "NoRain"),
                          ("daytime_only", "Daytime")):

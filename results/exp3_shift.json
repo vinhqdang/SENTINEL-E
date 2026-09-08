@@ -1,0 +1,420 @@
+{
+  "generated_at": "2026-09-08T13:49:20Z",
+  "python": "3.11.15",
+  "numpy": "2.4.6",
+  "payload": {
+    "coverage": {
+      "representative": [
+        {
+          "variant": "pooled",
+          "pfa": 0.975,
+          "pfa_ci": [
+            0.9428208558483829,
+            0.9892754385292123
+          ],
+          "arl0": 17415.43,
+          "add": 9471.391959798995,
+          "add_censored": 9774.035,
+          "add_censored_se": 948.643450459324,
+          "miss_rate": 0.005,
+          "abstention": 0.0
+        },
+        {
+          "variant": "Mondrian",
+          "pfa": 0.025,
+          "pfa_ci": [
+            0.010724561470787711,
+            0.05717914415161715
+          ],
+          "arl0": 88848.29,
+          "add": 12260.826086956522,
+          "add_censored": 43439.98,
+          "add_censored_se": 2143.305430354464,
+          "miss_rate": 0.54,
+          "abstention": 0.0020596749209449987
+        },
+        {
+          "variant": "residual",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": 5140.040609137056,
+          "add_censored": 6112.94,
+          "add_censored_se": 831.0364075873441,
+          "miss_rate": 0.015,
+          "abstention": 0.0006168219069113465
+        },
+        {
+          "variant": "residual + LR wts",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": 5655.505494505494,
+          "add_censored": 11446.51,
+          "add_censored_se": 1439.1742097395288,
+          "miss_rate": 0.09,
+          "abstention": 0.0006168219069113465
+        }
+      ],
+      "full_cycle_benign": [
+        {
+          "variant": "pooled",
+          "pfa": 1.0,
+          "pfa_ci": [
+            0.9811539940816791,
+            1.0
+          ],
+          "arl0": 6991.25,
+          "add": 5077.045,
+          "add_censored": 5077.045,
+          "add_censored_se": 629.1980911480875,
+          "miss_rate": 0.0,
+          "abstention": 0.0
+        },
+        {
+          "variant": "Mondrian",
+          "pfa": 0.09,
+          "pfa_ci": [
+            0.05768697871453362,
+            0.13776674613848952
+          ],
+          "arl0": 85675.185,
+          "add": 9267.224,
+          "add_censored": 32042.015,
+          "add_censored_se": 2180.1116296217347,
+          "miss_rate": 0.375,
+          "abstention": 0.25169000876012704
+        },
+        {
+          "variant": "residual",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": 7094.168604651163,
+          "add_censored": 15900.985,
+          "add_censored_se": 1683.2640324496235,
+          "miss_rate": 0.14,
+          "abstention": 0.25150712644179946
+        },
+        {
+          "variant": "residual + LR wts",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": 7164.33950617284,
+          "add_censored": 19103.115,
+          "add_censored_se": 1867.5303744400396,
+          "miss_rate": 0.19,
+          "abstention": 0.25150712644179946
+        }
+      ],
+      "daytime_only": [
+        {
+          "variant": "pooled",
+          "pfa": 0.655,
+          "pfa_ci": [
+            0.5867546071792236,
+            0.7174031309860971
+          ],
+          "arl0": 52563.73,
+          "add": 18050.7375,
+          "add_censored": 28440.59,
+          "add_censored_se": 1899.4220874362557,
+          "miss_rate": 0.2,
+          "abstention": 0.0
+        },
+        {
+          "variant": "Mondrian",
+          "pfa": 0.01,
+          "pfa_ci": [
+            0.0027466006037749346,
+            0.03572248519617954
+          ],
+          "arl0": 89793.135,
+          "add": 24250.24,
+          "add_censored": 64281.28,
+          "add_censored_se": 1123.6500362111803,
+          "miss_rate": 0.875,
+          "abstention": 0.25395490647698027
+        },
+        {
+          "variant": "residual",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": 29300.14285714286,
+          "add_censored": 65726.515,
+          "add_censored_se": 886.0067539182863,
+          "miss_rate": 0.895,
+          "abstention": 0.8177401908622993
+        },
+        {
+          "variant": "residual + LR wts",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": 29650.916666666668,
+          "add_censored": 67579.055,
+          "add_censored_se": 680.4236476721192,
+          "miss_rate": 0.94,
+          "abstention": 0.8177401908622993
+        }
+      ]
+    },
+    "activity": {
+      "1.0": [
+        {
+          "variant": "pooled",
+          "pfa": 0.975,
+          "pfa_ci": [
+            0.9428208558483829,
+            0.9892754385292123
+          ],
+          "arl0": 17415.43,
+          "add": 9471.391959798995,
+          "add_censored": 9774.035,
+          "add_censored_se": 948.643450459324,
+          "miss_rate": 0.005,
+          "abstention": 0.0
+        },
+        {
+          "variant": "Mondrian",
+          "pfa": 0.025,
+          "pfa_ci": [
+            0.010724561470787711,
+            0.05717914415161715
+          ],
+          "arl0": 88848.29,
+          "add": 12260.826086956522,
+          "add_censored": 43439.98,
+          "add_censored_se": 2143.305430354464,
+          "miss_rate": 0.54,
+          "abstention": 0.0020596749209449987
+        },
+        {
+          "variant": "residual",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": 5140.040609137056,
+          "add_censored": 6112.94,
+          "add_censored_se": 831.0364075873441,
+          "miss_rate": 0.015,
+          "abstention": 0.0006168219069113465
+        },
+        {
+          "variant": "residual + LR wts",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": 5655.505494505494,
+          "add_censored": 11446.51,
+          "add_censored_se": 1439.1742097395288,
+          "miss_rate": 0.09,
+          "abstention": 0.0006168219069113465
+        }
+      ],
+      "1.5": [
+        {
+          "variant": "pooled",
+          "pfa": 1.0,
+          "pfa_ci": [
+            0.9811539940816791,
+            1.0
+          ],
+          "arl0": 4945.605,
+          "add": 2457.945,
+          "add_censored": 2457.945,
+          "add_censored_se": 420.25848513924456,
+          "miss_rate": 0.0,
+          "abstention": 0.0
+        },
+        {
+          "variant": "Mondrian",
+          "pfa": 0.915,
+          "pfa_ci": [
+            0.8681031145576462,
+            0.9462547005301477
+          ],
+          "arl0": 30977.695,
+          "add": 6769.215384615384,
+          "add_censored": 8349.985,
+          "add_censored_se": 1000.5331557236806,
+          "miss_rate": 0.025,
+          "abstention": 0.001303971421332984
+        },
+        {
+          "variant": "residual",
+          "pfa": 0.005,
+          "pfa_ci": [
+            0.0008831459893662054,
+            0.02777439986977148
+          ],
+          "arl0": 89705.075,
+          "add": 5936.44502617801,
+          "add_censored": 8819.305,
+          "add_censored_se": 1110.7914828407866,
+          "miss_rate": 0.045,
+          "abstention": 0.009081740565074154
+        },
+        {
+          "variant": "residual + LR wts",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": 5753.027777777777,
+          "add_censored": 46871.09,
+          "add_censored_se": 2209.3343888302284,
+          "miss_rate": 0.64,
+          "abstention": 0.009081740565074154
+        }
+      ],
+      "2.0": [
+        {
+          "variant": "pooled",
+          "pfa": 1.0,
+          "pfa_ci": [
+            0.9811539940816791,
+            1.0
+          ],
+          "arl0": 2401.845,
+          "add": 466.51,
+          "add_censored": 466.51,
+          "add_censored_se": 65.34719757306557,
+          "miss_rate": 0.0,
+          "abstention": 0.0
+        },
+        {
+          "variant": "Mondrian",
+          "pfa": 1.0,
+          "pfa_ci": [
+            0.9811539940816791,
+            1.0
+          ],
+          "arl0": 5321.54,
+          "add": 1605.98,
+          "add_censored": 1605.98,
+          "add_censored_se": 209.42997198065777,
+          "miss_rate": 0.0,
+          "abstention": 0.0008999235708054109
+        },
+        {
+          "variant": "residual",
+          "pfa": 0.02,
+          "pfa_ci": [
+            0.007804300176394188,
+            0.050287865505193874
+          ],
+          "arl0": 89388.04,
+          "add": 6412.039548022599,
+          "add_censored": 13724.655,
+          "add_censored_se": 1544.5840369874527,
+          "miss_rate": 0.115,
+          "abstention": 0.04065027438312521
+        },
+        {
+          "variant": "residual + LR wts",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": 2488.6666666666665,
+          "add_censored": 68987.33,
+          "add_censored_se": 582.2375484884577,
+          "miss_rate": 0.985,
+          "abstention": 0.04065027438312521
+        }
+      ],
+      "3.0": [
+        {
+          "variant": "pooled",
+          "pfa": 1.0,
+          "pfa_ci": [
+            0.9811539940816791,
+            1.0
+          ],
+          "arl0": 850.425,
+          "add": 200.265,
+          "add_censored": 200.265,
+          "add_censored_se": 11.675194848427315,
+          "miss_rate": 0.0,
+          "abstention": 0.0
+        },
+        {
+          "variant": "Mondrian",
+          "pfa": 1.0,
+          "pfa_ci": [
+            0.9811539940816791,
+            1.0
+          ],
+          "arl0": 1017.28,
+          "add": 355.57,
+          "add_censored": 355.57,
+          "add_censored_se": 39.8569738858419,
+          "miss_rate": 0.0,
+          "abstention": 0.0004647666379728806
+        },
+        {
+          "variant": "residual",
+          "pfa": 0.07,
+          "pfa_ci": [
+            0.04215178292291873,
+            0.11405578216683726
+          ],
+          "arl0": 86959.625,
+          "add": 7712.054054054054,
+          "add_censored": 23906.92,
+          "add_censored_se": 2024.631444187302,
+          "miss_rate": 0.26,
+          "abstention": 0.1928987803736975
+        },
+        {
+          "variant": "residual + LR wts",
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "arl0": 90000.0,
+          "add": null,
+          "add_censored": 70000.0,
+          "add_censored_se": 0.0,
+          "miss_rate": 1.0,
+          "abstention": 0.1928987803736975
+        }
+      ]
+    },
+    "reps": 200,
+    "T": 90000,
+    "change_point": 20000
+  }
+}
