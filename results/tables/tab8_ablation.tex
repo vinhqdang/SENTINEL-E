@@ -1,0 +1,31 @@
+\begin{table}[t]
+\centering
+\caption{Component ablation at $\alpha=0.01$ over 200 null and 200 post-change streams. A cross in the fourth column means the realised false-alarm rate exceeded the nominal level, i.e. the variant does not deliver the guarantee it claims. Note that the components which break validity are the temporal and calibration ones, not the betting or prior choices, which only move the delay.}
+\label{tab:ablation}
+\begin{tabular}{llrcrrrr}
+\toprule
+group & variant & PFA & $\le\alpha$? & ARL$_0$ & cens. delay (s) & miss & lag \\
+\midrule
+ & SENTINEL-E (full) & 0.000 & \checkmark & 90,000 & 244.5 & 0.01 & 18 \\
+e-process core & changepoint mixture ($\eta = 0$) & 0.000 & \checkmark & 90,000 & 311.3 & 0.06 & 18 \\
+ & enable dilation ($\pi$ grid) & 0.000 & \checkmark & 90,000 & 269.8 & 0.02 & 18 \\
+ & single episode length & 0.000 & \checkmark & 90,000 & 247.6 & 0.02 & 18 \\
+ & single bet aggressiveness & 0.000 & \checkmark & 90,000 & 316.8 & 0.04 & 18 \\
+temporal & bet on every frame & 1.000 & \ding{55} & 332 & 3.3 & 0.00 & 1 \\
+ & bet once per 5 frames & 0.935 & \ding{55} & 42,640 & 9.0 & 0.00 & 5 \\
+ & raw calibration (not thinned) & 0.010 & \checkmark & 89,395 & 68.4 & 0.00 & 18 \\
+calibration & pooled conformal & 0.975 & \ding{55} & 17,415 & 391.0 & 0.01 & 18 \\
+ & Mondrian conformal & 0.025 & \ding{55} & 88,848 & 1737.6 & 0.54 & 18 \\
+ & residual + LR weighting & 0.000 & \checkmark & 90,000 & 457.9 & 0.09 & 18 \\
+conditional validity & DKW inflation & 0.000 & \checkmark & 90,000 & 2025.8 & 0.68 & 18 \\
+ & no correction ($\delta=0$) & 0.050 & \ding{55} & 88,463 & 43.1 & 0.00 & 18 \\
+onset prior & hazard $\rho=10^{-2}$ & 0.000 & \checkmark & 90,000 & 563.3 & 0.10 & 18 \\
+ & hazard $\rho=10^{-4}$ & 0.000 & \checkmark & 90,000 & 353.0 & 0.05 & 18 \\
+betting & linear betting (changepoint core) & 0.000 & \checkmark & 90,000 & 2597.4 & 0.92 & 18 \\
+ & adaptive ONS betting (changepoint core) & 0.000 & \checkmark & 90,000 & 2800.0 & 1.00 & 18 \\
+ & single bet, $K=1$ (changepoint core) & 0.000 & \checkmark & 90,000 & 2775.4 & 0.99 & 18 \\
+ & fixed start (changepoint core) & 0.000 & \checkmark & 90,000 & 2800.0 & 1.00 & 18 \\
+\bottomrule
+\end{tabular}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize ``lag'' is the decorrelation lag chosen from the calibration autocorrelation, in frames at 25\,fps.\end{minipage}
+\end{table}

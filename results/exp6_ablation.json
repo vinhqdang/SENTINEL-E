@@ -1,0 +1,337 @@
+{
+  "generated_at": "2026-09-08T14:04:53Z",
+  "python": "3.11.15",
+  "numpy": "2.4.6",
+  "payload": {
+    "rows": [
+      {
+        "name": "SENTINEL-E (full)",
+        "group": "",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 5140.040609137056,
+        "add_se": 624.435926450819,
+        "add_censored": 6112.94,
+        "add_censored_se": 831.0364075873441,
+        "miss_rate": 0.015,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "changepoint mixture ($\\eta = 0$)",
+        "group": "e-process core",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 4162.259259259259,
+        "add_se": 538.3081340641278,
+        "add_censored": 7783.335,
+        "add_censored_se": 1179.32950412954,
+        "miss_rate": 0.055,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "enable dilation ($\\pi$ grid)",
+        "group": "e-process core",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 5453.326530612245,
+        "add_se": 624.8605183783831,
+        "add_censored": 6744.26,
+        "add_censored_se": 886.16976731012,
+        "miss_rate": 0.02,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "single episode length",
+        "group": "e-process core",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 4887.418367346939,
+        "add_se": 616.4261612628208,
+        "add_censored": 6189.67,
+        "add_censored_se": 884.5733039754423,
+        "miss_rate": 0.02,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "single bet aggressiveness",
+        "group": "e-process core",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 4994.806282722513,
+        "add_se": 569.5419292721306,
+        "add_censored": 7920.04,
+        "add_censored_se": 1099.238617102148,
+        "miss_rate": 0.045,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "bet on every frame",
+        "group": "temporal",
+        "pfa": 1.0,
+        "pfa_ci": [
+          0.9811539940816791,
+          1.0
+        ],
+        "arl0": 332.02,
+        "add": 82.59,
+        "add_se": 2.8899513132516303,
+        "add_censored": 82.59,
+        "add_censored_se": 2.8899513132516303,
+        "miss_rate": 0.0,
+        "lag": 1,
+        "abstention": 0.0005603888888888889
+      },
+      {
+        "name": "bet once per 5 frames",
+        "group": "temporal",
+        "pfa": 0.935,
+        "pfa_ci": [
+          0.8919799625008207,
+          0.9616240123502404
+        ],
+        "arl0": 42640.185,
+        "add": 223.875,
+        "add_se": 5.656014442331216,
+        "add_censored": 223.875,
+        "add_censored_se": 5.656014442331216,
+        "miss_rate": 0.0,
+        "lag": 5,
+        "abstention": 0.0005783333333333334
+      },
+      {
+        "name": "raw calibration (not thinned)",
+        "group": "temporal",
+        "pfa": 0.01,
+        "pfa_ci": [
+          0.0027466006037749346,
+          0.03572248519617954
+        ],
+        "arl0": 89395.225,
+        "add": 1709.755,
+        "add_se": 295.59554921965133,
+        "add_censored": 1709.755,
+        "add_censored_se": 295.59554921965133,
+        "miss_rate": 0.0,
+        "lag": 18,
+        "abstention": 0.0005922670087177098
+      },
+      {
+        "name": "pooled conformal",
+        "group": "calibration",
+        "pfa": 0.975,
+        "pfa_ci": [
+          0.9428208558483829,
+          0.9892754385292123
+        ],
+        "arl0": 17415.43,
+        "add": 9471.391959798995,
+        "add_se": 903.6019875119912,
+        "add_censored": 9774.035,
+        "add_censored_se": 948.643450459324,
+        "miss_rate": 0.005,
+        "lag": 18,
+        "abstention": 0.0
+      },
+      {
+        "name": "Mondrian conformal",
+        "group": "calibration",
+        "pfa": 0.025,
+        "pfa_ci": [
+          0.010724561470787711,
+          0.05717914415161715
+        ],
+        "arl0": 88848.29,
+        "add": 12260.826086956522,
+        "add_se": 1433.665627104627,
+        "add_censored": 43439.98,
+        "add_censored_se": 2143.305430354464,
+        "miss_rate": 0.54,
+        "lag": 18,
+        "abstention": 0.0020596749209449987
+      },
+      {
+        "name": "residual + LR weighting",
+        "group": "calibration",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 5655.505494505494,
+        "add_se": 666.1441345069607,
+        "add_censored": 11446.51,
+        "add_censored_se": 1439.1742097395288,
+        "miss_rate": 0.09,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "DKW inflation",
+        "group": "conditional validity",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 10448.338461538462,
+        "add_se": 1196.3128440362968,
+        "add_censored": 50645.71,
+        "add_censored_se": 2014.7194599349816,
+        "miss_rate": 0.675,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "no correction ($\\delta=0$)",
+        "group": "conditional validity",
+        "pfa": 0.05,
+        "pfa_ci": [
+          0.027382349028644986,
+          0.08957905629784384
+        ],
+        "arl0": 88462.995,
+        "add": 1078.44,
+        "add_se": 182.1607996155674,
+        "add_censored": 1078.44,
+        "add_censored_se": 182.1607996155674,
+        "miss_rate": 0.0,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "hazard $\\rho=10^{-2}$",
+        "group": "onset prior",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 7870.427777777778,
+        "add_se": 675.613732667196,
+        "add_censored": 14083.385,
+        "add_censored_se": 1454.4028853617617,
+        "miss_rate": 0.1,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "hazard $\\rho=10^{-4}$",
+        "group": "onset prior",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 5605.773684210526,
+        "add_se": 608.5439968783578,
+        "add_censored": 8825.485,
+        "add_censored_se": 1150.6089165276094,
+        "miss_rate": 0.05,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "linear betting (changepoint core)",
+        "group": "betting",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 10416.70588235294,
+        "add_se": 2676.1834459739844,
+        "add_censored": 64935.42,
+        "add_censored_se": 1198.5222303743503,
+        "miss_rate": 0.915,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "adaptive ONS betting (changepoint core)",
+        "group": "betting",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": null,
+        "add_se": null,
+        "add_censored": 70000.0,
+        "add_censored_se": 0.0,
+        "miss_rate": 1.0,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "single bet, $K=1$ (changepoint core)",
+        "group": "betting",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": 8560.5,
+        "add_se": 4404.5,
+        "add_censored": 69385.605,
+        "add_censored_se": 434.4732650406124,
+        "miss_rate": 0.99,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      },
+      {
+        "name": "fixed start (changepoint core)",
+        "group": "betting",
+        "pfa": 0.0,
+        "pfa_ci": [
+          0.0,
+          0.018846005918320894
+        ],
+        "arl0": 90000.0,
+        "add": null,
+        "add_se": null,
+        "add_censored": 70000.0,
+        "add_censored_se": 0.0,
+        "miss_rate": 1.0,
+        "lag": 18,
+        "abstention": 0.0006168219069113465
+      }
+    ],
+    "reps": 200,
+    "alpha": 0.01,
+    "T": 90000,
+    "n_episodes": 4,
+    "change_point": 20000
+  }
+}

@@ -891,40 +891,47 @@ cannot, is that the bound never degrades with the horizon.
 
 This is the experiment that isolates the paper's main contribution.
 \Cref{fig:episodes} and \cref{tab:episodes,tab:intermittency} sweep the two axes
-along which an episode differs from a changepoint, holding everything else
-fixed --- same conformal layer, same betting family, same grid size, same
-$\alpha$ --- so the only difference is whether the mixture allows an episode to
-end.
+along which an episode differs from a changepoint, holding everything else fixed
+--- same conformal layer, same betting grid, same $\alpha$ --- so the only
+difference is whether the mixture allows an episode to end. Both variants hold
+the false-alarm level throughout, as \cref{thm:episodic} and
+\cref{prop:generalisation} require of both, so the comparison is entirely about
+power.
 
-With one episode per camera the two agree: miss rates \EpiOneEpiMiss{} and
-\EpiOneCpMiss, censored delays \EpiOneEpiDelay\,s and \EpiOneCpDelay\,s. That is
-the outcome \cref{prop:generalisation} predicts and it is worth reporting as a
-result rather than omitting: the generalisation is close to free where the
-classical model is correct, the small residual cost being the prior mass the
-grid spends on episode-duration hypotheses that turn out to be unnecessary.
+The trend is monotone in the number of episodes, and it crosses over. With a
+single episode the episodic mixture is marginally \emph{behind}: censored delay
+\EpiOneEpiDelay\,s against \EpiOneCpDelay\,s and miss rate \EpiOneEpiMiss{}
+against \EpiOneCpMiss. That is the price of the extra axis, spending prior mass
+on episode-end hypotheses that never fire, and it is what
+\cref{prop:generalisation} leads one to expect. From two episodes on the sign
+reverses and the gap widens: at \EpiBestCount{} episodes the episodic mixture
+cuts censored delay by \EpiBestGainPct\% (\EpiBestEpiDelay\,s against
+\EpiBestCpDelay\,s) and misses \EpiBestMissRatio$\times$ fewer events
+(\EpiBestEpiMiss{} against \EpiBestCpMiss); by \EpiMaxCount{} episodes it misses
+none at all (\EpiManyEpiMiss{} against \EpiManyCpMiss).
 
-With \EpiMaxCount{} episodes the gap opens. The changepoint mixture misses
-\EpiManyCpMiss{} of events against \EpiManyEpiMiss{} for the episodic process,
-and its censored delay is \EpiManyCpDelay\,s against \EpiManyEpiDelay\,s. The
-mechanism is the one \cref{sec:episodic} predicts: having bet on a change that
-has since reverted, the changepoint mixture carries that loss into the next
-episode, while the episodic process returns to its quiet state and accumulates
-across episodes. This is also the regime that matters operationally, since a
-dumping site that has been used once is used again.
+The mechanism is the one \cref{sec:episodic} predicts. Having bet on a change
+that has since reverted, the changepoint mixture carries that loss into the next
+episode; the episodic process returns to its quiet state and accumulates across
+episodes instead. The crossover is therefore not a nuisance but the signature of
+the mechanism: it appears exactly when there is more than one episode to
+accumulate over. Whether it helps at a given site is an empirical question about
+how often that site is dumped on, and a municipality knows the answer.
+
+We report the single-episode row rather than omitting it. A strict
+generalisation should cost something where its extra structure is absent, and
+quantifying that cost is what makes the rest of the table trustworthy.
 
 \Cref{tab:intermittency} varies the fraction $\pi$ of episode frames that show
-the act, with both mixtures using the same undilated betting grid
-(\cref{sec:dilation}). At the hardest setting, $\pi = \EpiMinPi$, the miss rates
-are \EpiHardPiEpiMiss{} for the episodic mixture and \EpiHardPiCpMiss{} for the
-changepoint mixture. Intermittency hurts both, and it is worth being clear about
-why the episodic mixture still holds an edge: not because it models the occluded
-frames --- our attempt to do that explicitly failed (\cref{sec:dilation}) --- but
-because heavier intermittency makes each episode weaker, so more of them are
-needed before the evidence crosses the threshold, and accumulating across
-episodes is exactly what the changepoint mixture cannot do. Below
-$\pi \approx 0.2$ neither variant detects reliably at any setting we tried, and
-we regard that as the honest edge of the operating envelope rather than a
-tuning problem.
+the act, at \EpiBestCount{} episodes and with both mixtures using the same
+undilated grid (\cref{sec:dilation}). Down to $\pi = 0.5$ the task is easy
+enough that the two are indistinguishable and neither misses anything; the
+separation appears only at $\pi = \EpiMinPi$, where the episodes become weak
+enough that several are needed before the evidence crosses the threshold ---
+which is, again, precisely when accumulating across episodes is what matters.
+Below $\pi \approx 0.2$ neither variant detects reliably at any setting we
+tried, and we take that as the honest edge of the operating envelope rather than
+a tuning problem.
 
 \subsection{Detection delay at a controlled false-alarm rate}
 \label{sec:delay}
