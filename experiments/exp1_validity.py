@@ -22,7 +22,8 @@ from experiments.common import fmt, fmt_int, save_json, setup_matplotlib, style_
 from experiments.runner import evaluate
 
 BASE_CFG = dict(T=60_000, calibration_regime="representative")
-REPS = 200
+REPS = 1_500          # alpha sweep: enough that a zero count is informative
+HORIZON_REPS = 300    # horizon sweep: the effect is enormous, precision is cheap
 ALPHAS = [0.2, 0.1, 0.05, 0.02, 0.01, 0.005]
 HORIZONS = [15_000, 30_000, 60_000, 120_000, 240_000]
 
@@ -74,41 +75,70 @@ def sweep_horizon(reps: int = REPS):
 
 
 def make_figure(alpha_rows, horizon_rows):
+    """Realised false-alarm rate, on a log scale with zero counts shown honestly.
+
+    An observed rate of exactly zero cannot be drawn on a log axis, and drawing
+    it at zero on a linear axis hides the only thing the reader needs: how far
+    below the nominal level it sits, and how tightly the Monte-Carlo sample
+    pins it down.  Zero-count outcomes are therefore plotted as open
+    downward-pointing markers at the 95\% Wilson upper confidence limit, which
+    is the strongest statement the data supports.
+    """
     plt = setup_matplotlib()
-    fig, axes = plt.subplots(1, 2, figsize=(7.0, 2.9))
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.0))
+    FLOOR = 2e-3
+
+    def draw(ax, x, y, ci_hi, label, style):
+        y = np.asarray(y, dtype=float)
+        ci_hi = np.asarray(ci_hi, dtype=float)
+        obs = y > 0
+        if obs.any():
+            ax.plot(np.asarray(x)[obs], y[obs], label=label, **style)
+        if (~obs).any():
+            ax.plot(np.asarray(x)[~obs], np.maximum(ci_hi[~obs], FLOOR),
+                    linestyle="none", marker="v", markerfacecolor="white",
+                    markeredgecolor=style["color"], markersize=6,
+                    label=None if obs.any() else label, zorder=style.get("zorder", 3))
+            ax.plot(np.asarray(x), np.where(obs, y, np.maximum(ci_hi, FLOOR)),
+                    color=style["color"], lw=1.0, ls=":", zorder=2)
 
     ax = axes[0]
     a = np.array([r["alpha"] for r in alpha_rows])
     for key, label in (("pvalue", "p-value threshold"),
-                       ("oracle", "e-detector, exact uniform p"),
+                       ("oracle", "e-detector, exact uniform $p$"),
                        ("sentinel", "SENTINEL-E")):
-        y = np.array([r[f"{key}_pfa"] for r in alpha_rows])
-        ci = np.array([r[f"{key}_ci"] for r in alpha_rows])
         st = style_for("SENTINEL-E (no graph)" if key == "oracle" else label)
-        ax.plot(a, y, label=label, **st)
-        ax.fill_between(a, ci[:, 0], ci[:, 1], color=st["color"], alpha=0.15, lw=0)
+        draw(ax, a, [r[f"{key}_pfa"] for r in alpha_rows],
+             [r[f"{key}_ci"][1] for r in alpha_rows], label, st)
     ax.plot(a, a, "k--", lw=1.0, label=r"nominal $\alpha$")
-    ax.set_xscale("log")
-    ax.set_ylim(-0.04, 1.04)
+    ax.set_xscale("log"); ax.set_yscale("log")
+    ax.set_ylim(FLOOR * 0.7, 1.6)
     ax.set_xlabel(r"target level $\alpha$")
     ax.set_ylabel("realised false-alarm rate")
     ax.set_title("(a) nominal vs realised, 40 min streams")
-    ax.legend(loc="upper left")
+    ax.legend(loc="lower right", fontsize=7)
 
     ax = axes[1]
-    T = np.array([r["T"] for r in horizon_rows]) / (25.0 * 3600.0)
-    for key, label in (("sentinel", "SENTINEL-E"),
-                       ("pvalue", "p-value threshold"),
-                       ("fixed", "Fixed threshold")):
-        ax.plot(T, [r[f"{key}_pfa"] for r in horizon_rows], label=label,
-                **style_for(label))
+    hours = np.array([r["hours"] for r in horizon_rows])
+    for key, label in (("pvalue", "p-value threshold"),
+                       ("fixed", "Fixed threshold"),
+                       ("sentinel", "SENTINEL-E")):
+        y = [r[f"{key}_pfa"] for r in horizon_rows]
+        ci = (
+            [r["sentinel_ci"][1] for r in horizon_rows]
+            if key == "sentinel" else [0.0] * len(horizon_rows)
+        )
+        draw(ax, hours, y, ci, label, style_for(label))
     ax.axhline(0.01, color="k", ls="--", lw=1.0, label=r"$\alpha=0.01$")
-    ax.set_xscale("log")
+    ax.set_xscale("log"); ax.set_yscale("log")
+    ax.set_ylim(FLOOR * 0.7, 1.6)
+    ax.set_xticks(hours)
+    ax.set_xticklabels([f"{h:.1f}" for h in hours])
+    ax.minorticks_off()
     ax.set_xlabel("monitoring horizon (hours of video)")
     ax.set_ylabel("P(at least one false alarm)")
-    ax.set_ylim(-0.03, 1.03)
     ax.set_title("(b) the horizon does not erode the bound")
-    ax.legend(loc="center right")
+    ax.legend(loc="center right", fontsize=7)
 
     fig.tight_layout()
     for ext in ("pdf", "png"):
@@ -116,7 +146,7 @@ def make_figure(alpha_rows, horizon_rows):
     plt.close(fig)
 
 
-def make_table(alpha_rows, horizon_rows):
+def make_table(alpha_rows, horizon_rows, reps=REPS, horizon_reps=HORIZON_REPS):
     rows = [
         [
             fmt(r["alpha"], 3),
@@ -134,7 +164,7 @@ def make_table(alpha_rows, horizon_rows):
         [r"$\alpha$", "PFA", "95\\% CI", "PFA (oracle $p$)", "ARL$_0$", "PFA", "ARL$_0$"],
         caption=(
             "Time-uniform false-alarm control on 40-minute null streams "
-            f"({REPS} Monte-Carlo streams per level). SENTINEL-E and the "
+            f"({reps} Monte-Carlo streams per level). SENTINEL-E and the "
             "per-frame p-value threshold consume identical conformal p-values; "
             "only the stopping rule differs. ARL$_0$ is censored at the "
             "60{,}000-frame horizon."
@@ -165,7 +195,8 @@ def make_table(alpha_rows, horizon_rows):
         ["frames", "hours", "SENTINEL-E", "p-value thr.", "fixed thr."],
         caption=(
             r"False-alarm probability against monitoring horizon at $\alpha=0.01$ "
-            r"(fixed threshold calibrated to a $10^{-3}$ per-frame rate). "
+            r"(fixed threshold calibrated to a $10^{-3}$ per-frame rate; "
+            f"{horizon_reps} streams per point). "
             r"SENTINEL-E is flat in the horizon; the per-frame rules are not."
         ),
         label="tab:horizon",
@@ -174,16 +205,17 @@ def make_table(alpha_rows, horizon_rows):
     )
 
 
-def main(reps: int = REPS):
+def main(reps: int = REPS, horizon_reps: int = HORIZON_REPS):
     print("Experiment 1: time-uniform false-alarm control")
-    print(" sweeping alpha ...")
+    print(f" sweeping alpha ({reps} streams per point) ...")
     alpha_rows = sweep_alpha(reps)
-    print(" sweeping horizon ...")
-    horizon_rows = sweep_horizon(reps)
+    print(f" sweeping horizon ({horizon_reps} streams per point) ...")
+    horizon_rows = sweep_horizon(horizon_reps)
     save_json({"alpha_sweep": alpha_rows, "horizon_sweep": horizon_rows,
-               "reps": reps, "config": BASE_CFG}, "exp1_validity")
+               "reps": reps, "horizon_reps": horizon_reps,
+               "config": BASE_CFG}, "exp1_validity")
     make_figure(alpha_rows, horizon_rows)
-    make_table(alpha_rows, horizon_rows)
+    make_table(alpha_rows, horizon_rows, reps, horizon_reps)
     print(" wrote results/exp1_validity.json, fig1_validity, tab1/tab2")
 
 
@@ -191,4 +223,6 @@ if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--reps", type=int, default=REPS)
+    ap.add_argument("--horizon-reps", type=int, default=HORIZON_REPS,
+                    dest="horizon_reps")
     main(**vars(ap.parse_args()))

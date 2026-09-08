@@ -199,7 +199,7 @@ cited.
       (\cref{thm:beta}). At $n=2000$ and $\delta=10^{-3}$ this puts the smallest
       usable p-value at $0.0037$ instead of the $0.051$ that DKW permits, a
       $14\times$ improvement precisely where the evidence is. In the ablation it
-      is worth a factor of \AblDkwDelay/\AblFullDelay{} in detection delay
+      shortens detection delay by a factor of \AblDkwSpeedup{}
       (\cref{sec:ablation}).
 
 \item \textbf{A changepoint-mixture e-process that is an exact supermartingale.}
@@ -380,9 +380,13 @@ daylight-dominated $\cD$ is exactly what fails. We therefore conformalise the
 \end{equation}
 with $\hat g$ and $\hat\sigma$ ridge regressions on a quadratic-with-interactions
 basis in $c$, fitted on one half of $\cD$ and conformalised on the other. The
-split preserves exchangeability between calibration and deployment residuals
-exactly, and the whole held-out half backs every context value --- unlike
-Mondrian binning, where a bin's worth must cover each one. We implement Mondrian
+split matters: it makes the conformalisation residuals independent of the fitted
+models, so conditionally on those models \cref{thm:beta} applies verbatim. What
+remains assumed is that the normalised residual in \cref{eq:residual} is
+distributed independently of $c$ --- exchangeability is bought by the
+normalisation, not by the split --- and \cref{sec:limitations} returns to what
+happens when the model is wrong. The gain over binning is that the whole held-out
+half backs every context value, rather than one bin's worth backing each. We implement Mondrian
 calibration as well, since it is exactly group-conditional and preferable when a
 single context variable dominates; \cref{sec:shift} shows where each wins.
 
@@ -618,7 +622,11 @@ single-thread CPU on the machine that produced the statistical results.
   \centering
   \includegraphics[width=\linewidth]{fig1_validity.pdf}
   \caption{Time-uniform false-alarm control, \ExpOneReps{} null streams per
-  point. \textbf{(a)} Realised against nominal level. SENTINEL-E stays below the
+  point in (a) and \ExpOneHorizonReps{} in (b). Open downward triangles mark
+  operating points at which \emph{no} false alarm was observed; they are drawn
+  at the 95\% Wilson upper confidence limit, which is the strongest statement
+  the sample supports, and the dotted line connects them.
+  \textbf{(a)} Realised against nominal level. SENTINEL-E stays below the
   diagonal everywhere; the per-frame p-value threshold, fed \emph{identical}
   conformal p-values, sits at the top of the plot, so the difference is
   attributable to the stopping rule alone. The middle curve is the same
@@ -789,8 +797,8 @@ delay. That is the right division of labour: a tuning knob should cost power, no
 correctness.
 
 Two rows deserve comment. The DKW inflation is valid but slow, at
-\AblDkwDelay\,s against \AblFullDelay\,s for the exact Beta levels, which
-quantifies what \cref{thm:beta} buys. And the fixed-start product martingale
+\AblDkwDelay\,s against \AblFullDelay\,s for the exact Beta levels --- a factor
+of \AblDkwSpeedup{} --- which quantifies what \cref{thm:beta} buys. And the fixed-start product martingale
 (no changepoint prior) misses \AblPointPriorMiss{} of events: with the change
 arriving deep into the stream, a wealth process started at frame one has burned
 too much to recover, which is precisely the failure mode the mixture in

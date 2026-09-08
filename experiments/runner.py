@@ -114,6 +114,7 @@ def run_spec(spec: Spec) -> Trace:
             lag=opt.get("lag", None),
             thin_calibration=opt.get("thin_calibration", True),
             cc_mode=opt.get("cc_mode", "beta"),
+            detector=opt.get("detector", "episodic"),
         )
         if spec.method == "SENTINEL-E":
             model = SentinelE(alpha=spec.knob, **cal_kw)

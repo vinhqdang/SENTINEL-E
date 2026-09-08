@@ -60,7 +60,7 @@ __all__ = [
     "train_spatial_prior",
 ]
 
-N_FEATURES = 8
+N_FEATURES = 9
 
 
 @dataclass
@@ -110,15 +110,23 @@ class FeatureTracker:
 
     def reset(self) -> None:
         self.log_wealth = np.zeros(self.K)
+        self.posterior = np.zeros(self.K)
         self.ema = np.ones((self.K, 3))          # E[-log p] = 1 under uniform
         self.frames = 0
 
     def features(self) -> np.ndarray:
-        """``(K, N_FEATURES)`` predictable node features."""
+        """``(K, N_FEATURES)`` predictable node features.
+
+        The episode posterior is the most useful of them: unlike log-wealth it
+        is bounded in ``[0, 1]`` and directly comparable between cameras with
+        different histories, so a message-passing layer can aggregate it across
+        the graph without one long-running camera swamping its neighbours.
+        """
         w = np.clip(self.log_wealth / max(self.log_threshold, 1e-9), -2.0, 2.0)
         return np.concatenate(
             [
                 w[:, None],
+                self.posterior[:, None],
                 np.log1p(np.maximum(self.ema, 0.0)) - np.log(2.0),
                 self.static,
                 self.degree[:, None],
@@ -127,12 +135,21 @@ class FeatureTracker:
             axis=1,
         )
 
-    def update(self, p_values: np.ndarray, log_wealth: np.ndarray) -> None:
+    def update(
+        self,
+        p_values: np.ndarray,
+        log_wealth: np.ndarray,
+        posterior: Optional[np.ndarray] = None,
+    ) -> None:
         p = np.clip(np.asarray(p_values, dtype=float).ravel(), 1e-12, 1.0)
         nlp = -np.log(p)
         for j, d in enumerate(self.cfg.ema_decays):
             self.ema[:, j] = d * self.ema[:, j] + (1.0 - d) * nlp
         self.log_wealth = np.asarray(log_wealth, dtype=float).ravel()
+        if posterior is not None:
+            self.posterior = np.clip(
+                np.asarray(posterior, dtype=float).ravel(), 0.0, 1.0
+            )
         self.frames += 1
 
 
@@ -142,8 +159,7 @@ class FeatureTracker:
 class HeuristicSpatialPrior:
     """Hand-designed spatial prior: neighbours' wealth raises the local hazard.
 
-    .. math:: \\rho_i = \\rho_0 \\exp\\bigl(\\gamma \\sum_j \\hat A_{ij}\\,
-              \\widetilde{\\log W_j}\\bigr),
+    .. math:: \\rho_i = \\rho_0 \\exp\\bigl(\\gamma \\sum_j \\hat A_{ij}\\, \\Pi_j\\bigr),
 
     clipped to ``[rho_min, rho_max]``.  Serves both as a sanity check that the
     graph signal is real and as the ablation the learned controller must beat.
@@ -153,7 +169,7 @@ class HeuristicSpatialPrior:
         self,
         adjacency: np.ndarray,
         rho0: float = 1e-3,
-        gamma: float = 1.5,
+        gamma: float = 2.5,
         config: Optional[SpatialPriorConfig] = None,
     ) -> None:
         self.A = np.asarray(adjacency, dtype=float)
@@ -162,13 +178,14 @@ class HeuristicSpatialPrior:
         self.cfg = config or SpatialPriorConfig()
 
     def __call__(self, features: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-        w = features[:, 0]
-        msg = self.A @ np.maximum(w, 0.0)
+        # Column 1 is the episode posterior: a neighbour that is probably inside
+        # an episode right now raises this camera's onset hazard.
+        post = features[:, 1]
+        msg = self.A @ post
         rho = np.clip(
             self.rho0 * np.exp(self.gamma * msg), self.cfg.rho_min, self.cfg.rho_max
         )
-        stake = np.full(w.shape, 0.5)
-        return rho, stake
+        return rho, np.ones_like(post)
 
 
 # --------------------------------------------------------------------------- #
@@ -237,6 +254,7 @@ else:  # pragma: no cover
 # --------------------------------------------------------------------------- #
 def _torch_features(
     log_wealth: "torch.Tensor",
+    posterior: "torch.Tensor",
     ema: "torch.Tensor",
     static: "torch.Tensor",
     degree: "torch.Tensor",
@@ -244,9 +262,10 @@ def _torch_features(
     log_threshold: float,
 ) -> "torch.Tensor":
     w = torch.clamp(log_wealth / log_threshold, -2.0, 2.0).unsqueeze(-1)
+    pi = torch.clamp(posterior, 0.0, 1.0).unsqueeze(-1)
     e = torch.log1p(torch.clamp(ema, min=0.0)) - float(np.log(2.0))
     age = torch.full_like(w, float(np.tanh(frames / 5_000.0)))
-    return torch.cat([w, e, static, degree.unsqueeze(-1), age], dim=-1)
+    return torch.cat([w, pi, e, static, degree.unsqueeze(-1), age], dim=-1)
 
 
 def train_spatial_prior(

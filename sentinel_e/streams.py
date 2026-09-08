@@ -59,13 +59,18 @@ class Stream:
     scores: np.ndarray                 # per-frame detector scores in (0, 1)
     context: np.ndarray                # per-frame context features, (T, d)
     labels: np.ndarray                 # per-frame dumping indicator (bool)
-    change_point: Optional[int]        # onset of the first dumping event
+    change_point: Optional[int]        # onset of the first dumping episode
     calibration_scores: np.ndarray     # confirmed no-dumping scores
     calibration_context: np.ndarray
+    episodes: List[Tuple[int, int]] = field(default_factory=list)
 
     @property
     def T(self) -> int:
         return int(self.scores.size)
+
+    @property
+    def n_episodes(self) -> int:
+        return len(self.episodes)
 
 
 @dataclass
@@ -149,6 +154,14 @@ class StreamConfig:
     event_length: int = 1_500          # frames (= 60 s at 25 fps)
     event_intermittency: float = 0.5   # fraction of event frames that are anomalous
     event_ramp: int = 150              # frames over which the shift ramps in/out
+
+    # Illegal dumping recurs: a site that has been used once is used again.
+    # ``n_episodes`` consecutive episodes are placed at the same camera,
+    # separated by gaps drawn around ``episode_gap``.  This is the structure the
+    # episodic e-process is built for, and the regime in which a
+    # changepoint-mixture detector degrades.
+    n_episodes: int = 1
+    episode_gap: int = 6_000           # mean quiet gap between episodes (frames)
 
     # Fleet.
     n_cameras: int = 12
@@ -252,17 +265,24 @@ class StreamSimulator:
         )
 
         labels = np.zeros(T, dtype=bool)
+        episodes: List[Tuple[int, int]] = []
         if change_point is not None:
             cp = int(np.clip(change_point, 0, T - 1))
-            end = min(T, cp + L)
-            # Intermittent anomalous frames inside the event window, with a
-            # smooth ramp so the onset is not an implausible step.
-            idx = np.arange(cp, end)
-            ramp = np.clip((idx - cp) / max(cfg.event_ramp, 1), 0.0, 1.0)
-            ramp *= np.clip((end - idx) / max(cfg.event_ramp, 1), 0.0, 1.0)
-            active = self.rng.random(idx.size) < cfg.event_intermittency
-            logit[cp:end] += cfg.event_shift * ramp * active
-            labels[cp:end] = active
+            start = cp
+            for _ in range(max(cfg.n_episodes, 1)):
+                if start >= T - 1:
+                    break
+                end = min(T, start + L)
+                # Intermittent anomalous frames inside the episode, with a
+                # smooth ramp so the onset is not an implausible step.
+                idx = np.arange(start, end)
+                ramp = np.clip((idx - start) / max(cfg.event_ramp, 1), 0.0, 1.0)
+                ramp *= np.clip((end - idx) / max(cfg.event_ramp, 1), 0.0, 1.0)
+                active = self.rng.random(idx.size) < cfg.event_intermittency
+                logit[start:end] += cfg.event_shift * ramp * active
+                labels[start:end] |= active
+                episodes.append((start, int(end)))
+                start = int(end + self.rng.exponential(cfg.episode_gap))
         else:
             cp = None
 
@@ -277,6 +297,7 @@ class StreamSimulator:
             change_point=cp,
             calibration_scores=cal_scores,
             calibration_context=cal_context,
+            episodes=episodes,
         )
 
     def _activity(self, T: int, mean: float) -> np.ndarray:
