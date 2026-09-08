@@ -976,9 +976,20 @@ class ResidualConformalCalibrator:
     clip_min: float = 1e-6
     random_state: int = 0
 
+    weighted: bool = False
+    weight_clip: float = 10.0
+    shift_auc_threshold: float = 0.60
+    weighted_bound: str = "effective_beta"
+
     _mean_model: Optional[_RidgeBasis] = field(default=None, repr=False)
     _scale_model: Optional[_RidgeBasis] = field(default=None, repr=False)
     _sorted_resid: Optional[np.ndarray] = field(default=None, repr=False)
+    _sorted_ctx: Optional[np.ndarray] = field(default=None, repr=False)
+    _weights: Optional[np.ndarray] = field(default=None, repr=False)
+    _levels_eff: Optional[np.ndarray] = field(default=None, repr=False)
+    _dr: Optional[LogisticDensityRatio] = field(default=None, repr=False)
+    _n_eff: float = field(default=0.0, repr=False)
+    _shift_auc: float = field(default=0.5, repr=False)
     _levels: Optional[np.ndarray] = field(default=None, repr=False)
     _eps: float = field(default=0.0, repr=False)
     _box_lo: Optional[np.ndarray] = field(default=None, repr=False)
@@ -1015,7 +1026,13 @@ class ResidualConformalCalibrator:
             self._scale_model = None
 
         z = self._residual(s[cal_idx], x[cal_idx])
-        self._sorted_resid = np.sort(z)
+        order = np.argsort(z)
+        self._sorted_resid = z[order]
+        self._sorted_ctx = x[cal_idx][order]
+        self._weights = None
+        self._levels_eff = None
+        self._dr = None
+        self._n_eff = float(z.size)
         n = z.size
         if self.mode == "beta" and self.delta > 0:
             self._levels = beta_calibration_levels(n, self.delta)
@@ -1065,6 +1082,83 @@ class ResidualConformalCalibrator:
         box = np.all((x >= self._box_lo) & (x <= self._box_hi), axis=1)
         return box & (self._mahalanobis(x) <= self._maha_max)
 
+    # -- covariate-shift weighting ---------------------------------------- #
+    def update_shift(self, deployment_context: np.ndarray) -> float:
+        """Reweight the held-out residuals for a shift in the context distribution.
+
+        Conformalising a normalised residual already absorbs shift in
+        :math:`P(c)` whenever the normalisation is correct, so this is the
+        second line of defence: if the residual distribution itself moves with
+        the context --- a mis-specified :math:`\\hat g` or
+        :math:`\\hat\\sigma` --- reweighting the calibration residuals by the
+        density ratio between deployment and calibration contexts restores
+        validity under the covariate-shift model of
+        :func:`tibshirani2019covariate`.
+
+        A held-out classifier two-sample test gates the whole thing: without it
+        the logistic model always finds some spurious direction, the effective
+        sample size drops and power is thrown away for nothing.  Returns the
+        effective calibration size under the resulting weights.
+        """
+        self._check_fitted()
+        if not self.weighted:
+            return self._n_eff
+        dep = np.atleast_2d(np.asarray(deployment_context, dtype=float))
+        if dep.shape[0] < 16 or self._sorted_ctx is None:
+            return self._n_eff
+
+        auc, dr = self._shift_test(self._sorted_ctx, dep)
+        self._shift_auc = auc
+        if auc < self.shift_auc_threshold or dr is None:
+            # No detectable shift: keep the exact order-statistic levels.
+            self._weights, self._levels_eff, self._dr = None, None, None
+            self._n_eff = float(self._sorted_resid.size)
+            return self._n_eff
+
+        w = np.clip(dr.ratio(self._sorted_ctx),
+                    np.exp(-self.weight_clip), np.exp(self.weight_clip))
+        wn = np.append(w, float(np.median(w)))
+        wn = wn / wn.sum()
+        self._n_eff = effective_sample_size(wn)
+        self._weights, self._dr = w, dr
+        if self.weighted_bound == "effective_beta":
+            self._levels_eff = beta_calibration_levels(
+                max(int(round(self._n_eff)), 1), self.delta
+            )
+            self._eps = 0.0
+        else:
+            self._levels_eff = None
+            self._eps = weighted_dkw_inflation(wn, self.delta)
+        return self._n_eff
+
+    def _shift_test(self, cal_ctx: np.ndarray, dep_ctx: np.ndarray):
+        """Held-out AUC of a calibration-vs-deployment classifier plus a full fit."""
+        rng = np.random.default_rng(self.random_state)
+        ic, idp = rng.permutation(len(cal_ctx)), rng.permutation(len(dep_ctx))
+        ca, cb = ic[: len(ic) // 2], ic[len(ic) // 2:]
+        da, db = idp[: len(idp) // 2], idp[len(idp) // 2:]
+        if min(len(ca), len(cb), len(da), len(db)) < 8:
+            return 0.5, None
+        probe = LogisticDensityRatio(clip=self.weight_clip).fit(
+            cal_ctx[ca], dep_ctx[da]
+        )
+        held = np.vstack([cal_ctx[cb], dep_ctx[db]])
+        y = np.concatenate([np.zeros(len(cb)), np.ones(len(db))])
+        auc = roc_auc(np.log(probe.ratio(held) + 1e-12), y)
+        auc = max(auc, 1.0 - auc)
+        full = LogisticDensityRatio(clip=self.weight_clip).fit(cal_ctx, dep_ctx)
+        return float(auc), full
+
+    @property
+    def n_eff(self) -> float:
+        """Effective calibration size under the current weights."""
+        return self._n_eff
+
+    @property
+    def shift_auc(self) -> float:
+        """Held-out separability of calibration and deployment contexts."""
+        return self._shift_auc
+
     def _residual(self, s: np.ndarray, x: np.ndarray) -> np.ndarray:
         r = s - self._mean_model.predict(x)
         if self._scale_model is not None:
@@ -1089,11 +1183,25 @@ class ResidualConformalCalibrator:
         z = self._residual(s, x)
         cal = self._sorted_resid
         n = cal.size
-        n_ge = n - np.searchsorted(cal, z, side="left")
-        if self._levels is not None:
-            p = self._levels[n_ge]
+        idx = np.searchsorted(cal, z, side="left")
+
+        if self._weights is not None and self._dr is not None:
+            # Weighted conformal on the residual scale.
+            w = self._weights
+            w_test = np.clip(self._dr.ratio(x),
+                             np.exp(-self.weight_clip), np.exp(self.weight_clip))
+            suffix = np.concatenate([np.cumsum(w[::-1])[::-1], [0.0]])
+            p = (suffix[idx] + w_test) / np.maximum(suffix[0] + w_test, _EPS)
+            if self._levels_eff is not None:
+                m = self._levels_eff.size - 1
+                j = np.clip(np.floor(p * (m + 1.0)).astype(int) - 1, 0, m)
+                p = self._levels_eff[j]
+            else:
+                p = np.minimum(1.0, p + self._eps)
+        elif self._levels is not None:
+            p = self._levels[n - idx]
         else:
-            p = np.minimum(1.0, (1.0 + n_ge) / (n + 1.0) + self._eps)
+            p = np.minimum(1.0, (1.0 + (n - idx)) / (n + 1.0) + self._eps)
 
         active = self.in_support(x)
         p = np.where(active, p, 1.0)

@@ -95,11 +95,10 @@ time-uniform false-alarm control with no new machinery; it costs $O(1)$ per
 frame, where a general mixture over active starts costs $O(t)$; and it
 contains the changepoint mixture exactly as the boundary case in which episodes
 never end, so it is a strict generalisation along an axis the change-detection
-literature has left fixed at infinity. Within-episode intermittency is absorbed
-by dilating the betting function to $(1-\pi) + \pi f$, a convex combination that
-remains legal, and the recursion returns for free the posterior probability that
-a camera is inside an episode --- a bounded, cross-camera-comparable quantity
-that becomes the message a camera graph exchanges.
+literature has left fixed at infinity. The recursion also returns, for free, the
+posterior probability that a camera is inside an episode --- a bounded,
+cross-camera-comparable quantity that becomes the message a camera graph
+exchanges.
 %
 Around this core we build a per-camera conformal layer that is calibrated
 conditionally on observable context and corrected by exact Beta order-statistic
@@ -211,9 +210,7 @@ where the episodic construction misses \EpiManyEpiMiss{}.
       observation \citep{saha2026nonpartitioned}; and (iii) a strict
       generalisation, equal
       to the changepoint mixture exactly when the episode-end rate is zero
-      (\cref{prop:generalisation}). Within-episode intermittency is absorbed by
-      \emph{dilating} the betting function, which is legal because a convex
-      combination of e-values is an e-value.
+      (\cref{prop:generalisation}).
 
 \item \textbf{A quantity worth passing between cameras.} The same recursion
       returns the posterior probability that a camera is currently inside an
@@ -248,6 +245,14 @@ where the episodic construction misses \EpiManyEpiMiss{}.
       detection is averaged over a different subset of runs for each method and
       systematically flatters the ones that miss the hard events, so we report a
       censored delay alongside it (\cref{sec:problem}).
+\end{itemize}
+
+\item \textbf{A negative result we would have preferred not to have.} We
+      introduced a dilated betting function to model within-episode
+      intermittency, and the ablation shows the $\kappa$ mixture already
+      handles it: dilation costs delay and never repays it
+      (\cref{sec:dilation}). It is off by default and reported rather than
+      buried.
 \end{itemize}
 
 \paragraph{What we do not claim.}
@@ -621,22 +626,37 @@ episode duration --- is one the change-detection literature has held fixed at
 infinity. The empirical consequence is in \cref{sec:episodes}: where the
 classical model is right, the two coincide; where events recur, the gap opens.
 
-\subsubsection{Intermittency, by dilation}
+\subsubsection{Intermittency, by dilation --- a negative result}
+\label{sec:dilation}
 
-Within an episode only a fraction $\pi$ of frames actually show the act.
-Betting the full $f$ on all of them is wrong in both directions --- too
-aggressive on the occluded frames, and their losses cancel the gains on the rest
---- so we \emph{dilate} the emission:
+Within an episode only a fraction $\pi$ of frames show the act, which suggests
+\emph{dilating} the emission:
 \begin{equation}
 \label{eq:dilated}
   f_\pi(p) \;=\; (1-\pi) + \pi\, f(p).
 \end{equation}
-Legality is immediate and is the reason this works: $f_\pi$ is a convex
-combination of the neutral bet and $f$, hence non-increasing with
-$\int_0^1 f_\pi \le 1$, so it is a betting function and \cref{thm:episodic}
-applies verbatim. Semantically it says the right thing --- \emph{this frame
-belongs to an episode, but it may or may not show the act} --- and $\pi = 1$
-recovers the undilated bet.
+This is legal, and cheaply so: $f_\pi$ is a convex combination of the neutral bet
+and $f$, hence non-increasing with $\int_0^1 f_\pi \le 1$, so it is a betting
+function and \cref{thm:episodic} applies verbatim. It also says the right thing
+--- \emph{this frame belongs to an episode, but it may or may not show the act}.
+
+We expected this to be the answer to intermittency. It is not, and we report
+that rather than quietly shipping it. Mixing over $\kappa$ already handles
+intermittency: a stream in which a third of the episode frames are anomalous is
+best played with a milder bet, and the $\kappa$ grid contains one. A $\pi$ axis
+therefore buys no behaviour the grid did not already have, while spending prior
+mass to do it. In the ablation, enabling it lengthens censored detection delay
+from \AblFullDelay\,s to \AblDilationDelay\,s (\cref{tab:ablation}), and we
+found no intermittency level at which it repaid that cost --- below
+$\pi \approx 0.2$ both variants fail together, and above it the plain $\kappa$
+mixture is ahead. The default grid therefore sets $\pi = 1$.
+
+We keep \cref{eq:dilated} in the exposition and the implementation for two
+reasons. It is the natural thing to try, so a reader is owed the evidence rather
+than left to repeat the experiment; and the construction remains available for a
+backbone whose anomalous frames are far stronger relative to its quiet ones than
+ours, where the trade-off could plausibly reverse. What it is not is a
+contribution, and we do not count it as one.
 
 \subsubsection{Staying parameter-free}
 
@@ -902,11 +922,18 @@ across episodes. This is also the regime that matters operationally, since a
 dumping site that has been used once is used again.
 
 \Cref{tab:intermittency} varies the fraction $\pi$ of episode frames that show
-the act. At the hardest setting, $\pi = \EpiMinPi$, the miss rates are
-\EpiHardPiEpiMiss{} and \EpiHardPiCpMiss. Dilating the emission
-(\cref{eq:dilated}) treats an occluded frame as expected rather than as evidence
-against the episode, which is exactly the distinction that matters when a
-vehicle blocks the camera for half of a dumping event.
+the act, with both mixtures using the same undilated betting grid
+(\cref{sec:dilation}). At the hardest setting, $\pi = \EpiMinPi$, the miss rates
+are \EpiHardPiEpiMiss{} for the episodic mixture and \EpiHardPiCpMiss{} for the
+changepoint mixture. Intermittency hurts both, and it is worth being clear about
+why the episodic mixture still holds an edge: not because it models the occluded
+frames --- our attempt to do that explicitly failed (\cref{sec:dilation}) --- but
+because heavier intermittency makes each episode weaker, so more of them are
+needed before the evidence crosses the threshold, and accumulating across
+episodes is exactly what the changepoint mixture cannot do. Below
+$\pi \approx 0.2$ neither variant detects reliably at any setting we tried, and
+we regard that as the honest edge of the operating envelope rather than a
+tuning problem.
 
 \subsection{Robustness to calibration/deployment mismatch}
 \label{sec:shift}

@@ -42,7 +42,7 @@ FPS = 25.0
 ALPHA = 0.01
 
 EPISODE_COUNTS = [1, 2, 4, 8]
-INTERMITTENCY = [1.0, 0.6, 0.35, 0.2]
+INTERMITTENCY = [1.0, 0.7, 0.5, 0.35]
 
 VARIANTS = {"episodic": {"detector": "episodic"},
             "changepoint": {"detector": "changepoint"}}
