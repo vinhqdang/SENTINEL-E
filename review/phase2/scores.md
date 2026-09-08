@@ -3,6 +3,8 @@
 | Seat | D1 | D2 | D3 | D4 | D5 | D6 |
 |---|---|---|---|---|---|---|
 | perspective | — | — | — | **warn** | — | — |
+| eic (journal-fit) | — | — | — | — | **block** | **block** (repairable) |
+| da | — | — | **block** (repairable) | — | — | — |
 
 ## perspective (D4 = warn)
 Trigger bound: "ethics, governance, or human-oversight implications are
