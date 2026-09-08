@@ -48,7 +48,9 @@ N_CAMERAS = 12
 
 
 def _cfg(T: int) -> StreamConfig:
-    return StreamConfig(T=T, n_cameras=N_CAMERAS, calibration_regime="representative")
+    return StreamConfig(T=T, n_cameras=N_CAMERAS, calibration_regime="representative",
+                        n_episodes=3, event_length=800, episode_gap=6_000,
+                        event_intermittency=0.35)
 
 
 def build_training_set(n_fleets: int = N_TRAIN_FLEETS, seed0: int = 900):
@@ -56,7 +58,8 @@ def build_training_set(n_fleets: int = N_TRAIN_FLEETS, seed0: int = 900):
     p_batches, adjs, statics, degs, cps = [], [], [], [], []
     for i in range(n_fleets):
         fleet = StreamSimulator(_cfg(T_TRAIN), seed=seed0 + i).simulate_fleet(n_events=3)
-        det = FleetSentinelE(alpha=ALPHA, calibration="residual", weighted=False)
+        det = FleetSentinelE(alpha=ALPHA, calibration="residual", weighted=False,
+                             detector="episodic")
         p, active, idx = det.compute_p_values(fleet)
         # Abstentions become neutral bets, which is a p-value of one.
         p = np.where(active, p, 1.0)
@@ -95,7 +98,7 @@ def evaluate_fleets(controller_name: str, model=None, n_fleets: int = N_EVAL_FLE
             ).simulate_fleet(n_events=0 if null_only else 3)
 
             kw = dict(alpha=ALPHA, calibration="residual", weighted=False,
-                      family="linear", n_grid=16, fdr_level=FDR_LEVEL, restart=False)
+                      detector="episodic", fdr_level=FDR_LEVEL, restart=False)
             if controller_name == "none":
                 det = FleetSentinelE(controller=None, **kw)
             elif controller_name == "heuristic":
@@ -217,7 +220,7 @@ def main(n_train: int = N_TRAIN_FLEETS, n_eval: int = N_EVAL_FLEETS, epochs: int
     print(" training the spatial prior ...")
     model = train_spatial_prior(
         p_batches, adjs, statics, degs, cps,
-        alpha=ALPHA, n_grid=16, epochs=epochs, verbose=True,
+        alpha=ALPHA, epochs=epochs, verbose=True,
         config=SpatialPriorConfig(hidden=32, n_layers=2),
     )
     rows = []
