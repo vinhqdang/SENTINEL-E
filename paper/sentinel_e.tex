@@ -869,34 +869,6 @@ and a practitioner who wants a realised rate close to nominal should calibrate
 the threshold empirically; what the theory provides, and what a fixed threshold
 cannot, is that the bound never degrades with the horizon.
 
-\subsection{Detection delay at a controlled false-alarm rate}
-\label{sec:delay}
-
-\begin{figure}[t]
-  \centering
-  \resultfig{fig2_delay_far}{}
-  \caption{Detection delay against realised false-alarm rate,
-  \ExpTwoReps{} null and \ExpTwoReps{} post-change streams per operating point.
-  Lower and further left is better; the operating region a municipality can live
-  with is the left-hand edge. Each method is swept over its own knob and plotted
-  where it actually lands, not where it claims to.}
-  \label{fig:delayfar}
-\end{figure}
-
-\inputtable{tab3_delay_far}
-
-This is the comparison the paper exists to make, and to our knowledge no
-existing waste-surveillance paper reports its analogue. \Cref{fig:delayfar} and
-\cref{tab:delay_far} give delay against realised false-alarm rate for every
-method. SENTINEL-E detects in \DelaySentinelSec\,s
-($\pm$\,\DelaySentinelCi\,s) at a realised \DelaySentinelPfa, missing
-\DelaySentinelMiss{} of events. \DelayNumInadmissible{} of the baselines never
-reach a realised false-alarm probability of $0.05$ at any knob setting while
-still detecting events (\DelayInadmissibleList), which is the substantive
-finding: on streams with drift, heavy tails and autocorrelation, the classical
-procedures cannot be tuned into the operating region at all, because the
-assumptions their thresholds rest on do not hold.
-
 \subsection{Episodes versus changepoints}
 \label{sec:episodes}
 
@@ -950,6 +922,34 @@ episodes is exactly what the changepoint mixture cannot do. Below
 $\pi \approx 0.2$ neither variant detects reliably at any setting we tried, and
 we regard that as the honest edge of the operating envelope rather than a
 tuning problem.
+
+\subsection{Detection delay at a controlled false-alarm rate}
+\label{sec:delay}
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig2_delay_far}{}
+  \caption{Detection delay against realised false-alarm rate,
+  \ExpTwoReps{} null and \ExpTwoReps{} post-change streams per operating point.
+  Lower and further left is better; the operating region a municipality can live
+  with is the left-hand edge. Each method is swept over its own knob and plotted
+  where it actually lands, not where it claims to.}
+  \label{fig:delayfar}
+\end{figure}
+
+\inputtable{tab3_delay_far}
+
+This is the comparison the paper exists to make, and to our knowledge no
+existing waste-surveillance paper reports its analogue. \Cref{fig:delayfar} and
+\cref{tab:delay_far} give delay against realised false-alarm rate for every
+method. SENTINEL-E detects in \DelaySentinelSec\,s
+($\pm$\,\DelaySentinelCi\,s) at a realised \DelaySentinelPfa, missing
+\DelaySentinelMiss{} of events. \DelayNumInadmissible{} of the baselines never
+reach a realised false-alarm probability of $0.05$ at any knob setting while
+still detecting events (\DelayInadmissibleList), which is the substantive
+finding: on streams with drift, heavy tails and autocorrelation, the classical
+procedures cannot be tuned into the operating region at all, because the
+assumptions their thresholds rest on do not hold.
 
 \subsection{Robustness to calibration/deployment mismatch}
 \label{sec:shift}
