@@ -245,8 +245,6 @@ where the episodic construction misses \EpiManyEpiMiss{}.
       detection is averaged over a different subset of runs for each method and
       systematically flatters the ones that miss the hard events, so we report a
       censored delay alongside it (\cref{sec:problem}).
-\end{itemize}
-
 \item \textbf{A negative result we would have preferred not to have.} We
       introduced a dilated betting function to model within-episode
       intermittency, and the ablation shows the $\kappa$ mixture already
@@ -836,10 +834,16 @@ single-thread CPU on the machine that produced the statistical results.
 \inputtable{tab2_horizon}
 
 \Cref{fig:validity} and \cref{tab:validity,tab:horizon} establish the basic
-claim. At every level swept, SENTINEL-E's realised false-alarm probability is at
-most \ValidityMaxSentinelPfa; the per-frame threshold on the same p-values
-reaches \ValidityPfaPvaluePct\% at $\alpha=0.01$, with a mean of only
-\ValidityPvalueArl{} frames to its first false alarm. Extending the horizon from
+claim, and with \ExpOneReps{} streams per level the statement can be made
+statistically rather than descriptively: at every level swept, the \emph{upper}
+end of the $95\%$ interval on SENTINEL-E's realised false-alarm probability is
+at most \ValidityWorstCiHi, and at the tightest level tested
+($\alpha = \ValidityTightestAlpha$) it is \ValidityTightestCiHi{} --- below
+nominal. The per-frame threshold on the same p-values reaches
+\ValidityPfaPvaluePct\% at $\alpha=0.01$, with a mean of only
+\ValidityPvalueArl{} frames --- \ValidityPvalueArlMin{} minutes of video --- to
+its first false alarm. An operator running that rule across a hundred cameras
+would field a false dispatch every few seconds. Extending the horizon from
 \HorizonMinHours{} to \HorizonMaxHours{} hours drives the p-value threshold to
 \HorizonPvaluePfa{} and the fixed score threshold from \HorizonFixedPfaShort{} to
 \HorizonFixedPfa, while SENTINEL-E remains at \HorizonSentinelPfa.

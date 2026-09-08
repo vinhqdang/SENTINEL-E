@@ -54,6 +54,12 @@ def collect() -> Dict[str, str]:
         m["ValidityAlphaLoose"] = _fmt(a[0]["alpha"], 2)
         m["ValidityMaxSentinelPfa"] = _fmt(max(r["sentinel_pfa"] for r in a), 3)
         m["ValidityPvalueArl"] = _int(at01["pvalue_arl0"])
+        m["ValidityPvalueArlMin"] = _fmt(at01["pvalue_arl0"] / (25.0 * 60.0), 1)
+        m["ValidityTightestAlpha"] = _fmt(min(r["alpha"] for r in a), 3)
+        tightest = min(a, key=lambda r: r["alpha"])
+        m["ValidityTightestPfa"] = _fmt(tightest["sentinel_pfa"], 3)
+        m["ValidityTightestCiHi"] = _fmt(tightest["sentinel_ci"][1], 3)
+        m["ValidityWorstCiHi"] = _fmt(max(r["sentinel_ci"][1] for r in a), 3)
         h = e1["horizon_sweep"]
         last = h[-1]
         m["HorizonMaxHours"] = _fmt(last["hours"], 1)
