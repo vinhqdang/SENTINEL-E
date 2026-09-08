@@ -93,3 +93,32 @@ mechanically verifiable.
   library defaults `n_episodes=1, event_length=1500, event_intermittency=0.5`
   in the three directions the exp8 sweep shows favour the episodic arm.
 - **M6 CONFIRMED** (already logged from the perspective seat).
+
+### Verification of the references the seat proposes for M2
+Checked before any of them is added to `refs.bib`; a hallucinated citation
+would be worse than the omission.
+
+- **Real, and exactly as described.** Guepie, Fillatre & Nikiforov,
+  "Sequential detection of transient changes", *Sequential Analysis* 31(4),
+  528--547 (2012), doi 10.1080/07474946.2012.719443 — window-limited CUSUM for
+  a change of finite *known* duration, with latent detection counted as a miss.
+- **Real, and closer to our problem than the seat states.** Sokolov, Spivak &
+  Tartakovsky, "Detecting an intermittent change of unknown duration",
+  *Sequential Analysis* 42(3), 269--302 (2023), arXiv:2210.17342. This is our
+  problem statement in its title. Its existence is decisive against the paper's
+  "an axis the change-detection literature has left fixed at infinity".
+- **Real.** Herbster & Warmuth, "Tracking the best expert", *Machine Learning*
+  32(2), 151--178 (1998) — the fixed-share algorithm.
+- **Partly mis-attributed by the seat.** "Epidemic changepoint detection in the
+  presence of nuisance changes" (arXiv:2008.08240) is Juodakis & Marsland, not
+  Fisch, Eckley & Fearnhead. The Fisch/Eckley/Fearnhead contribution in this
+  area is CAPA, "A linear time method for the detection of collective and point
+  anomalies". Both are relevant; the attribution must be corrected on the way in.
+- **Additional hits the seat did not name, both on point.** Tartakovsky et al.,
+  "Optimal sequential detection of signals with unknown appearance and
+  disappearance points in time" (arXiv:2102.01310); and "Score-based change
+  point detection via tracking the best of infinitely many experts"
+  (arXiv:2408.14073), which is the fixed-share/change-detection bridge itself.
+
+Net effect: M2 is not merely substantiated, it is understated. The related-work
+repair is larger than the seat's list implies.
