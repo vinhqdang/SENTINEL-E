@@ -51,32 +51,55 @@ draws:
 Frames whose context falls outside the calibrated region are reported inactive
 and bet on neutrally: a regime that was never calibrated cannot be certified.
 
-**Layer 2 --- betting e-detector** (`sentinel_e.edetector`, `sentinel_e.betting`)
+**Layer 2 --- the episodic e-process** (`sentinel_e.episodic`) — *the core*
 
-A changepoint prior `w_1, w_2, ...` and a betting function `f` define the wealth
+Every sequential change detector in use — CUSUM, Shiryaev–Roberts, e-detectors,
+E-SHIFT, non-partitioned e-detectors — models a **persistent** switch from one
+law to another that lasts forever. A dumping event is an **episode**: a van
+pulls up, the offender unloads for forty seconds and drives away; inside the
+episode the signal flickers because the offender is intermittently occluded;
+then it ends, and weeks later another one happens at the same site.
+
+So we mix over episodes instead of changepoints. Let `z_t ∈ {quiet, active}` be
+a two-state Markov chain with onset probability `ρ` and **end** probability `η`,
+and let the wealth mix over every trajectory of that chain. The sum has `2^t`
+terms and collapses to two numbers:
 
 ```
-W_t = sum_{j<=t} w_j prod_{s=j..t} f(p_s)  +  sum_{j>t} w_j
+A_t = [(1-η)·A_{t-1} + ρ·Q_{t-1}] · f(p_t)      # trajectories ending active
+Q_t =    η·A_{t-1} + (1-ρ)·Q_{t-1}              # trajectories ending quiet
+W_t = A_t + Q_t,        A_0 = 0,  Q_0 = 1
 ```
 
-Keeping the *unreached* prior mass inside the statistic is what makes `W_t` an
-exact non-negative supermartingale started at one, so Ville's inequality gives
+Four properties, all verified in `tests/test_episodic.py`:
 
-```
-P_infinity( exists t : W_t >= 1/alpha ) <= alpha
-```
+* **Exact supermartingale.** The transition probabilities out of each state sum
+  to one, so `E[W_t | F_{t-1}] ≤ W_{t-1}` and Ville's inequality gives
+  `P(∃t : W_t ≥ 1/α) ≤ α` — time-uniform control, with no new machinery. The
+  episode structure is free.
+* **O(1) per frame** in time and memory, whatever the horizon.
+* **Strict generalisation.** `η = 0` reproduces the changepoint mixture
+  *exactly* (bit-comparable in the tests); dropping `Q_t` from that recovers
+  Shiryaev–Roberts, which is *not* a supermartingale and admits only an
+  average-run-length bound.
+* **Intermittency by dilation.** Within an episode only a fraction `π` of frames
+  show the act, so the emission becomes `(1-π) + π·f(p)` — a convex combination
+  of the neutral bet and `f`, hence still a legal betting function.
 
-simultaneously over all frames. Dropping that mass recovers the classical
-Shiryaev--Roberts statistic, which only admits an average-run-length bound. The
-whole thing is the `O(1)` recursion `R_t = (R_{t-1} + w_t) f(p_t)`, evaluated in
-log space; it also has a closed form that vectorises to a single cumulative
-log-sum-exp for offline evaluation.
+A prior grid over `(ρ, η, π, κ)` keeps it parameter-free. The recursion also
+returns the **posterior probability of being inside an episode**,
+`Π_t = A_t/(A_t+Q_t)` — bounded, interpretable, and comparable across cameras,
+which is what makes it the right message for the graph layer to pass.
+
+On recurring episodes this cuts the missed-detection rate roughly eight-fold
+against the changepoint mixture; on a single persistent change the two agree,
+which is what a strict generalisation should do.
 
 **Layer 3 --- the camera network** (`sentinel_e.graph`, `sentinel_e.gnn`, `sentinel_e.ebh`)
 
-Offenders relocate, so a camera whose neighbours are accumulating evidence
-should bet harder. A graph neural network supplies a per-camera hazard and stake
-modulation from neighbour wealth. Because the modulation is *predictable* ---
+Offenders relocate, so a camera whose neighbours are probably inside an episode
+should bet harder. A graph neural network supplies a per-camera episode hazard
+and stake modulation from neighbours' episode posteriors. Because the modulation is *predictable* ---
 measurable with respect to the past --- the wealth stays a supermartingale
 whatever the network outputs, so the learned component cannot damage the
 guarantee, only the delay. Fleet-wide decisions use e-BH, which controls the
@@ -160,7 +183,10 @@ sentinel_e/
                   exact Beta calibration-conditional levels, support abstention
   temporal.py     decorrelation lag, detrending, FFT autocorrelation, Ljung-Box
   betting.py      power, linear, mixture and ONS-adaptive betting functions
-  edetector.py    Layer 2: changepoint-mixture wealth process, Ville threshold
+  episodic.py     Layer 2 (core): episodic e-process -- mixture over episodes
+                  via a two-state Markov chain, dilated emissions, O(1) forward
+                  recursion, episode posterior
+  edetector.py    the changepoint-mixture e-process it generalises (ablation)
   graph.py        camera graph construction
   gnn.py          Layer 3: predictable spatial prior, offline GROW training
   ebh.py          e-BH and e-value merging

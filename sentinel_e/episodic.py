@@ -69,6 +69,13 @@ with the unreached prior mass discarded.  The episodic process is therefore a
 strict generalisation along an axis --- episode duration --- that the change
 detection literature has left fixed at infinity.
 
+On cost: a mixture over candidate starts evaluated term by term is ``O(t)`` per
+observation, and under a geometric prior it telescopes to ``O(1)``, which is
+exactly the ``eta = 0`` case of the recursion above.  The claim here is not that
+this is cheaper than that special case but that it *matches* it while spanning
+episodes of finite duration --- the extra generality costs nothing
+arithmetically, which is what keeps month-long monitoring viable on a camera.
+
 Intermittency, by dilation
 --------------------------
 Within an episode only a fraction :math:`\\pi` of frames actually show the act.

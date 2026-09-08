@@ -92,7 +92,7 @@ realised as a two-state Markov chain whose forward recursion collapses a sum
 over $2^t$ trajectories into two numbers. The resulting \emph{episodic
 e-process} is an exact non-negative supermartingale, so Ville's inequality gives
 time-uniform false-alarm control with no new machinery; it costs $O(1)$ per
-frame against $O(t)$ for a mixture that must track every active start; and it
+frame, where a general mixture over active starts costs $O(t)$; and it
 contains the changepoint mixture exactly as the boundary case in which episodes
 never end, so it is a strict generalisation along an axis the change-detection
 literature has left fixed at infinity. Within-episode intermittency is absorbed
@@ -207,8 +207,9 @@ where the episodic construction misses \EpiManyEpiMiss{}.
       two-state Markov chain, gives a wealth process that is (i) an exact
       non-negative supermartingale, so Ville's inequality applies unchanged;
       (ii) computable in $O(1)$ time and memory per frame by an HMM forward
-      recursion, against $O(t)$ for a mixture over active starts
-      \citep{saha2026nonpartitioned}; and (iii) a strict generalisation, equal
+      recursion, where a general mixture over active starts costs $O(t)$ per
+      observation \citep{saha2026nonpartitioned}; and (iii) a strict
+      generalisation, equal
       to the changepoint mixture exactly when the episode-end rate is zero
       (\cref{prop:generalisation}). Within-episode intermittency is absorbed by
       \emph{dilating} the betting function, which is legal because a convex
@@ -299,10 +300,14 @@ no credit for it.
 The difference is the change model. All of these mix over the changepoint
 \emph{location} of a persistent shift; none of them models an episode that ends,
 let alone one that recurs or that is internally intermittent. That is the axis
-\cref{sec:episodic} adds. A secondary but practical difference is cost: a
-mixture over active starts is $O(t)$ per observation, whereas the two-state
-forward recursion is $O(1)$, which matters when the horizon is a month of video
-and the hardware is a camera.
+\cref{sec:episodic} adds. A secondary but practical difference is cost. Evaluated exactly across all
+active starts, a non-partitioned e-detector is $O(t)$ per observation
+\citep{saha2026nonpartitioned}; under a geometric prior over start times the
+sum telescopes to an $O(1)$ recursion, which is the special case of
+\cref{eq:forward} at $\eta=0$. The point is that the episodic process retains
+that $O(1)$ cost \emph{while adding the episode-end axis} --- the extra
+generality is free arithmetically as well as statistically, which matters when
+the horizon is a month of video and the hardware is a camera.
 
 \paragraph{Anytime-valid inference and e-values.}
 Testing by betting \citep{shafer2021testing,ramdas2023savi,grunwald2024evalues}
@@ -583,11 +588,14 @@ one gives the bound.
 
 Two things are worth drawing out. First, the episode structure is \emph{free}:
 it needed no new machinery and cost nothing in the guarantee, because the
-transition probabilities telescope exactly. Second, the recursion never grows.
-A mixture over active start times must carry one term per candidate start, at
+transition probabilities telescope exactly. Second, the recursion never grows. Evaluated
+term by term, a mixture over candidate starts carries one term per start, at
 $O(t)$ work per observation \citep{saha2026nonpartitioned}; \cref{eq:forward}
-carries two numbers whatever $t$ is, which is what makes month-long monitoring
-on edge hardware arithmetically trivial (\cref{sec:compute}).
+carries two numbers per grid point whatever $t$ is. The geometric-prior
+changepoint mixture also telescopes to $O(1)$ (\cref{prop:generalisation}), so
+the honest statement is not that we are cheaper than that special case but that
+we match it while spanning episodes of finite duration --- month-long monitoring
+on edge hardware stays arithmetically trivial (\cref{sec:compute}).
 
 \begin{proposition}[Strict generalisation]
 \label{prop:generalisation}
@@ -1093,9 +1101,8 @@ application of existing ones, because the sequential machinery is built for a
 persistent change and a dumping event is an episode. The episodic e-process
 mixes over when an episode starts \emph{and stops}, absorbs within-episode
 intermittency by dilating the bet, remains an exact supermartingale so Ville's
-inequality applies unchanged, costs $O(1)$ per frame where a mixture over active
-starts costs $O(t)$, and contains the changepoint mixture exactly as the
-boundary case $\eta = 0$. Around it, conformal calibration conditional on
+inequality applies unchanged, costs $O(1)$ per frame, and contains the
+changepoint mixture exactly as the boundary case $\eta = 0$. Around it, conformal calibration conditional on
 observable context makes the p-values honest, and a graph layer whose learned
 component enters only predictably shortens delay without touching the guarantee.
 The result is the only method in our comparison whose realised false-alarm rate
