@@ -79,7 +79,7 @@ Alerting the first time a threshold is crossed on a continuous stream is
 optional stopping, and it inflates the true false-alarm rate by an amount
 clip-level evaluation cannot show. We measure it and find it severe: a per-frame
 rule fed p-values that are individually valid at the $1\%$ level raises at least
-one false alarm on \ValidityPfaPvalue{} of $40$-minute null streams.
+one false alarm on \ValidityPfaPvaluePct\% of $40$-minute null streams.
 %
 Our main contribution is an algorithm, not a combination of existing ones.
 Every sequential change detector in use --- CUSUM, Shiryaev--Roberts,
@@ -155,8 +155,8 @@ least one over $T$ frames with probability $1-(1-q)^{T}$, which tends to one for
 any $q>0$. Persistence filters and score smoothing change $q$; they do not change
 the limit. Feeding a per-frame rule p-values that are individually and provably
 valid at the $1\%$ level --- so that nothing is wrong with the calibration ---
-produces at least one false alarm on \ValidityPfaPvalue{} of $40$-minute null
-streams (\cref{fig:validity}\,(a)); a raw score threshold tuned to a $10^{-3}$
+produces at least one false alarm on \ValidityPfaPvaluePct\% of $40$-minute
+null streams (\cref{fig:validity}\,(a)); a raw score threshold tuned to a $10^{-3}$
 per-frame rate reaches \HorizonFixedPfaShort{} within \HorizonMinHours\,hours and
 \HorizonFixedPfa{} by \HorizonMaxHours\,hours (\cref{fig:validity}\,(b)). A
 clip-level evaluation cannot see this, because it never runs the detector for
@@ -412,7 +412,7 @@ evaluated once per-frame backbone scores for a real corpus are in hand.
 \label{sec:layer1}
 
 \paragraph{Betting rate.}
-The e-process of \cref{sec:layer2} requires increments that are conditionally
+The e-process of \cref{sec:episodic} requires increments that are conditionally
 super-uniform given the past. Video violates this badly: at $25$\,fps the
 lag-one autocorrelation of backbone scores exceeds $0.85$ in our streams. We
 estimate a decorrelation lag $\ell$ from the calibration set alone --- projecting
@@ -769,7 +769,14 @@ Shiryaev--Roberts \citep{roberts1966}; a parametric e-detector using the same
 changepoint mixture with a Gaussian likelihood-ratio bet instead of a conformal
 one; a reimplementation of E-SHIFT \citep{khan2026eshift}; and, as the ablation that
 isolates the paper's core, the same pipeline with the changepoint mixture in
-place of the episodic one. Every baseline is
+place of the episodic one. That last baseline is not a straw man: by
+\cref{prop:generalisation} it is a faithful instance of the PFA-controlled
+non-partitioned e-detector of \citet{saha2026nonpartitioned} --- a mixture over
+start times with weights summing to one, under a geometric prior and a fixed
+betting family rather than an infimum over a composite pre-change class --- so
+the episodes-versus-changepoints comparison in \cref{sec:episodes} is a
+comparison against the current state of the art in anytime-valid change
+detection, run through an identical conformal front end. Every baseline is
 fitted on the same calibration set and evaluated on the same decorrelated
 betting grid, so none is helped or penalised by the frame-rate choice. Each is
 swept over its own knob and plotted at its realised false-alarm rate.
@@ -811,7 +818,7 @@ single-thread CPU on the machine that produced the statistical results.
 \Cref{fig:validity} and \cref{tab:validity,tab:horizon} establish the basic
 claim. At every level swept, SENTINEL-E's realised false-alarm probability is at
 most \ValidityMaxSentinelPfa; the per-frame threshold on the same p-values
-reaches \ValidityPfaPvalue{} at $\alpha=0.01$, with a mean of only
+reaches \ValidityPfaPvaluePct\% at $\alpha=0.01$, with a mean of only
 \ValidityPvalueArl{} frames to its first false alarm. Extending the horizon from
 \HorizonMinHours{} to \HorizonMaxHours{} hours drives the p-value threshold to
 \HorizonPvaluePfa{} and the fixed score threshold from \HorizonFixedPfaShort{} to
@@ -973,8 +980,8 @@ costs \CostBackboneMs\,ms per frame. SENTINEL-E adds \CostSentinelUs\,\textmu s
 per frame amortised, or \CostSentinelPct\% of the backbone, running at
 \CostRealtimeFactor$\times$ real time on one thread. Fitting a camera's
 calibration takes \CostFitSec\,s once. The reason is structural rather than
-incidental: the per-frame arithmetic is the $O(1)$ recursion of
-\cref{eq:recursion}, and it runs once per decorrelation lag rather than once per
+incidental: the per-frame arithmetic is the $O(1)$ forward recursion of
+\cref{eq:forward}, and it runs once per decorrelation lag rather than once per
 frame. Hardware that already runs the detector in real time needs no additional
 budget.
 
@@ -1021,9 +1028,9 @@ valid but slow, at
 of \AblDkwSpeedup{} --- which quantifies what \cref{thm:beta} buys. And the fixed-start product martingale
 (no changepoint prior) misses \AblPointPriorMiss{} of events: with the change
 arriving deep into the stream, a wealth process started at frame one has burned
-too much to recover, which is precisely the failure mode the mixture in
-\cref{eq:wealth} exists to prevent and the structural reason SENTINEL-E
-outperforms E-SHIFT here.
+too much to recover, which is precisely the failure mode the mixture over onsets in
+\cref{eq:episodic} exists to prevent, and the structural reason SENTINEL-E
+outperforms E-SHIFT here: E-SHIFT's wealth also starts at frame one.
 
 \section{Limitations}
 \label{sec:limitations}
@@ -1044,7 +1051,7 @@ to run the identical evaluation on real scores, and the adapters raise an error
 rather than substituting synthetic data when those scores are absent.
 
 \paragraph{Conditional super-uniformity is an assumption, not a theorem.}
-\Cref{thm:ville} needs the p-values to be super-uniform given the past. Thinning
+\Cref{thm:episodic} needs the p-values to be super-uniform given the past. Thinning
 by the decorrelation lag makes the residual dependence small ---
 \cref{tab:diagnostics} reports the Ljung--Box check \citep{ljung1978} --- but it
 does not eliminate it, and no finite-sample test can certify its absence.

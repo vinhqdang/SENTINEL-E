@@ -49,6 +49,7 @@ def collect() -> Dict[str, str]:
         at01 = next(r for r in a if abs(r["alpha"] - 0.01) < 1e-12)
         m["ValidityPfaSentinel"] = _fmt(at01["sentinel_pfa"], 3)
         m["ValidityPfaPvalue"] = _fmt(at01["pvalue_pfa"], 3)
+        m["ValidityPfaPvaluePct"] = _pct(at01["pvalue_pfa"], 0)
         m["ValidityPfaOracleLoose"] = _fmt(a[0]["oracle_pfa"], 3)
         m["ValidityAlphaLoose"] = _fmt(a[0]["alpha"], 2)
         m["ValidityMaxSentinelPfa"] = _fmt(max(r["sentinel_pfa"] for r in a), 3)
@@ -59,7 +60,9 @@ def collect() -> Dict[str, str]:
         m["HorizonMaxFrames"] = _int(last["T"])
         m["HorizonSentinelPfa"] = _fmt(last["sentinel_pfa"], 3)
         m["HorizonPvaluePfa"] = _fmt(last["pvalue_pfa"], 3)
+        m["HorizonPvaluePfaPct"] = _pct(last["pvalue_pfa"], 0)
         m["HorizonFixedPfa"] = _fmt(last["fixed_pfa"], 3)
+        m["HorizonFixedPfaPct"] = _pct(last["fixed_pfa"], 0)
         first = h[0]
         m["HorizonMinHours"] = _fmt(first["hours"], 1)
         m["HorizonFixedPfaShort"] = _fmt(first["fixed_pfa"], 3)
@@ -259,6 +262,7 @@ _NOT_MACROS = {
     # Standard LaTeX control sequences that match the CamelCase pattern.
     "Bigl", "Bigr", "Big", "Bigg", "Biggl", "Biggr", "Biggm", "Bigm",
     "LaTeX", "TeX", "Roman", "Alph", "Huge", "Large", "Small",
+    "IfFileExists", "Cref", "Crefformat",
 }
 
 
