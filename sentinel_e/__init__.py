@@ -36,6 +36,8 @@ from sentinel_e.betting import (
     AdaptiveLinearBet,
 )
 from sentinel_e.edetector import EDetector, EDetectorState, ChangepointPrior
+from sentinel_e.episodic import EpisodicEDetector, EpisodePrior, EpisodicState
+from sentinel_e.pipeline import SentinelE, FleetSentinelE
 from sentinel_e.ebh import ebh, ebh_rejections, global_e_merge
 from sentinel_e.graph import CameraGraph
 from sentinel_e.metrics import (
@@ -64,6 +66,11 @@ __all__ = [
     "MixtureBet",
     "AdaptiveLinearBet",
     "EDetector",
+    "EpisodicEDetector",
+    "EpisodePrior",
+    "EpisodicState",
+    "SentinelE",
+    "FleetSentinelE",
     "EDetectorState",
     "ChangepointPrior",
     "ebh",

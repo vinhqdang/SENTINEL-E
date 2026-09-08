@@ -44,6 +44,7 @@ def collect() -> Dict[str, str]:
     try:
         e1 = load_json("exp1_validity")
         m["ExpOneReps"] = str(e1["reps"])
+        m["ExpOneHorizonReps"] = str(e1.get("horizon_reps", e1["reps"]))
         a = e1["alpha_sweep"]
         at01 = next(r for r in a if abs(r["alpha"] - 0.01) < 1e-12)
         m["ValidityPfaSentinel"] = _fmt(at01["sentinel_pfa"], 3)
@@ -191,6 +192,9 @@ def collect() -> Dict[str, str]:
             m[f"{tag}Delay"] = _fmt(None if r["add"] is None else r["add"] / FPS, 1)
             m[f"{tag}Miss"] = _fmt(r["miss_rate"], 2)
         m["AblLag"] = str(rows["SENTINEL-E (full)"]["lag"])
+        full, dkw = rows.get("SENTINEL-E (full)"), rows.get("DKW inflation")
+        if full and dkw and full.get("add") and np.isfinite(full["add"]):
+            m["AblDkwSpeedup"] = _fmt(dkw["add"] / full["add"], 1)
         n_bad = sum(1 for r in e6["rows"] if r["pfa"] > e6["alpha"] + 1e-9)
         m["AblNumInvalid"] = str(n_bad)
         m["AblNumVariants"] = str(len(e6["rows"]))

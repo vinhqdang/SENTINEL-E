@@ -27,7 +27,9 @@ from experiments import (
 def main(quick: bool = False, only: str = ""):
     reps = 40 if quick else None
     plan = [
-        ("exp1", lambda: exp1_validity.main(reps or exp1_validity.REPS)),
+        ("exp1", lambda: exp1_validity.main(
+            reps or exp1_validity.REPS,
+            reps or exp1_validity.HORIZON_REPS)),
         ("exp2", lambda: exp2_delay_far.main(reps or exp2_delay_far.REPS)),
         ("exp3", lambda: exp3_shift.main(reps or exp3_shift.REPS)),
         ("exp4", lambda: exp4_network.main(

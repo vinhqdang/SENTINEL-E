@@ -31,6 +31,7 @@ from sentinel_e.conformal import (
 )
 from sentinel_e.ebh import ebh, global_e_merge
 from sentinel_e.edetector import ChangepointPrior, EDetector
+from sentinel_e.episodic import EpisodePrior, EpisodicEDetector
 from sentinel_e.gnn import FeatureTracker
 from sentinel_e.graph import CameraGraph
 from sentinel_e.streams import FleetStream, Stream
@@ -67,6 +68,12 @@ class SentinelE:
         end-to-end guarantee is ``alpha + delta``, so ``delta`` an order of
         magnitude below ``alpha`` costs little and buys honesty about the finite
         calibration set.
+    detector : {'episodic', 'changepoint'}
+        ``episodic`` (default) is the Markov-modulated e-process of
+        :mod:`sentinel_e.episodic`, which mixes over episodes with a finite,
+        unknown duration and models within-episode intermittency.
+        ``changepoint`` is the classical mixture over changepoint locations,
+        retained as the ablation.
     calibration : {'residual', 'mondrian', 'pooled', 'weighted'}
         ``residual`` (default) conformalises the context-normalised residual and
         scales to several context variables at once; ``mondrian`` bins the
@@ -89,6 +96,8 @@ class SentinelE:
         n_grid: int = 32,
         rho: float = 1e-3,
         prior_kind: str = "geometric",
+        detector: str = "episodic",
+        episode_prior: Optional[EpisodePrior] = None,
         restart: bool = False,
         lag: Optional[int] = None,
         thin_calibration: bool = True,
@@ -122,13 +131,21 @@ class SentinelE:
         self.continuous_cols = tuple(continuous_cols)
         self.categorical_cols = tuple(categorical_cols)
 
-        self.detector = EDetector(
-            alpha=alpha,
-            family=family,
-            n_grid=n_grid,
-            prior=ChangepointPrior(kind=prior_kind, rho=rho),
-            restart=restart,
-        )
+        if detector not in {"episodic", "changepoint"}:
+            raise ValueError("detector must be 'episodic' or 'changepoint'")
+        self.detector_kind = detector
+        if detector == "episodic":
+            prior = episode_prior or EpisodePrior(rho=rho)
+            self.detector = EpisodicEDetector(alpha=alpha, prior=prior,
+                                              restart=restart)
+        else:
+            self.detector = EDetector(
+                alpha=alpha,
+                family=family,
+                n_grid=n_grid,
+                prior=ChangepointPrior(kind=prior_kind, rho=rho),
+                restart=restart,
+            )
         self.calibrator = None
         self._lag_used = 1
         self._n_calibration_effective = 0
@@ -312,6 +329,7 @@ class FleetResult:
     p_values: np.ndarray          # (K, B)
     hazards: np.ndarray           # (K, B)
     stakes: np.ndarray            # (K, B)
+    episode_posteriors: np.ndarray  # (K, B) P(inside an episode now)
     bet_index: np.ndarray         # (B,) frame index of each betting step
     e_values: np.ndarray          # (K,) wealth at the per-camera stopping time
     ebh_rejected: np.ndarray      # (K,) bool
@@ -350,6 +368,8 @@ class FleetSentinelE:
         n_grid: int = 16,
         rho: float = 1e-3,
         restart: bool = False,
+        detector: str = "episodic",
+        episode_prior: Optional[EpisodePrior] = None,
         controller: Optional[Callable[[np.ndarray], Tuple[np.ndarray, np.ndarray]]] = None,
         fdr_level: float = 0.1,
         lag: Optional[int] = None,
@@ -363,6 +383,8 @@ class FleetSentinelE:
         self.n_grid = int(n_grid)
         self.rho = float(rho)
         self.restart = bool(restart)
+        self.detector_kind = detector
+        self.episode_prior = episode_prior
         self.controller = controller
         self.fdr_level = float(fdr_level)
         self.lag = lag
@@ -389,6 +411,8 @@ class FleetSentinelE:
             n_grid=self.n_grid,
             rho=self.rho,
             restart=self.restart,
+            detector=self.detector_kind,
+            episode_prior=self.episode_prior,
             lag=self.lag,
             **self.camera_kw,
         )
@@ -416,16 +440,26 @@ class FleetSentinelE:
         p, active, idx = self.compute_p_values(fleet)
         B = idx.size
 
-        detectors = [
-            EDetector(
-                alpha=self.alpha,
-                family=self.family,
-                n_grid=self.n_grid,
-                prior=ChangepointPrior(kind="geometric", rho=self.rho),
-                restart=self.restart,
-            )
-            for _ in range(K)
-        ]
+        if self.detector_kind == "episodic":
+            detectors = [
+                EpisodicEDetector(
+                    alpha=self.alpha,
+                    prior=self.episode_prior or EpisodePrior(rho=self.rho),
+                    restart=self.restart,
+                )
+                for _ in range(K)
+            ]
+        else:
+            detectors = [
+                EDetector(
+                    alpha=self.alpha,
+                    family=self.family,
+                    n_grid=self.n_grid,
+                    prior=ChangepointPrior(kind="geometric", rho=self.rho),
+                    restart=self.restart,
+                )
+                for _ in range(K)
+            ]
         static = (
             fleet.graph.context
             if fleet.graph.context is not None
@@ -442,6 +476,7 @@ class FleetSentinelE:
         alarms = np.zeros((K, B), dtype=bool)
         hazards = np.zeros((K, B))
         stakes = np.ones((K, B))
+        posteriors = np.zeros((K, B))
 
         for t in range(B):
             if self.controller is None:
@@ -452,6 +487,7 @@ class FleetSentinelE:
                 stake_t = np.asarray(stake_t, dtype=float).ravel()
 
             lw = np.empty(K)
+            post = np.zeros(K)
             for i in range(K):
                 res = detectors[i].step(
                     p[i, t],
@@ -461,10 +497,12 @@ class FleetSentinelE:
                 )
                 lw[i] = res.log_wealth
                 alarms[i, t] = res.alarm
+                post[i] = getattr(res, "episode_posterior", 0.0)
             log_wealth[:, t] = lw
+            posteriors[:, t] = post
             hazards[:, t] = rho_t
             stakes[:, t] = stake_t
-            tracker.update(p[:, t], lw)
+            tracker.update(p[:, t], lw, post)
 
         # e-values are read at tau_i = min(first alarm, horizon): optional
         # stopping keeps E[W_tau] <= 1, which is what e-BH requires.  A running
@@ -484,6 +522,7 @@ class FleetSentinelE:
             p_values=p,
             hazards=hazards,
             stakes=stakes,
+            episode_posteriors=posteriors,
             bet_index=idx,
             e_values=e_values,
             ebh_rejected=ebh(e_values, self.fdr_level),
