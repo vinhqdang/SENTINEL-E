@@ -76,21 +76,28 @@ this is cheaper than that special case but that it *matches* it while spanning
 episodes of finite duration --- the extra generality costs nothing
 arithmetically, which is what keeps month-long monitoring viable on a camera.
 
-Intermittency, by dilation
---------------------------
-Within an episode only a fraction :math:`\\pi` of frames actually show the act.
-Betting the full :math:`f` on all of them is wrong in both directions: too
-aggressive on the occluded frames, and the losses there cancel the gains.  We
-therefore *dilate* the emission,
+Intermittency, by dilation --- and why it is off by default
+-----------------------------------------------------------
+Within an episode only a fraction :math:`\\pi` of frames actually show the act,
+so it seems natural to *dilate* the emission,
 
 .. math:: f_\\pi(p) = (1-\\pi) + \\pi\\, f(p),
 
-which is a convex combination of the neutral bet and :math:`f`.  Convexity is
-what keeps it legal: :math:`\\int_0^1 f_\\pi \\le 1` and :math:`f_\\pi` is
-non-increasing, so it is a betting function and the supermartingale property is
-untouched.  It says exactly the right thing --- *this frame belongs to an episode,
-but it may or may not show the act* --- and :math:`\\pi = 1` recovers the
-undilated bet.
+a convex combination of the neutral bet and :math:`f`.  Convexity keeps it
+legal: :math:`\\int_0^1 f_\\pi \\le 1` and :math:`f_\\pi` is non-increasing, so
+it is a betting function and the supermartingale property is untouched.  It says
+exactly the right thing --- *this frame belongs to an episode, but it may or may
+not show the act*.
+
+It also does not help, and we report that rather than quietly shipping it.
+Mixing over :math:`\\kappa` already handles intermittency: a stream in which
+only a third of the episode frames are anomalous is best played with a milder
+bet, and the :math:`\\kappa` grid contains one.  Adding a :math:`\\pi` axis
+therefore buys no new behaviour and spends prior mass doing it, which lengthens
+detection delay by roughly a third in our experiments.  The default grid is
+:math:`\\pi = 1`; the implementation stays because the construction is correct
+and might pay off for a backbone with a very different score profile, and the
+ablation quantifies what turning it on costs.
 
 Everything above is a prior specification, so we do not have to know
 :math:`(\\rho, \\eta, \\pi, \\kappa)`.  The detector runs one forward recursion per
@@ -138,7 +145,16 @@ class EpisodePrior:
         expected length *in betting steps*.  Include a very small value so the
         grid spans persistent changes as well as short bursts.
     pi : sequence of float
-        Fraction of frames inside an episode that actually show the act.
+        Fraction of frames inside an episode that actually show the act, used by
+        the dilated emission.  **Defaults to ``(1.0,)``, i.e. no dilation.**  We
+        introduced dilation expecting it to be the answer to within-episode
+        intermittency and it is not: the ``kappa`` mixture already absorbs
+        intermittency by selecting a milder bet, so a ``pi`` grid only dilutes
+        the prior over the hypotheses that matter and measurably lengthens
+        detection delay.  The machinery is kept because the construction is
+        sound and may pay off for a backbone whose anomalous frames are far
+        stronger relative to its quiet ones, but it is off by default and the
+        ablation reports the cost of turning it on.
     rho : float
         Per-frame probability that an episode begins.  Matched to the monitoring
         horizon, or supplied per frame by the graph controller.
@@ -146,7 +162,7 @@ class EpisodePrior:
 
     kappa: Sequence[float] = (0.02, 0.05, 0.12, 0.28, 0.55, 0.85)
     eta: Sequence[float] = (1e-4, 3e-3, 1e-2, 5e-2)
-    pi: Sequence[float] = (0.25, 0.55, 1.0)
+    pi: Sequence[float] = (1.0,)
     rho: float = 1e-3
 
     def grid(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:

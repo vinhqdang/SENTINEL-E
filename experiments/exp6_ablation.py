@@ -36,9 +36,17 @@ BASE = dict(detector="episodic", calibration="residual", weighted=False,
 ABLATIONS: List[Dict] = [
     {"name": "SENTINEL-E (full)", "group": "", "opts": {}},
 
-    {"name": "changepoint mixture", "group": "e-process",
+    # --- the episodic core ------------------------------------------------ #
+    {"name": "changepoint mixture ($\\eta = 0$)", "group": "e-process core",
      "opts": {"detector": "changepoint"}},
+    {"name": "enable dilation ($\\pi$ grid)", "group": "e-process core",
+     "opts": {"episode_prior_kw": (("pi", (0.25, 0.55, 1.0)),)}},
+    {"name": "single episode length", "group": "e-process core",
+     "opts": {"episode_prior_kw": (("eta", (3e-3,)),)}},
+    {"name": "single bet aggressiveness", "group": "e-process core",
+     "opts": {"episode_prior_kw": (("kappa", (0.28,)),)}},
 
+    # --- temporal --------------------------------------------------------- #
     {"name": "bet on every frame", "group": "temporal",
      "opts": {"lag": 1}},
     {"name": "bet once per 5 frames", "group": "temporal",
@@ -46,31 +54,33 @@ ABLATIONS: List[Dict] = [
     {"name": "raw calibration (not thinned)", "group": "temporal",
      "opts": {"thin_calibration": False}},
 
+    # --- calibration ------------------------------------------------------ #
     {"name": "pooled conformal", "group": "calibration",
      "opts": {"calibration": "pooled"}},
     {"name": "Mondrian conformal", "group": "calibration",
      "opts": {"calibration": "mondrian"}},
-    {"name": "likelihood-ratio weighting", "group": "calibration",
+    {"name": "residual + LR weighting", "group": "calibration",
      "opts": {"weighted": True}},
 
+    # --- calibration-conditional validity --------------------------------- #
     {"name": "DKW inflation", "group": "conditional validity",
      "opts": {"cc_mode": "dkw"}},
     {"name": "no correction ($\\delta=0$)", "group": "conditional validity",
      "opts": {"delta": 0.0}},
 
-    {"name": "linear betting", "group": "betting",
-     "opts": {"family": "linear"}},
-    {"name": "adaptive (ONS) betting", "group": "betting",
-     "opts": {"family": "adaptive"}},
-    {"name": "single bet ($K=1$)", "group": "betting",
-     "opts": {"n_grid": 1}},
+    # --- episode-onset prior ---------------------------------------------- #
+    {"name": r"hazard $\rho=10^{-2}$", "group": "onset prior", "opts": {"rho": 1e-2}},
+    {"name": r"hazard $\rho=10^{-4}$", "group": "onset prior", "opts": {"rho": 1e-4}},
 
-    {"name": "scale-free changepoint prior", "group": "prior",
-     "opts": {"prior_kind": "scale_free"}},
-    {"name": "no changepoint prior (fixed start)", "group": "prior",
-     "opts": {"prior_kind": "point"}},
-    {"name": r"hazard $\rho=10^{-2}$", "group": "prior", "opts": {"rho": 1e-2}},
-    {"name": r"hazard $\rho=10^{-4}$", "group": "prior", "opts": {"rho": 1e-4}},
+    # --- betting family, evaluated on the changepoint core where it applies - #
+    {"name": "linear betting (changepoint core)", "group": "betting",
+     "opts": {"detector": "changepoint", "family": "linear"}},
+    {"name": "adaptive ONS betting (changepoint core)", "group": "betting",
+     "opts": {"detector": "changepoint", "family": "adaptive"}},
+    {"name": "single bet, $K=1$ (changepoint core)", "group": "betting",
+     "opts": {"detector": "changepoint", "n_grid": 1}},
+    {"name": "fixed start (changepoint core)", "group": "betting",
+     "opts": {"detector": "changepoint", "prior_kind": "point"}},
 ]
 
 

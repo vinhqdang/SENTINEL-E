@@ -183,13 +183,14 @@ def collect() -> Dict[str, str]:
         m["AblationAlpha"] = _fmt(e6["alpha"], 3)
         pairs = [
             ("SENTINEL-E (full)", "AblFull"),
-            ("changepoint mixture", "AblChangepoint"),
+            ("changepoint mixture ($\\eta = 0$)", "AblChangepoint"),
+            ("enable dilation ($\\pi$ grid)", "AblDilation"),
             ("bet on every frame", "AblEveryFrame"),
             ("raw calibration (not thinned)", "AblRawCal"),
             ("pooled conformal", "AblPooled"),
             ("DKW inflation", "AblDkw"),
             ("no correction ($\\delta=0$)", "AblNoCc"),
-            ("no changepoint prior (fixed start)", "AblPointPrior"),
+            ("fixed start (changepoint core)", "AblPointPrior"),
             ("linear betting", "AblLinear"),
         ]
         for name, tag in pairs:

@@ -116,6 +116,11 @@ def run_spec(spec: Spec) -> Trace:
             cc_mode=opt.get("cc_mode", "beta"),
             detector=opt.get("detector", "episodic"),
         )
+        if opt.get("episode_prior_kw"):
+            from sentinel_e.episodic import EpisodePrior
+            cal_kw["episode_prior"] = EpisodePrior(
+                rho=opt.get("rho", 1e-3), **dict(opt["episode_prior_kw"])
+            )
         if spec.method == "SENTINEL-E":
             model = SentinelE(alpha=spec.knob, **cal_kw)
             res = model.run_stream(st)

@@ -186,7 +186,7 @@ class SentinelE:
             if calibration_context is None:
                 raise ValueError("residual calibration requires context features")
             self.calibrator = ResidualConformalCalibrator(
-                delta=self.delta, mode=self.cc_mode
+                delta=self.delta, mode=self.cc_mode, weighted=self.weighted
             ).fit(s, calibration_context)
         elif self.calibration == "mondrian":
             if calibration_context is None:
