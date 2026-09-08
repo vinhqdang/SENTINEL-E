@@ -1062,16 +1062,25 @@ is indistinguishable from no graph at all --- \NetHeuristicDelaySec\,s against
 power \NetHeuristicPower{} against \NetNoGraphPower. The learned controller is
 worse than both: delay \NetGnnDelaySec\,s and power \NetGnnPower.
 
-We made two attempts to fix this before concluding it. The first was
+We made two attempts to fix this before concluding it, and the second is worth
+recording because it failed in an informative direction. The first was
 initialisation: the controller's heads are set so that an untrained network
 reproduces the ungoverned detector exactly, rather than starting at half stake
 and a twenty-five-fold hazard, so training begins from the baseline and can only
-improve on it in-sample. The second was the objective: rewarding terminal
-log-wealth lets the controller trade delay for terminal wealth, so we replaced
-it with log-wealth credited over a window opening at each camera's own onset,
-which targets delay directly. Neither closed the gap, and under the second
-objective the training gain drifts slightly downward, which suggests the
-gradient signal is weak rather than that the optimiser is mistuned.
+improve on it in-sample. That is now the default and it is what the table
+reports. The second was the objective. Maximising terminal log-wealth is
+plainly the wrong target --- detection delay is the time the wealth takes to
+reach $1/\alpha$, so a camera that ends the stream rich but climbed slowly is no
+use --- and we replaced it with log-wealth credited over a window opening at
+each camera's own onset. The better-motivated objective performed
+\emph{worse}: power fell from \NetGnnPower{} to $0.555$. We report the stronger
+of the two configurations here and keep the windowed objective in the library
+behind a flag so the comparison can be reproduced.
+
+That a better-motivated objective makes things worse, and that the training gain
+under it drifts downward rather than up, both point the same way: the gradient
+signal is weak, not the optimiser mistuned. There is little for the controller
+to learn.
 
 Our reading is that the spatial signal in these streams is real but small
 relative to what a camera learns from its own p-values: an episode propagates to
