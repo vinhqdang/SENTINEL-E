@@ -1,0 +1,12 @@
+## Scoring Plan
+
+### D4: cross_disciplinary_relevance
+
+dimension_id: D4
+what_to_look_for: Whether load-bearing terms are defined plainly enough for an adjacent-field reader; whether every claim of relevance beyond the home discipline (operational deployment, edge/embedded hardware, operator workflow, municipal or policy use, surveillance ethics) is supported by evidence of a kind that field would accept; whether failure modes are described as something an operator can observe and act on rather than as internal properties; whether stated compute, latency, memory, or throughput figures are tied to specified hardware and workload conditions; and whether relevant machinery from adjacent fields (sequential analysis, quality control, signal detection, human factors, public-sector data governance) is engaged rather than reinvented or ignored.
+what_triggers_block: A central deployment, operability, or real-world-impact claim is asserted in the framing, abstract, or contribution list but is supported only by home-field evidence that cannot bear it — for example, an efficiency, cost, or feasibility claim about field or edge operation whose only support is simulated or benchmark-harness evidence with no stated hardware, no measured resource figures, and no acknowledgement of the substitution; or the surveillance application is advanced as a use case with no engagement whatsoever with the ethics, proportionality, false-accusation, or governance consequences an adjacent field would treat as mandatory; or the operator is entirely absent, such that the method's failure modes have no described observable signature and a practitioner could not tell a functioning system from a silently degraded one.
+what_triggers_warn: The interdisciplinary reach is defensible but under-served — definitions of load-bearing terms are scattered, implicit, or shift between sections so an adjacent-field reader must reconstruct them; resource or latency claims are given without the hardware or workload they were measured on but are not the paper's main selling point; ethics, governance, or human-oversight implications are acknowledged in a single perfunctory sentence without substantive treatment; tunable parameters are presented without guidance on how a non-expert operator would set or revise them; or clearly relevant prior machinery from an adjacent field is unengaged where engaging it would have strengthened or complicated the claim.
+
+criteria_binding_unavailable
+
+[CONTRACT-ACKNOWLEDGED]
