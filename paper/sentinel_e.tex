@@ -796,7 +796,19 @@ the episodes-versus-changepoints comparison in \cref{sec:episodes} is a
 comparison against the current state of the art in anytime-valid change
 detection, run through an identical conformal front end. Every baseline is
 fitted on the same calibration set and evaluated on the same decorrelated
-betting grid, so none is helped or penalised by the frame-rate choice. Each is
+betting grid, so none is helped or penalised by the frame-rate choice.
+
+Every method also \emph{restarts} after an alarm. This matters more than it
+sounds. Under the single-shot convention of \cref{def:tuv} a detector stops at
+its first alarm, so a method that false-alarms early is disabled for the rest of
+the stream and records a missed detection for an event it never got to see. That
+convention is right for stating the guarantee and wrong for measuring delay,
+because an operator investigates an alert and resumes monitoring. Restarting
+leaves the null metrics untouched --- the probability of at least one false
+alarm, and the time to the first one, do not depend on what happens afterwards
+--- and can only help a method that cries wolf. Under the single-shot convention
+the classical baselines score miss rates near one; we report the restarting
+numbers because they are the ones that give those baselines a fair hearing. Each is
 swept over its own knob and plotted at its realised false-alarm rate.
 
 \paragraph{Reproducibility.}
