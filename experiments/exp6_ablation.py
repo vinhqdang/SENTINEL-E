@@ -21,18 +21,23 @@ import numpy as np
 from experiments.common import fmt, fmt_int, save_json, write_latex_table
 from experiments.runner import evaluate
 
-REPS = 300
-T = 60_000
-CHANGE_POINT = 30_000
+REPS = 200
+T = 90_000
+CHANGE_POINT = 20_000
+N_EPISODES = 4
 FPS = 25.0
 ALPHA = 0.01
 
-BASE = dict(calibration="residual", weighted=False, family="power",
+BASE = dict(detector="episodic", calibration="residual", weighted=False,
+            family="power",
             n_grid=32, rho=1e-3, prior_kind="geometric", delta=1e-3,
             thin_calibration=True)
 
 ABLATIONS: List[Dict] = [
     {"name": "SENTINEL-E (full)", "group": "", "opts": {}},
+
+    {"name": "changepoint mixture", "group": "e-process",
+     "opts": {"detector": "changepoint"}},
 
     {"name": "bet on every frame", "group": "temporal",
      "opts": {"lag": 1}},
@@ -70,7 +75,9 @@ ABLATIONS: List[Dict] = [
 
 
 def run(reps: int = REPS) -> List[Dict]:
-    cfg = dict(T=T, calibration_regime="representative")
+    cfg = dict(T=T, calibration_regime="representative",
+               n_episodes=N_EPISODES, event_length=800, episode_gap=6_000,
+               event_intermittency=0.35)
     rows = []
     for ab in ABLATIONS:
         opts = dict(BASE)
@@ -80,7 +87,9 @@ def run(reps: int = REPS) -> List[Dict]:
         rows.append({
             "name": ab["name"], "group": ab["group"],
             "pfa": out.pfa, "pfa_ci": list(out.pfa_ci), "arl0": out.arl0,
-            "add": out.add, "add_se": out.add_se, "miss_rate": out.miss_rate,
+            "add": out.add, "add_se": out.add_se,
+        "add_censored": out.add_censored,
+        "add_censored_se": out.add_censored_se, "miss_rate": out.miss_rate,
             "lag": null[0].lag,
             "abstention": float(np.mean([t.abstention for t in null])),
         })
@@ -99,12 +108,12 @@ def make_table(rows):
         valid = "\\checkmark" if r["pfa"] <= ALPHA + 1e-9 else "\\ding{55}"
         out.append([
             label, r["name"], fmt(r["pfa"], 3), valid, fmt_int(r["arl0"]),
-            fmt(None if r["add"] is None else r["add"] / FPS, 1),
+            fmt(None if r["add_censored"] is None else r["add_censored"] / FPS, 1),
             fmt(r["miss_rate"], 2), fmt_int(r["lag"]),
         ])
     write_latex_table(
         out,
-        ["group", "variant", "PFA", r"$\le\alpha$?", "ARL$_0$", "delay (s)",
+        ["group", "variant", "PFA", r"$\le\alpha$?", "ARL$_0$", "cens. delay (s)",
          "miss", "lag"],
         caption=(
             r"Component ablation at $\alpha=0.01$ over "
@@ -129,6 +138,7 @@ def main(reps: int = REPS):
     print("Experiment 6: component ablation")
     rows = run(reps)
     save_json({"rows": rows, "reps": reps, "alpha": ALPHA, "T": T,
+               "n_episodes": N_EPISODES,
                "change_point": CHANGE_POINT}, "exp6_ablation")
     make_table(rows)
     print(" wrote results/exp6_ablation.json, tab8")

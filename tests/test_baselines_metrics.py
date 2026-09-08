@@ -216,3 +216,21 @@ def test_adapter_reads_a_produced_intermediate(tmp_path):
     loaded = load_dataset("taco", root=tmp_path)
     assert loaded.n_clips == 4
     assert loaded.name == ADAPTERS["taco"].name
+
+
+def test_censored_delay_charges_misses_the_remaining_horizon():
+    """Conditional ADD drops misses; the censored figure must not."""
+    detected = [False] * 5 + [True] + [False] * 4      # delay 1 from nu = 4
+    missed = [False] * 10
+    res = summarize_runs([[False] * 10], [detected, missed], [4, 4])
+    assert res.add == pytest.approx(1.0)               # conditional: only the hit
+    assert res.miss_rate == pytest.approx(0.5)
+    # censored: (1 + 6) / 2, the miss charged the 6 remaining frames.
+    assert res.add_censored == pytest.approx(3.5)
+
+
+def test_censored_delay_equals_conditional_when_nothing_is_missed():
+    a = [False, False, True, False]
+    res = summarize_runs([[False] * 4], [a, a], [1, 1])
+    assert res.add == pytest.approx(res.add_censored)
+    assert res.miss_rate == 0.0

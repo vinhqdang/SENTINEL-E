@@ -24,6 +24,16 @@
 \bibliographystyle{plainnat}
 
 \graphicspath{{../results/figures/}}
+
+% Tolerate a partially-populated results directory: a missing table or figure
+% becomes a visible placeholder rather than a failed build, so the manuscript
+% can be proofread while the protocol is still running.
+\newcommand{\inputtable}[1]{%
+  \IfFileExists{../results/tables/#1.tex}{\input{../results/tables/#1}}%
+  {\begin{table}[t]\centering\fbox{\texttt{\detokenize{#1}}: results pending}\end{table}}}
+\newcommand{\resultfig}[2]{%
+  \IfFileExists{../results/figures/#1.pdf}{\includegraphics[width=\linewidth]{#1.pdf}}%
+  {\fbox{\parbox{0.9\linewidth}{\centering\vspace{2em}\texttt{\detokenize{#1}}: figure pending\vspace{2em}}}}}
 \input{../results/tables/macros}
 
 \theoremstyle{plain}
@@ -60,43 +70,49 @@
 \noindent
 Computer-vision systems for illegal dumping are trained and evaluated as
 fixed-sample-size classifiers: given a short clip, emit one dumping /
-no-dumping decision and report clip-level precision and recall. Deployment does
-not look like that. A municipal camera runs for weeks, and the quantity an
-operator actually manages is the number of false alarms accumulated over the
+no-dumping decision and report clip-level precision and recall. Every entry in
+the 2026 IWDD contest on the Mivia-IWDD benchmark follows this protocol.
+Deployment does not look like that. A municipal camera runs for weeks, and the
+quantity an operator manages is the number of false alarms accumulated over the
 whole monitoring period, because each one costs an enforcement dispatch.
-Applying a fixed threshold repeatedly to a continuous stream and alerting the
-first time it is crossed is optional stopping, and it inflates the true
-false-alarm rate by an amount clip-level evaluation cannot show. We measure the
-effect and find it severe: a per-frame rule built on p-values that are
-individually valid at the $1\%$ level raises at least one false alarm on
-\ValidityPfaPvalue{} of $40$-minute null streams, and on \HorizonPvaluePfa{} of
-\HorizonMaxHours-hour streams.
+Alerting the first time a threshold is crossed on a continuous stream is
+optional stopping, and it inflates the true false-alarm rate by an amount
+clip-level evaluation cannot show. We measure it and find it severe: a per-frame
+rule fed p-values that are individually valid at the $1\%$ level raises at least
+one false alarm on \ValidityPfaPvalue{} of $40$-minute null streams.
 %
-We introduce SENTINEL-E, a three-layer wrapper that converts any frozen
-per-frame dumping detector into a network of anytime-valid sequential detectors
-with time-uniform false-alarm control. Raw scores become conformal p-values
-against a per-camera set of confirmed no-dumping frames, calibrated
+Our main contribution is an algorithm, not a combination of existing ones.
+Every sequential change detector in use --- CUSUM, Shiryaev--Roberts,
+e-detectors, and the recent non-partitioned e-detectors --- models a
+\emph{persistent} switch from one law to another that lasts forever. A dumping
+event is an \emph{episode}: it begins, flickers because the offender is
+intermittently occluded, ends, and recurs weeks later at the same site. We
+replace the mixture over changepoint locations with a mixture over episodes,
+realised as a two-state Markov chain whose forward recursion collapses a sum
+over $2^t$ trajectories into two numbers. The resulting \emph{episodic
+e-process} is an exact non-negative supermartingale, so Ville's inequality gives
+time-uniform false-alarm control with no new machinery; it costs $O(1)$ per
+frame against $O(t)$ for a mixture that must track every active start; and it
+contains the changepoint mixture exactly as the boundary case in which episodes
+never end, so it is a strict generalisation along an axis the change-detection
+literature has left fixed at infinity. Within-episode intermittency is absorbed
+by dilating the betting function to $(1-\pi) + \pi f$, a convex combination that
+remains legal, and the recursion returns for free the posterior probability that
+a camera is inside an episode --- a bounded, cross-camera-comparable quantity
+that becomes the message a camera graph exchanges.
+%
+Around this core we build a per-camera conformal layer that is calibrated
 conditionally on observable context and corrected by exact Beta order-statistic
-levels that are an order of magnitude tighter in the tail than the usual
-concentration bound. Each camera then runs a betting e-detector whose wealth is
-a non-negative supermartingale under the no-dumping null, so thresholding at
-$1/\alpha$ controls the false-alarm probability \emph{simultaneously at every
-frame}, with no penalty for monitoring longer. Finally, cameras are organised
-into a graph whose neural spatial prior steers the bets through a
-\emph{predictable} hazard and stake modulation --- provably unable to damage the
-guarantee, whatever it outputs --- and fleet decisions are combined by e-BH,
-which controls the false-discovery rate under arbitrary dependence.
+levels, and a fleet layer in which a graph network steers each camera's episode
+hazard through a \emph{predictable} modulation --- provably unable to damage the
+guarantee --- with e-BH combining evidence under arbitrary dependence.
 %
-Across \ExpTwoReps{} Monte-Carlo streams per operating point, SENTINEL-E is the
-only method examined whose realised false-alarm rate stays at or below its
-nominal level at every setting, while detecting events in
-\DelaySentinelSec\,s. Of the components ablated, the ones that turn out to be
-load-bearing for validity are temporal decorrelation and conditional
-calibration, not the betting or prior choices. Because the guarantee layer sits
-on a frozen backbone and its per-frame arithmetic is $O(1)$, it costs
-\CostSentinelUs\,\textmu s per frame --- \CostSentinelPct\% of the detector it
-wraps --- and is therefore deployable on edge hardware that already runs the
-detector in real time.
+On recurring episodes the episodic mixture cuts the missed-detection rate from
+\EpiManyCpMiss{} to \EpiManyEpiMiss{} against the changepoint mixture; on a
+single persistent change the two agree, as a strict generalisation should.
+SENTINEL-E is the only method examined whose realised false-alarm rate never
+exceeds its nominal level, and it costs \CostSentinelUs\,\textmu s per frame,
+\CostSentinelPct\% of the detector it wraps.
 \end{abstract}
 
 \vspace{0.5em}
@@ -110,129 +126,139 @@ rate; video surveillance; edge deployment
 Illegal dumping is a persistent municipal problem with an obvious
 computer-vision framing, and the field has adopted that framing consistently:
 collect clips, label them as containing a dumping event or not, train a video
-classifier, report clip-level accuracy. The recent release of Mivia-IWDD-500
-\citep{greco2026iwdd} --- the first public dataset for illegal waste dumping
-detection, with $250$ positive and $250$ negative surveillance videos and
-onset timestamps --- gives the field a shared benchmark on exactly these terms,
-and the reference baseline distributed with it is evaluated on exactly these
-terms.
+classifier, report clip-level accuracy. Mivia-IWDD-500 \citep{greco2026iwdd} ---
+the first public dataset for illegal waste dumping detection, with $250$
+positive and $250$ negative surveillance videos and onset timestamps --- gave the
+field a shared benchmark on these terms, and the 2026 IWDD contest built on it
+attracted a strong and varied field: X3D with temporal localisation
+\citep{almorsy2026x3d}, cross-fold ensembles of Hiera and VideoMAE
+\citep{kim2026kfold}, a three-headed classifier \citep{scarrica2026garberus}, a
+vision--language temporal analysis \citep{kairanbay2026vlm}, and a
+temporal-spatial novelty detector \citep{zbuce2026novelty}. Every one of them
+reports per-video precision, recall and $F_1$ together with a timestamp error.
+Where ``false alarms'' appear, they are counted per clip --- ``six false alarms
+on thirty negative videos'' \citep{almorsy2026x3d} --- which is specificity, not
+a rate over a monitoring period.
 
 The framing does not match deployment. A camera watching a lay-by does not
 receive a curated ten-second clip and return a verdict; it produces frames
 continuously for weeks, and the system alerts the first time its evidence
-crosses some threshold. What the municipality manages is not per-clip precision
-but the number of enforcement dispatches wasted over a season. Those two
-quantities are related by a step that the clip-level protocol never exercises:
-\emph{repeatedly} testing a stream and stopping at the first exceedance is
-optional stopping, and it invalidates the level at which any fixed threshold
-was calibrated.
+crosses a threshold. What the municipality manages is not per-clip precision but
+the number of enforcement dispatches wasted over a season. Those two quantities
+are separated by a step the clip-level protocol never exercises: \emph{repeatedly}
+testing a stream and stopping at the first exceedance is optional stopping, and
+it invalidates the level at which any fixed threshold was calibrated.
 
-The magnitude of the gap is easy to state and, we find, easy to underestimate.
-A rule that raises a false alarm on each frame with probability $q$ raises at
+The magnitude of the gap is easy to state and, we find, easy to underestimate. A
+rule that raises a false alarm on each frame with probability $q$ raises at
 least one over $T$ frames with probability $1-(1-q)^{T}$, which tends to one for
-any $q>0$. Persistence filters and score smoothing change $q$; they do not
-change the limit. Our measurements bear this out. Feeding a per-frame rule
-p-values that are individually and provably valid at the $1\%$ level --- so that
-nothing is wrong with the calibration --- produces at least one false alarm on
-\ValidityPfaPvalue{} of $40$-minute null streams
-(\cref{fig:validity}\,(a)); a raw score threshold tuned to a $10^{-3}$ per-frame
-rate reaches \HorizonFixedPfaShort{} within \HorizonMinHours\,hours and
-\HorizonFixedPfa{} by \HorizonMaxHours\,hours (\cref{fig:validity}\,(b)). None
-of this is visible in a clip-level evaluation, because a clip-level evaluation
-never runs the detector for two hours.
+any $q>0$. Persistence filters and score smoothing change $q$; they do not change
+the limit. Feeding a per-frame rule p-values that are individually and provably
+valid at the $1\%$ level --- so that nothing is wrong with the calibration ---
+produces at least one false alarm on \ValidityPfaPvalue{} of $40$-minute null
+streams (\cref{fig:validity}\,(a)); a raw score threshold tuned to a $10^{-3}$
+per-frame rate reaches \HorizonFixedPfaShort{} within \HorizonMinHours\,hours and
+\HorizonFixedPfa{} by \HorizonMaxHours\,hours (\cref{fig:validity}\,(b)). A
+clip-level evaluation cannot see this, because it never runs the detector for
+two hours.
 
-The tools that solve exactly this problem are mature. Ville's inequality
+\subsection{Why the existing sequential machinery is the wrong shape}
+
+The tools for optional stopping are mature. Ville's inequality
 \citep{ville1939} bounds the probability that a non-negative supermartingale
-\emph{ever} exceeds a level, and the modern game-theoretic literature
-\citep{shafer2019game,ramdas2023savi,grunwald2024evalues} has turned that into a
-practical construction: bet against the null, and the accumulated wealth is a
-time-uniform certificate. Conformal prediction \citep{vovk2005alrw} supplies
-distribution-free p-values, e-detectors \citep{shin2024edetectors} adapt the
-machinery to change detection, and e-BH \citep{wang2022ebh} combines evidence
-across many streams under arbitrary dependence. To our knowledge none of it has
-been applied to waste, dumping or pollution surveillance. We think that gap is
-not a coincidence but a consequence of the clip-level framing: a protocol that
-never runs a detector continuously never surfaces the problem these tools
-solve.
+\emph{ever} exceeds a level, and the game-theoretic literature
+\citep{shafer2019game,ramdas2023savi,grunwald2024evalues} turns that into a
+construction: bet against the null, and the accumulated wealth is a time-uniform
+certificate. Conformal prediction \citep{vovk2005alrw} supplies distribution-free
+p-values to bet on, e-detectors \citep{shin2024edetectors} adapt the machinery to
+change detection, non-partitioned e-detectors \citep{saha2026nonpartitioned}
+sharpen it to composite pre-change classes, and e-BH \citep{wang2022ebh} combines
+evidence across streams under arbitrary dependence. To our knowledge none of it
+has been applied to waste, dumping or pollution surveillance.
 
-Closing it is not a matter of importing the machinery unchanged. Surveillance
-streams violate the assumptions three times over, and each violation is fatal
-in a way that only shows up when the guarantee is actually measured rather than
-cited.
+Importing it unchanged would not be enough, and the reason is structural rather
+than a matter of tuning. \emph{Every one of these procedures models a persistent
+change.} At an unknown frame $\nu$ the law switches from $P_0$ to $P_1$ and stays
+there for the rest of time; the mixtures are over $\nu$ alone, and the optimality
+theory, thresholds and delay bounds all presume it.
 
-\begin{enumerate}
-\item \textbf{The frame rate is not the evidence rate.} Consecutive frames of
-      video are near-duplicates, so backbone scores are strongly
-      autocorrelated. Every sequential test assumes conditionally independent
-      increments. Betting on each of $25$ frames per second inflates a nominal
-      $\alpha=0.01$ to a realised \AblEveryFramePfa{} in our experiments --- the
-      single most damaging mistake we found, and one invisible in the algebra.
-\item \textbf{Marginal calibration is not conditional calibration.} A
-      night-time score compared against a calibration set dominated by daylight
-      is marginally valid and locally useless: during the hours when the
-      backbone runs hot, its p-values are systematically too small, and a
-      sequential test converts that local miscalibration into an early alarm.
-      Pooled conformal calibration gives a realised \AblPooledPfa{} at a
-      nominal $0.01$.
-\item \textbf{The calibration set is finite and gets reused forever.}
-      Conditional on it --- which is the only conditioning that matters, since
-      the same set scores every frame for months --- the p-values are only
-      approximately uniform, by $O(n^{-1/2})$. Ignoring this gives a realised
-      \AblNoCcPfa{}. Correcting it with the standard
-      Dvoretzky--Kiefer--Wolfowitz inflation restores validity but is
-      catastrophically loose in the tail, which is where a betting detector
-      earns its wealth.
-\end{enumerate}
+An illegal dumping event is not a persistent change. It is an \emph{episode}. A
+van pulls up, the offender unloads for forty seconds and drives away. Inside the
+episode the signal is \emph{intermittent}: the offender is occluded by the
+vehicle, steps out of frame, returns. Then the episode ends, the stream reverts
+to its null behaviour, and --- because a site that has been used once is used
+again --- another episode follows weeks later.
+
+Modelling that as a persistent change is not a small mismatch. A
+changepoint-mixture wealth process keeps betting at full aggression after the
+episode is over, handing back what the episode earned; and because it treats
+every frame after $\nu$ as drawn from the post-change law, the quiet frames
+\emph{inside} the episode count against it rather than being expected. Both
+effects lengthen delay, and the second worsens as intermittency increases ---
+which is the regime this problem lives in. Empirically, over four recurring
+episodes per camera the changepoint mixture misses \EpiManyCpMiss{} of events
+where the episodic construction misses \EpiManyEpiMiss{}.
 
 \subsection{Contributions}
 
 \begin{itemize}
-\item \textbf{A formulation of dumping surveillance as anytime-valid sequential
-      detection}, with the operational metrics that follow from it --- delay at
-      a controlled false-alarm rate over a monitoring horizon --- and a protocol
-      that converts any clip-labelled corpus into long streams without new data
-      collection (\cref{sec:problem}).
+\item \textbf{The episodic e-process} (\cref{sec:episodic}), our main
+      contribution. Mixing over episodes rather than changepoints, via a
+      two-state Markov chain, gives a wealth process that is (i) an exact
+      non-negative supermartingale, so Ville's inequality applies unchanged;
+      (ii) computable in $O(1)$ time and memory per frame by an HMM forward
+      recursion, against $O(t)$ for a mixture over active starts
+      \citep{saha2026nonpartitioned}; and (iii) a strict generalisation, equal
+      to the changepoint mixture exactly when the episode-end rate is zero
+      (\cref{prop:generalisation}). Within-episode intermittency is absorbed by
+      \emph{dilating} the betting function, which is legal because a convex
+      combination of e-values is an e-value.
 
-\item \textbf{Exact calibration-conditional conformal levels.}
-      Rather than inflating p-values additively, we replace each attainable
-      level by its exact Beta order-statistic upper confidence bound
-      (\cref{thm:beta}). At $n=2000$ and $\delta=10^{-3}$ this puts the smallest
-      usable p-value at $0.0037$ instead of the $0.051$ that DKW permits, a
-      $14\times$ improvement precisely where the evidence is. In the ablation it
-      shortens detection delay by a factor of \AblDkwSpeedup{}
-      (\cref{sec:ablation}).
+\item \textbf{A quantity worth passing between cameras.} The same recursion
+      returns the posterior probability that a camera is currently inside an
+      episode. Unlike accumulated wealth it is bounded in $[0,1]$ and comparable
+      across cameras with different histories, which is what lets a
+      message-passing layer aggregate it without one long-running camera
+      swamping its neighbours (\cref{sec:layer3}).
 
-\item \textbf{A changepoint-mixture e-process that is an exact supermartingale.}
-      Retaining the not-yet-reached prior mass inside the statistic
-      (\cref{sec:layer2}) upgrades the classical Shiryaev--Roberts average-run-length
-      bound to a time-uniform probability bound, at a cost logarithmic in the
-      horizon, and collapses to an $O(1)$ recursion.
+\item \textbf{Exact calibration-conditional conformal levels}
+      (\cref{thm:beta}). Each attainable p-value level is replaced by its exact
+      Beta order-statistic upper confidence bound rather than inflated
+      additively. At $n=2000$, $\delta=10^{-3}$ the smallest usable p-value
+      becomes $0.0037$ instead of the $0.051$ that Dvoretzky--Kiefer--Wolfowitz
+      permits --- a $14\times$ improvement precisely where a betting detector
+      earns its wealth, worth a factor of \AblDkwSpeedup{} in detection delay.
 
 \item \textbf{A learned spatial prior that provably cannot break the
-      guarantee.} A graph network steers each camera's hazard and stake from its
-      neighbours' wealth. Because the modulation is predictable, the wealth
-      remains a supermartingale whatever the network outputs
-      (\cref{thm:predictable}) --- so a learned component sits on top of a formal
-      guarantee with none of the usual caveats. Fleet decisions use e-BH, valid
-      under the dependence the graph deliberately induces.
+      guarantee} (\cref{thm:predictable}). Because the graph network's output
+      enters only as a predictable modulation of the episode hazard and the
+      betting stake, the wealth remains a supermartingale whatever the network
+      outputs --- even badly trained or handed the wrong topology. It can move
+      the delay and nothing else.
 
-\item \textbf{An evaluation that measures guarantees instead of asserting
-      them}, over \ExpOneReps{} Monte-Carlo streams per operating point,
-      against five baselines including a reimplementation of the closest
-      generic prior art \citep{khan2026eshift}; a component ablation in which
+\item \textbf{An evaluation that measures guarantees rather than asserting
+      them}, over up to \ExpOneReps{} Monte-Carlo streams per operating point,
+      against six baselines including a reimplementation of the closest generic
+      prior art \citep{khan2026eshift}; a component ablation in which
       \AblNumInvalid{} of \AblNumVariants{} variants fail to deliver the level
-      they claim; and a cost measurement showing the guarantee layer runs at
-      \CostSentinelPct\% of its backbone.
+      they claim; and a cost measurement putting the guarantee layer at
+      \CostSentinelPct\% of its backbone. We also correct a measurement pitfall
+      that affects such comparisons generally: detection delay conditioned on
+      detection is averaged over a different subset of runs for each method and
+      systematically flatters the ones that miss the hard events, so we report a
+      censored delay alongside it (\cref{sec:problem}).
 \end{itemize}
 
-We are explicit about scope in \cref{sec:limitations}: the streaming results are
-obtained on a score-level simulator calibrated to plausible backbone behaviour,
-because no released corpus provides the months of continuously-labelled
-per-frame detector output that a time-uniform claim must be tested against, and
-we did not have access to one. The library ships adapters and a splicing
-protocol so the same evaluation runs on Mivia-IWDD and the other corpora as soon
-as backbone scores are available, and no adapter fabricates data when they are
-not.
+\paragraph{What we do not claim.}
+The changepoint mixture with retained tail mass that our construction reduces to
+is not new: it is the PFA-controlled e-detector of
+\citet{saha2026nonpartitioned}, which already delivers
+$\mathbb{P}(\tau < \infty) \le \alpha$ for a mixture over start times with
+weights summing to one. Our contribution is the episode axis on top of it, and
+the $O(1)$ recursion that axis happens to make available. The conformal and
+e-BH layers are existing machinery, used as intended and credited as such;
+\cref{sec:limitations} states plainly what the evaluation does and does not
+establish.
 
 \section{Related work}
 \label{sec:related}
@@ -243,27 +269,40 @@ ZeroWaste \citep{bashkirova2022zerowaste}; UAV and wide-area monitoring by
 UAVVaste \citep{kraft2021uavvaste} and AerialWaste
 \citep{torres2023aerialwaste}; marine pollution by MARIDA
 \citep{kikaki2022marida} and MADOS \citep{kikaki2024mados}. Video-based dumping
-detection has, until recently, lacked a public benchmark; Mivia-IWDD-500
-\citep{greco2026iwdd} supplies one together with a reference baseline. All of
-these are evaluated per image or per clip. We are not aware of any work in this
-literature that reports a false-alarm rate over a monitoring horizon, which is
-the quantity a deployment is judged by, nor any that addresses optional
-stopping. SENTINEL-E is complementary rather than competing: it consumes a
-frozen backbone's scores and adds a guarantee layer, so a better backbone and
-this work compound.
+detection now has a public benchmark and an active contest around it: on
+Mivia-IWDD-500 \citep{greco2026iwdd}, the 2026 IWDD entries span 3D CNNs with
+temporal localisation \citep{almorsy2026x3d}, cross-fold transformer ensembles
+\citep{kim2026kfold}, multi-head classifiers \citep{scarrica2026garberus},
+vision--language temporal reasoning \citep{kairanbay2026vlm} and novelty
+detection \citep{zbuce2026novelty}. These are strong backbones and our work does
+not compete with them: SENTINEL-E consumes a frozen backbone's scores, so a
+better backbone and this work compound. What none of them reports --- and what
+the clip-level protocol they share cannot express --- is a false-alarm rate over
+a monitoring horizon, an average run length, or a detection delay under
+continuous monitoring.
 
 \paragraph{Sequential change detection.}
 CUSUM \citep{page1954}, Shiryaev's Bayesian statistic \citep{shiryaev1963} and
 Shiryaev--Roberts \citep{roberts1966} are the classical procedures, with
 optimality theory due to \citet{lorden1971} and \citet{moustakides1986}. Their
-guarantees are asymptotic average-run-length statements that presume a correctly
-specified pre-change law. Detector scores from real footage are autocorrelated,
-heavy-tailed and diurnally non-stationary, so the presumption fails; both
-baselines lose control in our experiments. \citet{shin2024edetectors} give a
-nonparametric e-detector framework with clean non-asymptotic ARL bounds, which
-is the closest ancestor of our Layer 2. We depart from it in retaining the
-unreached changepoint prior mass, which converts the ARL bound into a
-time-uniform probability bound.
+guarantees are asymptotic average-run-length statements presuming a correctly
+specified pre-change law; detector scores from real footage are autocorrelated,
+heavy-tailed and diurnally non-stationary, so the presumption fails and both
+lose control in our experiments. \citet{shin2024edetectors} give a nonparametric
+e-detector framework with non-asymptotic ARL bounds, and
+\citet{saha2026nonpartitioned} extend it to composite pre-change classes,
+including a PFA-controlled variant that mixes over start times with weights
+summing to one and thereby achieves $\mathbb{P}(\tau<\infty) \le \alpha$. That
+variant is exactly what our \cref{prop:generalisation} reduces to, and we claim
+no credit for it.
+
+The difference is the change model. All of these mix over the changepoint
+\emph{location} of a persistent shift; none of them models an episode that ends,
+let alone one that recurs or that is internally intermittent. That is the axis
+\cref{sec:episodic} adds. A secondary but practical difference is cost: a
+mixture over active starts is $O(t)$ per observation, whereas the two-state
+forward recursion is $O(1)$, which matters when the horizon is a month of video
+and the hardware is a camera.
 
 \paragraph{Anytime-valid inference and e-values.}
 Testing by betting \citep{shafer2021testing,ramdas2023savi,grunwald2024evalues}
@@ -323,15 +362,33 @@ $\Pinf(\exists t : \text{alarm at } t)$, and the gap between them grows with the
 horizon. \Cref{def:tuv} is what a municipality is implicitly buying when it is
 told a detector has a $1\%$ false-alarm rate.
 
+Dumping is episodic, so we write $\mathbb{P}_{\mathcal{E}}$ for the law when a
+set of episodes $\mathcal{E} = \{[\nu_1, \nu_1 + L_1], \ldots\}$ occurs, within
+each of which a fraction $\pi$ of frames are anomalous. The single-persistent-change
+model is the special case of one episode with $L = \infty$ and $\pi = 1$.
+
 We report, over Monte-Carlo replicates:
 $\PFA$, the probability that a null stream of a stated length raises at least
 one alarm; $\ARL$, the mean frames to a false alarm on a null stream, censored
-at the horizon; $\ADD$, the mean frames from onset $\nu$ to the first alarm at
-or after it, over runs that alarm; and the miss rate, the fraction of
-post-change segments that end unflagged. Every comparison is made at a method's
-\emph{realised} $\PFA$, never its nominal one, since a method whose nominal
-level is meaningless would otherwise appear to dominate by misreporting its own
-error rate.
+at the horizon; $\ADD$, the mean frames from the first onset $\nu_1$ to the
+first alarm at or after it, over runs that alarm; and the miss rate, the
+fraction of post-change segments ending unflagged.
+
+\paragraph{A measurement pitfall, and the fix.}
+Conditional $\ADD$ is averaged over a \emph{different subset of runs for each
+method}: a detector that misses the hard events is scored only on the easy ones
+and therefore looks fast. Since the methods compared here differ substantially
+in miss rate, we also report a \emph{censored} delay in which a run that never
+alarms is charged the whole remaining horizon rather than dropped. The two can
+rank methods oppositely --- in \cref{sec:episodes} the changepoint mixture has
+the shorter conditional delay and the longer censored delay --- and where they
+disagree the censored figure is the comparable one, so head-to-head claims in
+this paper rest on it. This is not specific to our setting and we suspect it
+affects published comparisons elsewhere.
+
+Every comparison is made at a method's \emph{realised} $\PFA$, never its nominal
+one, since a method whose nominal level is meaningless would otherwise appear to
+dominate by misreporting its own error rate.
 
 \paragraph{From clips to streams.}
 A clip-labelled corpus such as Mivia-IWDD becomes a streaming benchmark without
@@ -458,122 +515,222 @@ the setting rather than about the technique: reweighting corrects the marginal
 context distribution, while a sequential test is broken by \emph{conditional}
 miscalibration.
 
-\subsection{Layer 2: the betting e-detector}
-\label{sec:layer2}
+\subsection{Layer 2: the episodic e-process}
+\label{sec:episodic}
 
-Let $p_1, p_2, \ldots$ be the p-values at the betting instants. A
-\emph{betting function} is a non-increasing $f : (0,1] \to [0,\infty)$ with
-$\int_0^1 f \le 1$; then $\mathbb{E}_{H_0}[f(p)] \le 1$ for any super-uniform
-$p$, so $f(p)$ is an e-value. We use the power family
-$f_\kappa(p) = \kappa p^{\kappa-1}$, $\kappa \in (0,1]$, mixed over a
-log-spaced grid; $\kappa = 1$ gives the neutral bet $f \equiv 1$.
+This is the core of the method. Let $p_1, p_2, \ldots$ be the p-values at the
+betting instants. A \emph{betting function} is a non-increasing
+$f : (0,1] \to [0,\infty)$ with $\int_0^1 f \le 1$; then
+$\mathbb{E}_{H_0}[f(p)] \le 1$ for any super-uniform $p$, so $f(p)$ is an
+e-value. We use the power family $f_\kappa(p) = \kappa p^{\kappa-1}$,
+$\kappa \in (0,1]$, with $\kappa = 1$ the neutral bet $f \equiv 1$.
 
-Dumping begins at an unknown $\nu$. Place a prior $w_1, w_2, \ldots$ with
-$\sum_j w_j = 1$ on it and define
+\subsubsection{Mixing over episodes}
+
+Let $z_t \in \{\text{quiet}, \text{active}\}$ be a two-state Markov chain with
+onset probability $\mathbb{P}(\text{quiet} \to \text{active}) = \rho$ and
+\emph{end} probability $\mathbb{P}(\text{active} \to \text{quiet}) = \eta$,
+started quiet, and let the wealth mix over every trajectory of that chain:
 \begin{equation}
-\label{eq:wealth}
-  W_t \;=\;
-  \underbrace{\sum_{j \le t} w_j \prod_{s=j}^{t} f(p_s)}_{R_t}
-  \;+\;
-  \underbrace{\sum_{j > t} w_j}_{Q_t} .
+\label{eq:episodic}
+  W_t \;=\; \sum_{z_{1:t}} \mathbb{P}(z_{1:t})
+            \prod_{s \le t} f(p_s)^{\ind{z_s = \text{active}}} .
 \end{equation}
+Each trajectory contributes the product of betting factors over the frames it
+declares active, weighted by its prior probability. The classical mixture over
+changepoints is the special case in which the chain, once active, can never
+return: it mixes over \emph{when} a change starts, whereas \cref{eq:episodic}
+mixes over \emph{when it starts and when it stops}, and over how many times that
+happens.
 
-\begin{theorem}[Time-uniform validity]
-\label{thm:ville}
-Under $\Pinf$, if the $p_t$ are conditionally super-uniform given $\Fcal_{t-1}$,
-then $(W_t)$ is a non-negative supermartingale with $W_0 = 1$, and
+The sum has $2^t$ terms and collapses to two numbers. Writing $A_t$ and $Q_t$
+for the parts of the sum whose trajectories end active and quiet respectively,
+\begin{equation}
+\label{eq:forward}
+  A_t = \bigl[(1-\eta)A_{t-1} + \rho\,Q_{t-1}\bigr] f(p_t),
+  \qquad
+  Q_t = \eta\,A_{t-1} + (1-\rho)\,Q_{t-1},
+\end{equation}
+with $A_0 = 0$, $Q_0 = 1$ and $W_t = A_t + Q_t$. This is the forward recursion
+of a hidden Markov model, and it is $O(1)$ per frame in both time and memory.
+
+\begin{theorem}[Time-uniform validity of the episodic e-process]
+\label{thm:episodic}
+Under $\Pinf$, if the $p_t$ are conditionally super-uniform given
+$\Fcal_{t-1}$, then $(W_t)$ defined by \cref{eq:episodic} is a non-negative
+supermartingale with $W_0 = 1$, and for any $\alpha \in (0,1)$
 \begin{equation*}
   \Pinf\bigl(\exists\, t \ge 1 : W_t \ge 1/\alpha\bigr) \;\le\; \alpha .
 \end{equation*}
 \end{theorem}
 
 \begin{proof}
-$W_0 = \sum_j w_j = 1$ and $W_t \ge 0$. Splitting off the term reached at $t$,
+Non-negativity is immediate and $W_0 = Q_0 = 1$. From \cref{eq:forward},
+$A_{t}$ carries exactly one factor $f(p_t)$ and $Q_t$ carries none, so
 \begin{align*}
   \mathbb{E}[W_t \mid \Fcal_{t-1}]
-   &= \Bigl(\textstyle\sum_{j \le t-1} w_j \prod_{s=j}^{t-1} f(p_s) + w_t\Bigr)
-      \,\mathbb{E}[f(p_t) \mid \Fcal_{t-1}] \;+\; Q_t \\
-   &\le R_{t-1} + w_t + Q_t \;=\; R_{t-1} + Q_{t-1} \;=\; W_{t-1},
+   &= \bigl[(1-\eta)A_{t-1} + \rho Q_{t-1}\bigr]\,
+      \mathbb{E}[f(p_t) \mid \Fcal_{t-1}]
+      \;+\; \eta A_{t-1} + (1-\rho) Q_{t-1} \\
+   &\le (1-\eta)A_{t-1} + \rho Q_{t-1} + \eta A_{t-1} + (1-\rho) Q_{t-1}
+    \;=\; A_{t-1} + Q_{t-1} \;=\; W_{t-1},
 \end{align*}
-using $\mathbb{E}[f(p_t)\mid\Fcal_{t-1}] \le 1$ and $Q_{t-1} = Q_t + w_t$.
-Ville's inequality \citep{ville1939} gives the bound.
+using $\mathbb{E}[f(p_t) \mid \Fcal_{t-1}] \le 1$ and the fact that the
+transition probabilities out of each state sum to one. Ville's inequality
+\citep{ville1939} applied to the non-negative supermartingale $(W_t)$ started at
+one gives the bound.
 \end{proof}
 
-\begin{remark}
-Dropping $Q_t$ from \cref{eq:wealth} recovers the Shiryaev--Roberts statistic,
-which is \emph{not} a supermartingale --- the telescoping in the proof fails by
-exactly $w_t$ per step --- and admits only an average-run-length bound. Carrying
-the unreached prior mass is what buys \cref{def:tuv}. Its cost is
-$-\log w_\nu \approx \log(1/\rho) + \nu\log(1/(1-\rho))$ nats of wealth to repay,
-i.e.\ $O(\log T)$ for a hazard $\rho \sim 1/T$ matched to the horizon: the price
-of monitoring $T$ frames grows logarithmically, against a fixed threshold whose
-false-alarm probability grows to one.
-\end{remark}
+Two things are worth drawing out. First, the episode structure is \emph{free}:
+it needed no new machinery and cost nothing in the guarantee, because the
+transition probabilities telescope exactly. Second, the recursion never grows.
+A mixture over active start times must carry one term per candidate start, at
+$O(t)$ work per observation \citep{saha2026nonpartitioned}; \cref{eq:forward}
+carries two numbers whatever $t$ is, which is what makes month-long monitoring
+on edge hardware arithmetically trivial (\cref{sec:compute}).
 
-Writing $w_t = \rho_t Q_{t-1}$ and $Q_t = (1-\rho_t)Q_{t-1}$ keeps
-$Q_{t-1} = Q_t + w_t$ exact even for a time-varying hazard, and \cref{eq:wealth}
-collapses to
+\begin{proposition}[Strict generalisation]
+\label{prop:generalisation}
+With $\eta = 0$ the recursion \cref{eq:forward} coincides with the mixture over
+changepoint locations under a geometric prior with hazard $\rho$; discarding
+$Q_t$ from that recovers in turn the classical Shiryaev--Roberts statistic.
+\end{proposition}
+
+\begin{proof}
+With $\eta = 0$, $Q_t = (1-\rho)Q_{t-1}$ so $Q_t = (1-\rho)^t$ is the prior mass
+on ``no episode has begun by $t$'', and
+$A_t = (A_{t-1} + \rho Q_{t-1}) f(p_t)$ with $\rho Q_{t-1} = w_t$ the geometric
+prior mass on a change at $t$. Unrolling gives
+$A_t = \sum_{j \le t} w_j \prod_{s=j}^{t} f(p_s)$, whence
+$W_t = \sum_{j\le t} w_j \prod_{s=j}^t f(p_s) + \sum_{j>t} w_j$, the
+changepoint mixture. Dropping $Q_t$ leaves the Shiryaev--Roberts sum, which is
+not a supermartingale --- the telescoping in \cref{thm:episodic} fails by
+exactly $w_t$ per step --- and admits only an average-run-length bound.
+\end{proof}
+
+So the episodic process sits strictly above both, and the axis it adds ---
+episode duration --- is one the change-detection literature has held fixed at
+infinity. The empirical consequence is in \cref{sec:episodes}: where the
+classical model is right, the two coincide; where events recur, the gap opens.
+
+\subsubsection{Intermittency, by dilation}
+
+Within an episode only a fraction $\pi$ of frames actually show the act.
+Betting the full $f$ on all of them is wrong in both directions --- too
+aggressive on the occluded frames, and their losses cancel the gains on the rest
+--- so we \emph{dilate} the emission:
 \begin{equation}
-\label{eq:recursion}
-  R_t = (R_{t-1} + w_t)\, f(p_t), \qquad Q_t = (1-\rho_t)\,Q_{t-1},
+\label{eq:dilated}
+  f_\pi(p) \;=\; (1-\pi) + \pi\, f(p).
 \end{equation}
-evaluated in log space: $O(1)$ arithmetic and $O(K)$ memory for a $K$-point
-mixture, independent of how long the camera has been running. For offline
-evaluation the same recursion has the closed form
-$R_t = P_t\bigl(R_0 + \sum_{j\le t} w_j / P_{j-1}\bigr)$ with
-$P_t = \prod_{s\le t} f(p_s)$, which is one cumulative log-sum-exp and lets us
-run the Monte-Carlo protocol at scale.
+Legality is immediate and is the reason this works: $f_\pi$ is a convex
+combination of the neutral bet and $f$, hence non-increasing with
+$\int_0^1 f_\pi \le 1$, so it is a betting function and \cref{thm:episodic}
+applies verbatim. Semantically it says the right thing --- \emph{this frame
+belongs to an episode, but it may or may not show the act} --- and $\pi = 1$
+recovers the undilated bet.
+
+\subsubsection{Staying parameter-free}
+
+Nothing above requires knowing $(\rho, \eta, \pi, \kappa)$. We place a prior grid
+over all four and run one recursion per grid point, mixing the results:
+$W_t = \sum_g \lambda_g W_t^{(g)}$ with $\sum_g \lambda_g = 1$ is a convex
+combination of supermartingales and hence a supermartingale. With $72$ grid
+points the per-frame cost is a few hundred floating-point operations and still
+$O(1)$ in $t$. In practice the mixture is what makes the method usable: an
+operator does not know how long a dumping event lasts at their site, and the
+grid spans everything from a ten-second burst to a permanent change.
+
+\subsubsection{The episode posterior}
+
+The recursion yields, at no extra cost, the posterior probability that the
+camera is inside an episode right now,
+\begin{equation}
+\label{eq:posterior}
+  \Pi_t \;=\; \frac{A_t}{A_t + Q_t} \;\in\; [0, 1],
+\end{equation}
+prior-averaged over the grid. This is a more useful thing to look at, and to
+transmit, than accumulated wealth: it is bounded, it is interpretable as a
+probability, and it is comparable between a camera installed last week and one
+that has been running for a month. \Cref{sec:layer3} uses it as the message the
+camera graph exchanges.
+
+\subsubsection{Numerics}
+
+Carrying \cref{eq:forward} in log space would need two \texttt{logaddexp} calls
+per grid point per frame. Instead we renormalise $(A_t, Q_t)$ to sum to one at
+every step and accumulate the logarithm of the scale factor, which is the
+standard HMM scaling trick: the two-state simplex cannot underflow, $\log W_t$
+is the accumulated log-scale, and the per-step work is a handful of vector
+operations on the grid.
 
 \subsection{Layer 3: the camera network}
 \label{sec:layer3}
 
 \paragraph{A predictable spatial prior.}
 Offenders return to the same lay-by and, when disturbed, move a few hundred
-metres and dump again, so evidence at one camera is genuine prior information
+metres and dump again, so an episode at one camera is genuine prior information
 about its neighbours. We build a graph over the fleet with edge weights
 combining spatial proximity and static-context similarity, and a two-layer
-message-passing network maps each camera's features --- its own log-wealth, three
-exponential moving averages of $-\log p$, static context and degree --- to a
-hazard $\rho_{i,t}$ and a stake scale $m_{i,t}$, the latter interpolating the
-power exponents towards the neutral bet, $\kappa_{\mathrm{eff}} = 1 - m(1-\kappa)$.
+message-passing network maps each camera's features to an onset hazard
+$\rho_{i,t}$ and a stake scale $m_{i,t}$.
+
+The features are where the episode posterior of \cref{eq:posterior} earns its
+place. A camera's log-wealth grows without bound and depends on how long it has
+been running, so aggregating raw wealth over a neighbourhood lets one
+long-installed camera dominate its neighbours regardless of what is happening
+there. $\Pi_{i,t}$ is bounded in $[0,1]$ and answers a question that means the
+same thing at every camera --- \emph{is there an episode here now?} --- so a mean
+over neighbours is meaningful. The network sees $\Pi_{i,t-1}$, the normalised
+log-wealth, three exponential moving averages of $-\log p$, static context and
+degree, all measurable at $t-1$.
 
 \begin{theorem}[Learned control cannot break the guarantee]
 \label{thm:predictable}
-Suppose $\rho_{i,t} \in [0,1]$ and $m_{i,t} \in [0,1]$ are $\Fcal_{t-1}$-measurable.
-Then \cref{thm:ville} holds verbatim for every camera, for any such choice.
+Suppose $\rho_{i,t} \in [0,1]$ and $m_{i,t} \in [0,1]$ are
+$\Fcal_{t-1}$-measurable, and the emission at an active state is
+$f_{\pi,\kappa_{\mathrm{eff}}}$ with
+$\kappa_{\mathrm{eff}} = 1 - m_{i,t}(1-\kappa)$. Then \cref{thm:episodic} holds
+verbatim for every camera, for any such choice.
 \end{theorem}
 
 \begin{proof}
-$\kappa_{\mathrm{eff}} = 1 - m_{i,t}(1-\kappa) \in (0,1]$ for any
-$m_{i,t}\in[0,1]$, so $f_{\kappa_{\mathrm{eff}}}$ is a betting function and
-$\mathbb{E}[f_{\kappa_{\mathrm{eff}}}(p_{i,t}) \mid \Fcal_{t-1}] \le 1$ because
-$\kappa_{\mathrm{eff}}$ is $\Fcal_{t-1}$-measurable and may be taken outside the
-conditional expectation. Likewise $w_t = \rho_{i,t} Q_{t-1}$ and
-$Q_t = (1-\rho_{i,t})Q_{t-1}$ are $\Fcal_{t-1}$-measurable and satisfy
-$Q_{t-1} = Q_t + w_t$ identically. The supermartingale step in \cref{thm:ville}
-is therefore unchanged.
+For $m_{i,t} \in [0,1]$ and $\kappa \in (0,1]$ we have
+$\kappa_{\mathrm{eff}} \in (0,1]$, so $f_{\kappa_{\mathrm{eff}}}$ is a betting
+function and by \cref{eq:dilated} so is its dilation. Since
+$\kappa_{\mathrm{eff}}$ and $\pi$ are $\Fcal_{t-1}$-measurable they may be taken
+outside the conditional expectation, giving
+$\mathbb{E}[f_{\pi,\kappa_{\mathrm{eff}}}(p_{i,t}) \mid \Fcal_{t-1}] \le 1$.
+Replacing $\rho$ by $\rho_{i,t}$ in \cref{eq:forward} leaves the transition
+probabilities out of each state summing to one, which is all the telescoping in
+\cref{thm:episodic} uses. The supermartingale step is therefore unchanged.
 \end{proof}
 
-This is worth stating plainly: the network can be badly trained, adversarially
-initialised or handed the wrong topology, and the false-alarm guarantee still
-holds. It can only affect detection delay. Training is offline on held-out
-simulated fleets, maximising post-change log-wealth growth --- the Kelly / GROW
-criterion \citep{kelly1956}, the standard proxy for minimising delay, since the
-delay is essentially the time for the wealth to climb from one to $1/\alpha$ at
-that rate --- with a penalty on wealth burned at unaffected cameras. The wealth
-recursion is differentiable, so gradients reach both heads.
+Stated plainly: the network can be badly trained, adversarially initialised or
+handed the wrong topology, and the false-alarm guarantee still holds. It can
+only affect detection delay. \Cref{tab:network} checks this empirically as well,
+since a theorem about the idealised object is not by itself evidence about the
+implementation.
+
+Training is offline on held-out simulated fleets, maximising post-change
+log-wealth growth --- the Kelly / GROW criterion \citep{kelly1956}, the standard
+proxy for minimising delay, since the delay is essentially the time for the
+wealth to climb from one to $1/\alpha$ at that rate --- with a penalty on wealth
+burned at unaffected cameras. The recursion is differentiable, so gradients
+reach both heads.
 
 \paragraph{Fleet decisions.}
 At a stopping time $\tau_i = \min(\text{first alarm}, T)$, optional stopping
 gives $\Einf[W_{i,\tau_i}] \le 1$, so each camera's wealth is a valid e-value.
-We apply e-BH \citep{wang2022ebh}: sort $E_{(1)} \ge \cdots \ge E_{(K)}$, reject
-the top $k^\star = \max\{k : E_{(k)} \ge K/(\alpha k)\}$. This controls FDR at
-$\alpha$ under \emph{arbitrary} dependence, which is what the setting demands:
-adjacent cameras share weather, lighting and traffic, and Layer 3 couples them
-deliberately. BH on p-values would need positive regression dependence or a
-Benjamini--Yekutieli $\log K$ penalty \citep{benjamini2001}; e-BH needs neither.
-A running maximum of the wealth would not be a valid e-value, which is why the
-reading is taken at a stopping time.
+We apply e-BH \citep{wang2022ebh}: sort $E_{(1)} \ge \cdots \ge E_{(K)}$ and
+reject the top $k^\star = \max\{k : E_{(k)} \ge K/(\alpha k)\}$. This controls
+FDR at $\alpha$ under \emph{arbitrary} dependence, which is what the setting
+demands: adjacent cameras share weather, lighting and traffic, and Layer 3
+couples them deliberately. BH on p-values would need positive regression
+dependence or a Benjamini--Yekutieli $\log K$ penalty
+\citep{benjamini2001}; e-BH needs neither. A running maximum of the wealth
+would not be a valid e-value, which is why the reading is taken at a stopping
+time.
 
 \section{Experimental protocol}
 \label{sec:protocol}
@@ -587,9 +744,10 @@ the null score distribution after calibration; scores follow an AR(1) with
 Student-$t$ innovations, so they are autocorrelated and heavy-tailed; a
 log-scale Ornstein--Uhlenbeck scene-activity process drives the backbone's
 false-positive rate and is deliberately \emph{not} part of the operator's obvious
-(clock, weather) taxonomy; dumping events are intermittent, with only half the
-frames in an event window anomalous and a ramp at each end; and events propagate
-along the camera graph with a lag. Defaults put the null score near $0.24$ and
+(clock, weather) taxonomy; dumping events are episodic and recurring, with
+a configurable number of episodes per camera separated by exponential gaps, only
+a fraction $\pi$ of the frames within an episode anomalous, and a ramp at each
+end; and episodes propagate along the camera graph with a lag. Defaults put the null score near $0.24$ and
 an anomalous frame near $0.75$, i.e.\ a per-frame signal weak enough that it
 must accumulate over time --- the regime where sequential methods earn their
 keep. \Cref{sec:limitations} states plainly what this does and does not
@@ -601,7 +759,9 @@ per-frame threshold on the \emph{same} conformal p-values SENTINEL-E consumes,
 which isolates optional stopping from calibration; CUSUM \citep{page1954};
 Shiryaev--Roberts \citep{roberts1966}; a parametric e-detector using the same
 changepoint mixture with a Gaussian likelihood-ratio bet instead of a conformal
-one; and a reimplementation of E-SHIFT \citep{khan2026eshift}. Every baseline is
+one; a reimplementation of E-SHIFT \citep{khan2026eshift}; and, as the ablation that
+isolates the paper's core, the same pipeline with the changepoint mixture in
+place of the episodic one. Every baseline is
 fitted on the same calibration set and evaluated on the same decorrelated
 betting grid, so none is helped or penalised by the frame-rate choice. Each is
 swept over its own knob and plotted at its realised false-alarm rate.
@@ -620,7 +780,7 @@ single-thread CPU on the machine that produced the statistical results.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\linewidth]{fig1_validity.pdf}
+  \resultfig{fig1_validity}{}
   \caption{Time-uniform false-alarm control, \ExpOneReps{} null streams per
   point in (a) and \ExpOneHorizonReps{} in (b). Open downward triangles mark
   operating points at which \emph{no} false alarm was observed; they are drawn
@@ -637,8 +797,8 @@ single-thread CPU on the machine that produced the statistical results.
   \label{fig:validity}
 \end{figure}
 
-\input{../results/tables/tab1_validity}
-\input{../results/tables/tab2_horizon}
+\inputtable{tab1_validity}
+\inputtable{tab2_horizon}
 
 \Cref{fig:validity} and \cref{tab:validity,tab:horizon} establish the basic
 claim. At every level swept, SENTINEL-E's realised false-alarm probability is at
@@ -663,7 +823,7 @@ cannot, is that the bound never degrades with the horizon.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\linewidth]{fig2_delay_far.pdf}
+  \resultfig{fig2_delay_far}{}
   \caption{Detection delay against realised false-alarm rate,
   \ExpTwoReps{} null and \ExpTwoReps{} post-change streams per operating point.
   Lower and further left is better; the operating region a municipality can live
@@ -672,7 +832,7 @@ cannot, is that the bound never degrades with the horizon.
   \label{fig:delayfar}
 \end{figure}
 
-\input{../results/tables/tab3_delay_far}
+\inputtable{tab3_delay_far}
 
 This is the comparison the paper exists to make, and to our knowledge no
 existing waste-surveillance paper reports its analogue. \Cref{fig:delayfar} and
@@ -686,12 +846,59 @@ finding: on streams with drift, heavy tails and autocorrelation, the classical
 procedures cannot be tuned into the operating region at all, because the
 assumptions their thresholds rest on do not hold.
 
+\subsection{Episodes versus changepoints}
+\label{sec:episodes}
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig5_episodes}{}
+  \caption{What mixing over episodes buys, and where it does not. With a single
+  episode the episodic and changepoint mixtures agree, which is what a strict
+  generalisation should do when its extra structure is absent; the gap opens as
+  events recur (a, b) and as the fraction of episode frames showing the act
+  falls (c).}
+  \label{fig:episodes}
+\end{figure}
+
+\inputtable{tab11_episodes}
+\inputtable{tab12_intermittency}
+
+This is the experiment that isolates the paper's main contribution.
+\Cref{fig:episodes} and \cref{tab:episodes,tab:intermittency} sweep the two axes
+along which an episode differs from a changepoint, holding everything else
+fixed --- same conformal layer, same betting family, same grid size, same
+$\alpha$ --- so the only difference is whether the mixture allows an episode to
+end.
+
+With one episode per camera the two agree: miss rates \EpiOneEpiMiss{} and
+\EpiOneCpMiss, censored delays \EpiOneEpiDelay\,s and \EpiOneCpDelay\,s. That is
+the outcome \cref{prop:generalisation} predicts and it is worth reporting as a
+result rather than omitting: the generalisation is close to free where the
+classical model is correct, the small residual cost being the prior mass the
+grid spends on episode-duration hypotheses that turn out to be unnecessary.
+
+With \EpiMaxCount{} episodes the gap opens. The changepoint mixture misses
+\EpiManyCpMiss{} of events against \EpiManyEpiMiss{} for the episodic process,
+and its censored delay is \EpiManyCpDelay\,s against \EpiManyEpiDelay\,s. The
+mechanism is the one \cref{sec:episodic} predicts: having bet on a change that
+has since reverted, the changepoint mixture carries that loss into the next
+episode, while the episodic process returns to its quiet state and accumulates
+across episodes. This is also the regime that matters operationally, since a
+dumping site that has been used once is used again.
+
+\Cref{tab:intermittency} varies the fraction $\pi$ of episode frames that show
+the act. At the hardest setting, $\pi = \EpiMinPi$, the miss rates are
+\EpiHardPiEpiMiss{} and \EpiHardPiCpMiss. Dilating the emission
+(\cref{eq:dilated}) treats an occluded frame as expected rather than as evidence
+against the episode, which is exactly the distinction that matters when a
+vehicle blocks the camera for half of a dumping event.
+
 \subsection{Robustness to calibration/deployment mismatch}
 \label{sec:shift}
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\linewidth]{fig3_shift.pdf}
+  \resultfig{fig3_shift}{}
   \caption{Shift in an \emph{unbinned} covariate (scene activity). Binning the
   context cannot help with a variable outside the taxonomy, so Mondrian
   calibration fails alongside the pooled baseline; conformalising the
@@ -699,8 +906,8 @@ assumptions their thresholds rest on do not hold.
   \label{fig:shift}
 \end{figure}
 
-\input{../results/tables/tab4_coverage}
-\input{../results/tables/tab5_activity}
+\inputtable{tab4_coverage}
+\inputtable{tab5_activity}
 
 Two kinds of mismatch, both routine between the week a calibration set is
 labelled and the month a camera is monitored. When deployment activity is
@@ -727,7 +934,7 @@ intend to monitor, and the abstention rate tells you whether it does.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\linewidth]{fig4_network.pdf}
+  \resultfig{fig4_network}{}
   \caption{Fleet of \NetCameras{} cameras over \NetFleets{} held-out fleets with
   events and \NetFleets{} all-null fleets. The learned spatial prior shortens
   delay; e-BH holds the false-discovery rate under the dependence the graph
@@ -735,7 +942,7 @@ intend to monitor, and the abstention rate tells you whether it does.
   \label{fig:network}
 \end{figure}
 
-\input{../results/tables/tab6_network}
+\inputtable{tab6_network}
 
 \Cref{tab:network} separates the two questions. The learned prior reduces delay
 from \NetNoGraphDelaySec\,s to \NetGnnDelaySec\,s
@@ -749,7 +956,7 @@ requires, since the modulation is predictable.
 \subsection{Computational cost}
 \label{sec:compute}
 
-\input{../results/tables/tab7_compute}
+\inputtable{tab7_compute}
 
 \Cref{tab:compute} settles the edge-deployment question by measurement. The
 reference backbone --- a depthwise-separable stack with
@@ -766,8 +973,8 @@ budget.
 \subsection{Checking the assumptions}
 \label{sec:diagnostics}
 
-\input{../results/tables/tab9_diagnostics}
-\input{../results/tables/tab10_pcoverage}
+\inputtable{tab9_diagnostics}
+\inputtable{tab10_pcoverage}
 
 The guarantee rests on two premises that are assumptions rather than theorems,
 and both are checkable from the calibration set alone --- so an operator can run
@@ -784,7 +991,7 @@ the DKW inflation would forfeit.
 \subsection{Ablation}
 \label{sec:ablation}
 
-\input{../results/tables/tab8_ablation}
+\inputtable{tab8_ablation}
 
 \Cref{tab:ablation} removes one decision at a time. \AblNumInvalid{} of
 \AblNumVariants{} variants fail to deliver the level they claim, and the pattern
@@ -796,7 +1003,12 @@ calibration ones --- betting every frame (\AblEveryFramePfa), pooled calibration
 delay. That is the right division of labour: a tuning knob should cost power, not
 correctness.
 
-Two rows deserve comment. The DKW inflation is valid but slow, at
+Three rows deserve comment. Replacing the episodic mixture with the changepoint
+mixture leaves validity intact (\AblChangepointPfa) --- both are exact
+supermartingales --- and costs power: \AblChangepointMiss{} of events missed
+against \AblFullMiss, with censored delay \AblChangepointDelay\,s against
+\AblFullDelay\,s, consistent with \cref{sec:episodes}. The DKW inflation is
+valid but slow, at
 \AblDkwDelay\,s against \AblFullDelay\,s for the exact Beta levels --- a factor
 of \AblDkwSpeedup{} --- which quantifies what \cref{thm:beta} buys. And the fixed-start product martingale
 (no changepoint prior) misses \AblPointPriorMiss{} of events: with the change
@@ -846,6 +1058,20 @@ explanation we believe is that reweighting corrects the marginal context
 distribution while a sequential test is broken by conditional miscalibration,
 but we have not established that this is the whole story.
 
+\paragraph{The episode model is a model.}
+The two-state chain of \cref{eq:episodic} assumes episodes with geometric
+durations and geometric gaps, and a constant within-episode anomalous fraction.
+Real dumping episodes are none of those exactly. The prior grid spans a wide
+range of each, and \cref{thm:episodic} holds whatever the truth is --- the
+guarantee never depends on the episode model being correct, only the power does.
+But we have not characterised how power degrades when the true duration
+distribution is far from anything on the grid, and a heavy-tailed duration
+distribution is the case we would expect to be worst. The generalisation also
+costs a little where it is not needed: with a single persistent change the
+episodic mixture is marginally behind the changepoint mixture
+(\cref{tab:episodes}), because the prior spends mass on episode-end hypotheses
+that never fire.
+
 \paragraph{Fleet scale and graph knowledge.}
 Experiments use \NetCameras{} cameras with a known planar geometry. Larger fleets
 are computationally trivial (\cref{tab:compute}), but we have not tested whether
@@ -856,25 +1082,35 @@ positions are poorly recorded would need to infer the graph.
 \label{sec:conclusion}
 
 Waste-surveillance systems are evaluated per clip and deployed per month, and
-the statistical consequences of that mismatch are larger than the field's
+the statistical consequence of that mismatch is larger than the field's
 reporting practice reveals: valid per-frame p-values, applied with the obvious
 stopping rule, produce a false alarm on essentially every multi-hour null stream
-we simulated. SENTINEL-E closes the gap by wrapping a frozen detector in three
-layers --- conformal calibration conditional on observable context and corrected
-by exact order-statistic levels, a changepoint-mixture betting e-process that
-retains its unreached prior mass and is therefore an exact supermartingale, and a
-graph-steered fleet layer whose learned component is predictable and so cannot
-damage the guarantee. It is the only method in our comparison whose realised
-false-alarm rate never exceeds its nominal one, it detects in
-\DelaySentinelSec\,s, and it costs \CostSentinelPct\% of the backbone it wraps.
+we simulated. Every entry in the 2026 IWDD contest reports per-clip $F_1$ and a
+timestamp error; none reports a rate over a monitoring horizon.
 
-Two directions follow. The first is empirical and is the one we would prioritise:
+Closing that gap turned out to require a new algorithm rather than an
+application of existing ones, because the sequential machinery is built for a
+persistent change and a dumping event is an episode. The episodic e-process
+mixes over when an episode starts \emph{and stops}, absorbs within-episode
+intermittency by dilating the bet, remains an exact supermartingale so Ville's
+inequality applies unchanged, costs $O(1)$ per frame where a mixture over active
+starts costs $O(t)$, and contains the changepoint mixture exactly as the
+boundary case $\eta = 0$. Around it, conformal calibration conditional on
+observable context makes the p-values honest, and a graph layer whose learned
+component enters only predictably shortens delay without touching the guarantee.
+The result is the only method in our comparison whose realised false-alarm rate
+never exceeds its nominal one, at \CostSentinelPct\% of the cost of the backbone
+it wraps.
+
+Two directions follow. The first is empirical and we would prioritise it:
 running this protocol on real per-frame scores from Mivia-IWDD and from an
-operational municipal deployment, which requires only that the backbone be run
-once over the corpus. The second is that the argument here is not specific to
-dumping. Any surveillance task evaluated on clips and deployed on streams ---
-marine pollution, wildlife monitoring, infrastructure inspection --- inherits the
-same optional-stopping problem and admits the same remedy.
+operational municipal deployment, which requires only that a backbone be run
+once over the corpus. The second is that neither the argument nor the algorithm
+is specific to dumping. Episodic, intermittent, recurring events observed
+through a continuously-monitored sensor describe wildlife poaching, illegal
+fishing, gas leaks and infrastructure faults as well; wherever a field evaluates
+on clips and deploys on streams, the same optional-stopping problem and the same
+remedy apply.
 
 \section*{Declarations}
 

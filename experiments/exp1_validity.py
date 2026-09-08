@@ -23,7 +23,7 @@ from experiments.runner import evaluate
 
 BASE_CFG = dict(T=60_000, calibration_regime="representative")
 REPS = 1_500          # alpha sweep: enough that a zero count is informative
-HORIZON_REPS = 300    # horizon sweep: the effect is enormous, precision is cheap
+HORIZON_REPS = 200    # horizon sweep: the effect is enormous, precision is cheap
 ALPHAS = [0.2, 0.1, 0.05, 0.02, 0.01, 0.005]
 HORIZONS = [15_000, 30_000, 60_000, 120_000, 240_000]
 

@@ -21,6 +21,7 @@ from experiments import (
     exp5_compute,
     exp6_ablation,
     exp7_diagnostics,
+    exp8_episodes,
 )
 
 
@@ -41,6 +42,7 @@ def main(quick: bool = False, only: str = ""):
         ("exp6", lambda: exp6_ablation.main(reps or exp6_ablation.REPS)),
         ("exp7", lambda: exp7_diagnostics.main(
             10 if quick else exp7_diagnostics.N_STREAMS)),
+        ("exp8", lambda: exp8_episodes.main(reps or exp8_episodes.REPS)),
     ]
     wanted = {s.strip() for s in only.split(",") if s.strip()}
     for name, fn in plan:

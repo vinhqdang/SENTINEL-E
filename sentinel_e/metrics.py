@@ -11,10 +11,20 @@ recall but
 ``ADD``
     average detection delay after the true onset of dumping, counted only on
     runs that alarm after the onset;
+``censored ADD``
+    the same, but a run that never alarms is charged the whole remaining
+    horizon rather than dropped;
 ``missed-detection rate``
     fraction of post-change segments that end before any alarm.
 
-The headline plot of the paper is ADD as a function of realised PFA (or of
+The distinction between the two delay metrics is not pedantry. Conditional
+``ADD`` is averaged over a *different subset of runs* for each method, so a
+method that misses the hard events looks fast --- it is being scored only on the
+easy ones. Whenever two methods differ in miss rate, and throughout this work
+they do, the censored figure is the comparable one and is what head-to-head
+claims should rest on.
+
+The headline plot of the paper is delay as a function of realised PFA (or of
 ARL0), obtained by sweeping each method's own tuning knob.
 """
 
@@ -77,6 +87,8 @@ class RunOutcome:
     add: float                    # mean detection delay (frames), detected only
     add_median: float
     add_se: float
+    add_censored: float           # misses charged the remaining horizon
+    add_censored_se: float
     miss_rate: float              # fraction of post-change segments never flagged
     pre_change_fa: float          # P(alarm before onset) on signal streams
 
@@ -114,6 +126,7 @@ def summarize_runs(
     if len(signal_alarms) != len(change_points):
         raise ValueError("signal_alarms and change_points must align")
     delays: List[int] = []
+    censored: List[int] = []
     misses = 0
     pre_fa = 0
     for a, nu in zip(signal_alarms, change_points):
@@ -123,12 +136,19 @@ def summarize_runs(
         d = detection_delay(arr, nu)
         if d is None:
             misses += 1
+            censored.append(int(arr.size - nu))   # charged the full remainder
         else:
             delays.append(d)
+            censored.append(d)
     n_signal = len(signal_alarms)
     add = float(np.mean(delays)) if delays else float("nan")
     add_median = float(np.median(delays)) if delays else float("nan")
     add_se = float(np.std(delays, ddof=1) / np.sqrt(len(delays))) if len(delays) > 1 else float("nan")
+    add_c = float(np.mean(censored)) if censored else float("nan")
+    add_c_se = (
+        float(np.std(censored, ddof=1) / np.sqrt(len(censored)))
+        if len(censored) > 1 else float("nan")
+    )
 
     return RunOutcome(
         n_null=n_null,
@@ -139,6 +159,8 @@ def summarize_runs(
         add=add,
         add_median=add_median,
         add_se=add_se,
+        add_censored=add_c,
+        add_censored_se=add_c_se,
         miss_rate=misses / n_signal if n_signal else float("nan"),
         pre_change_fa=pre_fa / n_signal if n_signal else float("nan"),
     )
@@ -149,9 +171,11 @@ def delay_far_curve(outcomes: Iterable[RunOutcome]) -> Dict[str, np.ndarray]:
     out = list(outcomes)
     pfa = np.array([o.pfa for o in out], dtype=float)
     add = np.array([o.add for o in out], dtype=float)
+    addc = np.array([o.add_censored for o in out], dtype=float)
     arl0 = np.array([o.arl0 for o in out], dtype=float)
     order = np.argsort(pfa)
-    return {"pfa": pfa[order], "add": add[order], "arl0": arl0[order]}
+    return {"pfa": pfa[order], "add": add[order],
+            "add_censored": addc[order], "arl0": arl0[order]}
 
 
 def fdr_power(rejected: Sequence[bool], truth: Sequence[bool]) -> Dict[str, float]:

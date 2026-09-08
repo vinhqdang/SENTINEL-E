@@ -76,14 +76,15 @@ def collect() -> Dict[str, str]:
             pts = [r for r in res[method]
                    if r["add"] is not None and np.isfinite(r["add"])
                    and r["pfa"] <= cap and r["miss_rate"] < 0.9]
-            return min(pts, key=lambda r: r["add"]) if pts else None
+            return min(pts, key=lambda r: r["add_censored"]) if pts else None
 
         se = best_at("SENTINEL-E")
         if se:
-            m["DelaySentinelSec"] = _fmt(se["add"] / FPS, 1)
+            m["DelaySentinelSec"] = _fmt(se["add_censored"] / FPS, 1)
+            m["DelaySentinelCondSec"] = _fmt(se["add"] / FPS, 1)
             m["DelaySentinelPfa"] = _fmt(se["pfa"], 3)
             m["DelaySentinelMiss"] = _fmt(se["miss_rate"], 2)
-            m["DelaySentinelCi"] = _fmt(1.96 * (se["add_se"] or 0) / FPS, 1)
+            m["DelaySentinelCi"] = _fmt(1.96 * (se["add_censored_se"] or 0) / FPS, 1)
         admissible, inadmissible = [], []
         for name in res:
             if name == "SENTINEL-E":
@@ -93,10 +94,11 @@ def collect() -> Dict[str, str]:
             if b:
                 key = name.replace("-", "").replace(" ", "").replace("$", "")
                 key = "".join(c for c in key if c.isalpha())
-                m[f"Delay{key}Sec"] = _fmt(b["add"] / FPS, 1)
+                m[f"Delay{key}Sec"] = _fmt(b["add_censored"] / FPS, 1)
                 m[f"Delay{key}Pfa"] = _fmt(b["pfa"], 3)
-                if se and b["add"] > 0:
-                    m[f"Speedup{key}"] = _fmt(b["add"] / se["add"], 1)
+                if se and se["add_censored"] > 0:
+                    m[f"Speedup{key}"] = _fmt(
+                        b["add_censored"] / se["add_censored"], 1)
         m["DelayNumInadmissible"] = str(len(inadmissible))
         m["DelayInadmissibleList"] = ", ".join(inadmissible) if inadmissible else "none"
     except FileNotFoundError:
@@ -114,6 +116,8 @@ def collect() -> Dict[str, str]:
                        ("residual", "Residual"), ("residual + LR wts", "ResidualLR")):
             r = next(x for x in act[worst] if x["variant"] == v)
             m[f"Shift{tag}Pfa"] = _fmt(r["pfa"], 3)
+            m[f"Shift{tag}Delay"] = _fmt(
+                None if r.get("add_censored") is None else r["add_censored"] / FPS, 1)
             m[f"Shift{tag}Miss"] = _fmt(r["miss_rate"], 2)
         cov = e3["coverage"]
         for reg, tag in (("representative", "Rep"), ("full_cycle_benign", "NoRain"),
@@ -176,6 +180,7 @@ def collect() -> Dict[str, str]:
         m["AblationAlpha"] = _fmt(e6["alpha"], 3)
         pairs = [
             ("SENTINEL-E (full)", "AblFull"),
+            ("changepoint mixture", "AblChangepoint"),
             ("bet on every frame", "AblEveryFrame"),
             ("raw calibration (not thinned)", "AblRawCal"),
             ("pooled conformal", "AblPooled"),
@@ -189,15 +194,42 @@ def collect() -> Dict[str, str]:
             if not r:
                 continue
             m[f"{tag}Pfa"] = _fmt(r["pfa"], 3)
-            m[f"{tag}Delay"] = _fmt(None if r["add"] is None else r["add"] / FPS, 1)
+            m[f"{tag}Delay"] = _fmt(
+                None if r.get("add_censored") is None else r["add_censored"] / FPS, 1)
             m[f"{tag}Miss"] = _fmt(r["miss_rate"], 2)
         m["AblLag"] = str(rows["SENTINEL-E (full)"]["lag"])
         full, dkw = rows.get("SENTINEL-E (full)"), rows.get("DKW inflation")
-        if full and dkw and full.get("add") and np.isfinite(full["add"]):
-            m["AblDkwSpeedup"] = _fmt(dkw["add"] / full["add"], 1)
+        if (full and dkw and full.get("add_censored")
+                and np.isfinite(full["add_censored"])):
+            m["AblDkwSpeedup"] = _fmt(
+                dkw["add_censored"] / full["add_censored"], 1)
         n_bad = sum(1 for r in e6["rows"] if r["pfa"] > e6["alpha"] + 1e-9)
         m["AblNumInvalid"] = str(n_bad)
         m["AblNumVariants"] = str(len(e6["rows"]))
+    except FileNotFoundError:
+        pass
+
+    # ---- Experiment 8 ---------------------------------------------------- #
+    try:
+        e8 = load_json("exp8_episodes")
+        m["EpiReps"] = str(e8["reps"])
+        counts = e8["episode_counts"]
+        m["EpiMaxCount"] = str(counts[-1])
+        for k, tag in ((counts[0], "One"), (counts[-1], "Many")):
+            for v, vt in (("episodic", "Epi"), ("changepoint", "Cp")):
+                r = next(x for x in e8["by_episodes"][str(k)] if x["variant"] == v)
+                m[f"Epi{tag}{vt}Miss"] = _fmt(r["miss_rate"], 3)
+                m[f"Epi{tag}{vt}Delay"] = _fmt(
+                    None if r["add_censored"] is None else r["add_censored"] / FPS, 1)
+                m[f"Epi{tag}{vt}Pfa"] = _fmt(r["pfa"], 3)
+        pis = e8["intermittency"]
+        m["EpiMinPi"] = _fmt(pis[-1], 2)
+        for v, vt in (("episodic", "Epi"), ("changepoint", "Cp")):
+            r = next(x for x in e8["by_intermittency"][str(pis[-1])]
+                     if x["variant"] == v)
+            m[f"EpiHardPi{vt}Miss"] = _fmt(r["miss_rate"], 3)
+            m[f"EpiHardPi{vt}Delay"] = _fmt(
+                None if r["add_censored"] is None else r["add_censored"] / FPS, 1)
     except FileNotFoundError:
         pass
 
