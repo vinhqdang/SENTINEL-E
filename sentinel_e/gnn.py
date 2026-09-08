@@ -296,7 +296,7 @@ def train_spatial_prior(
     epochs: int = 30,
     lr: float = 3e-3,
     pre_change_penalty: float = 0.35,
-    credit_window: int = 400,
+    credit_window: Optional[int] = None,
     config: Optional[SpatialPriorConfig] = None,
     seed: int = 0,
     verbose: bool = False,
@@ -407,17 +407,16 @@ def train_spatial_prior(
             mix = torch.softmax(w, dim=-1)
             posterior = (mix * a).sum(dim=-1)
 
-            # Reward wealth *early* after the onset, not at the horizon.  The
-            # detection delay is the time the wealth takes to reach 1/alpha, so
-            # a camera that ends the stream rich but climbed slowly is no use;
-            # scoring only the final wealth lets the controller trade delay for
-            # terminal wealth, which is the opposite of what we want.  Credit is
-            # therefore accumulated over a window that opens at each camera's
-            # own onset.
-            in_window = (
-                (t >= onset) & (t < onset + credit_window) & (affected > 0)
-            ).float()
-            credit = credit + (log_W * in_window).sum() / float(credit_window)
+            if credit_window is not None:
+                # Optional delay-targeted objective: credit wealth only over a
+                # window opening at each camera's own onset, rather than at the
+                # horizon.  Better motivated -- delay is the time the wealth
+                # takes to reach 1/alpha, so terminal wealth is the wrong thing
+                # to maximise -- and measurably worse in practice.
+                in_window = (
+                    (t >= onset) & (t < onset + credit_window) & (affected > 0)
+                ).float()
+                credit = credit + (log_W * in_window).sum() / float(credit_window)
 
             nlp = nlp_all[:, :, t].unsqueeze(-1)
             ema = decays * ema + (1.0 - decays) * nlp
@@ -431,7 +430,9 @@ def train_spatial_prior(
                 log_W = log_W.detach()
                 posterior = posterior.detach()
 
-        gain = credit / torch.clamp(affected.sum(), min=1.0)
+        gain = (
+            credit if credit_window is not None else (log_W * affected).sum()
+        ) / torch.clamp(affected.sum(), min=1.0)
         idle = ((torch.clamp(log_W, min=0.0)) * (1.0 - affected)).sum() / torch.clamp(
             (1.0 - affected).sum(), min=1.0
         )
