@@ -1,0 +1,14 @@
+\begin{table}[t]
+\centering
+\caption{Fleet of 12 cameras, 40 held-out fleets with events and 40 all-null fleets, $\alpha=0.01$ per camera and e-BH at level 0.1. The last two columns are the guarantee check: whatever the learned controller outputs, an all-null fleet must not alarm more often than the nominal level allows, because the modulation is predictable (Theorem 2).}
+\label{tab:network}
+\begin{tabular}{lrrrrrr}
+\toprule
+spatial prior & delay (s) & miss & e-BH power & e-BH FDR & null fleet PFA & null rejections \\
+\midrule
+independent detectors & 204.6 $\pm$ 37.9 & 0.19 & 0.816 & 0.000 & 0.000 & 0.000 \\
+heuristic spatial prior & 197.4 $\pm$ 37.4 & 0.18 & 0.821 & 0.000 & 0.000 & 0.000 \\
+learned GNN spatial prior & 215.4 $\pm$ 42.0 & 0.30 & 0.704 & 0.000 & 0.000 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}

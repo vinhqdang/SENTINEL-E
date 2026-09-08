@@ -231,11 +231,15 @@ where the episodic construction misses \EpiManyEpiMiss{}.
       earns its wealth, worth a factor of \AblDkwSpeedup{} in detection delay.
 
 \item \textbf{A learned spatial prior that provably cannot break the
-      guarantee} (\cref{thm:predictable}). Because the graph network's output
-      enters only as a predictable modulation of the episode hazard and the
-      betting stake, the wealth remains a supermartingale whatever the network
-      outputs --- even badly trained or handed the wrong topology. It can move
-      the delay and nothing else.
+      guarantee} (\cref{thm:predictable}) --- and the measurement showing it does
+      not help either. Because the network's output enters only as a predictable
+      modulation of the episode hazard and the betting stake, the wealth remains
+      a supermartingale whatever it outputs. Our experiments confirm the theorem
+      and refute the motivation: the learned controller leaves the false-alarm
+      guarantee exactly intact while \emph{reducing} power
+      (\cref{sec:network}). We report the construction because the invariance is
+      worth having --- it is what lets a learned component sit on top of a formal
+      guarantee at all --- and the result because it is what we found.
 
 \item \textbf{An evaluation that measures guarantees rather than asserting
       them}, over up to \ExpOneReps{} Monte-Carlo streams per operating point,
@@ -1039,14 +1043,50 @@ abstention rate tells you whether it does.
 
 \inputtable{tab6_network}
 
-\Cref{tab:network} separates the two questions. The learned prior reduces delay
-from \NetNoGraphDelaySec\,s to \NetGnnDelaySec\,s
-(\NetGnnDelayReduction\% lower) at e-BH power \NetGnnPower. Realised FDR is
-\NetGnnFdr{} against a target of \NetFdrLevel. The last column is the check
-that matters for \cref{thm:predictable}: on all-null fleets the learned
-controller's alarm rate is \NetGnnNullPfa, no worse than the
-\NetNoGraphNullPfa{} obtained without any graph at all --- as the theorem
-requires, since the modulation is predictable.
+\Cref{tab:network} separates the two questions, and they get different answers.
+
+\paragraph{The guarantee survives learned control, as claimed.}
+This is the part \cref{thm:predictable} is about, and it holds empirically as
+well as formally. On all-null fleets every controller --- none, hand-designed,
+and learned --- produces an alarm rate of \NetGnnNullPfa{} and an e-BH
+false-discovery rate of \NetGnnFdr{} against a target of \NetFdrLevel. The
+learned controller does this while actively \emph{hurting} power, which is the
+sharpest available demonstration of the theorem: a badly-behaved learned
+component degrades detection and leaves the false-alarm guarantee untouched,
+because it can only enter through a predictable modulation.
+
+\paragraph{The learned spatial prior does not earn its place.}
+We expected the graph to shorten delay and it does not. The hand-designed prior
+is indistinguishable from no graph at all --- \NetHeuristicDelaySec\,s against
+\NetNoGraphDelaySec\,s, a difference far inside the confidence interval, with
+power \NetHeuristicPower{} against \NetNoGraphPower. The learned controller is
+worse than both: delay \NetGnnDelaySec\,s and power \NetGnnPower.
+
+We made two attempts to fix this before concluding it. The first was
+initialisation: the controller's heads are set so that an untrained network
+reproduces the ungoverned detector exactly, rather than starting at half stake
+and a twenty-five-fold hazard, so training begins from the baseline and can only
+improve on it in-sample. The second was the objective: rewarding terminal
+log-wealth lets the controller trade delay for terminal wealth, so we replaced
+it with log-wealth credited over a window opening at each camera's own onset,
+which targets delay directly. Neither closed the gap, and under the second
+objective the training gain drifts slightly downward, which suggests the
+gradient signal is weak rather than that the optimiser is mistuned.
+
+Our reading is that the spatial signal in these streams is real but small
+relative to what a camera learns from its own p-values: an episode propagates to
+a neighbour with probability $0.45$ after a lag of order a thousand frames, by
+which time the neighbour's own evidence usually dominates. A denser fleet,
+stronger propagation, or a site layout where a single access road feeds many
+cameras might change that, and we have not tested those. What we can say is that
+on the configuration reported here the graph layer's value lies entirely in
+e-BH, not in the spatial prior.
+
+\paragraph{Fleet-level FDR control does earn its place.}
+e-BH recovers the affected cameras at power \NetNoGraphPower{} with a realised
+false-discovery rate of \NetNoGraphFdr{} against a target of \NetFdrLevel,
+under dependence induced by shared weather, shared lighting and correlated
+episodes. That is the part of Layer 3 we would keep.
 
 \subsection{Computational cost}
 \label{sec:compute}
@@ -1192,12 +1232,16 @@ timestamp error; none reports a rate over a monitoring horizon.
 Closing that gap turned out to require a new algorithm rather than an
 application of existing ones, because the sequential machinery is built for a
 persistent change and a dumping event is an episode. The episodic e-process
-mixes over when an episode starts \emph{and stops}, absorbs within-episode
-intermittency by dilating the bet, remains an exact supermartingale so Ville's
-inequality applies unchanged, costs $O(1)$ per frame, and contains the
-changepoint mixture exactly as the boundary case $\eta = 0$. Around it, conformal calibration conditional on
-observable context makes the p-values honest, and a graph layer whose learned
-component enters only predictably shortens delay without touching the guarantee.
+mixes over when an episode starts \emph{and stops}, remains an exact
+supermartingale so Ville's inequality applies unchanged, costs $O(1)$ per frame,
+and contains the changepoint mixture exactly as the boundary case
+$\eta = 0$. Around it, conformal calibration conditional on observable context
+makes the p-values honest, and e-BH turns per-camera evidence into fleet-wide
+decisions under arbitrary dependence. Two components did not survive contact
+with measurement and are reported rather than removed: the dilated emission for
+within-episode intermittency, which the betting mixture already handles, and the
+learned spatial prior, which leaves the guarantee exactly intact --- as its
+theorem promises --- while failing to improve detection.
 The result is the only method in our comparison that holds its nominal
 false-alarm level, at \CostSentinelPct\% of the cost of the backbone it wraps ---
 with a measured boundary, reported rather than elided, beyond which a shift in an
