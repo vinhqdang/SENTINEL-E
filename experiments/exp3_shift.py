@@ -35,9 +35,9 @@ from experiments.common import (
 )
 from experiments.runner import evaluate
 
-REPS = 250
-T = 60_000
-CHANGE_POINT = 30_000
+REPS = 200
+T = 90_000
+CHANGE_POINT = 20_000
 FPS = 25.0
 
 REGIMES = ["representative", "full_cycle_benign", "daytime_only"]
@@ -65,6 +65,8 @@ def _row(variant, opts, cfg, reps):
         "pfa_ci": list(out.pfa_ci),
         "arl0": out.arl0,
         "add": out.add,
+        "add_censored": out.add_censored,
+        "add_censored_se": out.add_censored_se,
         "miss_rate": out.miss_rate,
         "abstention": float(np.mean([t.abstention for t in null])),
     }
@@ -73,7 +75,9 @@ def _row(variant, opts, cfg, reps):
 def sweep_coverage(reps: int = REPS) -> Dict[str, List[Dict]]:
     res = {}
     for regime in REGIMES:
-        cfg = dict(T=T, calibration_regime=regime)
+        cfg = dict(T=T, calibration_regime=regime, n_episodes=4,
+                   event_length=800, episode_gap=6_000,
+                   event_intermittency=0.35)
         res[regime] = [_row(v, o, cfg, reps) for v, o in VARIANTS.items()]
         for r in res[regime]:
             print(f"  {regime:18s} {r['variant']:18s} PFA={r['pfa']:.3f} "
@@ -84,7 +88,9 @@ def sweep_coverage(reps: int = REPS) -> Dict[str, List[Dict]]:
 def sweep_activity(reps: int = REPS) -> Dict[str, List[Dict]]:
     res = {}
     for a in ACTIVITY_SHIFTS:
-        cfg = dict(T=T, calibration_regime="representative", activity_shift=a)
+        cfg = dict(T=T, calibration_regime="representative", activity_shift=a,
+                   n_episodes=4, event_length=800, episode_gap=6_000,
+                   event_intermittency=0.35)
         res[str(a)] = [_row(v, o, cfg, reps) for v, o in VARIANTS.items()]
         for r in res[str(a)]:
             print(f"  activity x{a:<4} {r['variant']:18s} PFA={r['pfa']:.3f} "
@@ -103,7 +109,7 @@ def make_figure(activity):
     for ax, key, ylabel, title in (
         (axes[0], "pfa", "realised false-alarm probability",
          "(a) validity under covariate shift"),
-        (axes[1], "add", "average detection delay (s)",
+        (axes[1], "add_censored", "censored detection delay (s)",
          "(b) the price paid for it"),
     ):
         for v in VARIANTS:
@@ -113,7 +119,7 @@ def make_figure(activity):
                 val = r[key]
                 y.append(np.nan if val is None or not np.isfinite(val) else val)
             y = np.array(y, dtype=float)
-            if key == "add":
+            if key == "add_censored":
                 y = y / FPS
             ax.plot(xs, y, label=v, color=colors[v], marker=markers[v])
         ax.set_xlabel("deployment / calibration activity ratio")
@@ -135,12 +141,12 @@ def make_tables(coverage, activity):
             rows.append([
                 REGIME_LABEL[regime] if i == 0 else "",
                 r["variant"], fmt(r["pfa"], 3), fmt_int(r["arl0"]),
-                fmt(None if r["add"] is None else r["add"] / FPS, 1),
+                fmt(None if r["add_censored"] is None else r["add_censored"] / FPS, 1),
                 fmt(r["miss_rate"], 2), fmt(r["abstention"], 2),
             ])
     write_latex_table(
         rows,
-        ["calibration coverage", "variant", "PFA", "ARL$_0$", "delay (s)",
+        ["calibration coverage", "variant", "PFA", "ARL$_0$", "cens. delay (s)",
          "miss", "abstain"],
         caption=(
             r"Calibration coverage against detection performance at $\alpha=0.01$ "
@@ -161,12 +167,12 @@ def make_tables(coverage, activity):
             rows.append([
                 f"$\\times {a}$" if i == 0 else "",
                 r["variant"], fmt(r["pfa"], 3), fmt_int(r["arl0"]),
-                fmt(None if r["add"] is None else r["add"] / FPS, 1),
+                fmt(None if r["add_censored"] is None else r["add_censored"] / FPS, 1),
                 fmt(r["miss_rate"], 2), fmt(r["abstention"], 2),
             ])
     write_latex_table(
         rows,
-        ["activity shift", "variant", "PFA", "ARL$_0$", "delay (s)", "miss", "abstain"],
+        ["activity shift", "variant", "PFA", "ARL$_0$", "cens. delay (s)", "miss", "abstain"],
         caption=(
             r"Shift in an \emph{unbinned} covariate (scene activity) at "
             r"$\alpha=0.01$. Binning the context cannot help with a variable "

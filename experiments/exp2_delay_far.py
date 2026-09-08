@@ -29,9 +29,11 @@ from experiments.common import (
 )
 from experiments.runner import evaluate
 
-BASE_CFG = dict(T=60_000, calibration_regime="representative")
-CHANGE_POINT = 30_000
-REPS = 300
+BASE_CFG = dict(T=90_000, calibration_regime="representative",
+                n_episodes=4, event_length=800, episode_gap=6_000,
+                event_intermittency=0.35)
+CHANGE_POINT = 20_000
+REPS = 200
 FPS = 25.0
 
 #: Each method's knob sweep, chosen to span the same realised-PFA range.
@@ -61,6 +63,8 @@ def run(reps: int = REPS) -> Dict[str, List[Dict]]:
                     "add": out.add,
                     "add_se": out.add_se,
                     "add_median": out.add_median,
+                    "add_censored": out.add_censored,
+                    "add_censored_se": out.add_censored_se,
                     "miss_rate": out.miss_rate,
                     "lag": null[0].lag,
                 }
@@ -97,8 +101,10 @@ def make_figure(results):
             if not pts:
                 continue
             x = np.array([r[xkey] for r in pts])
-            y = np.array([r["add"] for r in pts]) / FPS
-            se = np.array([r["add_se"] if r["add_se"] else 0.0 for r in pts]) / FPS
+            y = np.array([r["add_censored"] for r in pts]) / FPS
+            se = np.array(
+                [r["add_censored_se"] if r["add_censored_se"] else 0.0 for r in pts]
+            ) / FPS
             st = style_for(method)
             if xkey == "arl0":
                 order = np.argsort(x)
@@ -108,7 +114,7 @@ def make_figure(results):
                             color=st["color"], alpha=0.15, lw=0)
         ax.set_xscale("log")
         ax.set_xlabel(xlabel)
-        ax.set_ylabel("average detection delay (s)")
+        ax.set_ylabel("censored detection delay (s)")
         ax.set_title(title)
     axes[0].axvline(0.01, color="k", ls=":", lw=1.0)
     axes[0].text(0.011, axes[0].get_ylim()[1] * 0.95, r"$\alpha=0.01$",
@@ -126,24 +132,27 @@ def make_table(results):
     for method, rs in results.items():
         admissible = [r for r in _finite(rs) if r["pfa"] <= 0.05]
         if admissible:
-            best = min(admissible, key=lambda r: r["add"])
+            best = min(admissible, key=lambda r: r["add_censored"])
             rows.append([
                 method, fmt(best["knob"], 4), fmt(best["pfa"], 3),
                 fmt_int(best["arl0"]),
-                f"{fmt(best['add'] / FPS, 1)} $\\pm$ {fmt(1.96 * (best['add_se'] or 0) / FPS, 1)}",
+                fmt(best["add"] / FPS, 1),
+                f"{fmt(best['add_censored'] / FPS, 1)} $\\pm$ "
+                f"{fmt(1.96 * (best['add_censored_se'] or 0) / FPS, 1)}",
                 fmt(best["miss_rate"], 2),
             ])
         else:
             tight = min(rs, key=lambda r: r["pfa"])
             rows.append([
                 method, fmt(tight["knob"], 4), fmt(tight["pfa"], 3),
-                fmt_int(tight["arl0"]), "--", fmt(tight["miss_rate"], 2),
+                fmt_int(tight["arl0"]), "--", "--", fmt(tight["miss_rate"], 2),
             ])
     write_latex_table(
         rows,
-        ["method", "knob", "realised PFA", "ARL$_0$", "delay (s)", "miss rate"],
+        ["method", "knob", "realised PFA", "ARL$_0$", "cond. delay (s)",
+         "censored delay (s)", "miss rate"],
         caption=(
-            "Best achievable detection delay subject to a realised false-alarm "
+            "Best achievable censored detection delay subject to a realised false-alarm "
             "probability of at most 0.05 over a 40-minute stream "
             f"({REPS} null and {REPS} post-change streams per operating point). "
             "Rows showing ``--'' never reach that false-alarm rate at any setting "
@@ -151,10 +160,14 @@ def make_table(results):
         ),
         label="tab:delay_far",
         name="tab3_delay_far",
-        align="lrrrrr",
+        align="lrrrrrr",
         notes=(
-            r"Delay is reported in seconds at 25\,fps with a 95\% confidence "
-            r"interval, and is measured only on runs that detect the event."
+            r"Delays are in seconds at 25\,fps. The conditional delay averages "
+            r"only over runs that detect, so it is computed on a different "
+            r"subset for each method and flatters those that miss the hard "
+            r"events; the censored delay charges a miss the whole remaining "
+            r"horizon and is the comparable figure. Ranking and the 95\% "
+            r"interval use the censored delay."
         ),
     )
 
