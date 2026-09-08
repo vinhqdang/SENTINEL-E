@@ -5,6 +5,7 @@
 | perspective | — | — | — | **warn** | — | — |
 | eic (journal-fit) | — | — | — | — | **block** | **block** (repairable) |
 | da | — | — | **block** (repairable) | — | — | — |
+| domain | — | **block** (repairable) | — | — | — | — |
 
 ## perspective (D4 = warn)
 Trigger bound: "ethics, governance, or human-oversight implications are
