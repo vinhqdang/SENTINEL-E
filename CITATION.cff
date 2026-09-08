@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: >-
+  SENTINEL-E: Anytime-Valid Sequential Detection for Streaming Illegal Dumping
+  Surveillance
+abstract: >-
+  A three-layer wrapper that converts any frozen per-frame dumping detector into
+  a network of anytime-valid sequential detectors with time-uniform false-alarm
+  control. Its core is the episodic e-process, which mixes over episodes rather
+  than changepoints via a two-state Markov chain, remains an exact non-negative
+  supermartingale, and costs O(1) per frame.
+type: software
+authors:
+  - given-names: Quang-Vinh
+    family-names: Dang
+    email: vinh.dq4@buv.edu.vn
+    affiliation: British University Vietnam
+    orcid: https://orcid.org/0000-0002-3877-8024
+version: 1.0.0
+license: Apache-2.0
+repository-code: https://github.com/vinhqdang/SENTINEL-E
+keywords:
+  - anytime-valid inference
+  - e-values
+  - conformal prediction
+  - sequential change detection
+  - illegal dumping detection
