@@ -1,0 +1,202 @@
+{
+  "generated_at": "2026-09-08T14:14:09Z",
+  "python": "3.11.15",
+  "numpy": "2.4.6",
+  "payload": {
+    "by_episodes": {
+      "1": [
+        {
+          "variant": "episodic",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 508.5945945945946,
+          "add_se": 11.195203272426753,
+          "add_censored": 31432.27,
+          "add_censored_se": 2448.118562994425,
+          "miss_rate": 0.445
+        },
+        {
+          "variant": "changepoint",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 503.2,
+          "add_se": 11.418247870814474,
+          "add_censored": 30039.34,
+          "add_censored_se": 2435.3883786567767,
+          "miss_rate": 0.425
+        }
+      ],
+      "2": [
+        {
+          "variant": "episodic",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 2999.5549132947976,
+          "add_se": 409.37454131914893,
+          "add_censored": 12044.615,
+          "add_censored_se": 1661.1789876406363,
+          "miss_rate": 0.135
+        },
+        {
+          "variant": "changepoint",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 2988.0299401197603,
+          "add_se": 432.9120301781457,
+          "add_censored": 14045.005,
+          "add_censored_se": 1799.8747527404894,
+          "miss_rate": 0.165
+        }
+      ],
+      "4": [
+        {
+          "variant": "episodic",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 5140.040609137056,
+          "add_se": 624.435926450819,
+          "add_censored": 6112.94,
+          "add_censored_se": 831.0364075873441,
+          "miss_rate": 0.015
+        },
+        {
+          "variant": "changepoint",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 4162.259259259259,
+          "add_se": 538.3081340641278,
+          "add_censored": 7783.335,
+          "add_censored_se": 1179.32950412954,
+          "miss_rate": 0.055
+        }
+      ],
+      "8": [
+        {
+          "variant": "episodic",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 5494.305,
+          "add_se": 717.3697711099813,
+          "add_censored": 5494.305,
+          "add_censored_se": 717.3697711099813,
+          "miss_rate": 0.0
+        },
+        {
+          "variant": "changepoint",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 5412.70202020202,
+          "add_se": 724.13148885566,
+          "add_censored": 6058.575,
+          "add_censored_se": 849.3722785739624,
+          "miss_rate": 0.01
+        }
+      ]
+    },
+    "by_intermittency": {
+      "1.0": [
+        {
+          "variant": "episodic",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 220.665,
+          "add_se": 2.190170795983247,
+          "add_censored": 220.665,
+          "add_censored_se": 2.190170795983247,
+          "miss_rate": 0.0
+        },
+        {
+          "variant": "changepoint",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 218.69,
+          "add_se": 2.1692852492151213,
+          "add_censored": 218.69,
+          "add_censored_se": 2.1692852492151213,
+          "miss_rate": 0.0
+        }
+      ],
+      "0.7": [
+        {
+          "variant": "episodic",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 303.245,
+          "add_se": 5.644174733039847,
+          "add_censored": 303.245,
+          "add_censored_se": 5.644174733039847,
+          "miss_rate": 0.0
+        },
+        {
+          "variant": "changepoint",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 299.525,
+          "add_se": 5.51048765956618,
+          "add_censored": 299.525,
+          "add_censored_se": 5.51048765956618,
+          "miss_rate": 0.0
+        }
+      ],
+      "0.5": [
+        {
+          "variant": "episodic",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 859.835,
+          "add_se": 180.5959319643868,
+          "add_censored": 859.835,
+          "add_censored_se": 180.5959319643868,
+          "miss_rate": 0.0
+        },
+        {
+          "variant": "changepoint",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 834.47,
+          "add_se": 180.13918779766385,
+          "add_censored": 834.47,
+          "add_censored_se": 180.13918779766385,
+          "miss_rate": 0.0
+        }
+      ],
+      "0.35": [
+        {
+          "variant": "episodic",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 5140.040609137056,
+          "add_se": 624.435926450819,
+          "add_censored": 6112.94,
+          "add_censored_se": 831.0364075873441,
+          "miss_rate": 0.015
+        },
+        {
+          "variant": "changepoint",
+          "pfa": 0.0,
+          "arl0": 90000.0,
+          "add": 4162.259259259259,
+          "add_se": 538.3081340641278,
+          "add_censored": 7783.335,
+          "add_censored_se": 1179.32950412954,
+          "miss_rate": 0.055
+        }
+      ]
+    },
+    "reps": 200,
+    "T": 90000,
+    "alpha": 0.01,
+    "episode_counts": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "intermittency": [
+      1.0,
+      0.7,
+      0.5,
+      0.35
+    ]
+  }
+}

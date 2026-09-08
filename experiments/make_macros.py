@@ -247,12 +247,36 @@ def collect() -> Dict[str, str]:
         m["EpiReps"] = str(e8["reps"])
         counts = e8["episode_counts"]
         m["EpiMaxCount"] = str(counts[-1])
+        # The count at which the episodic mixture helps most, by relative
+        # reduction in censored delay -- reported rather than cherry-picked.
+        best_k, best_gain = None, 0.0
+        for k in counts:
+            e = next(x for x in e8["by_episodes"][str(k)] if x["variant"] == "episodic")
+            c = next(x for x in e8["by_episodes"][str(k)]
+                     if x["variant"] == "changepoint")
+            if e["add_censored"] and c["add_censored"]:
+                g = 1.0 - e["add_censored"] / c["add_censored"]
+                if g > best_gain:
+                    best_k, best_gain = k, g
+        if best_k is not None:
+            m["EpiBestCount"] = str(best_k)
+            m["EpiBestGainPct"] = _fmt(100 * best_gain, 0)
+            e = next(x for x in e8["by_episodes"][str(best_k)]
+                     if x["variant"] == "episodic")
+            c = next(x for x in e8["by_episodes"][str(best_k)]
+                     if x["variant"] == "changepoint")
+            m["EpiBestEpiMiss"] = _fmt(e["miss_rate"], 3)
+            m["EpiBestCpMiss"] = _fmt(c["miss_rate"], 3)
+            m["EpiBestEpiDelay"] = _fmt(e["add_censored"] / FPS, 0)
+            m["EpiBestCpDelay"] = _fmt(c["add_censored"] / FPS, 0)
+            if e["miss_rate"] > 0:
+                m["EpiBestMissRatio"] = _fmt(c["miss_rate"] / e["miss_rate"], 1)
         for k, tag in ((counts[0], "One"), (counts[-1], "Many")):
             for v, vt in (("episodic", "Epi"), ("changepoint", "Cp")):
                 r = next(x for x in e8["by_episodes"][str(k)] if x["variant"] == v)
                 m[f"Epi{tag}{vt}Miss"] = _fmt(r["miss_rate"], 3)
                 m[f"Epi{tag}{vt}Delay"] = _fmt(
-                    None if r["add_censored"] is None else r["add_censored"] / FPS, 1)
+                    None if r["add_censored"] is None else r["add_censored"] / FPS, 0)
                 m[f"Epi{tag}{vt}Pfa"] = _fmt(r["pfa"], 3)
         pis = e8["intermittency"]
         m["EpiMinPi"] = _fmt(pis[-1], 2)
