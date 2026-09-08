@@ -87,7 +87,7 @@ def run_spec(spec: Spec) -> Trace:
         # same betting grid.  Any remaining gap to the nominal level is the
         # slack in Ville's inequality itself, not a cost of the conformal layer.
         model = SentinelE(calibration="residual", weighted=False, alpha=spec.knob,
-                          restart=False)
+                          restart=opt.get("restart", True))
         model.fit(st.calibration_scores, st.calibration_context)
         bet = thin_indices(st.T, model.decorrelation_lag)
         rng = np.random.default_rng(spec.seed + 7_000_000)
@@ -110,7 +110,15 @@ def run_spec(spec: Spec) -> Trace:
             rho=opt.get("rho", 1e-3),
             prior_kind=opt.get("prior_kind", "geometric"),
             delta=opt.get("delta", 1e-3),
-            restart=False,
+            # Restarting after an alarm is the fair convention for a delay
+            # comparison: in deployment an operator investigates an alert and
+            # monitoring resumes, so one early false alarm must not disable a
+            # detector for the rest of the stream.  It leaves the null metrics
+            # untouched -- the probability of *at least one* false alarm, and
+            # the time to the first one, do not depend on what happens
+            # afterwards -- and it can only help a method that cries wolf, so
+            # the comparison is conservative in the baselines' favour.
+            restart=opt.get("restart", True),
             lag=opt.get("lag", None),
             thin_calibration=opt.get("thin_calibration", True),
             cc_mode=opt.get("cc_mode", "beta"),
@@ -142,17 +150,20 @@ def run_spec(spec: Spec) -> Trace:
         det = FixedThreshold(k_of_m=opt.get("k_of_m", (1, 1)))
         det.calibrate_threshold(st.calibration_scores, per_frame_rate=spec.knob)
     elif spec.method == "CUSUM":
-        det = CUSUM(delta=opt.get("delta_shift", 1.0), h=spec.knob, restart=False)
+        det = CUSUM(delta=opt.get("delta_shift", 1.0), h=spec.knob,
+                    restart=opt.get("restart", True))
         det.fit(st.calibration_scores)
     elif spec.method == "Shiryaev--Roberts":
-        det = ShiryaevRoberts(delta=opt.get("delta_shift", 1.0), A=spec.knob, restart=False)
+        det = ShiryaevRoberts(delta=opt.get("delta_shift", 1.0), A=spec.knob,
+                              restart=opt.get("restart", True))
         det.fit(st.calibration_scores)
     elif spec.method == "E-SHIFT":
-        det = EShiftDetector(alpha=spec.knob, restart=False)
+        det = EShiftDetector(alpha=spec.knob, restart=opt.get("restart", True))
         det.fit(st.calibration_scores)
     elif spec.method == "Parametric e-detector":
         det = ParametricEDetector(alpha=spec.knob, delta=opt.get("delta_shift", 1.0),
-                                  rho=opt.get("rho", 1e-3), restart=False)
+                                  rho=opt.get("rho", 1e-3),
+                                  restart=opt.get("restart", True))
         det.fit(st.calibration_scores)
     else:
         raise ValueError(f"unknown method {spec.method!r}")
