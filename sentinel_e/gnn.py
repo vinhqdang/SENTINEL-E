@@ -312,7 +312,9 @@ def train_spatial_prior(
                 affected[b, i] = 1.0
                 onset[b, i] = float(cp)
 
-    grid = torch.as_tensor(np.linspace(0.05, 0.95, n_grid), dtype=torch.float32)
+    grid = torch.as_tensor(
+        np.exp(np.linspace(np.log(0.02), np.log(0.95), n_grid)), dtype=torch.float32
+    )
     log_prior = torch.log(torch.full((n_grid,), 1.0 / n_grid))
     log_threshold = float(np.log(1.0 / alpha))
     decays = torch.as_tensor(cfg.ema_decays, dtype=torch.float32)
@@ -335,9 +337,11 @@ def train_spatial_prior(
             log_Q = log_Q + torch.log1p(-rho)
 
             p_t = torch.clamp(P[:, :, t], 1e-12, 1.0)
-            lam = torch.clamp(stake.unsqueeze(-1) * grid, 0.0, 1.0)
-            log_f = torch.log(
-                torch.clamp(1.0 + lam * (1.0 - 2.0 * p_t.unsqueeze(-1)), min=1e-12)
+            # Power betting, interpolated towards the neutral bet kappa = 1 by
+            # the predictable stake scale (see EDetector._modulated_kappa).
+            kappa = torch.clamp(1.0 - stake.unsqueeze(-1) * (1.0 - grid), 1e-4, 1.0)
+            log_f = torch.log(kappa) + (kappa - 1.0) * torch.log(
+                p_t.unsqueeze(-1)
             )
             log_R = torch.logaddexp(log_R, log_w.unsqueeze(-1)) + log_f
             log_W = torch.logaddexp(

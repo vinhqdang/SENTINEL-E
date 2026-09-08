@@ -59,8 +59,11 @@ class SentinelE:
     ----------
     alpha : float
         Time-uniform false-alarm level; the wealth threshold is ``1/alpha``.
+    cc_mode : {'beta', 'dkw', 'none'}
+        Calibration-conditional correction: exact order-statistic levels, the
+        additive DKW inflation, or none.
     delta : float
-        Calibration-conditional failure probability of the DKW inflation.  The
+        Calibration-conditional failure probability.  The
         end-to-end guarantee is ``alpha + delta``, so ``delta`` an order of
         magnitude below ``alpha`` costs little and buys honesty about the finite
         calibration set.
@@ -95,6 +98,7 @@ class SentinelE:
         shift_block: int = 400,
         n_context_bins: int = 8,
         min_bin: int = 100,
+        cc_mode: str = "beta",
         continuous_cols: Sequence[int] = (0,),
         categorical_cols: Sequence[int] = (1,),
     ) -> None:
@@ -114,6 +118,7 @@ class SentinelE:
         self.shift_block = int(shift_block)
         self.n_context_bins = int(n_context_bins)
         self.min_bin = int(min_bin)
+        self.cc_mode = str(cc_mode)
         self.continuous_cols = tuple(continuous_cols)
         self.categorical_cols = tuple(categorical_cols)
 
@@ -163,9 +168,9 @@ class SentinelE:
         if self.calibration == "residual":
             if calibration_context is None:
                 raise ValueError("residual calibration requires context features")
-            self.calibrator = ResidualConformalCalibrator(delta=self.delta).fit(
-                s, calibration_context
-            )
+            self.calibrator = ResidualConformalCalibrator(
+                delta=self.delta, mode=self.cc_mode
+            ).fit(s, calibration_context)
         elif self.calibration == "mondrian":
             if calibration_context is None:
                 raise ValueError("mondrian calibration requires context features")
@@ -177,6 +182,7 @@ class SentinelE:
             self.calibrator = MondrianConformalCalibrator(
                 taxonomy=tax,
                 delta=self.delta,
+                mode=self.cc_mode,
                 min_bin=self.min_bin,
                 weighted=self.weighted,
             ).fit(s, calibration_context)
@@ -185,7 +191,9 @@ class SentinelE:
                 s, calibration_context
             )
         else:
-            self.calibrator = ConformalCalibrator(delta=self.delta).fit(s)
+            self.calibrator = ConformalCalibrator(
+                delta=self.delta, mode=self.cc_mode
+            ).fit(s)
         return self
 
     @property
@@ -336,9 +344,9 @@ class FleetSentinelE:
         self,
         alpha: float = 0.01,
         delta: float = 1e-3,
-        calibration: str = "mondrian",
-        weighted: bool = True,
-        family: str = "linear",
+        calibration: str = "residual",
+        weighted: bool = False,
+        family: str = "power",
         n_grid: int = 16,
         rho: float = 1e-3,
         restart: bool = False,
