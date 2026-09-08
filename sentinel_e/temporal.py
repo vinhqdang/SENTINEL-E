@@ -29,7 +29,14 @@ __all__ = ["acf", "detrend", "estimate_decorrelation_lag", "thin_indices", "ljun
 
 
 def acf(x: np.ndarray, n_lags: int = 100) -> np.ndarray:
-    """Sample autocorrelation of ``x`` at lags ``0..n_lags`` (lag 0 equals one)."""
+    """Sample autocorrelation of ``x`` at lags ``0..n_lags`` (lag 0 equals one).
+
+    Computed through the Wiener--Khinchin theorem: the autocovariance is the
+    inverse transform of the periodogram, which costs one FFT instead of one
+    dot product per lag.  On the calibration sets used here (hundreds of
+    thousands of frames, two hundred lags) that is the difference between
+    seconds and milliseconds, and it is the dominant cost of fitting a camera.
+    """
     x = np.asarray(x, dtype=float).ravel()
     n = x.size
     if n < 2:
@@ -39,10 +46,11 @@ def acf(x: np.ndarray, n_lags: int = 100) -> np.ndarray:
     denom = float(np.dot(xc, xc))
     if denom <= 0:
         return np.concatenate([[1.0], np.zeros(n_lags)])
-    out = np.empty(n_lags + 1)
+    size = 1 << int(np.ceil(np.log2(2 * n - 1)))
+    f = np.fft.rfft(xc, size)
+    cov = np.fft.irfft(f * np.conjugate(f), size)[: n_lags + 1]
+    out = cov / denom
     out[0] = 1.0
-    for k in range(1, n_lags + 1):
-        out[k] = float(np.dot(xc[:-k], xc[k:])) / denom
     return out
 
 
@@ -88,6 +96,7 @@ def estimate_decorrelation_lag(
     """
     resid = detrend(calibration_scores, context)
     r = acf(resid, n_lags=max_lag)
+
     below = np.flatnonzero(np.abs(r[1:]) < target)
     lag = int(below[0] + 1) if below.size else int(max_lag)
     return int(max(lag, min_lag))

@@ -204,6 +204,7 @@ METHOD_STYLE: Dict[str, Dict[str, object]] = {
     "CUSUM":                 {"color": "#2e7d32", "marker": "D", "zorder": 3},
     "Shiryaev--Roberts":     {"color": "#7b1fa2", "marker": "^", "zorder": 3},
     "Parametric e-detector": {"color": "#795548", "marker": "P", "zorder": 3},
+    "E-SHIFT":               {"color": "#00838f", "marker": "*", "zorder": 3},
 }
 
 

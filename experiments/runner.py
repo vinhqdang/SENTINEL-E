@@ -17,6 +17,7 @@ import numpy as np
 from experiments.common import parallel_map
 from sentinel_e.baselines import (
     CUSUM,
+    EShiftDetector,
     FixedThreshold,
     ParametricEDetector,
     PValueThreshold,
@@ -112,6 +113,7 @@ def run_spec(spec: Spec) -> Trace:
             restart=False,
             lag=opt.get("lag", None),
             thin_calibration=opt.get("thin_calibration", True),
+            cc_mode=opt.get("cc_mode", "beta"),
         )
         if spec.method == "SENTINEL-E":
             model = SentinelE(alpha=spec.knob, **cal_kw)
@@ -138,6 +140,9 @@ def run_spec(spec: Spec) -> Trace:
         det.fit(st.calibration_scores)
     elif spec.method == "Shiryaev--Roberts":
         det = ShiryaevRoberts(delta=opt.get("delta_shift", 1.0), A=spec.knob, restart=False)
+        det.fit(st.calibration_scores)
+    elif spec.method == "E-SHIFT":
+        det = EShiftDetector(alpha=spec.knob, restart=False)
         det.fit(st.calibration_scores)
     elif spec.method == "Parametric e-detector":
         det = ParametricEDetector(alpha=spec.knob, delta=opt.get("delta_shift", 1.0),

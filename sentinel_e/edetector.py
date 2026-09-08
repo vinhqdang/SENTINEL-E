@@ -226,11 +226,29 @@ class EDetector:
             self._ons.reset()
 
     # -- betting factors -------------------------------------------------- #
+    @staticmethod
+    def _modulated_kappa(grid: np.ndarray, stake_scale: float) -> np.ndarray:
+        """Interpolate the power exponents towards the neutral bet.
+
+        ``kappa = 1`` gives ``f(p) = 1``, the neutral bet, so
+
+        .. math:: \\kappa_{\\mathrm{eff}} = 1 - s\\,(1 - \\kappa)
+
+        sweeps continuously from the grid's own aggressiveness at ``s = 1`` to
+        no bet at all at ``s = 0``.  Every intermediate value is a legitimate
+        betting function, so a *predictable* ``s`` supplied by the graph layer
+        preserves the supermartingale property exactly (Theorem 2).  This is the
+        power-family analogue of scaling a linear stake, and it matters because
+        linear stakes are bounded by ``1 + lambda <= 2`` and therefore extract
+        far less evidence from a very small p-value than a power bet does.
+        """
+        return np.clip(1.0 - stake_scale * (1.0 - grid), 1e-4, 1.0)
+
     def _log_factors(self, p: float, stake_scale: float) -> np.ndarray:
         """Log betting factors for the current grid at p-value ``p``."""
         p = float(min(max(p, 1e-12), 1.0))
         if self.family == "power":
-            kappa = self.mixture.grid
+            kappa = self._modulated_kappa(self.mixture.grid, stake_scale)
             return np.log(kappa) + (kappa - 1.0) * np.log(p)
         if self.family == "linear":
             lam = np.clip(self.mixture.grid * stake_scale, 0.0, 1.0)
@@ -333,7 +351,9 @@ class EDetector:
         """``(n, K)`` log betting factors, with zero rows wherever we abstain."""
         pc = np.clip(np.asarray(p, dtype=float), 1e-12, 1.0)[:, None]
         if self.family == "power":
-            kappa = self.mixture.grid[None, :]
+            kappa = self.mixture.grid[None, :]   # unmodulated: the batch path is
+                                                 # only used when no controller
+                                                 # supplies a stake scale
             log_f = np.log(kappa) + (kappa - 1.0) * np.log(pc)
         else:
             lam = np.clip(self.mixture.grid, 0.0, 1.0)[None, :]
