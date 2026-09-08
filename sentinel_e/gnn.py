@@ -275,7 +275,7 @@ def train_spatial_prior(
     degrees: Sequence[np.ndarray],
     change_points: Sequence[Sequence[Optional[int]]],
     alpha: float = 0.01,
-    n_grid: int = 16,
+    episode_prior=None,
     epochs: int = 30,
     lr: float = 3e-3,
     pre_change_penalty: float = 0.35,
@@ -305,6 +305,10 @@ def train_spatial_prior(
     ----------
     p_value_batches : sequence of ``(K, T)`` arrays
         Conformal p-values of the training fleets.
+    episode_prior : EpisodePrior, optional
+        The grid the deployed detector will use.  Training unrolls the same
+        episodic recursion over the same grid, so the controller is fitted
+        against the objective it will actually face rather than a proxy.
     adjacencies : sequence of ``(K, K)`` normalised adjacency matrices.
     change_points : sequence of length-``K`` sequences
         Event onsets per camera; ``None`` for unaffected cameras.
@@ -331,10 +335,16 @@ def train_spatial_prior(
                 affected[b, i] = 1.0
                 onset[b, i] = float(cp)
 
-    grid = torch.as_tensor(
-        np.exp(np.linspace(np.log(0.02), np.log(0.95), n_grid)), dtype=torch.float32
-    )
-    log_prior = torch.log(torch.full((n_grid,), 1.0 / n_grid))
+    # Product grid over betting aggressiveness and episode-end rate, matching
+    # the deployed EpisodePrior.
+    from sentinel_e.episodic import EpisodePrior
+
+    ep = episode_prior or EpisodePrior()
+    kap, et, _pi, lp = ep.grid()
+    grid = torch.as_tensor(kap, dtype=torch.float32)
+    eta = torch.as_tensor(et, dtype=torch.float32)
+    n_grid = int(grid.numel())
+    log_prior = torch.as_tensor(lp, dtype=torch.float32)
     log_threshold = float(np.log(1.0 / alpha))
     decays = torch.as_tensor(cfg.ema_decays, dtype=torch.float32)
     nlp_all = -torch.log(torch.clamp(P, min=1e-12))
@@ -342,41 +352,53 @@ def train_spatial_prior(
     history: List[float] = []
     for epoch in range(epochs):
         opt.zero_grad()
-        log_R = torch.full((B, K, n_grid), -30.0)
-        log_Q = torch.zeros(B, K)
+        # Episodic forward recursion, carried in scaled form exactly as the
+        # deployed detector carries it, so the controller is trained against the
+        # objective it will actually face.  a and q are renormalised at every step and
+        # the scale accumulates in log_scale, which keeps the two-state simplex
+        # from underflowing across a long unroll.
+        a = torch.zeros(B, K, n_grid)
+        q = torch.ones(B, K, n_grid)
+        log_scale = torch.zeros(B, K, n_grid)
         ema = torch.ones(B, K, 3)
         log_W = torch.zeros(B, K)
+        posterior = torch.zeros(B, K)
 
         for t in range(T):
-            feats = _torch_features(log_W, ema, S, D, t, log_threshold)
+            feats = _torch_features(log_W, posterior, ema, S, D, t, log_threshold)
             rho, stake = model(feats, A)
-            rho = torch.clamp(rho, cfg.rho_min, cfg.rho_max)
+            rho = torch.clamp(rho, cfg.rho_min, cfg.rho_max).unsqueeze(-1)
 
-            log_w = log_Q + torch.log(rho)
-            log_Q = log_Q + torch.log1p(-rho)
-
-            p_t = torch.clamp(P[:, :, t], 1e-12, 1.0)
+            p_t = torch.clamp(P[:, :, t], 1e-12, 1.0).unsqueeze(-1)
             # Power betting, interpolated towards the neutral bet kappa = 1 by
             # the predictable stake scale (see EDetector._modulated_kappa).
-            kappa = torch.clamp(1.0 - stake.unsqueeze(-1) * (1.0 - grid), 1e-4, 1.0)
-            log_f = torch.log(kappa) + (kappa - 1.0) * torch.log(
-                p_t.unsqueeze(-1)
+            kappa = torch.clamp(
+                1.0 - stake.unsqueeze(-1) * (1.0 - grid), 1e-4, 1.0
             )
-            log_R = torch.logaddexp(log_R, log_w.unsqueeze(-1)) + log_f
-            log_W = torch.logaddexp(
-                torch.logsumexp(log_R + log_prior, dim=-1), log_Q
-            )
+            f = torch.exp(torch.log(kappa) + (kappa - 1.0) * torch.log(p_t))
+
+            a_new = ((1.0 - eta) * a + rho * q) * f
+            q_new = eta * a + (1.0 - rho) * q
+            c = torch.clamp(a_new + q_new, min=1e-30)
+            a, q = a_new / c, q_new / c
+            log_scale = log_scale + torch.log(c)
+
+            w = log_prior + log_scale
+            log_W = torch.logsumexp(w, dim=-1)
+            mix = torch.softmax(w, dim=-1)
+            posterior = (mix * a).sum(dim=-1)
 
             nlp = nlp_all[:, :, t].unsqueeze(-1)
             ema = decays * ema + (1.0 - decays) * nlp
-            # Detach the recursion carriers periodically: the controller only
-            # needs short-horizon credit assignment and the full unroll would
-            # otherwise build a T-deep graph.
+            # Detach the carriers periodically: the controller only needs
+            # short-horizon credit assignment and a full unroll would otherwise
+            # build a T-deep graph.
             if (t + 1) % 200 == 0:
-                log_R = log_R.detach()
-                log_Q = log_Q.detach()
+                a, q = a.detach(), q.detach()
+                log_scale = log_scale.detach()
                 ema = ema.detach()
                 log_W = log_W.detach()
+                posterior = posterior.detach()
 
         gain = (log_W * affected).sum() / torch.clamp(affected.sum(), min=1.0)
         idle = ((torch.clamp(log_W, min=0.0)) * (1.0 - affected)).sum() / torch.clamp(
