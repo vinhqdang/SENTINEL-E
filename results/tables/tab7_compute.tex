@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{Single-thread CPU cost of each layer, measured on the machine that produced every other result in this paper. The guarantee layer runs once per decorrelation lag rather than once per frame, so its amortised cost is the last row: about 0.0016\% of the backbone it wraps. Deploying SENTINEL-E on hardware that already runs the detector in real time therefore requires no additional compute budget.}
+\label{tab:compute}
+\begin{tabular}{lrr}
+\toprule
+component & cost (ms) & \% of backbone \\
+\midrule
+frozen backbone (reference, 320$\times$320) & 36.84 & -- \\
+conformal p-value (per frame scored) & 0.00037 & 0.0010 \\
+e-detector step, 32-point mixture (per bet) & 0.0183 & 0.050 \\
+graph controller, 32 cameras (per camera-bet) & 0.0040 & 0.011 \\
+\textbf{SENTINEL-E, amortised per video frame} & \textbf{0.00061} & \textbf{0.0016} \\
+\bottomrule
+\end{tabular}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize The reference backbone is a depthwise-separable stack of the scale used on edge hardware, timed on the same CPU; it stands in for a deployed detector rather than reproducing a specific published one.\end{minipage}
+\end{table}

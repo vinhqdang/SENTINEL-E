@@ -116,7 +116,7 @@ def fleet_cost(sizes=(8, 16, 32, 64, 128), n_steps: int = 500) -> List[Dict]:
     """Cost of the graph controller per betting step as the fleet grows."""
     try:
         import torch
-        from sentinel_e.gnn import SpatialPriorGNN
+        from sentinel_e.gnn import N_FEATURES, SpatialPriorGNN
     except Exception:
         return []
     torch.set_num_threads(1)
@@ -126,7 +126,7 @@ def fleet_cost(sizes=(8, 16, 32, 64, 128), n_steps: int = 500) -> List[Dict]:
     for K in sizes:
         g = CameraGraph.from_positions(rng.uniform(0, 2000, size=(K, 2)), k_neighbors=4)
         a = g.normalized_adjacency()
-        feats = rng.normal(size=(K, 8))
+        feats = rng.normal(size=(K, N_FEATURES))
         t = _time(lambda: model.predict(feats, a), 30)
         rows.append({"n_cameras": K, "sec_per_step": t, "sec_per_camera_step": t / K})
     return rows

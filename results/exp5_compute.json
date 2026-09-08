@@ -1,0 +1,92 @@
+{
+  "generated_at": "2026-09-08T14:47:20Z",
+  "python": "3.11.15",
+  "numpy": "2.4.6",
+  "payload": {
+    "machine": {
+      "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+      "processor": "x86_64"
+    },
+    "backbone": {
+      "available": 1.0,
+      "seconds_per_frame": 0.036844474666577295,
+      "parameters": 1613633.0
+    },
+    "detector": [
+      {
+        "n_grid": 8,
+        "sec_per_step_vectorised": 7.396253999710704e-07,
+        "sec_per_step_streaming": 1.8793161666811405e-05
+      },
+      {
+        "n_grid": 16,
+        "sec_per_step_vectorised": 1.3412660833637347e-06,
+        "sec_per_step_streaming": 1.79717006667488e-05
+      },
+      {
+        "n_grid": 32,
+        "sec_per_step_vectorised": 2.601503566681155e-06,
+        "sec_per_step_streaming": 1.831747100004577e-05
+      },
+      {
+        "n_grid": 64,
+        "sec_per_step_vectorised": 5.84363028331912e-06,
+        "sec_per_step_streaming": 2.0922592999947182e-05
+      }
+    ],
+    "conformal": [
+      {
+        "n_calibration": 2000,
+        "fit_seconds": 0.002389444334160847,
+        "sec_per_frame": 3.423718699923484e-07
+      },
+      {
+        "n_calibration": 10000,
+        "fit_seconds": 0.010112296333924556,
+        "sec_per_frame": 3.517893699972774e-07
+      },
+      {
+        "n_calibration": 50000,
+        "fit_seconds": 0.09757378166614217,
+        "sec_per_frame": 3.7235222000163046e-07
+      }
+    ],
+    "fleet": [
+      {
+        "n_cameras": 8,
+        "sec_per_step": 0.0001354832666644749,
+        "sec_per_camera_step": 1.693540833305936e-05
+      },
+      {
+        "n_cameras": 16,
+        "sec_per_step": 0.00013446213330704874,
+        "sec_per_camera_step": 8.403883331690546e-06
+      },
+      {
+        "n_cameras": 32,
+        "sec_per_step": 0.00012865353334442868,
+        "sec_per_camera_step": 4.020422917013396e-06
+      },
+      {
+        "n_cameras": 64,
+        "sec_per_step": 0.00015801516662274177,
+        "sec_per_camera_step": 2.46898697848034e-06
+      },
+      {
+        "n_cameras": 128,
+        "sec_per_step": 0.00035159363336182043,
+        "sec_per_camera_step": 2.746825260639222e-06
+      }
+    ],
+    "end_to_end": {
+      "frames": 200000,
+      "video_seconds": 8000.0,
+      "calibration_fit_seconds": 0.12165212899708422,
+      "monitor_seconds": 0.12112438533222303,
+      "decorrelation_lag": 20,
+      "betting_steps": 10000,
+      "realtime_factor": 66047.80679016367,
+      "microseconds_per_frame": 0.6056219266611151
+    }
+  }
+}

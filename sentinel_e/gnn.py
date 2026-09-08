@@ -203,9 +203,11 @@ if _HAS_TORCH:
         fleet.
         """
 
-        def __init__(self, config: Optional[SpatialPriorConfig] = None) -> None:
+        def __init__(self, config: Optional[SpatialPriorConfig] = None,
+                     rho0: float = 1e-3) -> None:
             super().__init__()
             self.cfg = config or SpatialPriorConfig()
+            self.rho0 = float(rho0)
             h = self.cfg.hidden
             self.inp = nn.Linear(N_FEATURES, h)
             self.self_layers = nn.ModuleList(
@@ -215,8 +217,23 @@ if _HAS_TORCH:
                 [nn.Linear(h, h) for _ in range(self.cfg.n_layers)]
             )
             self.head = nn.Linear(h, 2)
-            nn.init.zeros_(self.head.bias)
+            # Initialise so that an untrained controller reproduces the
+            # no-graph detector exactly: full stake, and the same episode-onset
+            # hazard the ungoverned detector uses.  Starting from the default
+            # sigmoid midpoint instead puts the controller at half stake and a
+            # 25x hazard, which is far enough from the baseline that a short
+            # training run cannot recover and the "learned" variant loses to no
+            # graph at all -- a training artefact that looks like a finding.
             nn.init.normal_(self.head.weight, std=1e-2)
+            with torch.no_grad():
+                c = self.cfg
+                span = max(c.rho_max - c.rho_min, 1e-12)
+                frac = float(np.clip((rho0 - c.rho_min) / span, 1e-6, 1 - 1e-6))
+                self.head.bias[0] = float(np.log(frac / (1 - frac)))
+                sfrac = float(np.clip(
+                    (1.0 - c.stake_min) / max(c.stake_max - c.stake_min, 1e-12),
+                    1e-6, 1 - 1e-6))
+                self.head.bias[1] = float(np.log(sfrac / (1 - sfrac)))
 
         def forward(self, x: "torch.Tensor", a_hat: "torch.Tensor") -> Tuple["torch.Tensor", "torch.Tensor"]:
             """``x``: ``(B, K, F)``; ``a_hat``: ``(B, K, K)``."""
@@ -279,6 +296,7 @@ def train_spatial_prior(
     epochs: int = 30,
     lr: float = 3e-3,
     pre_change_penalty: float = 0.35,
+    credit_window: int = 400,
     config: Optional[SpatialPriorConfig] = None,
     seed: int = 0,
     verbose: bool = False,
@@ -316,9 +334,11 @@ def train_spatial_prior(
     if not _HAS_TORCH:  # pragma: no cover
         raise ImportError("train_spatial_prior requires PyTorch")
 
+    from sentinel_e.episodic import EpisodePrior
+
     torch.manual_seed(seed)
     cfg = config or SpatialPriorConfig()
-    model = SpatialPriorGNN(cfg)
+    model = SpatialPriorGNN(cfg, rho0=(episode_prior or EpisodePrior()).rho)
     opt = torch.optim.Adam(model.parameters(), lr=lr)
 
     P = torch.as_tensor(np.stack(p_value_batches), dtype=torch.float32)   # (B,K,T)
@@ -337,8 +357,6 @@ def train_spatial_prior(
 
     # Product grid over betting aggressiveness and episode-end rate, matching
     # the deployed EpisodePrior.
-    from sentinel_e.episodic import EpisodePrior
-
     ep = episode_prior or EpisodePrior()
     kap, et, _pi, lp = ep.grid()
     grid = torch.as_tensor(kap, dtype=torch.float32)
@@ -363,6 +381,7 @@ def train_spatial_prior(
         ema = torch.ones(B, K, 3)
         log_W = torch.zeros(B, K)
         posterior = torch.zeros(B, K)
+        credit = torch.zeros(())
 
         for t in range(T):
             feats = _torch_features(log_W, posterior, ema, S, D, t, log_threshold)
@@ -388,6 +407,18 @@ def train_spatial_prior(
             mix = torch.softmax(w, dim=-1)
             posterior = (mix * a).sum(dim=-1)
 
+            # Reward wealth *early* after the onset, not at the horizon.  The
+            # detection delay is the time the wealth takes to reach 1/alpha, so
+            # a camera that ends the stream rich but climbed slowly is no use;
+            # scoring only the final wealth lets the controller trade delay for
+            # terminal wealth, which is the opposite of what we want.  Credit is
+            # therefore accumulated over a window that opens at each camera's
+            # own onset.
+            in_window = (
+                (t >= onset) & (t < onset + credit_window) & (affected > 0)
+            ).float()
+            credit = credit + (log_W * in_window).sum() / float(credit_window)
+
             nlp = nlp_all[:, :, t].unsqueeze(-1)
             ema = decays * ema + (1.0 - decays) * nlp
             # Detach the carriers periodically: the controller only needs
@@ -400,7 +431,7 @@ def train_spatial_prior(
                 log_W = log_W.detach()
                 posterior = posterior.detach()
 
-        gain = (log_W * affected).sum() / torch.clamp(affected.sum(), min=1.0)
+        gain = credit / torch.clamp(affected.sum(), min=1.0)
         idle = ((torch.clamp(log_W, min=0.0)) * (1.0 - affected)).sum() / torch.clamp(
             (1.0 - affected).sum(), min=1.0
         )
