@@ -434,6 +434,10 @@ _NOT_MACROS = {
     "Bigl", "Bigr", "Big", "Bigg", "Biggl", "Biggr", "Biggm", "Bigm",
     "LaTeX", "TeX", "Roman", "Alph", "Huge", "Large", "Small",
     "IfFileExists", "Cref", "Crefformat",
+    # algpseudocode control sequences.
+    "Comment", "EndFor", "EndIf", "Require", "State", "For", "If", "Ensure",
+    "While", "EndWhile", "Return", "Function", "EndFunction", "Procedure",
+    "EndProcedure",
 }
 
 
