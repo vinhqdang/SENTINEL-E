@@ -79,6 +79,18 @@ def run_spec(spec: Spec) -> Trace:
     cfg = StreamConfig(**spec.cfg)
     sim = StreamSimulator(cfg, seed=spec.seed)
     st = sim.simulate_camera(change_point=spec.change_point)
+    return run_spec_on_stream(st, spec)
+
+
+def run_spec_on_stream(st, spec: Spec) -> Trace:
+    """Run one detector over an already-built stream (real or simulated).
+
+    Factored out of :func:`run_spec` so that real-data experiments
+    (``experiments/real_data/runner.py``) can reuse the exact same method
+    dispatch -- SENTINEL-E, every classical baseline, and the thinning
+    convention -- without duplicating it. Nothing below this line knows or
+    cares whether ``st.scores`` came from a simulator or a real backbone.
+    """
     opt = spec.opt
     nu = spec.change_point if spec.change_point is not None else 0
 
@@ -169,12 +181,21 @@ def run_spec(spec: Spec) -> Trace:
         raise ValueError(f"unknown method {spec.method!r}")
 
     # Baselines are given the same decorrelated betting grid, so no method is
-    # penalised or helped by the frame-rate choice.
+    # penalised or helped by the frame-rate choice. An explicit `lag` option
+    # (the real-data experiments always set one; see exp_r1_validity) is
+    # honoured directly rather than re-estimated, so every method in a given
+    # comparison sees literally the same grid SENTINEL-E was fixed to use --
+    # re-estimating here from a residual-conformal fit can hit a different
+    # (or, on real autocorrelated scores, an unusable) lag than the one the
+    # headline method was actually run at.
     if opt.get("thin_baselines", True):
-        model = SentinelE(calibration="residual", weighted=False)
-        model.fit(st.calibration_scores, st.calibration_context)
-        bet = thin_indices(st.T, model.decorrelation_lag)
-        lag = model.decorrelation_lag
+        if opt.get("lag") is not None:
+            lag = int(opt["lag"])
+        else:
+            model = SentinelE(calibration="residual", weighted=False)
+            model.fit(st.calibration_scores, st.calibration_context)
+            lag = model.decorrelation_lag
+        bet = thin_indices(st.T, lag)
     else:
         bet, lag = np.arange(st.T), 1
     fired = det.run(st.scores[bet])

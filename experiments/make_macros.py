@@ -407,6 +407,84 @@ def collect() -> Dict[str, str]:
     except FileNotFoundError:
         pass
 
+    # ---- Real-video corpora (dataset facts, not an experiment run) -------- #
+    try:
+        from sentinel_e.datasets.real_vad import (
+            clips_from_runs, load_real_vad,
+        )
+        from sentinel_e.temporal import acf
+
+        labels = {"ped2": "PedTwo", "avenue": "Avenue"}
+        for name, tag in labels.items():
+            c = load_real_vad(name)
+            m[f"Real{tag}Auc"] = _fmt(c.backbone_auc, 3)
+            m[f"Real{tag}NTrainVideos"] = str(len(c.train_boundaries))
+            m[f"Real{tag}NTestVideos"] = str(len(c.video_boundaries))
+            m[f"Real{tag}NEpisodes"] = str(len(c.episodes))
+            durs = [e - s for s, e in c.episodes]
+            m[f"Real{tag}EpiMedian"] = _int(np.median(durs))
+            m[f"Real{tag}EpiMin"] = _int(min(durs))
+            m[f"Real{tag}EpiMax"] = _int(max(durs))
+            r = acf(c.calibration_scores, n_lags=min(500, c.calibration_scores.size // 3))
+            below = np.flatnonzero(r < 0.05)
+            m[f"Real{tag}FullLag"] = _int(below[0] + 1) if below.size else f">{len(r)}"
+            neg_runs, lab_arr, _ids = clips_from_runs(c, include_calibration_as_negative=False)
+            neg = np.concatenate([neg_runs[i] for i in np.flatnonzero(lab_arr == 0)])
+            p95 = np.percentile(c.calibration_scores, 95)
+            m[f"Real{tag}ShiftFrac"] = _pct((neg > p95).mean(), 1)
+    except FileNotFoundError:
+        pass
+
+    # ---- Experiment R1 (real-video validity) ------------------------------ #
+    try:
+        er1 = load_json("exp_r1_validity")
+        m["RealReps"] = str(er1["reps"])
+        m["RealLagReps"] = str(er1["lag_reps"])
+        labels = {"ped2": "PedTwo", "avenue": "Avenue"}
+        for name, tag in labels.items():
+            m[f"Real{tag}Lag"] = str(er1["dataset_lag"][name])
+            rows = er1["alpha_sweep"][name]
+            at01 = next(r for r in rows if abs(r["alpha"] - 0.1) < 1e-12)
+            m[f"Real{tag}PfaHeadline"] = _fmt(at01["pfa"], 3)
+            m[f"Real{tag}MissHeadline"] = _fmt(at01["miss_rate"], 2)
+            m[f"Real{tag}CiHiHeadline"] = _fmt(at01["pfa_ci"][1], 3)
+            worst = max(rows, key=lambda r: r["pfa"])
+            m[f"Real{tag}WorstAlpha"] = _fmt(worst["alpha"], 2)
+            m[f"Real{tag}WorstPfa"] = _fmt(worst["pfa"], 3)
+    except FileNotFoundError:
+        pass
+
+    # ---- Experiment R2 (real-video delay-vs-FAR against baselines) -------- #
+    try:
+        er2 = load_json("exp_r2_delayfar")
+        m["RealDelayReps"] = str(er2["reps"])
+        labels = {"ped2": "PedTwo", "avenue": "Avenue"}
+        for name, tag in labels.items():
+            res = er2["results"][name]
+            se = min(
+                (r for r in res["SENTINEL-E"]
+                 if r["add"] is not None and np.isfinite(r["add"])
+                 and r["pfa"] <= 0.1 and r["miss_rate"] < 0.9),
+                key=lambda r: (r["pfa"], r["add_censored"]), default=None,
+            )
+            if se:
+                m[f"RealDelay{tag}Sec"] = _fmt(se["add_censored"] / FPS, 1)
+                m[f"RealDelay{tag}Pfa"] = _fmt(se["pfa"], 3)
+                m[f"RealDelay{tag}Miss"] = _fmt(se["miss_rate"], 2)
+            n_pass = 0
+            for method, rs in res.items():
+                if method == "SENTINEL-E":
+                    continue
+                usable = [r for r in rs
+                          if r["add_censored"] is not None
+                          and np.isfinite(r["add_censored"]) and r["miss_rate"] < 0.9]
+                if usable and min(r["pfa"] for r in usable) <= 0.1:
+                    n_pass += 1
+            m[f"RealDelay{tag}NBaselinesPass"] = str(n_pass)
+            m[f"RealDelay{tag}NBaselines"] = str(len(res) - 1)
+    except FileNotFoundError:
+        pass
+
     # ---- Experiment 7 ---------------------------------------------------- #
     try:
         e7 = load_json("exp7_diagnostics")

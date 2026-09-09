@@ -1,0 +1,66 @@
+[
+ {
+  "name": "Train001",
+  "n_frames": 120
+ },
+ {
+  "name": "Train002",
+  "n_frames": 150
+ },
+ {
+  "name": "Train003",
+  "n_frames": 150
+ },
+ {
+  "name": "Train004",
+  "n_frames": 180
+ },
+ {
+  "name": "Train005",
+  "n_frames": 180
+ },
+ {
+  "name": "Train006",
+  "n_frames": 150
+ },
+ {
+  "name": "Train007",
+  "n_frames": 150
+ },
+ {
+  "name": "Train008",
+  "n_frames": 120
+ },
+ {
+  "name": "Train009",
+  "n_frames": 180
+ },
+ {
+  "name": "Train010",
+  "n_frames": 180
+ },
+ {
+  "name": "Train011",
+  "n_frames": 180
+ },
+ {
+  "name": "Train012",
+  "n_frames": 180
+ },
+ {
+  "name": "Train013",
+  "n_frames": 180
+ },
+ {
+  "name": "Train014",
+  "n_frames": 150
+ },
+ {
+  "name": "Train015",
+  "n_frames": 150
+ },
+ {
+  "name": "Train016",
+  "n_frames": 150
+ }
+]

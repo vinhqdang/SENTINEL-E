@@ -1,0 +1,1 @@
+{"auc": 0.7634576315507161, "n_test": 2010, "n_anomalous": 1648, "note": "median-filtered (k=3, per-video) to suppress isolated single-frame flow outliers"}

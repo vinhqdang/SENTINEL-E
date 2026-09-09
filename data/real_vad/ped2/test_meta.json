@@ -1,0 +1,50 @@
+[
+ {
+  "name": "Test001",
+  "n_frames": 180
+ },
+ {
+  "name": "Test002",
+  "n_frames": 180
+ },
+ {
+  "name": "Test003",
+  "n_frames": 150
+ },
+ {
+  "name": "Test004",
+  "n_frames": 180
+ },
+ {
+  "name": "Test005",
+  "n_frames": 150
+ },
+ {
+  "name": "Test006",
+  "n_frames": 180
+ },
+ {
+  "name": "Test007",
+  "n_frames": 180
+ },
+ {
+  "name": "Test008",
+  "n_frames": 180
+ },
+ {
+  "name": "Test009",
+  "n_frames": 120
+ },
+ {
+  "name": "Test010",
+  "n_frames": 150
+ },
+ {
+  "name": "Test011",
+  "n_frames": 180
+ },
+ {
+  "name": "Test012",
+  "n_frames": 180
+ }
+]

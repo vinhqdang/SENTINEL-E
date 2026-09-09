@@ -1,0 +1,33 @@
+\begin{table}[t]
+\centering
+\caption{Validity and power against the betting-grid thinning lag at $\alpha=0.1$ (250 null and 250 signal streams per point). Real per-frame autocorrelation forces a narrow crossing between an uncontrolled false-alarm rate and near-total misses, not the wide margin the simulated streams left. The arrow marks the operating lag used by every other real-data result.}
+\label{tab:real_lag_sweep}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{lrrrc}
+\toprule
+dataset & lag & PFA & miss rate &  \\
+\midrule
+UCSD Ped2 & 1 & 1.000 & 0.000 &  \\
+UCSD Ped2 & 2 & 1.000 & 0.000 &  \\
+UCSD Ped2 & 3 & 0.948 & 0.008 &  \\
+UCSD Ped2 & 4 & 0.460 & 0.052 &  \\
+UCSD Ped2 & 5 & 0.000 & 0.328 & $\leftarrow$ \\
+UCSD Ped2 & 6 & 0.000 & 0.348 &  \\
+UCSD Ped2 & 7 & 0.000 & 0.660 &  \\
+UCSD Ped2 & 8 & 0.000 & 0.876 &  \\
+UCSD Ped2 & 10 & 0.000 & 1.000 &  \\
+UCSD Ped2 & 15 & 0.000 & 1.000 &  \\
+UCSD Ped2 & 20 & 0.000 & 1.000 &  \\
+CUHK Avenue & 1 & 1.000 & 0.000 &  \\
+CUHK Avenue & 2 & 0.980 & 0.024 &  \\
+CUHK Avenue & 3 & 0.864 & 0.120 &  \\
+CUHK Avenue & 5 & 0.844 & 0.224 &  \\
+CUHK Avenue & 6 & 0.508 & 0.484 &  \\
+CUHK Avenue & 7 & 0.016 & 0.860 & $\leftarrow$ \\
+CUHK Avenue & 8 & 0.008 & 0.920 &  \\
+CUHK Avenue & 10 & 0.000 & 0.968 &  \\
+CUHK Avenue & 15 & 0.000 & 1.000 &  \\
+CUHK Avenue & 20 & 0.000 & 1.000 &  \\
+\bottomrule
+\end{tabular}}
+\end{table}

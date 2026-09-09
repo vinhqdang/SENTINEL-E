@@ -1,0 +1,145 @@
+Every result in this subsection runs the identical, unmodified pipeline ---
+the same conformal calibration, the same episodic e-process, the same
+classical baselines --- on real per-frame scores rather than the simulator.
+Two classical video-anomaly-detection corpora supply continuous, real,
+frame-labelled surveillance footage: CUHK Avenue \citep{lu2013avenue}
+(\RealAvenueNTrainVideos{} training / \RealAvenueNTestVideos{} testing
+videos, a campus walkway, \RealAvenueNEpisodes{} distinct labelled anomalous
+runs across the test split) and UCSD Ped2 \citep{mahadevan2010ucsd}
+(\RealPedTwoNTrainVideos{} training / \RealPedTwoNTestVideos{} testing videos, a
+pedestrian walkway, \RealPedTwoNEpisodes{} runs, one per test video). Neither
+ships per-frame detector scores, so we compute our own: Farneback dense
+optical-flow magnitude \citep{farneback2003}, averaged per frame and denoised
+by a 3-frame per-video median filter (disclosed below), reaching frame-level
+ROC-AUC \RealPedTwoAuc{} on Ped2 and \RealAvenueAuc{} on Avenue --- a real,
+classical, unsupervised backbone chosen for transparency over benchmark
+leaderboard position; \cref{sec:related} situates it against 2025--2026
+methods that reach substantially higher AUC on the same pair. Streams are
+built by \texttt{build\_stream\_from\_clips} exactly as \cref{sec:problem}
+describes: calibration is the official training split, and the deployment
+stream is spliced from real labelled runs inside the test split, with no
+frame ever eligible for both roles.
+
+\paragraph{A real train/test shift, disclosed and quantified.} Before any
+sequential machinery runs, a direct quantile check on the raw scores shows
+that \RealPedTwoShiftFrac{}\% of Ped2's confirmed-normal test frames, and
+\RealAvenueShiftFrac{}\% of Avenue's, exceed the 95th percentile of the
+\emph{official training} split's score distribution --- both far above the
+5\% a well-calibrated split would show. Real footage across a train/test
+boundary is not, in this backbone's scores, the same distribution twice; this
+is a fact about the datasets and the backbone, not an artefact of splicing.
+
+\paragraph{Real autocorrelation, and why it is the headline finding here.}
+\Cref{thm:beta} needs the calibration draws to be close to i.i.d., which is
+why \cref{sec:layer1} thins the betting grid to the decorrelation lag. On the
+AR(1) simulator that lag is small and an anomalous episode lasts thousands of
+frames, so thinning costs almost nothing. Real Farneback-flow scores behave
+nothing like that: the sample autocorrelation of the official training split
+does not fall below 0.05 until lag \RealPedTwoFullLag{} on Ped2 and lag
+\RealAvenueFullLag{} on Avenue --- two orders of magnitude past anything the
+simulator produced --- while a real labelled episode lasts a median of
+\RealPedTwoEpiMedian{} frames on Ped2 (\RealPedTwoEpiMin{}--\RealPedTwoEpiMax{}) and
+just \RealAvenueEpiMedian{} on Avenue (\RealAvenueEpiMin{}--\RealAvenueEpiMax{}).
+Thinning to the fully rigorous lag leaves at most one or two betting
+opportunities inside a typical real event --- too few for any sequential test,
+at any $\alpha$, to detect reliably.
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig_r1_validity}{}
+  \caption{Real video: validity and power against the betting-grid lag
+  (\RealLagReps{} streams per point, $\alpha=0.1$), and time-uniform
+  false-alarm control at the fixed operating lag each dataset's sweep
+  selects. \textbf{(a)} Below a sharp threshold the realised false-alarm rate
+  (solid) is uncontrolled; above it the miss rate (dashed) is near one. The
+  two curves cross in a window of a handful of frames --- not the wide margin
+  the simulated streams left --- and the vertical line marks the lag used
+  everywhere else in this subsection. \textbf{(b)} PFA against the nominal
+  level at that fixed lag; open markers are zero-count outcomes plotted at
+  their 95\% Wilson upper limit.}
+  \label{fig:real-validity}
+\end{figure}
+
+\Cref{tab:real_lag_sweep} reports that crossing directly. Rather than pick
+the one lag that works best and report only it, every lag swept is shown,
+because the crossing itself --- not the single surviving operating point ---
+is the finding: real per-frame anomaly scores do not leave a comfortable
+region in which both validity and power hold simultaneously, the way the
+simulated AR(1) streams did throughout \cref{sec:validity,sec:episodes}. The
+lag this sweep selects (\RealPedTwoLag{} on Ped2, \RealAvenueLag{} on Avenue)
+is fixed once, from this diagnostic alone, and reused unchanged for every
+other real-data result in this subsection --- including the classical
+baselines in \cref{tab:real_delay_far}, which are thinned to the identical
+grid so that no method is favoured by a different frame rate.
+
+\inputtable{tabr1_lag_sweep}
+
+\Cref{tab:real_validity} sweeps $\alpha$ at that fixed lag.
+Ped2 controls its false-alarm rate at \RealPedTwoPfaHeadline{}
+(95\% CI upper end \RealPedTwoCiHiHeadline{}) at $\alpha=0.1$, with roughly two
+thirds of real spliced events detected (miss rate \RealPedTwoMissHeadline{}) --- a
+real, modest, but genuine detection window. Avenue is harder: its shorter,
+sparser real episodes leave a realised PFA of \RealAvenuePfaHeadline{} at the same
+$\alpha$, but a miss rate of \RealAvenueMissHeadline{}. At the loosest level swept,
+$\alpha=\RealAvenueWorstAlpha$, Avenue's realised rate (\RealAvenueWorstPfa{})
+still does not exceed the nominal level, so the guarantee itself is not
+violated anywhere on this grid; what real footage costs Avenue is power, not
+validity. This is not the failure the simulated experiments were built to
+surface, and it could not have been --- it is specific to what real
+optical-flow scores from real short-duration events actually look like, and
+\cref{sec:limitations} returns to it as the paper's central open problem
+rather than a number to look past.
+
+\inputtable{tabr1b_validity}
+
+\paragraph{Classical baselines on the same real streams.}
+\Cref{tab:real_delay_far} repeats the delay-vs-false-alarm-rate comparison of
+\cref{sec:delay} on real video, with every method --- SENTINEL-E, a fixed
+threshold, the per-frame p-value threshold, CUSUM, Shiryaev--Roberts, a
+parametric e-detector, and E-SHIFT --- thinned to the identical fixed lag
+\cref{tab:real_lag_sweep} selects for that dataset. SENTINEL-E is the only
+method that reaches the target false-alarm probability while still detecting
+most events on either dataset (\RealDelayPedTwoNBaselinesPass{} of
+\RealDelayPedTwoNBaselines{} classical baselines pass on Ped2,
+\RealDelayAvenueNBaselinesPass{} of \RealDelayAvenueNBaselines{} on Avenue).
+The per-frame p-value threshold --- consuming the identical conformal
+p-values SENTINEL-E does, differing only in the stopping rule --- never fires
+at any swept threshold on either dataset: no single real frame's score is
+extreme enough on its own to cross even a lenient per-frame significance
+level, which is exactly the argument \cref{sec:episodic} makes for accumulating
+evidence sequentially rather than thresholding one frame at a time, now
+confirmed on real scores rather than simulated ones. The classical
+parametric procedures (CUSUM, Shiryaev--Roberts, the parametric e-detector)
+reach a false-alarm probability near one at essentially every setting of
+their own tuning knob on real footage, consistent with \cref{sec:delay}'s
+simulated finding and for the same underlying reason: their pre-change model
+is a poor fit to real, heavy-tailed, strongly autocorrelated detector output.
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig_r2_delay_far}{}
+  \caption{Detection delay against realised false-alarm probability on real
+  video (\RealDelayReps{} null and signal streams per operating point), at
+  each dataset's fixed operating lag from \cref{fig:real-validity}. Curves
+  that never reach the plotted range detect too rarely, on real spliced
+  events, at any realised false-alarm rate their swept knob achieves.}
+  \label{fig:real-delayfar}
+\end{figure}
+
+\inputtable{tabr2_delay_far}
+
+\paragraph{What this subsection does and does not establish.} It establishes
+that the pipeline runs end to end on real, unmodified video --- real
+backbone, real train/test split, real spliced events, real classical
+baselines --- and that SENTINEL-E's time-uniform guarantee holds on both
+corpora at the lag each one's own diagnostic selects, which the naive
+classical alternatives do not manage on either. It does not establish that
+this backbone, at this frame rate, is adequate for deployment: Avenue's
+power is weak, the horizon tested is minutes rather than weeks, and the two
+datasets are pedestrian-walkway anomaly corpora, not illegal-dumping
+footage, because no continuously-labelled real dumping corpus of the
+required length is publicly available (\cref{sec:limitations}). What
+transfers is the pipeline and the diagnostic, not the specific power number:
+a stronger backbone with genuinely independent frame-to-frame errors, run
+through the identical calibration and episodic layers, is the direction most
+likely to close the gap \cref{tab:real_lag_sweep} exposes.
