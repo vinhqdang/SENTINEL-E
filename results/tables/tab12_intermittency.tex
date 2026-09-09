@@ -2,6 +2,7 @@
 \centering
 \caption{Effect of within-episode intermittency at four episodes per camera. $\pi$ is the fraction of frames inside an episode that actually show the act; smaller is harder. The dilated emission $(1-\pi) + \pi f$ treats the occluded frames as expected rather than as evidence against the episode.}
 \label{tab:intermittency}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{rlrrr}
 \toprule
 $\pi$ & mixture & PFA & cens. delay (s) & miss rate \\
@@ -15,5 +16,5 @@ $\pi$ & mixture & PFA & cens. delay (s) & miss rate \\
 0.35 & episodic & 0.000 & 244.5 & 0.015 \\
  & changepoint & 0.000 & 311.3 & 0.055 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}

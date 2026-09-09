@@ -24,7 +24,9 @@ from sentinel_e.metrics import (
     detection_delay,
     fdr_power,
     first_alarm_index,
+    per_episode_outcomes,
     run_length,
+    summarize_per_episode,
     summarize_runs,
     wilson_interval,
 )
@@ -133,6 +135,42 @@ def test_delay_far_curve_is_sorted_by_false_alarm_rate():
             summarize_runs([[False]] * 4, [[True]] * 2, [0] * 2)]
     curve = delay_far_curve(outs)
     assert np.all(np.diff(curve["pfa"]) >= 0)
+
+
+def test_per_episode_outcomes_scores_each_episode_independently():
+    # Stream-level scoring (summarize_runs' miss_rate) would call this a clean
+    # detection: an alarm follows the first onset at 100. Per-episode scoring
+    # reveals two of the three episodes were slept through.
+    episodes = [(100, 200), (300, 400), (500, 600)]
+    alarms = [False] * 700
+    alarms[650] = True
+    outs = per_episode_outcomes(alarms, episodes, horizon=700)
+    assert [o.missed for o in outs] == [True, True, False]
+    assert outs[2].delay == 150
+    agg = summarize_per_episode([outs])
+    assert agg["n_episodes"] == 3
+    assert agg["episode_miss_rate"] == pytest.approx(2 / 3)
+    assert agg["episode_add"] == pytest.approx(150.0)
+    # censored: the two misses are charged their own window's remainder
+    # (window 0: 300-100=200; window 1: 500-300=200; window 2: delay 150)
+    assert agg["episode_add_censored"] == pytest.approx((200 + 200 + 150) / 3)
+
+
+def test_per_episode_outcomes_detects_within_its_own_window():
+    episodes = [(0, 50), (100, 150)]
+    alarms = [False] * 200
+    alarms[20] = True    # inside episode 0's window
+    alarms[120] = True   # inside episode 1's window
+    outs = per_episode_outcomes(alarms, episodes, horizon=200)
+    assert [o.missed for o in outs] == [False, False]
+    assert outs[0].delay == 20
+    assert outs[1].delay == 20
+    agg = summarize_per_episode([outs])
+    assert agg["episode_miss_rate"] == 0.0
+
+
+def test_summarize_per_episode_handles_no_episodes():
+    assert summarize_per_episode([[]])["n_episodes"] == 0
 
 
 def test_fdr_power_counts():

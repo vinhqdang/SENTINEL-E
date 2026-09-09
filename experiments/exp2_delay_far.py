@@ -45,15 +45,31 @@ SWEEPS: Dict[str, List[float]] = {
     "Shiryaev--Roberts":     [1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8],
     "Parametric e-detector": [0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002],
     "E-SHIFT":               [0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002],
+    # The prior-art baseline announced in sec:protocol as "not a straw man":
+    # a faithful instance of the PFA-controlled non-partitioned e-detector of
+    # Saha & Ramdas (2026) by prop:generalisation, run through the identical
+    # conformal front end. It belongs in the same figure/table as every other
+    # baseline, not only in the episode-count ablation.
+    "Changepoint mixture":   [0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002],
+}
+
+#: Per-method options passed to ``evaluate`` beyond ``(method, knob)``.
+METHOD_OPTIONS: Dict[str, Dict] = {
+    "Changepoint mixture": {"detector": "changepoint"},
 }
 
 
 def run(reps: int = REPS) -> Dict[str, List[Dict]]:
     results: Dict[str, List[Dict]] = {}
     for method, knobs in SWEEPS.items():
+        # "Changepoint mixture" is SENTINEL-E's own pipeline with the detector
+        # swapped; the runner dispatches on the literal method name "SENTINEL-E".
+        eval_method = "SENTINEL-E" if method == "Changepoint mixture" else method
+        opts = METHOD_OPTIONS.get(method)
         rows = []
         for k in knobs:
-            out, null, _ = evaluate(method, k, BASE_CFG, reps, CHANGE_POINT)
+            out, null, _ = evaluate(eval_method, k, BASE_CFG, reps, CHANGE_POINT,
+                                    options=opts)
             rows.append(
                 {
                     "knob": k,
@@ -180,6 +196,9 @@ def make_table(results, cap: float = 0.05):
             if detects else "--",
             fmt(best["miss_rate"], 2),
         ])
+    passing = [r[0] for r in rows if not r[3].startswith("\\ding")]
+    exact_e_processes = {"SENTINEL-E", "Changepoint mixture"}
+    passing_classical = [m for m in passing if m not in exact_e_processes]
     write_latex_table(
         rows,
         ["method", "knob", "realised PFA", f"$\\le {cap}$?", "ARL$_0$",
@@ -189,11 +208,24 @@ def make_table(results, cap: float = 0.05):
             "achieves while still detecting most events, over a 60-minute stream "
             f"({REPS} null and {REPS} post-change streams per operating point). "
             "This is the operator's question: insisting on few false alarms, what "
-            "does the method cost in delay? SENTINEL-E is the only one that "
-            f"reaches a rate of at most {cap} at all. The classical procedures "
-            "can be made fast, but only at a false-alarm probability near one; "
-            "no setting of their knob moves them into the operating region. The "
-            "full trade-off is in Figure~\\ref{fig:delayfar}."
+            "does the method cost in delay? "
+            + (
+                f"Both exact e-processes tested (SENTINEL-E and the changepoint "
+                f"mixture it strictly contains, \\cref{{prop:generalisation}}) "
+                f"reach a rate of at most {cap}"
+                + (
+                    "; none of the classical or parametric baselines does"
+                    if not passing_classical else
+                    f"; {', '.join(passing_classical)} also does among the "
+                    "classical baselines"
+                )
+                if "Changepoint mixture" in passing else
+                f"SENTINEL-E is the only method here that reaches a rate of at "
+                f"most {cap}"
+            )
+            + ". The classical procedures can be made fast, but only at a "
+            "false-alarm probability near one for most settings of their knob; "
+            "the full trade-off is in Figure~\\ref{fig:delayfar}."
         ),
         label="tab:delay_far",
         name="tab3_delay_far",

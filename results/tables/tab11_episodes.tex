@@ -2,6 +2,7 @@
 \centering
 \caption{Mixing over episodes against mixing over changepoints, as the number of episodes at a camera grows ($\alpha=0.01$, 200 null and 200 post-change streams per row, episodes of 800 frames at intermittency $\pi=0.35$). With one episode the two agree, as a strict generalisation should; the gap opens as events recur, which is what a dumping hotspot does.}
 \label{tab:episodes}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{rlrrr}
 \toprule
 episodes & mixture & PFA & cens. delay (s) & miss rate \\
@@ -15,5 +16,5 @@ episodes & mixture & PFA & cens. delay (s) & miss rate \\
 8 & episodic & 0.000 & 219.8 & 0.000 \\
  & changepoint & 0.000 & 242.3 & 0.010 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}

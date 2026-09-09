@@ -118,6 +118,12 @@ def write_latex_table(
         r"\centering",
         f"\\caption{{{caption}}}",
         f"\\label{{{label}}}",
+        # Shrink to \linewidth only if the natural width overflows it, so a
+        # table that already fits is untouched; this is what keeps a wide
+        # table's columns (e.g. a headline miss-rate column) on the page
+        # instead of running off it, which \begin{tabular} alone does not
+        # guard against.
+        r"\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%",
         f"\\begin{{tabular}}{{{align}}}",
         r"\toprule",
         " & ".join(str(h) for h in header) + r" \\",
@@ -125,7 +131,7 @@ def write_latex_table(
     ]
     for r in rows:
         lines.append(" & ".join("" if v is None else str(v) for v in r) + r" \\")
-    lines += [r"\bottomrule", r"\end{tabular}"]
+    lines += [r"\bottomrule", r"\end{tabular}}"]
     if notes:
         lines.append(r"\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize " + notes + r"\end{minipage}")
     lines.append(r"\end{table}")
@@ -205,6 +211,7 @@ METHOD_STYLE: Dict[str, Dict[str, object]] = {
     "Shiryaev--Roberts":     {"color": "#7b1fa2", "marker": "^", "zorder": 3},
     "Parametric e-detector": {"color": "#795548", "marker": "P", "zorder": 3},
     "E-SHIFT":               {"color": "#00838f", "marker": "*", "zorder": 3},
+    "Changepoint mixture":   {"color": "#f9a825", "marker": "h", "zorder": 4},
 }
 
 

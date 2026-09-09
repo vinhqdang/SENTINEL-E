@@ -1,14 +1,16 @@
 \begin{table}[t]
 \centering
-\caption{Fleet of 12 cameras, 40 held-out fleets with events and 40 all-null fleets, $\alpha=0.01$ per camera and e-BH at level 0.1. The last two columns are the guarantee check: whatever the learned controller outputs, an all-null fleet must not alarm more often than the nominal level allows, because the modulation is predictable (Theorem 2).}
+\caption{Fleet of 12 cameras, 40 held-out fleets with events and 40 all-null fleets, $\alpha=0.01$ per camera and e-BH at level 0.1. The last two columns are the guarantee check: whatever the learned controller outputs, an all-null fleet must not alarm more often than the nominal level allows, because the modulation is predictable (\cref{thm:predictable}). Both delay statistics are shown because the miss rates differ across controllers: the conditional column is averaged over each controller's own detected events and therefore flatters whichever one skips the hard ones, which is exactly the pitfall \cref{sec:problem} identifies. The censored column is the comparable one.}
 \label{tab:network}
-\begin{tabular}{lrrrrrr}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{lrrrrrrr}
 \toprule
-spatial prior & delay (s) & miss & e-BH power & e-BH FDR & null fleet PFA & null rejections \\
+spatial prior & cond.\ delay (s) & censored delay (s) & miss & e-BH power & e-BH FDR & null fleet PFA & null rejections \\
 \midrule
-independent detectors & 204.6 $\pm$ 37.9 & 0.19 & 0.816 & 0.000 & 0.000 & 0.000 \\
-heuristic spatial prior & 197.4 $\pm$ 37.4 & 0.18 & 0.821 & 0.000 & 0.000 & 0.000 \\
-learned GNN spatial prior & 215.4 $\pm$ 42.0 & 0.30 & 0.704 & 0.000 & 0.000 & 0.000 \\
+independent detectors & 191.9 $\pm$ 30.9 & 343.3 $\pm$ 50.0 & 0.17 & 0.827 & 0.000 & 0.000 & 0.000 \\
+heuristic spatial prior & 187.7 $\pm$ 30.7 & 335.0 $\pm$ 49.4 & 0.17 & 0.832 & 0.000 & 0.000 & 0.000 \\
+learned GNN spatial prior & 201.1 $\pm$ 33.3 & 435.3 $\pm$ 57.5 & 0.26 & 0.745 & 0.000 & 0.000 & 0.000 \\
+learned GNN, windowed objective & 248.6 $\pm$ 35.0 & 462.7 $\pm$ 52.3 & 0.28 & 0.724 & 0.000 & 0.000 & 0.000 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}

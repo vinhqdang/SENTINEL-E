@@ -1,7 +1,8 @@
 \begin{table}[t]
 \centering
-\caption{Marginal calibration of the deployment p-values on null streams (191,890 betting instants pooled over 60 cameras). This checks Layer 1 in isolation: the p-values must be super-uniform before any betting takes place. The smallest attainable p-value is 0.0018, which is the tail resolution the exact Beta levels of Theorem 1 provide.}
+\caption{Marginal calibration of the deployment p-values on null streams (191,890 betting instants pooled over 60 cameras). This checks Layer 1 in isolation: the p-values must be super-uniform before any betting takes place. The smallest attainable p-value is 0.0018, which is the tail resolution the exact Beta levels of \cref{thm:beta} provide.}
 \label{tab:pcoverage}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{rrc}
 \toprule
 nominal level $u$ & realised $P(p \le u)$ & super-uniform? \\
@@ -12,5 +13,5 @@ nominal level $u$ & realised $P(p \le u)$ & super-uniform? \\
 0.25 & 0.2133 & \checkmark \\
 0.50 & 0.4547 & \checkmark \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}

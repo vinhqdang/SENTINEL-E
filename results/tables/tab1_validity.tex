@@ -2,6 +2,7 @@
 \centering
 \caption{Time-uniform false-alarm control on 40-minute null streams (1500 Monte-Carlo streams per level). SENTINEL-E and the per-frame p-value threshold consume identical conformal p-values; only the stopping rule differs. ARL$_0$ is censored at the 60{,}000-frame horizon.}
 \label{tab:validity}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{lrrrrrr}
 \toprule
 $\alpha$ & PFA & 95\% CI & PFA (oracle $p$) & ARL$_0$ & PFA & ARL$_0$ \\
@@ -13,6 +14,6 @@ $\alpha$ & PFA & 95\% CI & PFA (oracle $p$) & ARL$_0$ & PFA & ARL$_0$ \\
 0.010 & 0.000 & [0.000, 0.003] & 0.001 & 60,000 & 0.998 & 11,155 \\
 0.005 & 0.000 & [0.000, 0.003] & 0.000 & 60,000 & 0.865 & 27,900 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Columns 2--3 and 5: SENTINEL-E; column 4 is the same e-detector fed exactly uniform p-values, isolating the slack in Ville's inequality from the conservatism of the conformal layer. Columns 6--7: per-frame p-value threshold. PFA is the probability that a null stream raises at least one alarm.\end{minipage}
 \end{table}

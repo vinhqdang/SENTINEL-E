@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\caption{Stream-level miss rate (any alarm after the first onset) against the per-episode miss rate (each episode's own detection window scored independently, 200 streams per row). The two columns diverge sharply as episodes accumulate: a stream can look perfectly detected while most of its individual episodes are missed, which is exactly what the stream-level statistic used elsewhere in this paper cannot show.}
+\label{tab:per_episode}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{rlrrr}
+\toprule
+episodes & mixture & stream miss & per-episode miss & per-episode cens.\ delay (s) \\
+\midrule
+1 & episodic & 0.455 & 0.455 & 1285.9 \\
+ & changepoint & 0.440 & 0.440 & 1244.0 \\
+2 & episodic & 0.185 & 0.593 & 952.4 \\
+ & changepoint & 0.205 & 0.603 & 1001.1 \\
+4 & episodic & 0.015 & 0.754 & 628.3 \\
+ & changepoint & 0.050 & 0.762 & 629.5 \\
+8 & episodic & 0.000 & 0.873 & 322.5 \\
+ & changepoint & 0.000 & 0.873 & 320.5 \\
+\bottomrule
+\end{tabular}}
+\end{table}
