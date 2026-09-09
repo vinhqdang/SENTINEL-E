@@ -58,7 +58,7 @@
 \newcommand{\PFA}{\mathrm{PFA}}
 
 \title{\textbf{SENTINEL-E}: Anytime-Valid Sequential Detection for\\
-       Streaming Illegal Dumping Surveillance}
+       Streaming Visual Anomaly Surveillance}
 
 \author{%
   Quang-Vinh Dang\,\orcidlink{0000-0002-3877-8024}\\[2pt]
@@ -72,72 +72,70 @@
 
 \begin{abstract}
 \noindent
-Computer-vision systems for illegal dumping are trained and evaluated as
-fixed-sample-size classifiers: given a short clip, emit one dumping /
-no-dumping decision and report clip-level precision and recall. The ten-team
-2026 IWDD contest on the Mivia-IWDD benchmark follows this protocol, reporting
-per-clip precision, recall and $F_1$ alongside a notification-delay measure and
-a per-clip ROC analysis --- none of it a rate over a continuous monitoring
-horizon. Deployment does not look like that. A municipal camera runs for
-weeks, and the
-quantity an operator manages is the number of false alarms accumulated over the
-whole monitoring period, because each one costs an enforcement dispatch.
-Alerting the first time a threshold is crossed on a continuous stream is
-optional stopping, and it inflates the true false-alarm rate by an amount
-clip-level evaluation cannot show. We measure it and find it severe: a per-frame
-rule fed p-values that are individually valid at the $1\%$ level raises at least
-one false alarm on \ValidityPfaPvaluePct\% of $40$-minute null streams.
+Streaming visual-anomaly systems --- illegal dumping among them --- are
+trained and evaluated as fixed-sample-size classifiers: given a short clip,
+emit one decision and report clip-level precision and recall. Deployment does
+not look like that: a municipal camera runs for weeks, and what an operator
+manages is the number of false alarms accumulated over the whole monitoring
+period, because each one costs a dispatch. Alerting the first time a
+per-frame threshold is crossed on a continuous stream is optional stopping,
+and it inflates the true false-alarm rate by an amount clip-level evaluation
+cannot show: a per-frame rule fed p-values individually valid at the $1\%$
+level raises at least one false alarm on \ValidityPfaPvaluePct\% of
+$40$-minute null streams.
 %
-Our main contribution is an algorithm, not a combination of existing ones.
-Every anytime-valid sequential change detector in use --- CUSUM, Shiryaev--Roberts,
-e-detectors, and the recent non-partitioned e-detectors --- models a
-\emph{persistent} switch from one law to another that lasts forever; the
-finite-duration case has a classical literature of its own
-(transient and intermittent change detection), but not one built as a
-time-uniform e-process. A dumping event is an \emph{episode}: it begins,
-flickers because the offender is intermittently occluded, ends, and recurs
-weeks later at the same site. We replace the mixture over changepoint
-locations with a mixture over episodes, realised as a two-state Markov chain
-whose forward recursion collapses a sum over $2^t$ trajectories into two
-numbers. The resulting \emph{episodic e-process} is an exact non-negative
-supermartingale, so Ville's inequality gives time-uniform false-alarm control
-with no new machinery; it costs $O(1)$ per frame, where a general mixture over
-active starts costs $O(t)$; and it contains the changepoint mixture exactly as
-the boundary case in which episodes never end, so it is a strict
-generalisation, within the anytime-valid e-process family, along an axis that
-family has left fixed at infinity. The recursion also returns, for free, the
-posterior probability that a camera is inside an episode --- a bounded,
-cross-camera-comparable quantity that becomes the message a camera graph
-exchanges.
+Our contribution is an algorithm. Every anytime-valid sequential change
+detector in use --- CUSUM, Shiryaev--Roberts, e-detectors, non-partitioned
+e-detectors --- models a switch that, once it happens, lasts forever. A
+dumping event is an \emph{episode}: it begins, flickers under intermittent
+occlusion, ends, and recurs weeks later at the same site. We replace the
+mixture over changepoint locations with a mixture over episodes, realised as
+a two-state Markov chain whose forward recursion collapses a sum over $2^t$
+trajectories into two numbers. The resulting \emph{episodic e-process} is an
+exact non-negative supermartingale --- so Ville's inequality gives
+time-uniform false-alarm control with no new machinery --- costs $O(1)$ per
+frame against $O(t)$ for a general mixture over active starts, and contains
+the changepoint mixture exactly as the boundary case in which episodes never
+end, a strict generalisation along an axis the anytime-valid e-process
+family has left fixed at infinity. Around this core sits a per-camera
+conformal layer calibrated conditionally on observable context and corrected
+by exact Beta order-statistic levels, and a fleet layer in which a graph
+network steers each camera's episode hazard through a \emph{predictable}
+modulation --- provably unable to damage the guarantee --- combined across
+cameras by e-BH under arbitrary dependence.
 %
-Around this core we build a per-camera conformal layer that is calibrated
-conditionally on observable context and corrected by exact Beta order-statistic
-levels, and a fleet layer in which a graph network steers each camera's episode
-hazard through a \emph{predictable} modulation --- provably unable to damage the
-guarantee --- with e-BH combining evidence under arbitrary dependence.
-%
-On recurring episodes a paired comparison on a shared betting grid (every
-seed run under both mixtures, \cref{sec:episodes}) resolves a real advantage
-for the episodic mixture at two and four episodes and a real, smaller cost at
-one episode, where the classical model is closer to correct and the extra
-axis is paid for rather than earned.
-Across the baseline comparison, every classical and parametric method we test
+Two evidence sources back these claims. Large-horizon simulated streams
+($10^5$--$10^6$ frames) show every classical and parametric baseline we test
 --- fixed threshold, per-frame p-value threshold, CUSUM, Shiryaev--Roberts, a
-parametric e-detector, and E-SHIFT --- fails to hold its nominal false-alarm
-level; the changepoint mixture that \cref{prop:generalisation} shows
-SENTINEL-E strictly contains also holds it, as any exact e-process on the same
-conformal front end must, and the two are compared head to head, with
-uncertainty, in \cref{sec:episodes}. SENTINEL-E costs \CostSentinelUs\,\textmu s
-per frame, \CostSentinelPct\% of the detector it wraps. We also report where
-its false-alarm level stops holding: a shift in an unmodelled covariate beyond
-$\times\ShiftResidualBreaks$ inflates the rate unless the shift-weighting
-safeguard is engaged, which restores validity at a steep cost in power.
+parametric e-detector, E-SHIFT --- failing to hold its nominal false-alarm
+level, while SENTINEL-E and the changepoint mixture it strictly contains both
+hold it; a paired comparison on a shared betting grid resolves a real
+advantage for the episodic mixture at two and four recurring episodes and a
+real, smaller cost at one. We also report where the guarantee stops holding:
+an unmodelled covariate shift beyond $\times\ShiftResidualBreaks$ inflates the
+rate unless a shift-weighting safeguard is engaged, at a steep cost in power.
+%
+New in this revision: the pipeline is also run, unmodified, on real
+surveillance video (CUHK Avenue and UCSD Ped2) with a real optical-flow
+backbone rather than a simulator. This surfaces a limitation the simulated
+streams could not: real per-frame scores are autocorrelated across
+hundreds of frames (\RealAvenueFullLag{} on Avenue, \RealPedTwoFullLag{} on
+Ped2), close to or beyond a real episode's own duration, leaving only a
+narrow lag window in which validity and
+power coexist at all. Inside that window the guarantee holds on both real
+corpora --- realised false-alarm rate \RealPedTwoPfaHeadline{} on Ped2 and
+\RealAvenuePfaHeadline{} on Avenue at $\alpha=0.1$ --- while every classical
+baseline tested fails to hold it on the same real streams; detection power is
+real but modest on Ped2 and weak on Avenue, whose real episodes are shorter.
+This gap, not the simulated results, is the paper's central open problem.
+SENTINEL-E costs \CostSentinelUs\,\textmu s per frame, \CostSentinelPct\% of
+the detector it wraps.
 \end{abstract}
 
 \vspace{0.5em}
-\noindent\textbf{Keywords:} illegal dumping detection; anytime-valid inference;
-e-values; conformal prediction; sequential change detection; false discovery
-rate; video surveillance; edge deployment
+\noindent\textbf{Keywords:} video anomaly detection; illegal dumping detection;
+anytime-valid inference; e-values; conformal prediction; sequential change
+detection; false discovery rate; video surveillance; edge deployment
 
 \section{Introduction}
 \label{sec:intro}
@@ -189,6 +187,19 @@ per-frame rate reaches \HorizonFixedPfaShort{} within \HorizonMinHours\,hours an
 \HorizonFixedPfa{} by \HorizonMaxHours\,hours (\cref{fig:validity}\,(b)). A
 clip-level evaluation cannot see this, because it never runs the detector for
 two hours.
+
+Nothing in the argument above is specific to dumping. Any scene-level
+anomaly a per-frame backbone scores --- loitering, wrong-direction motion,
+an abandoned object, a vehicle where pedestrians belong --- exposes the same
+gap between a per-clip evaluation and a continuously monitored stream, and
+the method that follows is built and validated at that scope: an
+anytime-valid sequential detector for streaming visual anomaly surveillance,
+with illegal dumping as the motivating case throughout. We say this plainly
+rather than let it surface only in the data section: \cref{sec:real-data}'s
+empirical validation runs on two classical video-anomaly-detection corpora,
+not dumping footage, because no continuously-labelled real dumping stream of
+the required length is publicly available, and that scope mismatch is a real
+limitation this paper discloses (\cref{sec:limitations}) rather than hides.
 
 \subsection{Why the existing sequential machinery is the wrong shape}
 
@@ -342,6 +353,30 @@ false-positive-rate axis, which is still a per-clip quantity rather than a
 rate over a horizon, so the distinction we draw survives with that
 qualification attached.
 
+\paragraph{Video anomaly detection benchmarks (2025--2026).}
+The classical video anomaly detection (VAD) literature this paper's real-data
+protocol draws its streams from --- CUHK Avenue \citep{lu2013avenue} and UCSD
+Ped2 \citep{mahadevan2010ucsd} --- continues to report clip- or frame-level
+ROC-AUC as its primary metric: a reconstruction-based idempotent generative
+network reaches 99.03\% AUC on Ped2 and 92.40\% on Avenue
+\citep{dong2025rvadign}. That method post-dates this paper's original
+submission and outperforms, on frame-level AUC alone, the Farneback
+optical-flow backbone \cref{sec:real-data} uses
+(\RealPedTwoAuc{}/\RealAvenueAuc{}). We do not run it head to head against
+SENTINEL-E, and the reason is the point this paper makes rather than an
+omission: AUC is computed after the fact over a fixed, already-labelled test
+set and says nothing about the rate at which a rule raises an alarm on a
+continuously monitored, unlabelled stream, which is the quantity
+\cref{sec:real-data} actually measures. \citet{rashidi2026benchmarkauc} audits
+this gap directly: eleven off-the-shelf VAD feature sets that average 70.4\%
+AUC on their own training distribution collapse to 49.9\% --- chance --- under
+a cross-dataset shift, with false-alarm rates around $3.2\times 10^4$ per hour
+at thresholds a same-dataset evaluation would call operational. That finding
+and \cref{sec:real-data}'s own (the narrow, dataset-specific lag window a
+time-uniform guarantee actually needs on real footage) are independent
+audits of the same failure mode from opposite ends: a benchmark-AUC number
+does not certify what happens when the clock keeps running.
+
 \paragraph{Sequential detection of changes that end.}
 Classical quickest-detection theory treats a permanent shift, but a
 sub-literature treats exactly the object this paper does: a change of finite,
@@ -449,7 +484,10 @@ prediction-interval literature does not face: the p-values must be
 super-uniform \emph{conditionally on the past}, not merely marginally, or the
 wealth process is not a supermartingale.
 
-\section{Problem formulation}
+\section{Method}
+\label{sec:method}
+
+\subsection{Problem formulation}
 \label{sec:problem}
 
 A camera produces frames $x_1, x_2, \ldots$ and a frozen detector
@@ -513,11 +551,9 @@ $\cD$; concatenate the remaining negative clips into a background stream of the
 desired length; splice positive clips in at random onsets. Holding the
 calibration clips out preserves the exchangeability the conformal layer needs.
 This protocol is implemented in the library
-(\texttt{build\_stream\_from\_clips}) and is how we recommend the method be
-evaluated once per-frame backbone scores for a real corpus are in hand.
-
-\section{Method}
-\label{sec:method}
+(\texttt{build\_stream\_from\_clips}) and is how \cref{sec:real-data}'s Ped2
+and Avenue streams are built once per-frame backbone scores for a real corpus
+are in hand.
 
 \subsection{Layer 1: conformal calibration}
 \label{sec:layer1}
@@ -1040,10 +1076,31 @@ dependence or a Benjamini--Yekutieli $\log K$ penalty
 would not be a valid e-value, which is why the reading is taken at a stopping
 time.
 
-\section{Experimental protocol}
+\section{Experiments and results}
+\label{sec:results}
+
+\subsection{Protocol}
 \label{sec:protocol}
 
-\paragraph{Streams.}
+\paragraph{Two evidence sources, used for different things.}
+This paper reports both simulated and real streams, and they answer different
+questions. \Cref{sec:real-data} is the paper's empirical basis for what a real
+backbone, on real surveillance footage, actually delivers: real per-frame
+optical-flow scores from two public video-anomaly-detection corpora, real
+train/test splits, real spliced anomalous events, and --- reported as a
+finding rather than a footnote --- a real, severe autocorrelation structure
+that leaves only a narrow band of usable operating points. It is also, by
+construction, limited to the two datasets' native horizons (minutes, not
+weeks) and to the one backbone we computed scores with. The simulated streams
+that follow exist to answer the question the real corpora cannot: what
+happens at the $10^5$--$10^6$-frame horizons, the wide range of episode counts
+and intermittency levels, and the calibration/deployment shift severities a
+municipal deployment must survive, but that no released corpus --- Mivia-IWDD
+included --- provides months of continuously-labelled per-frame detector
+output to test directly. Neither source substitutes for the other, and
+\cref{sec:limitations} states plainly what each does and does not establish.
+
+\paragraph{Simulated streams.}
 SENTINEL-E consumes one scalar per frame, so the faithful way to stress the
 guarantee layer at the timescales that matter --- weeks of video, $10^6$ frames
 --- is to model that scalar. Our simulator is deliberately unfriendly in the ways
@@ -1099,8 +1156,10 @@ number, and every quantity quoted in this text is generated into a macro file
 from the experiment output, so a stale number is not possible. All timings are
 single-thread CPU on the machine that produced the statistical results.
 
-\section{Results}
-\label{sec:results}
+\subsection{Real-video validation}
+\label{sec:real-data}
+
+\input{real_data_section}
 
 \subsection{A single stream, worked through}
 \label{sec:worked-example}
@@ -1592,20 +1651,38 @@ wealth also starts at frame one.
 \section{Limitations}
 \label{sec:limitations}
 
-\paragraph{The streams are simulated.}
-This is the main limitation and we do not want it buried. A time-uniform claim
-must be tested over horizons of $10^5$--$10^6$ frames with confirmed no-dumping
-ground truth throughout, and no released corpus --- Mivia-IWDD included --- provides
-months of continuously-labelled per-frame detector output; we did not have
-access to one. Our streaming results therefore come from a score-level simulator
-whose non-stationarity, tail behaviour, autocorrelation and event intermittency
-are set to plausible values, and its parameters are stated in full. What this
-establishes is that the failures we report are \emph{reachable} under conditions
-real footage plainly exhibits, and that SENTINEL-E survives them; what it does
-not establish is the numerical delay a specific backbone would achieve on
-Mivia-IWDD. The library ships the splicing protocol and dataset adapters needed
-to run the identical evaluation on real scores, and the adapters raise an error
-rather than substituting synthetic data when those scores are absent.
+\paragraph{Real video exposes a real power gap this paper does not close, and
+it is not illegal-dumping footage.} This is the main limitation and we do not
+want it buried. \Cref{sec:real-data} runs the full pipeline on real,
+continuous surveillance video with a real backbone, and it is the paper's most
+important negative-adjacent result: on CUHK Avenue, real autocorrelation and
+real episode brevity leave a valid but weak detection window
+(\RealAvenuePfaHeadline{} realised false-alarm rate at $\alpha=0.1$, but a
+\RealAvenueMissHeadline{} miss rate); Ped2 fares better but is still far from a
+comfortable margin. That gap did not exist in the simulated streams, and no
+simulator we could have built would have exposed it, because it comes from a
+specific, measured property of real optical-flow scores --- a decorrelation
+lag (\RealAvenueFullLag{} frames on Avenue, \RealPedTwoFullLag{} on Ped2)
+close to or exceeding a real episode's own duration --- that an AR(1)
+process with a short memory
+cannot reproduce by construction. What \cref{sec:real-data} establishes is
+that the guarantee holds on real video at the lag its own diagnostic selects,
+on two different real camera scenes, and that every classical baseline tested
+fails to hold it on the same real streams. What it does not establish is that
+this backbone, at this frame rate, is adequate for deployment, or that the
+result transfers to illegal dumping specifically: Avenue and Ped2 are
+classical pedestrian-walkway anomaly corpora, not dumping footage, because no
+released corpus --- Mivia-IWDD included --- provides months of
+continuously-labelled per-frame dumping-detector output, and the two are not
+the same task (dumping is committed once and its evidence often persists in
+the scene; a pedestrian or vehicle anomaly is transient by construction, which
+is part of why Avenue's episodes are so short). The library ships the
+splicing protocol and dataset adapters needed to run the identical evaluation
+on any other corpus with real per-frame scores, and the adapters raise an
+error rather than substituting synthetic data when those scores are absent;
+what would close the gap \cref{sec:real-data} exposes is not a different
+evaluation but a backbone whose frame-to-frame errors are more nearly
+independent than optical-flow magnitude's, which is future work.
 
 \paragraph{The tested horizon is two orders of magnitude short of the
 motivating claim.}
@@ -1791,15 +1868,33 @@ the episode-recurrence axis available at the same $O(1)$ cost, at
 boundary, reported rather than elided, beyond which a shift in an unmodelled
 covariate breaks it unless the conservative safeguard is engaged.
 
-Two directions follow. The first is empirical and we would prioritise it:
-running this protocol on real per-frame scores from Mivia-IWDD and from an
-operational municipal deployment, which requires only that a backbone be run
-once over the corpus. The second is that neither the argument nor the algorithm
-is specific to dumping. Episodic, intermittent, recurring events observed
-through a continuously-monitored sensor describe wildlife poaching, illegal
-fishing, gas leaks and infrastructure faults as well; wherever a field evaluates
-on clips and deploys on streams, the same optional-stopping problem and the same
-remedy apply.
+This revision closes part of the first empirical direction the earlier version
+of this paper deferred: \cref{sec:real-data} runs the identical pipeline,
+unmodified, on real per-frame scores from two real surveillance corpora,
+CUHK Avenue and UCSD Ped2, rather than on simulated streams alone. What it
+finds is not unqualified success. The guarantee holds on both real corpora at
+the lag each dataset's own diagnostic selects, and every classical baseline
+tested fails to hold it on the same real streams --- but the window in which
+validity and power coexist at all is narrow, narrower than any simulated
+configuration in this paper, because real optical-flow scores are far more
+autocorrelated than an AR(1) process and real anomalous episodes are
+correspondingly brief. Two directions follow from that finding specifically.
+The nearer one is a stronger backbone: what \cref{sec:real-data} exposes is a
+property of the scores, not of the sequential layer, and a backbone whose
+frame-to-frame errors are more nearly independent than optical-flow
+magnitude's would widen the window without touching the theory. The further
+one is the corpus itself: this paper's real-data validation runs on
+pedestrian-walkway anomaly footage because no continuously-labelled real
+illegal-dumping stream of the required length is publicly available, and
+closing that gap needs a released corpus, from Mivia-IWDD or an operational
+municipal deployment, rather than a change to the method. Neither the
+argument nor the algorithm is specific to dumping in the first place.
+Episodic, intermittent, recurring events observed through a
+continuously-monitored sensor describe wildlife poaching, illegal fishing,
+gas leaks and infrastructure faults as well as the loitering, wrong-direction
+motion and abandoned-object anomalies the real corpora above already
+represent; wherever a field evaluates on clips and deploys on streams, the
+same optional-stopping problem and the same remedy apply.
 
 \section*{Declarations}
 

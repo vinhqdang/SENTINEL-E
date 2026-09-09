@@ -23,6 +23,7 @@ from experiments import (
     exp7_diagnostics,
     exp8_episodes,
 )
+from experiments.real_data import exp_r1_validity, exp_r2_delayfar
 
 
 def main(quick: bool = False, only: str = ""):
@@ -43,6 +44,9 @@ def main(quick: bool = False, only: str = ""):
         ("exp7", lambda: exp7_diagnostics.main(
             10 if quick else exp7_diagnostics.N_STREAMS)),
         ("exp8", lambda: exp8_episodes.main(reps or exp8_episodes.REPS)),
+        ("exp_r1", lambda: exp_r1_validity.main(
+            reps or exp_r1_validity.REPS, reps or exp_r1_validity.LAG_REPS)),
+        ("exp_r2", lambda: exp_r2_delayfar.main(reps or exp_r2_delayfar.REPS)),
     ]
     wanted = {s.strip() for s in only.split(",") if s.strip()}
     for name, fn in plan:
@@ -50,7 +54,14 @@ def main(quick: bool = False, only: str = ""):
             continue
         t0 = time.time()
         print(f"\n{'=' * 72}\n{name}\n{'=' * 72}", flush=True)
-        fn()
+        if name.startswith("exp_r"):
+            try:
+                fn()
+            except FileNotFoundError as e:
+                print(f"[{name} skipped: {e}]", flush=True)
+                continue
+        else:
+            fn()
         print(f"[{name} finished in {time.time() - t0:.0f}s]", flush=True)
 
 
