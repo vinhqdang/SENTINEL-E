@@ -1,7 +1,8 @@
 \begin{table}[t]
 \centering
-\caption{Each method at the tightest realised false-alarm probability it achieves while still detecting most events, over a 60-minute stream (200 null and 200 post-change streams per operating point). This is the operator's question: insisting on few false alarms, what does the method cost in delay? SENTINEL-E is the only one that reaches a rate of at most 0.05 at all. The classical procedures can be made fast, but only at a false-alarm probability near one; no setting of their knob moves them into the operating region. The full trade-off is in Figure~\ref{fig:delayfar}.}
+\caption{Each method at the tightest realised false-alarm probability it achieves while still detecting most events, over a 60-minute stream (200 null and 200 post-change streams per operating point). This is the operator's question: insisting on few false alarms, what does the method cost in delay? Both exact e-processes tested (SENTINEL-E and the changepoint mixture it strictly contains, \cref{prop:generalisation}) reach a rate of at most 0.05; none of the classical or parametric baselines does. The classical procedures can be made fast, but only at a false-alarm probability near one for most settings of their knob; the full trade-off is in Figure~\ref{fig:delayfar}.}
 \label{tab:delay_far}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{llrcrrrr}
 \toprule
 method & knob & realised PFA & $\le 0.05$? & ARL$_0$ & cond. delay (s) & censored delay (s) & miss rate \\
@@ -9,11 +10,12 @@ method & knob & realised PFA & $\le 0.05$? & ARL$_0$ & cond. delay (s) & censore
 SENTINEL-E & 0.5 & 0.000 & \checkmark & 90,000 & 54.6 & 68.3 $\pm$ 31.8 & 0.01 \\
 Fixed threshold & $10^{-5}$ & \textbf{0.105} & \ding{55} & 85,085 & 1489.3 & 2649.3 $\pm$ 71.7 & 0.89 \\
 p-value threshold & 0.003 & \textbf{0.680} & \ding{55} & 53,943 & 297.9 & 598.1 $\pm$ 122.8 & 0.12 \\
-CUSUM & 60 & \textbf{0.750} & \ding{55} & 48,638 & 1269.2 & 1697.8 $\pm$ 126.7 & 0.28 \\
-Shiryaev--Roberts & $10^{14}$ & \textbf{0.940} & \ding{55} & 28,854 & 846.4 & 953.8 $\pm$ 116.0 & 0.06 \\
-Parametric e-detector & $10^{-8}$ & \textbf{0.955} & \ding{55} & 23,552 & 570.0 & 648.0 $\pm$ 101.6 & 0.04 \\
-E-SHIFT & $10^{-8}$ & \textbf{0.795} & \ding{55} & 28,509 & 479.9 & 2092.4 $\pm$ 158.4 & 0.69 \\
+CUSUM & 20 & \textbf{0.990} & \ding{55} & 16,982 & 389.1 & 413.2 $\pm$ 76.3 & 0.01 \\
+Shiryaev--Roberts & 10 & \textbf{1.000} & \ding{55} & 619 & 4.3 & 4.3 $\pm$ 0.4 & 0.00 \\
+Parametric e-detector & 0.5 & \textbf{1.000} & \ding{55} & 4,444 & 17.4 & 17.4 $\pm$ 7.0 & 0.00 \\
+E-SHIFT & 0.002 & \textbf{0.965} & \ding{55} & 12,136 & 279.3 & 1791.7 $\pm$ 178.6 & 0.60 \\
+Changepoint mixture & 0.2 & 0.000 & \checkmark & 90,000 & 92.5 & 119.6 $\pm$ 49.4 & 0.01 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Delays are in seconds at 25\,fps. The conditional delay averages only over runs that detect, so it is computed on a different subset for each method and flatters those that miss the hard events; the censored delay charges a miss the whole remaining horizon and is the comparable figure. A bold rate violates the constraint in the fourth column; ``--'' means the method never detects at any setting.\end{minipage}
 \end{table}
