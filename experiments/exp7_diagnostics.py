@@ -1,6 +1,6 @@
 """Experiment 7 --- assumption diagnostics.
 
-The guarantee of Theorem 1 rests on two premises that are assumptions, not
+The guarantee of the supermartingale theorem rests on two premises that are assumptions, not
 theorems, and both are checkable on the calibration set alone --- which means an
 operator can run these checks on their own camera before trusting the alarm
 rate.
@@ -98,9 +98,16 @@ def make_table(d: Dict):
             f"Conditional-independence diagnostics over {d['n_streams']} cameras "
             f"(estimated decorrelation lag {d['lag_min']}--{d['lag_max']} frames, "
             f"mean {d['lag_mean']:.1f}). Betting on every frame violates the "
-            "premise of Theorem 1 outright; betting once per lag is consistent "
-            "with it. These are computed from the calibration set alone, so an "
-            "operator can run them before trusting the alarm rate."
+            "premise of \\cref{thm:episodic} outright. Betting once per lag "
+            "reduces the violation by every measure here but does not remove "
+            "it: the median Ljung--Box $p$ is still below $0.05$ and only a "
+            "minority of cameras pass at that level, so the diagnostic "
+            "positively rejects conditional independence rather than failing "
+            "to certify it. What survives is the empirical false-alarm "
+            "control of \\cref{sec:validity}, not the literal hypothesis of "
+            "\\cref{thm:episodic}; see \\cref{sec:limitations}. These are "
+            "computed from betting instants on labelled null streams, which an "
+            "operator does not have; the calibration-set analogue is weaker."
         ),
         label="tab:diagnostics", name="tab9_diagnostics", align="lrr",
     )
@@ -116,7 +123,7 @@ def make_table(d: Dict):
             f"{d['n_streams']} cameras). This checks Layer 1 in isolation: the "
             "p-values must be super-uniform before any betting takes place. The "
             f"smallest attainable p-value is {d['p_min']:.4f}, which is the tail "
-            "resolution the exact Beta levels of Theorem 1 provide."
+            "resolution the exact Beta levels of \\cref{thm:beta} provide."
         ),
         label="tab:pcoverage", name="tab10_pcoverage", align="rrc",
     )

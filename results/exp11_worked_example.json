@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-09-09T03:13:52Z",
+  "python": "3.11.15",
+  "numpy": "2.4.6",
+  "payload": {
+    "T": 30000,
+    "alpha": 0.01,
+    "seed": 12345,
+    "episodes": [
+      [
+        8000,
+        8800
+      ],
+      [
+        9808,
+        10608
+      ],
+      [
+        11386,
+        12186
+      ]
+    ],
+    "change_point": 8000,
+    "lag": 18,
+    "abstention_rate": 0.0,
+    "first_alarm": 8586,
+    "n_episodes_in_window": 3
+  }
+}

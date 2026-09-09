@@ -1,7 +1,8 @@
 \begin{table}[t]
 \centering
-\caption{Conditional-independence diagnostics over 60 cameras (estimated decorrelation lag 17--21 frames, mean 18.8). Betting on every frame violates the premise of Theorem 1 outright; betting once per lag is consistent with it. These are computed from the calibration set alone, so an operator can run them before trusting the alarm rate.}
+\caption{Conditional-independence diagnostics over 60 cameras (estimated decorrelation lag 17--21 frames, mean 18.8). Betting on every frame violates the premise of \cref{thm:episodic} outright. Betting once per lag reduces the violation by every measure here but does not remove it: the median Ljung--Box $p$ is still below $0.05$ and only a minority of cameras pass at that level, so the diagnostic positively rejects conditional independence rather than failing to certify it. What survives is the empirical false-alarm control of \cref{sec:validity}, not the literal hypothesis of \cref{thm:episodic}; see \cref{sec:limitations}. These are computed from betting instants on labelled null streams, which an operator does not have; the calibration-set analogue is weaker.}
 \label{tab:diagnostics}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{lrr}
 \toprule
 diagnostic & every frame & one bet per lag \\
@@ -10,5 +11,5 @@ lag-1 autocorrelation of calibration residuals & 0.839 & 0.046 \\
 Ljung--Box p-value (20 lags, median over cameras) & 0.000 & 0.005 \\
 fraction of cameras with Ljung--Box $p > 0.05$ & 0.000 & 0.183 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}

@@ -2,6 +2,7 @@
 \centering
 \caption{Calibration coverage against detection performance at $\alpha=0.01$ (200 null and 200 post-change streams per row). Pooled and Mondrian calibration lose false-alarm control; the residual construction never does. Under poor coverage its power degrades visibly through the abstention and miss columns rather than silently through the alarm rate.}
 \label{tab:coverage}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{llrrrrr}
 \toprule
 calibration coverage & variant & PFA & ARL$_0$ & cens. delay (s) & miss & abstain \\
@@ -19,5 +20,5 @@ daytime window only & pooled & 0.655 & 52,564 & 1137.6 & 0.20 & 0.00 \\
  & residual & 0.000 & 90,000 & 2629.1 & 0.90 & 0.82 \\
  & residual + LR wts & 0.000 & 90,000 & 2703.2 & 0.94 & 0.82 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}

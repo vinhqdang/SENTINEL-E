@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Paired episodic-vs-changepoint comparison on a shared 24-point $\kappa$ grid (200 seeded pairs per row): the changepoint-mixture minus episodic censored delay, and the discordant miss counts (episodic-detects-only / changepoint-detects-only) with an exact two-sided McNemar test. A positive mean difference favours the episodic mixture. Unlike \cref{tab:episodes}, which compares unpaired point estimates on different grids, every row here isolates the episode-end axis alone.}
+\label{tab:paired_episodes}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{rrrrrr}
+\toprule
+episodes & mean diff.\ (s) & 95\% CI & $p$ (boot.) & miss discordant & $p$ (McNemar) \\
+\midrule
+1 & -55.7 & [-111.2, -14.0] & 0.000 & 0/4 & 0.125 \\
+2 & +80.0 & [+25.6, +144.8] & 0.001 & 6/0 & 0.031 \\
+4 & +66.8 & [+20.4, +120.8] & 0.002 & 8/0 & 0.008 \\
+8 & +22.6 & [+2.5, +44.3] & 0.026 & 2/0 & 0.500 \\
+\bottomrule
+\end{tabular}}
+\end{table}

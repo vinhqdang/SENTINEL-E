@@ -44,6 +44,9 @@ __all__ = [
     "delay_far_curve",
     "fdr_power",
     "wilson_interval",
+    "PerEpisodeOutcome",
+    "per_episode_outcomes",
+    "summarize_per_episode",
 ]
 
 
@@ -191,4 +194,95 @@ def fdr_power(rejected: Sequence[bool], truth: Sequence[bool]) -> Dict[str, floa
         "fdp": n_false / n_rej if n_rej else 0.0,
         "power": int((r & t).sum()) / n_true_alt if n_true_alt else float("nan"),
         "n_rejected": float(n_rej),
+    }
+
+
+@dataclass(frozen=True)
+class PerEpisodeOutcome:
+    """Whether and how fast *this one episode* was flagged.
+
+    ``summarize_runs``'s ``miss_rate`` is stream-level: with several episodes
+    per camera, a stream counts as detected the moment *any* alarm follows the
+    *first* onset, so a detector that sleeps through episodes 1 through k-1 and
+    only fires on episode k is scored a clean detection. That hides exactly the
+    mechanism the episodic e-process claims credit for --- recovering after a
+    missed episode rather than carrying a burned wealth process into the next
+    one. This scores each episode's own detection window separately.
+    """
+
+    episode_index: int
+    start: int
+    window_end: int          # exclusive: the next episode's start, or the horizon
+    delay: Optional[int]     # frames from ``start`` to the first alarm in-window
+    missed: bool
+
+
+def per_episode_outcomes(
+    alarms: Sequence[bool],
+    episodes: Sequence[tuple],
+    horizon: Optional[int] = None,
+) -> List[PerEpisodeOutcome]:
+    """Score each episode's own detection window.
+
+    ``episodes`` is the stream's ``[(start, end), ...]`` list, in order. Each
+    episode's detection window runs from its own ``start`` to the *next*
+    episode's start (or the horizon, for the last one) --- so an alarm counts
+    toward the episode whose window it falls in, whether it fires during the
+    episode itself or during the quiet gap that follows, and a restart between
+    alarms (the convention used throughout this paper) means each window's
+    result is independent of the others.
+    """
+    a = np.asarray(alarms, dtype=bool)
+    T = a.size if horizon is None else int(horizon)
+    out: List[PerEpisodeOutcome] = []
+    for i, (start, _end) in enumerate(episodes):
+        window_end = int(episodes[i + 1][0]) if i + 1 < len(episodes) else T
+        window_end = min(window_end, T)
+        start = int(start)
+        if start >= window_end:
+            continue
+        d = detection_delay(a[:window_end], start)
+        out.append(PerEpisodeOutcome(
+            episode_index=i, start=start, window_end=window_end,
+            delay=d, missed=d is None,
+        ))
+    return out
+
+
+def summarize_per_episode(
+    per_stream: Sequence[Sequence[PerEpisodeOutcome]],
+) -> Dict[str, float]:
+    """Pool per-episode outcomes across streams into aggregate rates.
+
+    Unlike ``summarize_runs``'s stream-level ``miss_rate``, this is the
+    fraction of individual episodes --- not streams --- that end unflagged,
+    which is the definition \\S3 gives and the one the per-episode mechanism
+    claim needs.
+    """
+    all_outcomes = [o for stream in per_stream for o in stream]
+    n = len(all_outcomes)
+    if n == 0:
+        return {"n_episodes": 0, "episode_miss_rate": float("nan"),
+                "episode_add": float("nan"), "episode_add_se": float("nan"),
+                "episode_add_censored": float("nan"),
+                "episode_add_censored_se": float("nan")}
+    misses = sum(o.missed for o in all_outcomes)
+    delays = [o.delay for o in all_outcomes if o.delay is not None]
+    censored = [
+        o.delay if o.delay is not None else (o.window_end - o.start)
+        for o in all_outcomes
+    ]
+    return {
+        "n_episodes": n,
+        "episode_miss_rate": misses / n,
+        "episode_add": float(np.mean(delays)) if delays else float("nan"),
+        "episode_add_se": (
+            float(np.std(delays, ddof=1) / np.sqrt(len(delays)))
+            if len(delays) > 1 else float("nan")
+        ),
+        "episode_add_censored": float(np.mean(censored)),
+        "episode_add_censored_se": (
+            float(np.std(censored, ddof=1) / np.sqrt(len(censored)))
+            if len(censored) > 1 else float("nan")
+        ),
     }

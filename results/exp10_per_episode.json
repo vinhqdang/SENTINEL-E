@@ -1,0 +1,100 @@
+{
+ "generated_at": "2026-09-09T02:58:02Z",
+ "python": "3.11.15",
+ "numpy": "2.4.6",
+ "payload": {
+  "reps": 200,
+  "T": 90000,
+  "change_point": 20000,
+  "alpha": 0.01,
+  "episode_counts": [
+   1,
+   2,
+   4,
+   8
+  ],
+  "by_episodes": {
+   "1": {
+    "episodic": {
+     "n_episodes_scored": 200,
+     "episode_miss_rate": 0.455,
+     "episode_add": 544.8623853211009,
+     "episode_add_se": 12.102851422433528,
+     "episode_add_censored": 32146.95,
+     "episode_add_censored_se": 2451.7904690671558,
+     "stream_miss_rate": 0.455
+    },
+    "changepoint": {
+     "n_episodes_scored": 200,
+     "episode_miss_rate": 0.44,
+     "episode_add": 536.8392857142857,
+     "episode_add_se": 11.885686978477874,
+     "episode_add_censored": 31100.63,
+     "episode_add_censored_se": 2444.274393582092,
+     "stream_miss_rate": 0.44
+    }
+   },
+   "2": {
+    "episodic": {
+     "n_episodes_scored": 400,
+     "episode_miss_rate": 0.5925,
+     "episode_add": 492.63803680981596,
+     "episode_add_se": 10.13735039670912,
+     "episode_add_censored": 23810.2025,
+     "episode_add_censored_se": 1436.9478002847188,
+     "stream_miss_rate": 0.185
+    },
+    "changepoint": {
+     "n_episodes_scored": 400,
+     "episode_miss_rate": 0.6025,
+     "episode_add": 502.49685534591197,
+     "episode_add_se": 9.950405937193219,
+     "episode_add_censored": 25027.8475,
+     "episode_add_censored_se": 1456.91675912891,
+     "stream_miss_rate": 0.205
+    }
+   },
+   "4": {
+    "episodic": {
+     "n_episodes_scored": 800,
+     "episode_miss_rate": 0.75375,
+     "episode_add": 511.8172588832487,
+     "episode_add_se": 9.599368026102788,
+     "episode_add_censored": 15708.55375,
+     "episode_add_censored_se": 719.7008220980954,
+     "stream_miss_rate": 0.015
+    },
+    "changepoint": {
+     "n_episodes_scored": 800,
+     "episode_miss_rate": 0.7625,
+     "episode_add": 519.0631578947368,
+     "episode_add_se": 9.488023555007382,
+     "episode_add_censored": 15736.49125,
+     "episode_add_censored_se": 719.931642790406,
+     "stream_miss_rate": 0.05
+    }
+   },
+   "8": {
+    "episodic": {
+     "n_episodes_scored": 1577,
+     "episode_miss_rate": 0.8731769181991123,
+     "episode_add": 505.02,
+     "episode_add_se": 9.177561559635791,
+     "episode_add_censored": 8062.6823081800885,
+     "episode_add_censored_se": 230.37931472277003,
+     "stream_miss_rate": 0.0
+    },
+    "changepoint": {
+     "n_episodes_scored": 1577,
+     "episode_miss_rate": 0.8731769181991123,
+     "episode_add": 516.65,
+     "episode_add_se": 9.089020241187914,
+     "episode_add_censored": 8011.743817374762,
+     "episode_add_censored_se": 229.65237264501184,
+     "stream_miss_rate": 0.0
+    }
+   }
+  },
+  "event_length": 800
+ }
+}

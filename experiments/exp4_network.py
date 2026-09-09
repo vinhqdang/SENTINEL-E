@@ -5,7 +5,7 @@ Two distinct questions, often conflated in multi-camera work.
 *Does the graph shorten detection delay?*  Offenders relocate, so evidence
 accumulating at one camera is genuine prior information about its neighbours.
 The spatial prior acts only through a **predictable** hazard and stake
-modulation, so by Theorem 2 it cannot damage the false-alarm guarantee whatever
+modulation, so by the predictable-modulation theorem it cannot damage the false-alarm guarantee whatever
 it outputs.  That is checked here empirically as well as proved: the
 all-null fleet columns must stay at or below the nominal level for the learned
 controller exactly as they do without it.
@@ -45,6 +45,7 @@ T_EVAL = 60_000
 N_TRAIN_FLEETS = 10
 N_EVAL_FLEETS = 40
 N_CAMERAS = 12
+CREDIT_WINDOW = 2_000     # frames of post-onset credit for the windowed objective
 
 
 def _cfg(T: int) -> StreamConfig:
@@ -86,6 +87,7 @@ def evaluate_fleets(controller_name: str, model=None, n_fleets: int = N_EVAL_FLE
                     seed0: int = 4_000) -> Dict:
     """Run a controller over held-out fleets, with and without real events."""
     delays: List[int] = []
+    censored: List[int] = []
     misses = 0
     fdps, powers, n_rej = [], [], []
     null_fleet_alarm = 0
@@ -121,10 +123,16 @@ def evaluate_fleets(controller_name: str, model=None, n_fleets: int = N_EVAL_FLE
                 # Convert the onset to the betting grid, then delays back to frames.
                 cp_bet = int(np.searchsorted(res.bet_index, cp))
                 d = detection_delay(res.alarms[k], min(cp_bet, res.alarms.shape[1] - 1))
+                stride = res.bet_index[1] - res.bet_index[0]
                 if d is None:
                     misses += 1
+                    # Section 3 insists head-to-head claims rest on the censored
+                    # statistic: a miss is charged the rest of the horizon, so a
+                    # controller cannot buy a short delay by skipping hard events.
+                    censored.append(int(T_EVAL - cp))
                 else:
-                    delays.append(d * (res.bet_index[1] - res.bet_index[0]))
+                    delays.append(d * stride)
+                    censored.append(d * stride)
             m = fdr_power(res.ebh_rejected, truth)
             fdps.append(m["fdp"])
             powers.append(m["power"])
@@ -136,6 +144,9 @@ def evaluate_fleets(controller_name: str, model=None, n_fleets: int = N_EVAL_FLE
         "add": float(np.mean(delays)) if delays else float("nan"),
         "add_se": float(np.std(delays, ddof=1) / np.sqrt(len(delays)))
         if len(delays) > 1 else float("nan"),
+        "add_censored": float(np.mean(censored)) if censored else float("nan"),
+        "add_censored_se": float(np.std(censored, ddof=1) / np.sqrt(len(censored)))
+        if len(censored) > 1 else float("nan"),
         "add_median": float(np.median(delays)) if delays else float("nan"),
         "miss_rate": misses / n_events if n_events else float("nan"),
         "n_events": n_events,
@@ -180,14 +191,17 @@ def make_figure(rows):
     plt.close(fig)
 
 
-def make_table(rows):
+def make_table(rows, n_eval: int = N_EVAL_FLEETS):
     labels = {"none": "independent detectors", "heuristic": "heuristic spatial prior",
-              "gnn": "learned GNN spatial prior"}
+              "gnn": "learned GNN spatial prior",
+              "gnn_windowed": "learned GNN, windowed objective"}
     out = []
     for r in rows:
         out.append([
             labels[r["controller"]],
             f"{fmt(r['add'] / FPS, 1)} $\\pm$ {fmt(1.96 * r['add_se'] / FPS, 1)}",
+            f"{fmt(r['add_censored'] / FPS, 1)} $\\pm$ "
+            f"{fmt(1.96 * r['add_censored_se'] / FPS, 1)}",
             fmt(r["miss_rate"], 2),
             fmt(r["power"], 3),
             fmt(r["fdr"], 3),
@@ -196,20 +210,25 @@ def make_table(rows):
         ])
     write_latex_table(
         out,
-        ["spatial prior", "delay (s)", "miss", "e-BH power", "e-BH FDR",
-         "null fleet PFA", "null rejections"],
+        ["spatial prior", "cond.\\ delay (s)", "censored delay (s)", "miss",
+         "e-BH power", "e-BH FDR", "null fleet PFA", "null rejections"],
         caption=(
-            f"Fleet of {N_CAMERAS} cameras, {N_EVAL_FLEETS} held-out fleets with "
-            f"events and {N_EVAL_FLEETS} all-null fleets, "
+            f"Fleet of {N_CAMERAS} cameras, {n_eval} held-out fleets with "
+            f"events and {n_eval} all-null fleets, "
             r"$\alpha=0.01$ per camera and e-BH at level "
             f"{FDR_LEVEL}. The last two columns are the guarantee check: whatever "
             "the learned controller outputs, an all-null fleet must not alarm "
             "more often than the nominal level allows, because the modulation is "
-            "predictable (Theorem 2)."
+            "predictable (\\cref{thm:predictable}). Both delay statistics are "
+            "shown because the miss rates differ across controllers: the "
+            "conditional column is averaged over each controller's own detected "
+            "events and therefore flatters whichever one skips the hard ones, "
+            "which is exactly the pitfall \\cref{sec:problem} identifies. The "
+            "censored column is the comparable one."
         ),
         label="tab:network",
         name="tab6_network",
-        align="lrrrrrr",
+        align="lrrrrrrr",
     )
 
 
@@ -223,8 +242,20 @@ def main(n_train: int = N_TRAIN_FLEETS, n_eval: int = N_EVAL_FLEETS, epochs: int
         alpha=ALPHA, epochs=epochs, verbose=True,
         config=SpatialPriorConfig(hidden=32, n_layers=2),
     )
+    # The windowed objective is the better-motivated one -- delay is the time
+    # wealth takes to reach 1/alpha, so terminal wealth is the wrong target --
+    # and it performs worse.  Reporting that requires actually running it, so
+    # it is trained and evaluated here rather than quoted from a stale note.
+    print(" training the windowed-objective spatial prior ...")
+    model_win = train_spatial_prior(
+        p_batches, adjs, statics, degs, cps,
+        alpha=ALPHA, epochs=epochs, verbose=True,
+        credit_window=CREDIT_WINDOW,
+        config=SpatialPriorConfig(hidden=32, n_layers=2),
+    )
     rows = []
-    for name, m in (("none", None), ("heuristic", None), ("gnn", model)):
+    for name, m in (("none", None), ("heuristic", None), ("gnn", model),
+                    ("gnn_windowed", model_win)):
         print(f" evaluating controller: {name} ...", flush=True)
         r = evaluate_fleets(name, m, n_eval)
         rows.append(r)
@@ -232,11 +263,13 @@ def main(n_train: int = N_TRAIN_FLEETS, n_eval: int = N_EVAL_FLEETS, epochs: int
               f"FDR={r['fdr']:.3f} null-PFA={r['null_fleet_alarm_rate']:.3f}", flush=True)
 
     save_json({"rows": rows, "n_train": n_train, "n_eval": n_eval,
+               "epochs": epochs, "credit_window": CREDIT_WINDOW,
                "alpha": ALPHA, "fdr_level": FDR_LEVEL, "n_cameras": N_CAMERAS,
-               "T_eval": T_EVAL, "train_loss": list(getattr(model, "history", []))},
+               "T_eval": T_EVAL, "train_loss": list(getattr(model, "history", [])),
+               "train_loss_windowed": list(getattr(model_win, "history", []))},
               "exp4_network")
-    make_figure(rows)
-    make_table(rows)
+    make_figure([r for r in rows if r["controller"] != "gnn_windowed"])
+    make_table(rows, n_eval=n_eval)
     print(" wrote results/exp4_network.json, fig4_network, tab6")
 
 

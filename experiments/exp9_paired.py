@@ -29,6 +29,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 
+from experiments.common import fmt, write_latex_table
 from experiments.runner import evaluate
 
 REPS = 200
@@ -104,7 +105,8 @@ def _choose(n: int, k: int) -> float:
 
 def run(reps: int = REPS, counts: Sequence[int] = EPISODE_COUNTS) -> Dict:
     payload: Dict = {"reps": reps, "T": T, "change_point": CHANGE_POINT,
-                     "alpha": ALPHA, "fps": FPS, "by_episodes": {}}
+                     "alpha": ALPHA, "fps": FPS, "episode_counts": list(counts),
+                     "by_episodes": {}}
     for n_ep in counts:
         cfg = dict(T=T, n_episodes=n_ep, event_length=800, episode_gap=6_000,
                    event_intermittency=0.35)
@@ -158,11 +160,58 @@ def _report(n_ep: int, row: Dict) -> None:
               f" | miss discordant {mi['b01']}/{mi['b10']} p={mi['p_exact']:.3f}")
 
 
+def make_table(payload: Dict) -> None:
+    """Paired episodic-vs-changepoint comparison, on a shared 24-point kappa grid.
+
+    Reports the ``epi_vs_cp24`` contrast: same class, same grid size, differing
+    only in the eta axis, so a significant delay or miss difference here is not
+    confounded with the grid-size effect the ablation shows can be comparably
+    large (\\cref{sec:ablation}, "single bet aggressiveness").
+    """
+    rows = []
+    for k in payload["episode_counts"] if "episode_counts" in payload else sorted(
+            payload["by_episodes"], key=int):
+        row = payload["by_episodes"][str(k)]
+        d = row["paired"]["epi_vs_cp24"]["delay"]
+        m = row["paired"]["epi_vs_cp24"]["miss"]
+        rows.append([
+            str(k),
+            f"{d['mean_diff']/FPS:+.1f}",
+            f"[{d['ci95'][0]/FPS:+.1f}, {d['ci95'][1]/FPS:+.1f}]",
+            fmt(d["p_boot"], 3),
+            f"{m['b01']}/{m['b10']}",
+            fmt(m["p_exact"], 3),
+        ])
+    write_latex_table(
+        rows,
+        ["episodes", "mean diff.\\ (s)", "95\\% CI", "$p$ (boot.)",
+         "miss discordant", "$p$ (McNemar)"],
+        caption=(
+            r"Paired episodic-vs-changepoint comparison on a shared "
+            f"{len(KAPPA24)}-point $\\kappa$ grid ({payload['reps']} seeded "
+            r"pairs per row): the changepoint-mixture minus episodic censored "
+            r"delay, and the discordant miss counts (episodic-detects-only / "
+            r"changepoint-detects-only) with an exact two-sided McNemar test. "
+            r"A positive mean difference favours the episodic mixture. Unlike "
+            r"\cref{tab:episodes}, which compares unpaired point estimates on "
+            r"different grids, every row here isolates the episode-end axis "
+            r"alone."
+        ),
+        label="tab:paired_episodes", name="tab13_paired_episodes", align="rrrrrr",
+    )
+
+
 if __name__ == "__main__":
     import sys
+    from experiments.common import save_json
     reps = int(sys.argv[1]) if len(sys.argv) > 1 else REPS
     out = run(reps=reps)
-    path = sys.argv[2] if len(sys.argv) > 2 else "/tmp/exp9_paired.json"
-    with open(path, "w") as fh:
-        json.dump(out, fh, indent=1)
-    print("\nwrote", path)
+    if len(sys.argv) > 2:
+        with open(sys.argv[2], "w") as fh:
+            json.dump(out, fh, indent=1)
+        print("\nwrote", sys.argv[2])
+    else:
+        save_json(out, "exp9_paired")
+        print("\nwrote results/exp9_paired.json")
+    make_table(out)
+    print("wrote results/tables/tab13_paired_episodes.tex")

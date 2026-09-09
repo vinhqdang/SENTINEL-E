@@ -18,7 +18,8 @@ calibrated to a valid 1% level raises at least one false alarm on **100%** of
 SENTINEL-E turns any frozen per-frame detector into a network of anytime-valid
 sequential detectors with time-uniform false-alarm control. It never touches the
 backbone or the pixels --- it consumes one score per frame --- and its amortised
-cost is about **0.0006%** of the backbone it wraps.
+cost is about **0.0016%** of the backbone it wraps (0.61 microseconds against
+36.8 milliseconds per frame; `results/exp5_compute.json`).
 
 ---
 

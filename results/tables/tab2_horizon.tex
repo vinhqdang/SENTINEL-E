@@ -2,6 +2,7 @@
 \centering
 \caption{False-alarm probability against monitoring horizon at $\alpha=0.01$ (fixed threshold calibrated to a $10^{-3}$ per-frame rate; 200 streams per point). SENTINEL-E is flat in the horizon; the per-frame rules are not.}
 \label{tab:horizon}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{rrrrr}
 \toprule
 frames & hours & SENTINEL-E & p-value thr. & fixed thr. \\
@@ -12,5 +13,5 @@ frames & hours & SENTINEL-E & p-value thr. & fixed thr. \\
 120,000 & 1.33 & 0.000 & 1.000 & 0.990 \\
 240,000 & 2.67 & 0.000 & 1.000 & 1.000 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}

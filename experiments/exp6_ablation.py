@@ -109,30 +109,58 @@ def run(reps: int = REPS) -> List[Dict]:
     return rows
 
 
+def _verdict(pfa_ci, alpha: float = ALPHA) -> str:
+    """Three-state validity verdict from the Wilson interval, not the point estimate.
+
+    At ``REPS`` replicates a point-estimate comparison against ``alpha`` has no
+    power to resolve most rows here (Wilson upper bound above nominal for every
+    PFA-zero row), so a verdict is only reported where the interval actually
+    settles it.
+    """
+    lo, hi = pfa_ci
+    if hi <= alpha + 1e-9:
+        return "\\checkmark"
+    if lo > alpha + 1e-9:
+        return "\\ding{55}"
+    return "?"
+
+
 def make_table(rows):
     out, last_group = [], None
+    n_unresolved = 0
     for r in rows:
         g = r["group"]
         label = g if g and g != last_group else ""
         last_group = g if g else last_group
-        valid = "\\checkmark" if r["pfa"] <= ALPHA + 1e-9 else "\\ding{55}"
+        verdict = _verdict(r["pfa_ci"])
+        n_unresolved += verdict == "?"
+        lo, hi = r["pfa_ci"]
         out.append([
-            label, r["name"], fmt(r["pfa"], 3), valid, fmt_int(r["arl0"]),
+            label, r["name"],
+            f"{fmt(r['pfa'], 3)} [{fmt(lo, 3)}, {fmt(hi, 3)}]",
+            verdict, fmt_int(r["arl0"]),
             fmt(None if r["add_censored"] is None else r["add_censored"] / FPS, 1),
             fmt(r["miss_rate"], 2), fmt_int(r["lag"]),
         ])
+    n_invalid = sum(1 for r in rows if _verdict(r["pfa_ci"]) == "\\ding{55}")
+    n_valid = len(rows) - n_unresolved - n_invalid
     write_latex_table(
         out,
-        ["group", "variant", "PFA", r"$\le\alpha$?", "ARL$_0$", "cens. delay (s)",
-         "miss", "lag"],
+        ["group", "variant", "PFA [95\\% CI]", "valid?", "ARL$_0$",
+         "cens. delay (s)", "miss", "lag"],
         caption=(
             r"Component ablation at $\alpha=0.01$ over "
-            f"{REPS} null and {REPS} post-change streams. A cross in the fourth "
-            "column means the realised false-alarm rate exceeded the nominal "
-            "level, i.e. the variant does not deliver the guarantee it claims. "
-            "Note that the components which break validity are the temporal and "
-            "calibration ones, not the betting or prior choices, which only move "
-            "the delay."
+            f"{REPS} null and {REPS} post-change streams, with the Wilson 95\\%"
+            " interval on the realised PFA. The fourth column reports a "
+            "checkmark only where the interval's upper end stays at or below "
+            "nominal, a cross only where its lower end exceeds nominal, and a "
+            f"question mark where neither holds: {n_valid} rows resolve as "
+            f"valid, {n_invalid} resolve as invalid, and {n_unresolved} of "
+            f"{len(rows)} are unresolved at {REPS} replicates --- most rows "
+            "reporting PFA $0.000$ fall in this last class, since their Wilson "
+            "upper bound already exceeds $\\alpha$; see "
+            "\\cref{sec:limitations} for what this design can and cannot "
+            "certify."
         ),
         label="tab:ablation",
         name="tab8_ablation",

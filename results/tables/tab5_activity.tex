@@ -2,6 +2,7 @@
 \centering
 \caption{Shift in an \emph{unbinned} covariate (scene activity) at $\alpha=0.01$. Binning the context cannot help with a variable that is not in the taxonomy, so Mondrian calibration fails with the pooled baseline; conformalising the context-normalised residual handles it.}
 \label{tab:activity}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{llrrrrr}
 \toprule
 activity shift & variant & PFA & ARL$_0$ & cens. delay (s) & miss & abstain \\
@@ -23,5 +24,5 @@ $\times 3.0$ & pooled & 1.000 & 850 & 8.0 & 0.00 & 0.00 \\
  & residual & 0.070 & 86,960 & 956.3 & 0.26 & 0.19 \\
  & residual + LR wts & 0.000 & 90,000 & 2800.0 & 1.00 & 0.19 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
