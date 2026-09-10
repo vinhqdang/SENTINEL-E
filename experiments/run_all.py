@@ -23,7 +23,11 @@ from experiments import (
     exp7_diagnostics,
     exp8_episodes,
 )
-from experiments.real_data import exp_r1_validity, exp_r2_delayfar
+from experiments.real_data import (
+    exp_r1_validity,
+    exp_r2_delayfar,
+    make_qualitative_figure,
+)
 
 
 def main(quick: bool = False, only: str = ""):
@@ -44,6 +48,7 @@ def main(quick: bool = False, only: str = ""):
         ("exp7", lambda: exp7_diagnostics.main(
             10 if quick else exp7_diagnostics.N_STREAMS)),
         ("exp8", lambda: exp8_episodes.main(reps or exp8_episodes.REPS)),
+        ("exp_r0", make_qualitative_figure.main),
         ("exp_r1", lambda: exp_r1_validity.main(
             reps or exp_r1_validity.REPS, reps or exp_r1_validity.LAG_REPS)),
         ("exp_r2", lambda: exp_r2_delayfar.main(reps or exp_r2_delayfar.REPS)),
