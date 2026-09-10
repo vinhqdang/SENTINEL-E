@@ -1,0 +1,135 @@
+% Title page for double-anonymous review.
+% Kept as a SEPARATE file from sentinel_e.tex (the blinded manuscript) so the
+% manuscript file itself carries no author-identifying information. Submit
+% both files together; do not merge this content back into sentinel_e.tex.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{microtype}
+\PassOptionsToPackage{hidelinks}{hyperref}
+\usepackage{hyperref}
+\usepackage{orcidlink}
+
+\graphicspath{{../results/figures/}}
+\input{../results/tables/macros}
+
+\title{\textbf{SENTINEL-E}: Anytime-Valid Sequential Detection for\\
+       Streaming Visual Anomaly Surveillance}
+
+\author{%
+  Quang-Vinh Dang\,\orcidlink{0000-0002-3877-8024}\\[2pt]
+  \small British University Vietnam, Hung Yen, Vietnam\\
+  \small \texttt{vinh.dq4@buv.edu.vn}
+}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+  \small\emph{Title page for double-anonymous review. The accompanying
+  manuscript file (\texttt{sentinel\_e.tex}/\texttt{.pdf}) carries no author
+  information; this page and its declarations are for editorial use and are
+  withheld from reviewers.}
+\end{center}
+\vspace{1em}
+
+\begin{abstract}
+\noindent
+Streaming visual-anomaly systems --- illegal dumping among them --- are
+trained and evaluated as fixed-sample-size classifiers: given a short clip,
+emit one decision and report clip-level precision and recall. Deployment does
+not look like that: a municipal camera runs for weeks, and what an operator
+manages is the number of false alarms accumulated over the whole monitoring
+period, because each one costs a dispatch. Alerting the first time a
+per-frame threshold is crossed on a continuous stream is optional stopping,
+and it inflates the true false-alarm rate by an amount clip-level evaluation
+cannot show: a per-frame rule fed p-values individually valid at the $1\%$
+level raises at least one false alarm on \ValidityPfaPvaluePct\% of
+$40$-minute null streams.
+%
+Our contribution is an algorithm. Every anytime-valid sequential change
+detector in use --- CUSUM, Shiryaev--Roberts, e-detectors, non-partitioned
+e-detectors --- models a switch that, once it happens, lasts forever. A
+dumping event is an \emph{episode}: it begins, flickers under intermittent
+occlusion, ends, and recurs weeks later at the same site. We replace the
+mixture over changepoint locations with a mixture over episodes, realised as
+a two-state Markov chain whose forward recursion collapses a sum over $2^t$
+trajectories into two numbers. The resulting \emph{episodic e-process} is an
+exact non-negative supermartingale --- so Ville's inequality gives
+time-uniform false-alarm control with no new machinery --- costs $O(1)$ per
+frame against $O(t)$ for a general mixture over active starts, and contains
+the changepoint mixture exactly as the boundary case in which episodes never
+end, a strict generalisation along an axis the anytime-valid e-process
+family has left fixed at infinity. Around this core sits a per-camera
+conformal layer calibrated conditionally on observable context and corrected
+by exact Beta order-statistic levels, and a fleet layer in which a graph
+network steers each camera's episode hazard through a \emph{predictable}
+modulation --- provably unable to damage the guarantee --- combined across
+cameras by e-BH under arbitrary dependence.
+%
+Two evidence sources back these claims. Large-horizon simulated streams
+($10^5$--$10^6$ frames) show every classical and parametric baseline we test
+--- fixed threshold, per-frame p-value threshold, CUSUM, Shiryaev--Roberts, a
+parametric e-detector, E-SHIFT --- failing to hold its nominal false-alarm
+level, while SENTINEL-E and the changepoint mixture it strictly contains both
+hold it; a paired comparison on a shared betting grid resolves a real
+advantage for the episodic mixture at two and four recurring episodes and a
+real, smaller cost at one. We also report where the guarantee stops holding:
+an unmodelled covariate shift beyond $\times\ShiftResidualBreaks$ inflates the
+rate unless a shift-weighting safeguard is engaged, at a steep cost in power.
+%
+New in this revision: the pipeline is also run, unmodified, on real
+surveillance video (CUHK Avenue and UCSD Ped2) with a real optical-flow
+backbone rather than a simulator. This surfaces a limitation the simulated
+streams could not: real per-frame scores are autocorrelated across
+hundreds of frames (\RealAvenueFullLag{} on Avenue, \RealPedTwoFullLag{} on
+Ped2), close to or beyond a real episode's own duration, leaving only a
+narrow lag window in which validity and
+power coexist at all. Inside that window the guarantee holds on both real
+corpora --- realised false-alarm rate \RealPedTwoPfaHeadline{} on Ped2 and
+\RealAvenuePfaHeadline{} on Avenue at $\alpha=0.1$ --- while every classical
+baseline tested fails to hold it on the same real streams; detection power is
+real but modest on Ped2 and weak on Avenue, whose real episodes are shorter.
+This gap, not the simulated results, is the paper's central open problem.
+SENTINEL-E costs \CostSentinelUs\,\textmu s per frame, \CostSentinelPct\% of
+the detector it wraps.
+\end{abstract}
+
+\vspace{0.5em}
+\noindent\textbf{Keywords:} video anomaly detection; illegal dumping detection;
+anytime-valid inference; e-values; conformal prediction; sequential change
+detection; false discovery rate; video surveillance; edge deployment
+
+\section*{Declarations}
+
+\paragraph{Funding.} No funding was received for this work.
+\paragraph{Competing interests.} The author declares no competing interests.
+\paragraph{Author contributions.} The sole author conceived the method,
+implemented the library and experiments, and wrote the manuscript.
+\paragraph{Data and code availability.} All code, experiment scripts and
+generated results are available in the project repository, to be disclosed
+upon acceptance to preserve the double-anonymous review process; a private
+link is available to editors and reviewers on request. The corpora referenced
+in the manuscript's Related Work (CUHK Avenue, UCSD Ped2, TACO, ZeroWaste,
+UAVVaste, AerialWaste, MARIDA, MADOS, Mivia-IWDD) are distributed by their
+respective authors under their own terms; no data from them is redistributed
+here.
+\paragraph{Ethical approval.} Not applicable. No human-subjects data was
+collected for this work. The real video corpora used (CUHK Avenue, UCSD Ped2)
+are long-standing, publicly released video-anomaly-detection benchmarks
+distributed by their original authors for research use; this paper is a
+downstream, secondary use of that already-public release, not new data
+collection, and involves no interaction with human subjects. This work
+concerns the statistical calibration of alerting systems, not the governance
+of their deployment; the manuscript's Limitations section gives a substantive
+treatment of the human-oversight, accountability, and disclosure questions
+that automated surveillance of public space raises, rather than treating the
+topic as out of scope.
+
+\end{document}
