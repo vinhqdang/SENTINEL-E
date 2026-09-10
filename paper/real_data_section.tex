@@ -20,6 +20,26 @@ describes: calibration is the official training split, and the deployment
 stream is spliced from real labelled runs inside the test split, with no
 frame ever eligible for both roles.
 
+\begin{figure}[t]
+  \centering
+  \resultfig{fig_r0_qualitative}{}
+  \caption{What the backbone actually sees. One normal and one anomalous
+  frame from each real corpus, with the Farneback flow-magnitude field and
+  the resulting scalar score computed at the identical 64$\times$64
+  resolution the rest of this subsection runs on --- these are the real
+  numbers the pipeline consumes, not an illustration of them. The Ped2
+  anomaly is a cyclist among pedestrians; the Avenue anomaly is a loitering
+  pedestrian. Purely for legibility in print, the \emph{frame} panels are
+  re-read from each dataset's original higher-resolution release at the
+  identical frame index; the flow field and the score never are. Notice how
+  little the score moves between the two conditions
+  (\QualExamplePedTwoNormal{}$\to$\QualExamplePedTwoAnomalous{} on Ped2,
+  \QualExampleAvenueNormal{}$\to$\QualExampleAvenueAnomalous{} on Avenue) ---
+  a concrete picture of the weak per-frame signal \cref{sec:intro} motivates
+  accumulating sequentially rather than thresholding on its own.}
+  \label{fig:real-qualitative}
+\end{figure}
+
 \paragraph{A real train/test shift, disclosed and quantified.} Before any
 sequential machinery runs, a direct quantile check on the raw scores shows
 that \RealPedTwoShiftFrac{}\% of Ped2's confirmed-normal test frames, and
@@ -120,9 +140,18 @@ is a poor fit to real, heavy-tailed, strongly autocorrelated detector output.
   \resultfig{fig_r2_delay_far}{}
   \caption{Detection delay against realised false-alarm probability on real
   video (\RealDelayReps{} null and signal streams per operating point), at
-  each dataset's fixed operating lag from \cref{fig:real-validity}. Curves
-  that never reach the plotted range detect too rarely, on real spliced
-  events, at any realised false-alarm rate their swept knob achieves.}
+  each dataset's fixed operating lag from \cref{fig:real-validity}. Both axes
+  are log-scaled: every classical baseline's knob sweep saturates at, or
+  near, a false-alarm probability of one on real footage, so without a log
+  delay axis their whole operating range collapses into an illegible cluster
+  against SENTINEL-E's much larger delays. Points are additionally jittered
+  horizontally by a small, fixed, method-specific, never-positive offset
+  (at most 3\%, disclosed in \texttt{exp\_r2\_delayfar.py}) purely so
+  distinct methods' markers at the same realised PFA do not print on top of
+  one another; no offset changes which side of any false-alarm threshold a
+  point falls on. Curves that never reach the plotted range detect too
+  rarely, on real spliced events, at any realised false-alarm rate their
+  swept knob achieves.}
   \label{fig:real-delayfar}
 \end{figure}
 

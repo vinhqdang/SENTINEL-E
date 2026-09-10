@@ -79,19 +79,33 @@ def make_figure(results_by_dataset):
         (axes[0], "ped2", "(a) UCSD Ped2 (lag=%d)" % DATASET_LAG["ped2"]),
         (axes[1], "avenue", "(b) CUHK Avenue (lag=%d)" % DATASET_LAG["avenue"]),
     ):
-        for method, rows in results_by_dataset[dataset].items():
+        methods = list(results_by_dataset[dataset])
+        for i, method in enumerate(methods):
+            rows = results_by_dataset[dataset][method]
             pts = _finite(rows)
             if not pts:
                 continue
             x = np.array([r["pfa"] for r in pts])
             y = np.array([r["add_censored"] for r in pts]) / FPS
+            # On real video every classical baseline's knob sweep saturates at
+            # (or near) PFA=1: without this, five methods' markers stack
+            # exactly on top of one another at the plot's right edge, which
+            # is what made this figure unreadable. A tiny, fixed,
+            # method-indexed multiplicative offset (disclosed in the caption)
+            # fans them out horizontally; the offset is never positive, so a
+            # jittered point never reads as a higher false-alarm probability
+            # than the method actually realised, and it never moves a point
+            # by more than 3%.
+            jitter = 1.0 - 0.006 * i
             st = style_for(method)
-            ax.plot(x, y, label=method, **st)
+            ax.plot(x * jitter, y, label=method, alpha=0.85,
+                    markeredgecolor="white", markeredgewidth=0.4, **st)
         ax.set_xscale("log")
+        ax.set_yscale("log")
         ax.set_xlabel("realised false-alarm probability")
         ax.set_ylabel("censored detection delay (s)")
         ax.set_title(title)
-    axes[0].legend(loc="upper right", fontsize=6.5)
+    axes[0].legend(loc="lower left", fontsize=6.5)
     fig.tight_layout()
     for ext in ("pdf", "png"):
         fig.savefig(FIGURES / f"fig_r2_delay_far.{ext}")

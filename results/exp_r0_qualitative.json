@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-09-10T01:41:44Z",
+  "python": "3.11.15",
+  "numpy": "2.4.6",
+  "payload": {
+    "examples": {
+      "ped2": {
+        "video": "Test001",
+        "normal": 30,
+        "anomalous": 120
+      },
+      "avenue": {
+        "video": "01.avi",
+        "normal": 750,
+        "anomalous": 580
+      }
+    },
+    "scores": {
+      "ped2": {
+        "normal": 0.07388332486152649,
+        "anomalous": 0.08579643070697784
+      },
+      "avenue": {
+        "normal": 0.02605271153151989,
+        "anomalous": 0.0963081493973732
+      }
+    }
+  }
+}

@@ -485,6 +485,16 @@ def collect() -> Dict[str, str]:
     except FileNotFoundError:
         pass
 
+    # ---- Experiment R0 (qualitative real-frame example) ------------------- #
+    try:
+        er0 = load_json("exp_r0_qualitative")
+        labels = {"ped2": "PedTwo", "avenue": "Avenue"}
+        for name, tag in labels.items():
+            m[f"QualExample{tag}Normal"] = _fmt(er0["scores"][name]["normal"], 3)
+            m[f"QualExample{tag}Anomalous"] = _fmt(er0["scores"][name]["anomalous"], 3)
+    except FileNotFoundError:
+        pass
+
     # ---- Experiment 7 ---------------------------------------------------- #
     try:
         e7 = load_json("exp7_diagnostics")
