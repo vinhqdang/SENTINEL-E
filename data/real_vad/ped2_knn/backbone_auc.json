@@ -1,0 +1,7 @@
+{
+ "auc": 0.558534872338143,
+ "fps": 25.0,
+ "n_test": 2010,
+ "n_anomalous": 1648,
+ "note": "ResNet-18 (ImageNet, layer3) 196 patch vectors per 224x224 frame; frame score = max over patches of min L2 distance to a ~20k-patch bank of normal training patches (leave-one-video-out for calibration); 3-frame per-video median filter"
+}

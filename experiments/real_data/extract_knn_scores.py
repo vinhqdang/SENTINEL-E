@@ -108,15 +108,19 @@ def ped2_gt_len(d: str) -> int:
     return sum(1 for f in os.listdir(root) if f.endswith(".bmp"))
 
 
+def avenue_subdir(split: str) -> str:
+    return "training_videos" if split == "Train" else "testing_videos"
+
+
 def avenue_files(split: str) -> List[str]:
-    root = RAW_ROOT / "avenue" / "extracted" / "Avenue Dataset" / f"{split}ing_videos"
+    root = RAW_ROOT / "avenue" / "extracted" / "Avenue Dataset" / avenue_subdir(split)
     return sorted(f for f in os.listdir(root) if f.endswith(".avi"))
 
 
 def avenue_frames(split: str, f: str, n_limit: Optional[int]) -> Iterator[np.ndarray]:
     import cv2
 
-    cap = cv2.VideoCapture(str(RAW_ROOT / "avenue" / "extracted" / "Avenue Dataset" / f"{split}ing_videos" / f))
+    cap = cv2.VideoCapture(str(RAW_ROOT / "avenue" / "extracted" / "Avenue Dataset" / avenue_subdir(split) / f))
     count = 0
     try:
         while n_limit is None or count < n_limit:
