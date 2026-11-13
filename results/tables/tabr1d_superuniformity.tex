@@ -7,12 +7,12 @@
 \toprule
 dataset & lag & KS $p$ & mean $p$ & $\sup(\hat F(u)-u)$ & lag-1 corr. & median LB $p$ & frac. LB$>$0.05 & cond. KS $p$, $p_{t-1}\le0.1$ (n) & cond. KS $p$, $p_{t-1}>0.1$ (n) & mean $p_t\mid p_{t-1}\le0.1$ \\
 \midrule
-UCSD Ped2 & 3 & 0.000 & 0.521 & 0.023 & 0.808 & 0.000 & 0.00 & 0.000 (229) & 0.000 (2,461) & 0.097 \\
-UCSD Ped2 & 1 & 0.000 & 0.479 & 0.076 & 0.932 & 0.000 & 0.00 & 0.000 (1,150) & 0.000 (6,940) & 0.064 \\
-UCSD Ped2 (i.i.d. ref.) & 3 & 0.000 & 0.646 & 0.000 & 0.012 & 0.581 & 1.00 & 0.000 (86) & 0.000 (2,604) & 0.623 \\
-CUHK Avenue & 15 & 0.000 & 0.748 & 0.000 & 0.700 & 0.000 & 0.00 & 0.000 (40) & 0.000 (3,210) & 0.304 \\
-CUHK Avenue & 1 & 0.000 & 0.674 & 0.000 & 0.962 & 0.000 & 0.00 & 0.000 (1,980) & 0.000 (46,880) & 0.080 \\
-CUHK Avenue (i.i.d. ref.) & 15 & 0.000 & 0.592 & 0.000 & 0.014 & 0.364 & 1.00 & 0.000 (203) & 0.000 (3,047) & 0.578 \\
+UCSD Ped2 & 3 & 0.000 & 0.521 & 0.023 & 0.809 & 0.000 & 0.00 & 0.000 (9,120) & 0.000 (98,480) & 0.094 \\
+UCSD Ped2 & 1 & 0.000 & 0.479 & 0.076 & 0.932 & 0.000 & 0.00 & 0.000 (46,000) & 0.000 (277,600) & 0.064 \\
+UCSD Ped2 (i.i.d. ref.) & 3 & 0.000 & 0.648 & 0.000 & -0.003 & 0.477 & 0.94 & 0.000 (3,075) & 0.000 (104,525) & 0.654 \\
+CUHK Avenue & 15 & 0.000 & 0.745 & 0.000 & 0.704 & 0.000 & 0.00 & 0.000 (1,830) & 0.000 (128,170) & 0.310 \\
+CUHK Avenue & 1 & 0.000 & 0.674 & 0.000 & 0.962 & 0.000 & 0.00 & 0.000 (79,200) & 0.000 (1,875,200) & 0.080 \\
+CUHK Avenue (i.i.d. ref.) & 15 & 0.000 & 0.601 & 0.000 & 0.003 & 0.510 & 0.95 & 0.000 (7,888) & 0.000 (122,112) & 0.598 \\
 \bottomrule
 \end{tabular}}
 \begin{minipage}{\linewidth}\vspace{2pt}\footnotesize KS $p$ tests pooled thinned p-values against $U(0,1)$; it rejects any conservative (super-uniform) p-value distribution. The Ljung--Box lag count is $\min(10, T/4)$ per stream. Conformal p-values with a finite calibration set take a discrete set of values, so KS $p$ values are approximate.\end{minipage}

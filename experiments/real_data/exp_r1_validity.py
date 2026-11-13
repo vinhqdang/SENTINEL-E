@@ -424,6 +424,7 @@ def make_tables(payload: Dict) -> None:
 
 
 def make_figure(payload: Dict) -> None:
+    from matplotlib import ticker
     plt = setup_matplotlib()
     fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.0))
     colors = {"ped2": "#0b3d91", "avenue": "#c1272d"}
@@ -467,12 +468,17 @@ def make_figure(payload: Dict) -> None:
                         color=colors.get(ds), marker="o", ms=3.5, lw=1.0, capsize=2,
                         label=LABELS.get(ds, ds))
         if (~obs).any():
+            # Zero observed PFA: drawn at the Wilson upper bound (floored), hollow.
             ax.plot(a[~obs], np.maximum(ci_hi[~obs], FLOOR), linestyle="none", marker="v",
-                    markerfacecolor="white", markeredgecolor=colors.get(ds), ms=5)
+                    markerfacecolor="white", markeredgecolor=colors.get(ds), ms=5,
+                    label=f"{LABELS.get(ds, ds)} (0 observed; CI upper bound)")
     ax.plot(ALPHAS, ALPHAS, "k--", lw=1.0, label=r"nominal $\alpha$")
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_xlim(0.012, 0.4)
+    ax.set_xticks(ALPHAS)
+    ax.set_xticklabels([f"{x:g}" for x in ALPHAS])
+    ax.xaxis.set_minor_locator(ticker.NullLocator())
     ax.set_ylim(FLOOR * 0.7, 1.2)
     ax.set_xlabel(r"target level $\alpha$")
     ax.set_ylabel("null PFA on held-out training videos")

@@ -159,13 +159,13 @@ def make_table(payload: Dict) -> None:
                 LABELS.get(ds, ds), method, _fmt_knob(best["knob"]), pfa_cell,
                 "\\checkmark" if ok else "\\ding{55}",
                 fmt(best["episode_detection_rate"], 2),
-                fmt(best["median_delay_s"], 1) if det else "--",
+                fmt(best["mean_delay_s"], 1) if det else "--",
                 fmt(best["false_alarms_per_hour"], 2),
             ])
     write_latex_table(
         rows,
         ["dataset", "method", "knob", "null PFA", r"$\le 0.1$?", "episode det.",
-         "median delay (s)", "FA / hour"],
+         "mean delay (s)", "FA / hour"],
         caption=(
             "Each method at the knob with the smallest null false-alarm "
             "probability among knobs that detect at least 10\\% of real test "
@@ -174,7 +174,7 @@ def make_table(payload: Dict) -> None:
         ),
         label="tab:r2_delay_far", name="tabr2_delay_far", align="llrrcrrr",
         notes=(
-            r"``--'' in the delay column means the method reached no knob with "
+            r"Delays are means over detected test episodes. ``--'' in the delay column means the method reached no knob with "
             r"detection $\geq 0.10$; its row then shows the smallest-PFA knob. "
             r"Ties in null PFA are broken by the higher detection rate. Null "
             r"PFA is over held-out training-video streams; detection and "
