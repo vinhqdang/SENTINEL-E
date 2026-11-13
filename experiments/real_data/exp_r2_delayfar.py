@@ -1,36 +1,43 @@
-"""Experiment R2 --- detection delay against realised false-alarm rate, real video.
+"""Experiment R2 (protocol v2) --- detection delay against false-alarm rate, real video.
 
-The real-data analogue of ``experiments/exp2_delay_far.py``, and the paper's
-head-to-head comparison against classical sequential baselines on real
-surveillance footage. Every method sees the identical real Farneback-flow
-score stream, the identical real spliced event, and -- critically, since
-Experiment R1 showed this is where real video punishes an unfair comparison
--- the identical fixed betting-grid lag Experiment R1 selected for that
-dataset (5 frames on Ped2, 7 on Avenue). No method is thinned differently
-from any other.
+The v2 counterpart of the head-to-head comparison with classical sequential
+baselines. Every method runs at the lag L* that Experiment R1 selected for
+that dataset from *training* videos only, on the same real streams:
 
-Reading the table: at the lag Experiment R1's sweep identifies as usable,
-Ped2 keeps a real, non-trivial detection window; Avenue's is thin enough that
-most operating points here simply confirm the R1 finding from a different
-angle -- a real backbone whose validity and power windows barely overlap
-leaves classical baselines no more room to manoeuvre than SENTINEL-E.
+* null streams: permutations of the held-out training group ``null``;
+* test streams: permutations of the real labelled test videos, every video
+  once per stream, scored with :func:`protocol_v2.score_labelled_stream`.
+
+Knob sweeps are the same as in the v1 file. For each method, the table reports
+the knob with the smallest null false-alarm probability among those whose
+test episode detection rate is at least 0.10 (ties in null PFA broken by the
+higher detection rate). If no knob reaches 0.10 detection, the knob with the
+smallest null PFA is reported and its delay is shown as ``--``.
 """
 
 from __future__ import annotations
 
-from typing import Dict, List
+import argparse
+from typing import Dict, List, Sequence
 
 import numpy as np
 
 from experiments.common import (
-    FIGURES, fmt, fmt_int, save_json, setup_matplotlib, style_for, write_latex_table,
+    FIGURES, fmt, fmt_int, load_json, parallel_map, save_json, setup_matplotlib,
+    style_for, write_latex_table,
 )
-from experiments.real_data.exp_r1_validity import DATASET_LAG
-from experiments.real_data.runner import evaluate_real
+from experiments.real_data.protocol_v2 import (
+    FPS, GRACE_FRAMES, make_stream, rate, rng_for, run_alarms, score_labelled_stream,
+    state, test_summary,
+)
+from sentinel_e.datasets.real_vad import concat_whole_videos
 
-BASE = dict(n_frames=6_000, n_calibration=800, change_point=1_500, n_events=1)
-REPS = 250
-FPS = 25.0
+DATASETS = ("ped2", "avenue")
+LABELS = {"ped2": "UCSD Ped2", "avenue": "CUHK Avenue"}
+REPS = 200
+DETECT_FLOOR = 0.10
+#: Floor used to draw zero false-alarm rates on the log-scale figure.
+FA_FLOOR = 0.1
 
 SWEEPS: Dict[str, List[float]] = {
     "SENTINEL-E":            [0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002],
@@ -43,69 +50,83 @@ SWEEPS: Dict[str, List[float]] = {
 }
 
 
-def run(dataset: str, reps: int = REPS) -> Dict[str, List[Dict]]:
-    lag = DATASET_LAG[dataset]
+def _job(args):
+    """One stream of one method at one knob. Returns a bool (null) or a summary dict (test)."""
+    dataset, method, knob, lag, kind, rep = args
+    s = state(dataset)
+    if kind == "null":
+        scores, _, _ = concat_whole_videos(s["groups"]["null"], rng_for(dataset, "null", rep))
+        st = make_stream(scores, np.zeros(scores.size, dtype=bool), [], s["cal"])
+        return bool(run_alarms(method, knob, st, lag).size > 0)
+    scores, labels, eps = concat_whole_videos(
+        [v for v, _ in s["tv"]], rng_for(dataset, "test", rep), [l for _, l in s["tv"]],
+    )
+    st = make_stream(scores, labels, eps, s["cal"])
+    idx = run_alarms(method, knob, st, lag)
+    return score_labelled_stream(idx, labels, eps, GRACE_FRAMES, FPS)
+
+
+def run_dataset(dataset: str, lag: int, reps: int) -> Dict[str, List[Dict]]:
+    state(dataset)  # warm the cache in the parent process
+    jobs, keys = [], []
+    for method, knobs in SWEEPS.items():
+        for k in knobs:
+            for r in range(reps):
+                jobs.append((dataset, method, k, lag, "null", r))
+                keys.append((method, k, "null"))
+                jobs.append((dataset, method, k, lag, "test", r))
+                keys.append((method, k, "test"))
+    print(f"  {dataset}: {len(jobs)} stream runs at lag={lag}", flush=True)
+    out = parallel_map(_job, jobs, desc=f"R2 {dataset}")
+
     results: Dict[str, List[Dict]] = {}
     for method, knobs in SWEEPS.items():
-        opts = {"calibration": "pooled", "calibration_regime": "official", "lag": lag}
         rows = []
         for k in knobs:
-            out, null, _ = evaluate_real(method, k, dataset, reps, options=opts, **BASE)
-            rows.append({
-                "knob": k, "pfa": out.pfa, "pfa_ci": list(out.pfa_ci), "arl0": out.arl0,
-                "add": out.add, "add_se": out.add_se, "add_median": out.add_median,
-                "add_censored": out.add_censored, "add_censored_se": out.add_censored_se,
-                "miss_rate": out.miss_rate, "lag": null[0].lag,
-            })
-            print(f"  {dataset:7s} {method:24s} knob={k:<9g} PFA={out.pfa:.3f} "
-                  f"ADD={out.add if np.isfinite(out.add) else float('nan'):8.1f} "
-                  f"miss={out.miss_rate:.2f}", flush=True)
+            nulls = [o for o, kk in zip(out, keys) if kk == (method, k, "null")]
+            tests = [o for o, kk in zip(out, keys) if kk == (method, k, "test")]
+            null_rate = rate(sum(nulls), len(nulls))
+            summ = test_summary(tests)
+            rows.append({"knob": k, "null_pfa": null_rate["pfa"], "null_ci": null_rate["ci"],
+                         "null_k": null_rate["k"], "null_n": null_rate["n"], **summ})
+            print(f"  {dataset:7s} {method:22s} knob={k:<9g} nullPFA={null_rate['pfa']:.3f} "
+                  f"det={summ['episode_detection_rate']:.3f} "
+                  f"FA/h={summ['false_alarms_per_hour']:.1f}", flush=True)
         results[method] = rows
     return results
 
 
-def _finite(rows, pfa_max=1.01):
-    return sorted(
-        [r for r in rows if r["add"] is not None and np.isfinite(r["add"])
-         and r["pfa"] <= pfa_max and r["miss_rate"] < 0.9],
-        key=lambda r: r["pfa"],
-    )
+def select_knob(rows: List[Dict]) -> Dict:
+    """Smallest null PFA among knobs with test detection >= DETECT_FLOOR (ties: higher detection)."""
+    usable = [r for r in rows if np.isfinite(r["episode_detection_rate"])
+              and r["episode_detection_rate"] >= DETECT_FLOOR]
+    if usable:
+        best = min(usable, key=lambda r: (r["null_pfa"], -r["episode_detection_rate"]))
+        return {**best, "detects": True}
+    best = min(rows, key=lambda r: (r["null_pfa"], -(r["episode_detection_rate"] or 0.0)))
+    return {**best, "detects": False}
 
 
-def make_figure(results_by_dataset):
+def make_figure(payload: Dict) -> None:
     plt = setup_matplotlib()
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.0))
-    for ax, dataset, title in (
-        (axes[0], "ped2", "(a) UCSD Ped2 (lag=%d)" % DATASET_LAG["ped2"]),
-        (axes[1], "avenue", "(b) CUHK Avenue (lag=%d)" % DATASET_LAG["avenue"]),
-    ):
-        methods = list(results_by_dataset[dataset])
-        for i, method in enumerate(methods):
-            rows = results_by_dataset[dataset][method]
-            pts = _finite(rows)
+    datasets = list(payload["results"])
+    fig, axes = plt.subplots(1, len(datasets), figsize=(3.6 * len(datasets), 3.1), squeeze=False)
+    for ax, ds in zip(axes[0], datasets):
+        for method, rows in payload["results"][ds].items():
+            pts = [r for r in rows if np.isfinite(r["false_alarms_per_hour"])]
             if not pts:
                 continue
-            x = np.array([r["pfa"] for r in pts])
-            y = np.array([r["add_censored"] for r in pts]) / FPS
-            # On real video every classical baseline's knob sweep saturates at
-            # (or near) PFA=1: without this, five methods' markers stack
-            # exactly on top of one another at the plot's right edge, which
-            # is what made this figure unreadable. A tiny, fixed,
-            # method-indexed multiplicative offset (disclosed in the caption)
-            # fans them out horizontally; the offset is never positive, so a
-            # jittered point never reads as a higher false-alarm probability
-            # than the method actually realised, and it never moves a point
-            # by more than 3%.
-            jitter = 1.0 - 0.006 * i
-            st = style_for(method)
-            ax.plot(x * jitter, y, label=method, alpha=0.85,
-                    markeredgecolor="white", markeredgewidth=0.4, **st)
+            x = np.array([max(r["false_alarms_per_hour"], FA_FLOOR) for r in pts])
+            y = np.array([r["episode_detection_rate"] for r in pts])
+            ax.plot(x, y, label=method, alpha=0.9, markeredgecolor="white",
+                    markeredgewidth=0.4, **style_for(method))
         ax.set_xscale("log")
-        ax.set_yscale("log")
-        ax.set_xlabel("realised false-alarm probability")
-        ax.set_ylabel("censored detection delay (s)")
-        ax.set_title(title)
-    axes[0].legend(loc="lower left", fontsize=6.5)
+        ax.set_ylim(-0.02, 1.02)
+        ax.axhline(DETECT_FLOOR, color="k", lw=0.7, ls=":")
+        ax.set_xlabel(f"false alarms per hour, real normal footage (zero drawn at {FA_FLOOR:g})")
+        ax.set_ylabel("episode detection rate")
+        ax.set_title(f"{LABELS.get(ds, ds)} (lag $L^\\ast$={payload['lag'][ds]})")
+    axes[0][0].legend(loc="lower right", fontsize=6.3)
     fig.tight_layout()
     for ext in ("pdf", "png"):
         fig.savefig(FIGURES / f"fig_r2_delay_far.{ext}")
@@ -120,74 +141,70 @@ def _fmt_knob(v: float) -> str:
         exp = int(np.floor(np.log10(a)))
         mant = a / 10**exp
         mant_s = f"{mant:g}"
-        return (f"$10^{{{exp}}}$" if mant_s == "1"
-                else f"${mant_s}\\times 10^{{{exp}}}$")
+        return f"$10^{{{exp}}}$" if mant_s == "1" else f"${mant_s}\\times 10^{{{exp}}}$"
     return f"{a:g}"
 
 
-def make_table(results_by_dataset, cap: float = 0.1):
-    labels = {"ped2": "UCSD Ped2", "avenue": "CUHK Avenue"}
+def make_table(payload: Dict) -> None:
     rows = []
-    for dataset, results in results_by_dataset.items():
-        for method, rs in results.items():
-            usable = [r for r in rs if r["add_censored"] is not None
-                      and np.isfinite(r["add_censored"]) and r["miss_rate"] < 0.9]
-            if usable:
-                best = min(usable, key=lambda r: (r["pfa"], r["add_censored"]))
-                detects = True
-            else:
-                best = min(rs, key=lambda r: r["pfa"])
-                detects = False
-            ok = detects and best["pfa"] <= cap
-            pfa_cell = fmt(best["pfa"], 3)
+    for ds, res in payload["results"].items():
+        for method, rs in res.items():
+            best = select_knob(rs)
+            ok = best["null_pfa"] <= 0.1
+            pfa_cell = fmt(best["null_pfa"], 3)
             if not ok:
                 pfa_cell = f"\\textbf{{{pfa_cell}}}"
+            det = best["detects"]
             rows.append([
-                labels[dataset], method, _fmt_knob(best["knob"]), pfa_cell,
-                "\\checkmark" if ok else "\\ding{55}", fmt_int(best["arl0"]),
-                (f"{fmt(best['add_censored'] / FPS, 1)} $\\pm$ "
-                 f"{fmt(1.96 * (best['add_censored_se'] or 0) / FPS, 1)}")
-                if detects else "--",
-                fmt(best["miss_rate"], 2),
+                LABELS.get(ds, ds), method, _fmt_knob(best["knob"]), pfa_cell,
+                "\\checkmark" if ok else "\\ding{55}",
+                fmt(best["episode_detection_rate"], 2),
+                fmt(best["median_delay_s"], 1) if det else "--",
+                fmt(best["false_alarms_per_hour"], 2),
             ])
     write_latex_table(
         rows,
-        ["dataset", "method", "knob", "realised PFA", f"$\\le {cap}$?", "ARL$_0$",
-         "censored delay (s)", "miss rate"],
+        ["dataset", "method", "knob", "null PFA", r"$\le 0.1$?", "episode det.",
+         "median delay (s)", "FA / hour"],
         caption=(
-            "Each method at the tightest realised false-alarm probability it "
-            "achieves while still detecting most events, on real surveillance "
-            f"video at the operating lag fixed by Experiment R1 ({REPS} null "
-            "and signal streams per operating point)."
+            "Each method at the knob with the smallest null false-alarm "
+            "probability among knobs that detect at least 10\\% of real test "
+            f"episodes, at the lag $L^\\ast$ selected on training videos in "
+            f"Experiment R1 ({REPS} null and {REPS} test streams per knob)."
         ),
-        label="tab:real_delay_far",
-        name="tabr2_delay_far",
-        align="llrrcrrr",
+        label="tab:r2_delay_far", name="tabr2_delay_far", align="llrrcrrr",
         notes=(
-            r"Delays are in seconds at 25\,fps, censored at the horizon on a "
-            r"miss. A bold rate violates the target column; ``--'' means the "
-            r"method never detects at any setting. Every method here shares "
-            r"the identical fixed lag SENTINEL-E was run at (Experiment R1), "
-            r"so no method is thinned more or less favourably than another."
+            r"``--'' in the delay column means the method reached no knob with "
+            r"detection $\geq 0.10$; its row then shows the smallest-PFA knob. "
+            r"Ties in null PFA are broken by the higher detection rate. Null "
+            r"PFA is over held-out training-video streams; detection and "
+            r"false-alarm rate are over the real labelled test split. Bold PFA "
+            r"exceeds 0.1."
         ),
     )
 
 
-def main(reps: int = REPS):
-    print("Experiment R2: detection delay vs realised false-alarm rate, real video")
-    results_by_dataset = {}
-    for dataset in ("ped2", "avenue"):
-        print(f" {dataset} ...")
-        results_by_dataset[dataset] = run(dataset, reps)
-    save_json({"results": results_by_dataset, "reps": reps, "base": BASE,
-               "dataset_lag": DATASET_LAG, "fps": FPS}, "exp_r2_delayfar")
-    make_figure(results_by_dataset)
-    make_table(results_by_dataset)
+def main(reps: int = REPS, datasets: Sequence[str] = DATASETS):
+    print("Experiment R2 (v2): delay vs false-alarm rate on real video")
+    r1 = load_json("exp_r1_validity")
+    lag = {ds: int(r1["datasets"][ds]["selection"]["selected_lag"]) for ds in datasets}
+    results = {}
+    for ds in datasets:
+        print(f" {ds} (L*={lag[ds]}) ...", flush=True)
+        results[ds] = run_dataset(ds, lag[ds], reps)
+    payload = {"reps": reps, "lag": lag, "fps": FPS, "grace_frames": GRACE_FRAMES,
+               "detect_floor": DETECT_FLOOR, "fa_floor": FA_FLOOR, "sweeps": SWEEPS,
+               "results": results}
+    save_json(payload, "exp_r2_delayfar")
+    make_figure(payload)
+    make_table(payload)
     print(" wrote results/exp_r2_delayfar.json, fig_r2_delay_far, tabr2_delay_far")
+    return payload
 
 
 if __name__ == "__main__":
-    import argparse
     ap = argparse.ArgumentParser()
+    ap.add_argument("--datasets", default=",".join(DATASETS))
     ap.add_argument("--reps", type=int, default=REPS)
-    main(**vars(ap.parse_args()))
+    a = ap.parse_args()
+    main(reps=a.reps, datasets=tuple(x.strip() for x in a.datasets.split(",") if x.strip()))

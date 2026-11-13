@@ -47,6 +47,9 @@ __all__ = [
     "clips_from_runs",
     "build_real_stream",
     "causal_local_context",
+    "train_video_groups",
+    "test_videos",
+    "concat_whole_videos",
 ]
 
 DATA_ROOT = Path(__file__).resolve().parents[2] / "data" / "real_vad"
@@ -458,3 +461,96 @@ def _splice(
         calibration_context=causal_local_context(calibration).reshape(-1, 1),
         episodes=episodes,
     )
+
+
+# --------------------------------------------------------------------------- #
+# Whole-video protocol (v2)
+# --------------------------------------------------------------------------- #
+#: Assignment of official training videos to the three disjoint groups used by
+#: the v2 protocol. Indexed by the video's position in ``train_boundaries``.
+TRAIN_GROUP_OF_RESIDUE = {0: "cal", 1: "sel", 2: "null"}
+
+
+def train_video_groups(corpus: RealVADCorpus) -> dict:
+    """Split the official anomaly-free training videos into three disjoint groups.
+
+    Each group holds whole training videos (one 1-D score array per video),
+    never fragments. Assignment is deterministic: video ``i`` goes to ``"cal"``
+    if ``i % 3 == 0``, ``"sel"`` if ``i % 3 == 1`` and ``"null"`` if
+    ``i % 3 == 2``. ``"cal"`` supplies calibration frames, ``"sel"`` is used
+    only to select the betting-grid lag, and ``"null"`` is held out for
+    validating the false-alarm rate. No group touches the labelled test split.
+    """
+    if not corpus.train_boundaries:
+        raise ValueError(f"{corpus.name}: no train_meta.json boundaries available")
+    groups = {"cal": [], "sel": [], "null": []}
+    for i, (_name, lo, hi) in enumerate(corpus.train_boundaries):
+        groups[TRAIN_GROUP_OF_RESIDUE[i % 3]].append(
+            np.asarray(corpus.calibration_scores[lo:hi], dtype=float).copy()
+        )
+    return groups
+
+
+def test_videos(corpus: RealVADCorpus) -> list:
+    """One ``(scores, labels)`` pair per official test video, in official order.
+
+    ``labels`` is boolean with True inside an annotated anomalous run. Arrays
+    are copies, so callers may not alias the corpus.
+    """
+    out = []
+    for _name, lo, hi in corpus.video_boundaries:
+        out.append((
+            np.asarray(corpus.test_scores[lo:hi], dtype=float).copy(),
+            np.asarray(corpus.test_labels[lo:hi], dtype=bool).copy(),
+        ))
+    return out
+
+
+def concat_whole_videos(videos, rng, labels=None):
+    """Concatenate whole videos in a random order, reusing no frame.
+
+    Parameters
+    ----------
+    videos : sequence of 1-D arrays
+        One score array per whole video. Every video appears exactly once.
+    rng : numpy.random.Generator
+        The video order is ``rng.permutation(len(videos))``.
+    labels : sequence of 1-D bool arrays, optional
+        Per-video frame labels, aligned with ``videos``. When given, episodes
+        are the maximal runs of True computed *within each video*, so a run
+        is never merged across a video boundary.
+
+    Returns
+    -------
+    scores : (T,) float array, ``T = sum of video lengths``.
+    labels_out : (T,) bool array. All False when ``labels`` is None.
+    episodes : list of (start, end_exclusive) global index pairs. Empty when
+        ``labels`` is None.
+    """
+    n = len(videos)
+    if n == 0:
+        raise ValueError("concat_whole_videos needs at least one video")
+    if labels is not None and len(labels) != n:
+        raise ValueError("labels must align one-to-one with videos")
+    order = rng.permutation(n)
+
+    score_parts, label_parts, episodes = [], [], []
+    offset = 0
+    for j in order:
+        v = np.asarray(videos[j], dtype=float).ravel()
+        score_parts.append(v)
+        if labels is None:
+            label_parts.append(np.zeros(v.size, dtype=bool))
+        else:
+            lab = np.asarray(labels[j], dtype=bool).ravel()
+            if lab.size != v.size:
+                raise ValueError("per-video labels must match the video length")
+            label_parts.append(lab)
+            for s, e in _episodes_from_labels(lab):
+                episodes.append((offset + s, offset + e))
+        offset += v.size
+
+    scores = np.concatenate(score_parts) if score_parts else np.zeros(0)
+    labels_out = np.concatenate(label_parts) if label_parts else np.zeros(0, dtype=bool)
+    return scores, labels_out, episodes
+

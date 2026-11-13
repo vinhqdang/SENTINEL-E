@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\caption{Test-split detection at $\alpha=0.1$ for reference lags, shown so a reader can see what a lag tuned on the test split would have reported. These lags are not used to select anything.}
+\label{tab:r1_reference_lags}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llrrr}
+\toprule
+dataset & lag & test episode det. & median delay (s) & FA / hour \\
+\midrule
+UCSD Ped2 & 1 & 1.00 & 0.5 & 4931.51 \\
+UCSD Ped2 & 3 & 0.98 & 1.5 & 904.11 \\
+UCSD Ped2 & 5 & 0.95 & 2.4 & 164.38 \\
+UCSD Ped2 & 7 & 0.74 & 3.2 & 493.15 \\
+UCSD Ped2 & 10 & 0.45 & 4.0 & 82.19 \\
+CUHK Avenue & 1 & 0.76 & 0.3 & 896.47 \\
+CUHK Avenue & 3 & 0.45 & 0.9 & 187.20 \\
+CUHK Avenue & 5 & 0.31 & 1.2 & 70.31 \\
+CUHK Avenue & 7 & 0.20 & 1.8 & 48.34 \\
+CUHK Avenue & 10 & 0.09 & 3.1 & 22.85 \\
+\bottomrule
+\end{tabular}}
+\end{table}

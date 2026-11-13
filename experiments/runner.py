@@ -82,17 +82,16 @@ def run_spec(spec: Spec) -> Trace:
     return run_spec_on_stream(st, spec)
 
 
-def run_spec_on_stream(st, spec: Spec) -> Trace:
-    """Run one detector over an already-built stream (real or simulated).
+def alarm_indices_on_stream(st, spec: Spec) -> Tuple[np.ndarray, float, int]:
+    """Every alarm frame index (sorted) that one detector raises on one stream.
 
-    Factored out of :func:`run_spec` so that real-data experiments
-    (``experiments/real_data/runner.py``) can reuse the exact same method
-    dispatch -- SENTINEL-E, every classical baseline, and the thinning
-    convention -- without duplicating it. Nothing below this line knows or
-    cares whether ``st.scores`` came from a simulator or a real backbone.
+    Returns ``(idx, abstention, lag)``: ``idx`` holds all alarm indices, not
+    only the first; ``abstention`` is the fraction of betting opportunities
+    the method declined (0.0 for score-based baselines); ``lag`` is the
+    betting-grid thinning lag actually used. :func:`run_spec_on_stream`
+    reduces this to the first-alarm :class:`Trace`.
     """
     opt = spec.opt
-    nu = spec.change_point if spec.change_point is not None else 0
 
     if spec.method == "Oracle p-values":
         # Diagnostic: feed the same e-detector exactly-uniform p-values on the
@@ -110,8 +109,7 @@ def run_spec_on_stream(st, spec: Spec) -> Trace:
         model.detector.reset()
         _, al = model.detector.run(p)
         idx = bet[np.flatnonzero(al)]
-        return Trace(st.T, _first(idx), _first(idx, nu), 0.0,
-                     model.decorrelation_lag, int(idx.size))
+        return idx, 0.0, model.decorrelation_lag
 
     if spec.method in PVALUE_METHODS:
         cal_kw = dict(
@@ -145,8 +143,7 @@ def run_spec_on_stream(st, spec: Spec) -> Trace:
             model = SentinelE(alpha=spec.knob, **cal_kw)
             res = model.run_stream(st)
             idx = np.flatnonzero(res.alarms)
-            return Trace(st.T, _first(idx), _first(idx, nu),
-                         res.abstention_rate, res.lag, int(idx.size))
+            return idx, res.abstention_rate, res.lag
         # p-value threshold: identical conformal front end, naive stopping rule.
         model = SentinelE(alpha=0.01, **cal_kw)
         model.fit(st.calibration_scores, st.calibration_context)
@@ -154,8 +151,7 @@ def run_spec_on_stream(st, spec: Spec) -> Trace:
         p, active = model.p_values(st.scores[bet], st.context[bet])
         fired = PValueThreshold(level=spec.knob).run_pvalues(p) & active
         idx = bet[np.flatnonzero(fired)]
-        return Trace(st.T, _first(idx), _first(idx, nu), float(1 - active.mean()),
-                     model.decorrelation_lag, int(idx.size))
+        return idx, float(1 - active.mean()), model.decorrelation_lag
 
     # Score-based baselines: calibrated on the same confirmed no-dumping frames.
     if spec.method == "Fixed threshold":
@@ -200,7 +196,21 @@ def run_spec_on_stream(st, spec: Spec) -> Trace:
         bet, lag = np.arange(st.T), 1
     fired = det.run(st.scores[bet])
     idx = bet[np.flatnonzero(fired)]
-    return Trace(st.T, _first(idx), _first(idx, nu), 0.0, lag, int(idx.size))
+    return idx, 0.0, lag
+
+
+def run_spec_on_stream(st, spec: Spec) -> Trace:
+    """Run one detector over an already-built stream (real or simulated).
+
+    Factored out of :func:`run_spec` so that real-data experiments
+    (``experiments/real_data/runner.py``) can reuse the exact same method
+    dispatch -- SENTINEL-E, every classical baseline, and the thinning
+    convention -- without duplicating it. Nothing below this line knows or
+    cares whether ``st.scores`` came from a simulator or a real backbone.
+    """
+    nu = spec.change_point if spec.change_point is not None else 0
+    idx, abstention, lag = alarm_indices_on_stream(st, spec)
+    return Trace(st.T, _first(idx), _first(idx, nu), abstention, lag, int(idx.size))
 
 
 def evaluate(

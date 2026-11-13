@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\caption{Super-uniformity of conformal p-values on held-out training-video null streams, at the selected lag and at lag 1, with an i.i.d. Gaussian reference of matched size. Conformal p-values with the exact order-statistic correction are super-uniform, so they can sit above $U(0,1)$ even when valid; the sup statistic is the direct test of that. Conditional uniformity needs KS $p$ not small, lag-1 correlation near zero and conditional mean near 0.5.}
+\label{tab:r1_superuniform}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+dataset & lag & KS $p$ & mean $p$ & $\sup(\hat F(u)-u)$ & lag-1 corr. & median LB $p$ & frac. LB$>$0.05 & cond. KS $p$, $p_{t-1}\le0.1$ (n) & cond. KS $p$, $p_{t-1}>0.1$ (n) & mean $p_t\mid p_{t-1}\le0.1$ \\
+\midrule
+UCSD Ped2 & 3 & 0.000 & 0.521 & 0.023 & 0.808 & 0.000 & 0.00 & 0.000 (229) & 0.000 (2,461) & 0.097 \\
+UCSD Ped2 & 1 & 0.000 & 0.479 & 0.076 & 0.932 & 0.000 & 0.00 & 0.000 (1,150) & 0.000 (6,940) & 0.064 \\
+UCSD Ped2 (i.i.d. ref.) & 3 & 0.000 & 0.646 & 0.000 & 0.012 & 0.581 & 1.00 & 0.000 (86) & 0.000 (2,604) & 0.623 \\
+CUHK Avenue & 15 & 0.000 & 0.748 & 0.000 & 0.700 & 0.000 & 0.00 & 0.000 (40) & 0.000 (3,210) & 0.304 \\
+CUHK Avenue & 1 & 0.000 & 0.674 & 0.000 & 0.962 & 0.000 & 0.00 & 0.000 (1,980) & 0.000 (46,880) & 0.080 \\
+CUHK Avenue (i.i.d. ref.) & 15 & 0.000 & 0.592 & 0.000 & 0.014 & 0.364 & 1.00 & 0.000 (203) & 0.000 (3,047) & 0.578 \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize KS $p$ tests pooled thinned p-values against $U(0,1)$; it rejects any conservative (super-uniform) p-value distribution. The Ljung--Box lag count is $\min(10, T/4)$ per stream. Conformal p-values with a finite calibration set take a discrete set of values, so KS $p$ values are approximate.\end{minipage}
+\end{table}
