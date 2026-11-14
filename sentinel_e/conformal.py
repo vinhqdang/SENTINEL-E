@@ -858,7 +858,7 @@ class MondrianConformalCalibrator:
             cal, w, eps = rec["scores"], rec["weights"], rec["eps"]
             if self.weighted and "dr" in rec:
                 w_test = np.clip(
-                    rec["dr"].ratio(ctx[m]),
+                    rec["dr"].ratio(_select_columns(ctx[m], self.shift_features)),
                     np.exp(-self.weight_clip),
                     np.exp(self.weight_clip),
                 )
@@ -1234,7 +1234,7 @@ class ResidualConformalCalibrator:
         if self._weights is not None and self._dr is not None:
             # Weighted conformal on the residual scale.
             w = self._weights
-            w_test = np.clip(self._dr.ratio(x),
+            w_test = np.clip(self._dr.ratio(_select_columns(x, self.shift_features)),
                              np.exp(-self.weight_clip), np.exp(self.weight_clip))
             suffix = np.concatenate([np.cumsum(w[::-1])[::-1], [0.0]])
             p = (suffix[idx] + w_test) / np.maximum(suffix[0] + w_test, _EPS)
