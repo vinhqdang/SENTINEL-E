@@ -142,7 +142,7 @@ def process_video(row: dict) -> dict:
     for s in sample_frames(row["path"], row["meta_fps"]):
         frames.append(gray64(s.bgr))
         ts.append(s.t)
-        idxs.append(s.index)
+        idxs.append(int(s.index))
         fps = s.fps
     if not frames:
         raise RuntimeError(f"no frames decoded from {row['video_id']}")
@@ -150,6 +150,7 @@ def process_video(row: dict) -> dict:
     return {
         "scores": median3(raw),
         "t": np.asarray(ts),
+        "indices": idxs,
         "native_fps": round(float(fps), 2),
         "n_frames": len(frames),
     }
@@ -166,10 +167,12 @@ def main() -> None:
     train_rows = [r for r in load_split("train") if r["label"] == "false"]
     print(f"calibration pool: {len(train_rows)} normal train videos", flush=True)
     cal_parts, train_meta = [], []
+    sampled = {}
     for j, r in enumerate(train_rows):
         res = process_video(r)
         cal_parts.append(res["scores"])
         train_meta.append({"name": r["video_id"], "n_frames": res["n_frames"]})
+        sampled[r["video_id"]] = res["indices"]
         if j % 20 == 0:
             print(f"  train {j + 1}/{len(train_rows)} ({time.time() - t0:.0f}s)", flush=True)
 
@@ -184,8 +187,13 @@ def main() -> None:
         lab = np.zeros(res["n_frames"], dtype=np.int64)
         if positive:
             lab = (res["t"] >= r["timestamp"]).astype(np.int64)
+            if lab.sum() == 0:
+                # Onset is after the last sampled frame (label quirk in source metadata).
+                print(f"  WARNING {r['video_id']}: onset {r['timestamp']}s is after the last "
+                      f"sampled frame ({res['t'][-1]:.2f}s); zero positive frames", flush=True)
         test_parts.append(res["scores"])
         label_parts.append(lab)
+        sampled[r["video_id"]] = res["indices"]
         test_meta.append({
             "name": r["video_id"],
             "n_frames": res["n_frames"],
@@ -203,6 +211,7 @@ def main() -> None:
     np.save(out_dir / "test_labels.npy", labels)
     (out_dir / "train_meta.json").write_text(json.dumps(train_meta, indent=1))
     (out_dir / "test_meta.json").write_text(json.dumps(test_meta, indent=1))
+    (out_dir / "sampled_indices.json").write_text(json.dumps(sampled))
 
     auc = float(roc_auc(labels, test))
     (out_dir / "backbone_auc.json").write_text(json.dumps({
