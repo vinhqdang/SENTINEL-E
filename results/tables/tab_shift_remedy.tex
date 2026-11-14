@@ -1,0 +1,25 @@
+\begin{table}[t]
+\centering
+\caption{Activity shift at $\alpha=0.01$: the unweighted residual detector with a stricter calibrated support region, against the two experiment 3b arms.}
+\label{tab:shift_remedy}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llrlllrr}
+\toprule
+activity shift & variant & PFA & 95\% CI & verdict & miss rate & censored delay (s) & abstention (null) \\
+\midrule
+$\times 1.0$ & residual & 0.0000 & [0.0000, 0.0026] & valid & 0.025 & 237.9 & 0.001 \\
+ & residual + LR wts & 0.0000 & [0.0000, 0.0026] & valid & 0.095 & 453.2 & 0.001 \\
+ & residual (support slack 0.5) & 0.0000 & [0.0000, 0.0026] & valid & 0.025 & 239.9 & 0.010 \\
+$\times 1.5$ & residual & 0.0020 & [0.0007, 0.0059] & valid & 0.060 & 369.4 & 0.009 \\
+ & residual + LR wts & 0.0000 & [0.0000, 0.0026] & valid & 0.540 & 1620.3 & 0.009 \\
+ & residual (support slack 0.5) & 0.0000 & [0.0000, 0.0026] & valid & 0.070 & 404.3 & 0.068 \\
+$\times 2.0$ & residual & 0.0140 & [0.0092, 0.0213] & unresolved & 0.115 & 542.3 & 0.040 \\
+ & residual + LR wts & 0.0000 & [0.0000, 0.0026] & valid & 0.930 & 2617.4 & 0.040 \\
+ & residual (support slack 0.5) & 0.0000 & [0.0000, 0.0026] & valid & 0.165 & 696.4 & 0.191 \\
+$\times 3.0$ & residual & 0.0620 & [0.0509, 0.0754] & invalid & 0.265 & 939.2 & 0.192 \\
+ & residual + LR wts & 0.0000 & [0.0000, 0.0026] & valid & 1.000 & 2800.0 & 0.192 \\
+ & residual (support slack 0.5) & 0.0007 & [0.0001, 0.0038] & valid & 0.450 & 1458.1 & 0.500 \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Null PFA over 1500 streams and post-change metrics over 200 streams per row, alpha = 0.01. Verdict: valid if the Wilson 95\% upper bound is at most alpha; invalid if the lower bound exceeds alpha; otherwise unresolved. The first two rows are taken unchanged from experiment 3b. The support-slack row sets the residual calibrator's Mahalanobis abstention multiplier to 0.5 (default 1.5), which abstains on frames near the calibrated-support edge. Abstention is the fraction of null betting instants declared inactive.\end{minipage}
+\end{table}
