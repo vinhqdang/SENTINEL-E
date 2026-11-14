@@ -24,10 +24,11 @@ from __future__ import annotations
 
 import argparse
 import time
-from typing import Dict, List, Sequence
+from typing import Dict, List, Optional, Sequence
 
 import numpy as np
 
+from experiments.checkpoint import UnitCache, safe_name
 from experiments.common import (
     FIGURES,
     fmt,
@@ -61,46 +62,54 @@ def make_cfg(T: int) -> Dict:
                 diurnal_period=DIURNAL_PERIOD, n_calibration=N_CALIBRATION)
 
 
+def _pfa_unit(method: str, knob: float, cfg: Dict, reps: int, workers: int) -> Dict:
+    """One (horizon, method) unit: null streams and their summary."""
+    t0 = time.perf_counter()
+    out, null, _ = evaluate(method, knob, cfg, reps, None, workers=workers)
+    return {"pfa": out.pfa, "pfa_ci": list(out.pfa_ci), "n": out.n_null,
+            "arl0": out.arl0, "lag": null[0].lag,
+            "seconds": time.perf_counter() - t0}
+
+
 def run(hours: Sequence[float] = HOURS, reps_sentinel: int = REPS_SENTINEL,
-        reps_baseline: int = REPS_BASELINE, workers: int = WORKERS) -> List[Dict]:
+        reps_baseline: int = REPS_BASELINE, workers: int = WORKERS,
+        cache: Optional[UnitCache] = None) -> List[Dict]:
+    cache = cache if cache is not None else UnitCache("exp13_horizon_week")
     rows = []
     for h in hours:
         T = frames_for(h)
         cfg = make_cfg(T)
         print(f"  horizon {h} h ({T:,} frames)", flush=True)
 
-        t0 = time.perf_counter()
-        se, se_null, _ = evaluate("SENTINEL-E", ALPHA, cfg, reps_sentinel, None,
-                                  workers=workers)
-        t_se = time.perf_counter() - t0
+        def unit(method: str, knob: float, reps: int) -> Dict:
+            key = f"h{float(h):g}__{safe_name(method)}"
+            params = dict(hours=float(h), method=method, knob=knob, reps=reps,
+                          seed0=10_000, cfg=cfg)
+            return cache.get_or_compute(
+                key, params, lambda: _pfa_unit(method, knob, cfg, reps, workers))
 
-        t0 = time.perf_counter()
-        pv, _, _ = evaluate("p-value threshold", ALPHA, cfg, reps_baseline, None,
-                            workers=workers)
-        t_pv = time.perf_counter() - t0
-
-        t0 = time.perf_counter()
-        ft, _, _ = evaluate("Fixed threshold", FIXED_RATE, cfg, reps_baseline, None,
-                            workers=workers)
-        t_ft = time.perf_counter() - t0
+        se = unit("SENTINEL-E", ALPHA, reps_sentinel)
+        pv = unit("p-value threshold", ALPHA, reps_baseline)
+        ft = unit("Fixed threshold", FIXED_RATE, reps_baseline)
+        t_se, t_pv, t_ft = se["seconds"], pv["seconds"], ft["seconds"]
 
         row = {
             "hours": float(h),
             "frames": T,
             "n_calibration": N_CALIBRATION,
-            "sentinel": {"pfa": se.pfa, "pfa_ci": list(se.pfa_ci),
-                         "n": se.n_null, "arl0": se.arl0,
-                         "lag": se_null[0].lag,
+            "sentinel": {"pfa": se["pfa"], "pfa_ci": se["pfa_ci"],
+                         "n": se["n"], "arl0": se["arl0"],
+                         "lag": se["lag"],
                          "seconds": t_se},
-            "pvalue": {"pfa": pv.pfa, "pfa_ci": list(pv.pfa_ci),
-                       "n": pv.n_null, "seconds": t_pv},
-            "fixed": {"pfa": ft.pfa, "pfa_ci": list(ft.pfa_ci),
-                      "n": ft.n_null, "seconds": t_ft},
+            "pvalue": {"pfa": pv["pfa"], "pfa_ci": pv["pfa_ci"],
+                       "n": pv["n"], "seconds": t_pv},
+            "fixed": {"pfa": ft["pfa"], "pfa_ci": ft["pfa_ci"],
+                      "n": ft["n"], "seconds": t_ft},
         }
         rows.append(row)
-        print(f"    SENTINEL-E PFA={se.pfa:.3f} {tuple(round(x,3) for x in se.pfa_ci)} "
+        print(f"    SENTINEL-E PFA={se['pfa']:.3f} {tuple(round(x,3) for x in se['pfa_ci'])} "
               f"({t_se:.0f}s, lag={row['sentinel']['lag']})  "
-              f"p-value={pv.pfa:.3f} ({t_pv:.0f}s)  fixed={ft.pfa:.3f} ({t_ft:.0f}s)",
+              f"p-value={pv['pfa']:.3f} ({t_pv:.0f}s)  fixed={ft['pfa']:.3f} ({t_ft:.0f}s)",
               flush=True)
     return rows
 
@@ -179,16 +188,21 @@ def make_table(rows: List[Dict], reps_sentinel: int, reps_baseline: int) -> None
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true",
-                    help="tiny run (1 h and 6 h, 4 and 2 streams); writes nothing")
+                    help="tiny run (1 h and 6 h, 4 and 2 streams); writes nothing; "
+                         "uses results/cache/exp13_horizon_week_smoke")
+    ap.add_argument("--no-cache", action="store_true",
+                    help="ignore the unit cache (neither read nor write it)")
     args = ap.parse_args(argv)
+    cache = UnitCache("exp13_horizon_week", enabled=not args.no_cache, smoke=args.smoke)
     if args.smoke:
-        rows = run(hours=[1, 6], reps_sentinel=4, reps_baseline=2)
+        rows = run(hours=[1, 6], reps_sentinel=4, reps_baseline=2, cache=cache)
         print("smoke test ok:", [round(r["sentinel"]["pfa"], 3) for r in rows])
         return
     print("Experiment 13: week-long horizon, realistic diurnal cycle")
     t0 = time.perf_counter()
-    rows = run()
+    rows = run(cache=cache)
     total = time.perf_counter() - t0
+    print(f" units computed={cache.computed} loaded from cache={cache.hits}", flush=True)
     save_json({
         "rows": rows,
         "alpha": ALPHA,

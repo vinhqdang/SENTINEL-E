@@ -30,6 +30,7 @@ from typing import Dict, List
 
 import numpy as np
 
+from experiments.checkpoint import UnitCache, safe_name
 from experiments.common import fmt, parallel_map, save_json, write_latex_table
 from experiments.exp3_shift import CHANGE_POINT, FPS, T
 from experiments.runner import evaluate
@@ -115,26 +116,50 @@ def gate_stats(shift: float, n_streams: int, workers: int) -> Dict:
     }
 
 
-def run_cell(shift: float, opts: Dict, reps_null: int, reps_sig: int, workers: int) -> Dict:
+def null_part(shift: float, opts: Dict, reps_null: int, workers: int) -> Dict:
+    """Unit (shift, variant, "null"): null streams for one variant."""
     cfg = base_cfg(shift)
     out_n, null_tr, _ = evaluate("SENTINEL-E", ALPHA, cfg, reps_null, None,
                                  options=opts, seed0=NULL_SEED0, workers=workers)
-    out_s, _, sig_tr = evaluate("SENTINEL-E", ALPHA, cfg, reps_sig, CHANGE_POINT,
-                                options=opts, seed0=SIGNAL_SEED0, workers=workers)
-    lo, hi = out_n.pfa_ci
-    cens = out_s.add_censored
     return {
         "pfa": out_n.pfa,
-        "pfa_ci": [lo, hi],
-        "verdict": verdict(lo, hi),
+        "pfa_ci": list(out_n.pfa_ci),
         "n_null": out_n.n_null,
         "arl0": out_n.arl0,
+        "abstention_null": float(np.mean([t.abstention for t in null_tr])) if null_tr else None,
+    }
+
+
+def signal_part(shift: float, opts: Dict, reps_sig: int, workers: int) -> Dict:
+    """Unit (shift, variant, "signal"): post-change streams for one variant."""
+    cfg = base_cfg(shift)
+    out_s, _, sig_tr = evaluate("SENTINEL-E", ALPHA, cfg, reps_sig, CHANGE_POINT,
+                                options=opts, seed0=SIGNAL_SEED0, workers=workers)
+    cens = out_s.add_censored
+    return {
         "miss_rate": out_s.miss_rate,
         "add_censored_frames": cens,
         "add_censored_s": None if cens is None else float(cens) / FPS,
         "abstention_signal": float(np.mean([t.abstention for t in sig_tr])) if sig_tr else None,
-        "abstention_null": float(np.mean([t.abstention for t in null_tr])) if null_tr else None,
         "n_signal": out_s.n_signal,
+    }
+
+
+def assemble_cell(null: Dict, sig: Dict) -> Dict:
+    """Combine a variant's null and signal units into one cell (same keys as before)."""
+    lo, hi = null["pfa_ci"]
+    return {
+        "pfa": null["pfa"],
+        "pfa_ci": [lo, hi],
+        "verdict": verdict(lo, hi),
+        "n_null": null["n_null"],
+        "arl0": null["arl0"],
+        "miss_rate": sig["miss_rate"],
+        "add_censored_frames": sig["add_censored_frames"],
+        "add_censored_s": sig["add_censored_s"],
+        "abstention_signal": sig["abstention_signal"],
+        "abstention_null": null["abstention_null"],
+        "n_signal": sig["n_signal"],
     }
 
 
@@ -213,25 +238,40 @@ def make_table(cells: Dict, gates: Dict, decision: Dict, reps_null: int, reps_si
     )
 
 
-def main(reps_null: int, reps_sig: int, gate_streams: int, workers: int, smoke: bool):
+def main(reps_null: int, reps_sig: int, gate_streams: int, workers: int, smoke: bool,
+         no_cache: bool = False):
     t0 = time.time()
     print(f"Experiment 3b: default-setting check (null={reps_null}, signal={reps_sig}, "
           f"gate={gate_streams}, workers={workers}, smoke={smoke})", flush=True)
+    cache = UnitCache("exp3b_shift_default", enabled=not no_cache, smoke=smoke)
     cells: Dict[str, Dict] = {}
     gates: Dict[str, Dict] = {}
     for a in ACTIVITY_SHIFTS:
         cells[str(a)] = {}
         for v, opts in VARIANTS.items():
-            cells[str(a)][v] = run_cell(a, opts, reps_null, reps_sig, workers)
-            c = cells[str(a)][v]
+            base = dict(shift=a, variant=v, opts=opts, cfg=base_cfg(a))
+            nkey = f"x{a}__{safe_name(v)}__null"
+            skey = f"x{a}__{safe_name(v)}__signal"
+            null = cache.get_or_compute(
+                nkey, dict(base, part="null", reps=reps_null, seed0=NULL_SEED0),
+                lambda: null_part(a, opts, reps_null, workers))
+            sig = cache.get_or_compute(
+                skey, dict(base, part="signal", reps=reps_sig, seed0=SIGNAL_SEED0),
+                lambda: signal_part(a, opts, reps_sig, workers))
+            cells[str(a)][v] = c = assemble_cell(null, sig)
             print(f"  x{a:<4} {v:18s} PFA={c['pfa']:.4f} CI=[{c['pfa_ci'][0]:.4f},"
                   f"{c['pfa_ci'][1]:.4f}] {c['verdict']:10s} miss={c['miss_rate']:.3f} "
                   f"cens_s={c['add_censored_s']} abst={c['abstention_signal']:.3f}",
                   flush=True)
-        gates[str(a)] = gate_stats(a, gate_streams, workers)
+        gates[str(a)] = cache.get_or_compute(
+            f"x{a}__gate",
+            dict(shift=a, part="gate", streams=gate_streams, seed0=NULL_SEED0,
+                 cfg=base_cfg(a)),
+            lambda: gate_stats(a, gate_streams, workers))
         g = gates[str(a)]
         print(f"  x{a:<4} gate: streams>=1 triggered={g['frac_streams_triggered']:.3f} "
               f"mean block frac={g['mean_frac_blocks_triggered']:.3f}", flush=True)
+    print(f" units computed={cache.computed} loaded from cache={cache.hits}", flush=True)
     decision = decide(cells)
     runtime = time.time() - t0
     print(f" decision: {decision}", flush=True)
@@ -267,6 +307,10 @@ if __name__ == "__main__":
     ap.add_argument("--reps-sig", type=int, default=REPS_SIGNAL)
     ap.add_argument("--gate-streams", type=int, default=GATE_STREAMS)
     ap.add_argument("--workers", type=int, default=WORKERS)
-    ap.add_argument("--smoke", action="store_true", help="tiny run, writes nothing")
+    ap.add_argument("--smoke", action="store_true",
+                    help="run with the given counts, writes nothing; uses the "
+                         "results/cache/exp3b_shift_default_smoke cache")
+    ap.add_argument("--no-cache", action="store_true",
+                    help="ignore the unit cache (neither read nor write it)")
     a = ap.parse_args()
-    main(a.reps_null, a.reps_sig, a.gate_streams, a.workers, a.smoke)
+    main(a.reps_null, a.reps_sig, a.gate_streams, a.workers, a.smoke, a.no_cache)

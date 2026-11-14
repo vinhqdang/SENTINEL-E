@@ -18,10 +18,11 @@ from __future__ import annotations
 
 import argparse
 import time
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import numpy as np
 
+from experiments.checkpoint import UnitCache, safe_name
 from experiments.common import fmt, fmt_int, parallel_map, save_json, write_latex_table
 from experiments.exp6_ablation import (
     ABLATIONS,
@@ -74,37 +75,66 @@ def verdict(k: int, n: int, alpha: float = ALPHA) -> str:
     return "unresolved"
 
 
-def run(null_reps: int = NULL_REPS, signal_reps: int = SIGNAL_REPS) -> List[Dict]:
+def _null_unit(opts: Dict, null_reps: int) -> Dict:
+    """Unit (row, "null"): null streams for one ablation row."""
+    t0 = time.perf_counter()
+    null_out, null, _ = evaluate("SENTINEL-E", ALPHA, CFG, null_reps, None,
+                                 options=opts, workers=WORKERS)
+    return {"pfa": null_out.pfa, "pfa_ci": list(null_out.pfa_ci),
+            "arl0": null_out.arl0, "lag": null[0].lag,
+            "seconds": time.perf_counter() - t0}
+
+
+def _signal_unit(opts: Dict, signal_reps: int) -> Dict:
+    """Unit (row, "signal"): post-change streams for one ablation row."""
+    t0 = time.perf_counter()
+    sig = _signal_traces(opts, signal_reps)
+    delay = _censored(sig, T, CHANGE_POINT)
+    missed = _missed(sig)
+    return {"miss_rate": float(missed.mean()),
+            "censored_delay_s": float(delay.mean()) / FPS,
+            "seconds": time.perf_counter() - t0}
+
+
+def run(null_reps: int = NULL_REPS, signal_reps: int = SIGNAL_REPS,
+        cache: Optional[UnitCache] = None) -> List[Dict]:
+    cache = cache if cache is not None else UnitCache("exp6b_ablation_highrep")
     rows = []
     for ab in ABLATIONS:
         if ab["name"] not in ROW_NAMES:
             continue
         opts = dict(BASE)
         opts.update(ab["opts"])
-        t0 = time.perf_counter()
-        null_out, null, _ = evaluate("SENTINEL-E", ALPHA, CFG, null_reps, None,
-                                     options=opts, workers=WORKERS)
-        sig = _signal_traces(opts, signal_reps)
-        delay = _censored(sig, T, CHANGE_POINT)
-        missed = _missed(sig)
-        k = int(round(null_out.pfa * null_reps))
+        row_key = safe_name(ab["name"])
+        null = cache.get_or_compute(
+            f"{row_key}__null",
+            dict(row=ab["name"], part="null", opts=opts, cfg=CFG, reps=null_reps,
+                 seed0=SEED0),
+            lambda: _null_unit(opts, null_reps))
+        sig = cache.get_or_compute(
+            f"{row_key}__signal",
+            dict(row=ab["name"], part="signal", opts=opts, cfg=CFG, reps=signal_reps,
+                 seed0=SEED0 + 500_000, change_point=CHANGE_POINT),
+            lambda: _signal_unit(opts, signal_reps))
+        k = int(round(null["pfa"] * null_reps))
         row = {
             "name": ab["name"], "group": ab["group"],
             "null_reps": null_reps, "signal_reps": signal_reps,
-            "pfa": null_out.pfa, "pfa_ci": list(null_out.pfa_ci),
+            "pfa": null["pfa"], "pfa_ci": null["pfa_ci"],
             "false_alarms": k,
             "verdict": verdict(k, null_reps),
-            "arl0": null_out.arl0,
-            "miss_rate": float(missed.mean()),
-            "censored_delay_s": float(delay.mean()) / FPS,
-            "lag": null[0].lag,
-            "seconds": time.perf_counter() - t0,
+            "arl0": null["arl0"],
+            "miss_rate": sig["miss_rate"],
+            "censored_delay_s": sig["censored_delay_s"],
+            "lag": null["lag"],
+            "seconds": null["seconds"] + sig["seconds"],
         }
         rows.append(row)
         print(f"  {ab['name']:34s} PFA={row['pfa']:.4f} "
               f"[{row['pfa_ci'][0]:.4f}, {row['pfa_ci'][1]:.4f}] {row['verdict']:10s} "
               f"miss={row['miss_rate']:.3f} delay={row['censored_delay_s']:.1f}s "
               f"lag={row['lag']} ({row['seconds']:.0f}s)", flush=True)
+    print(f" units computed={cache.computed} loaded from cache={cache.hits}", flush=True)
     return rows
 
 
@@ -147,17 +177,26 @@ def make_table(rows: List[Dict], null_reps: int, signal_reps: int) -> None:
 
 
 def main(argv=None) -> None:
+    global WORKERS
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true",
-                    help="tiny run (8 null, 4 signal per row); writes nothing")
+                    help="tiny run (8 null, 4 signal per row); writes nothing; "
+                         "uses results/cache/exp6b_ablation_highrep_smoke")
+    ap.add_argument("--no-cache", action="store_true",
+                    help="ignore the unit cache (neither read nor write it)")
+    ap.add_argument("--workers", type=int, default=WORKERS,
+                    help="process-pool size (does not change any result)")
     args = ap.parse_args(argv)
+    WORKERS = args.workers
+    cache = UnitCache("exp6b_ablation_highrep", enabled=not args.no_cache,
+                      smoke=args.smoke)
     if args.smoke:
-        rows = run(null_reps=8, signal_reps=4)
+        rows = run(null_reps=8, signal_reps=4, cache=cache)
         print("smoke test ok:", [r["verdict"] for r in rows])
         return
     print(f"Experiment 6b: {NULL_REPS} null / {SIGNAL_REPS} signal streams per row")
     t0 = time.perf_counter()
-    rows = run()
+    rows = run(cache=cache)
     total = time.perf_counter() - t0
     save_json({"rows": rows, "null_reps": NULL_REPS, "signal_reps": SIGNAL_REPS,
                "alpha": ALPHA, "T": T, "change_point": CHANGE_POINT,
