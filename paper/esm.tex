@@ -91,10 +91,11 @@ Each row uses independent seeds. These tables are descriptive. The claims in
 the main text rest on the paired comparison (Sect.~4.5), which removes the grid
 confound and uses shared seeds.
 
-The caption of \Cref{tab:episodes} states that the two mixtures agree with
-one episode. The paired comparison does not support that reading. At one episode
-the episodic mixture is behind by \EpiPairedDiffOne\,s (95\% CI
-\EpiPairedCIOne{}), a difference that the main text reports as resolved.
+\Cref{tab:episodes} is unpaired and uses different grids, so it is descriptive
+only. The paired comparison in the main text, Sect.~4.5, supersedes it. At one
+episode the paired changepoint-minus-episodic delay difference is
+\EpiPairedDiffOne\,s (95\% CI \EpiPairedCIOne{}), so the changepoint mixture is
+faster.
 
 The stream miss rates in \Cref{tab:episodes} for two episodes differ from
 those in the main-text per-episode table. Those are independent runs of the same
@@ -123,16 +124,6 @@ week-long sweep in the main text, Sect.~4.4, extends this to 168\,h with a
 realistic day.
 
 \inputtable{tab2_horizon}
-
-\section{Per-component cost breakdown}
-\label{sec:esm-cost}
-
-The per-component breakdown is in Sect.~4.9 of the main text. \Cref{tab:compute}
-is the earlier single-run timing, kept for transparency and superseded by that
-breakdown. It times the 32-point e-detector at 18.3\,\textmu s per bet, a figure
-that neither the batch nor the streaming path in the breakdown reproduces.
-
-\inputtable{tab7_compute}
 
 \section{Full ablation at 200 streams}
 \label{sec:esm-ablation}

@@ -123,9 +123,10 @@ dispatch every few seconds.
 They use a simulated diurnal cycle of a full 24\,h of $2{,}160{,}000$ frames, and calibration
 covers one full day. SENTINEL-E runs on \HorizonWeekReps{} streams per horizon,
 and the two per-frame rules on \HorizonWeekBaselineReps{}, up to
-\HorizonWeekMaxHours{}\,h or \HorizonWeekMaxMFrames{} million frames. The
-false-alarm probability of SENTINEL-E is at most \HorizonWeekSentinelPfaMax{} at
-every horizon, with upper limit \HorizonWeekSentinelCiHi{}. The p-value threshold
+\HorizonWeekMaxHours{}\,h or \HorizonWeekMaxMFrames{} million frames. SENTINEL-E
+raised no false alarm in any stream at any horizon. Its 95\% upper limit on the
+false-alarm probability is \HorizonWeekSentinelCiHi{}, which does not by itself
+resolve $\alpha=0.01$. The p-value threshold
 reaches \HorizonWeekPvalueOneHour{} within the first hour. The fixed threshold
 reaches \HorizonWeekFixedOneHour{} at one hour and \HorizonWeekFixedSixHour{}
 from six hours.
@@ -154,8 +155,10 @@ the bound does not degrade with the horizon.
 Two mixtures are compared on the same seeds. The episodic arm mixes over six
 values of $\kappa$ and four of $\eta$, giving \EpiGridPoints{} grid points. The
 changepoint arm mixes over \EpiGridPoints{} values of $\kappa$ with $\eta=0$.
-The two arms therefore share a grid size and differ only in the episode-end
-axis. Delay differences are reported as paired bootstrap intervals, and miss
+The two arms therefore use grids of equal size, 24 points: 6 $\kappa$ by 4 $\eta$
+for the episodic arm and 24 $\kappa$ values for the changepoint arm. The grids are
+not shared. The changepoint arm covers $\kappa$ more finely, which biases the
+comparison against the episodic arm. Delay differences are reported as paired bootstrap intervals, and miss
 differences use an exact McNemar test on discordant pairs. Unpaired comparisons
 on different grids are in Online Resource~1, Sect.~S2. They are descriptive only.
 
@@ -166,8 +169,8 @@ the episodic mixture is behind. The censored-delay difference is
 \EpiPairedDiffOne\,s (95\% CI \EpiPairedCIOne{}, bootstrap $p<0.001$),
 and the changepoint arm detects \EpiPairedDiscordantOne{} events the episodic arm
 misses, with none in reverse (McNemar $p=\EpiPairedPMcnemarOne$). This is the
-cost of the extra axis, which places prior mass on episode-end hypotheses that
-never fire. At two and four episodes, the episodic mixture is ahead, by
+cost of the extra axis: prior mass goes to episode-end hypotheses that one
+episode does not repay. At two and four episodes, the episodic mixture is ahead, by
 \EpiPairedDiffTwo\,s and \EpiPairedDiffMid\,s. The discordant misses all favour
 it, \EpiPairedDiscordantTwo{} and \EpiPairedDiscordantMid{} respectively, with
 McNemar $p=\EpiPairedPMcnemarTwo$ and $p=\EpiPairedPMcnemarMid$. At eight episodes
@@ -177,7 +180,8 @@ $p=\EpiPairedPbootMany$), and the miss difference is not significant
 
 The configuration matters too. \Cref{tab:corner_sweep} and \cref{fig:corner}
 repeat the paired comparison at $\alpha=0.01$ across the event shapes the
-simulator exposes, with \CornerReps{} seeded pairs each.
+simulator exposes, with \CornerReps{} seeded pairs each. A delay difference below 1\,s in absolute
+value counts as equivalent. This is the margin used in \cref{tab:corner_sweep}.
 
 \begin{figure}[t]
   \centering
@@ -196,8 +200,10 @@ at $\pi=0.2$ and a gap of $12{,}000$ frames, the episodic arm is ahead by
 discordant misses and none in reverse. With a gap of $1500$ frames the delay
 advantage is \CornerShortGapDiff\,s (CI \CornerShortGapCi), but three discordant
 misses give McNemar $p=\CornerShortGapP$, so the miss difference is not resolved.
-Dense episodes ($\pi=0.7$) and a permanent change differ by about
-\CornerDenseDiff\,s, which is practically equivalent. A single episode of 800
+Dense episodes ($\pi=0.7$) and a permanent change have delays of 9 to 12\,s. The
+changepoint mixture is faster by \CornerDenseAbsDiff\,s in both cases. The 95\%
+interval of that difference lies within 0.2\,s of zero, so both rows are equivalent
+under the 1\,s margin and the difference is negligible. A single episode of 800
 frames favours the changepoint mixture by \CornerSingleAbsDiff\,s (CI
 \CornerSingleCi). Short episodes of 200 frames are missed by both mixtures at
 $\alpha=0.01$, a miss rate of \CornerFloorMiss{}, which marks the detection floor
@@ -232,14 +238,19 @@ independent catches of each episode.
 \inputtable{tab3_delay_far}
 
 \Cref{tab:delay_far} gives the delay of each method at a controlled false-alarm
-rate. Baselines are shown at the tightest realised rate at which they still
-detect most events. The two exact e-processes are compared at a common nominal
+rate. Baselines are shown at the tightest realised false-alarm rate that still leaves
+some events detected. The miss-rate column shows what that costs. The two exact e-processes are compared at a common nominal
 level, because their nominal level is the knob that an operator sets.
-At $\alpha=0.2$ they tie: SENTINEL-E has a censored delay of
-\EqSEFifthDelaySec\,s ($\pm\EqSEFifthCiSec$) and the changepoint mixture
-\EqCpFifthDelaySec\,s. At $\alpha=0.01$, SENTINEL-E is faster, at
+Each $\pm$ is 1.96 standard errors. At $\alpha=0.2$ the two tie: SENTINEL-E has a
+censored delay of \EqSEFifthDelaySec\,s ($\pm\EqSEFifthCiSec$) and the changepoint
+mixture \EqCpFifthDelaySec\,s. At $\alpha=0.1$ the changepoint mixture is faster,
+at 138.1\,s against 146.4\,s for SENTINEL-E, with intervals of about $\pm52$\,s for
+each. At $\alpha=0.05$ the figures are 181.4\,s for the changepoint mixture and
+171.2\,s for SENTINEL-E. At $\alpha=0.01$, SENTINEL-E is faster, at
 \EqSEHundredthDelaySec\,s against \EqCpHundredthDelaySec\,s, with miss rate
-\EqSEHundredthMiss{} against \EqCpHundredthMiss. The nominal level
+\EqSEHundredthMiss{} against \EqCpHundredthMiss. The ordering therefore changes
+with $\alpha$, and the differences at $\alpha=0.2$ and $0.1$ are small against
+their intervals. The nominal level
 $\alpha=0.5$ is not a usable operating point. Its bound allows a false alarm on
 half of all streams, so the low delay it reports (\EqSEHalfDelaySec\,s) says
 little about a usable threshold.
@@ -275,17 +286,17 @@ row several shift levels cannot be resolved (\ShiftResidualUnresolvedRatios{}).
 
 \inputtable{tab_shift_remedy}
 
-\Cref{tab:shift_remedy} gives the sweep at 1,500 null streams and 200 post-change streams per level. The unweighted residual default is valid at $\times 1.0$ and $\times 1.5$, with a false-alarm probability of 0.0020 at $\times 1.5$. It is unresolved at $\times 2.0$ (0.0140, interval [0.0092, 0.0213]) and invalid at $\times 3.0$ (0.0620, interval [0.0509, 0.0754]). Its p-values are marginally conservative at every shift tested. False alarms cluster immediately after the detector re-enters the calibrated context region, at frames near the support edge where the residual model extrapolates.
+\Cref{tab:shift_remedy} gives the sweep at 1,500 null streams and 200 post-change streams per level. The unweighted residual default is valid at $\times 1.0$ and $\times 1.5$, with a false-alarm probability of 0.0020 at $\times 1.5$. It is unresolved at $\times 2.0$ (0.0140, interval [0.0092, 0.0213]) and invalid at $\times 3.0$ (0.0620, interval [0.0509, 0.0754]). False alarms cluster immediately after the detector re-enters the calibrated context region, at frames near the support edge where the residual model extrapolates.
 
-Likelihood-ratio weighting holds the level at every shift tested, but its power falls. Its miss rate is 0.095 at $\times 1.0$, against 0.025 unweighted, and rises to 0.540, 0.930 and 1.000 at $\times 1.5$, $\times 2.0$ and $\times 3.0$. The Kish effective-sample-size substitution has no calibration-conditional proof, so the weighted path is a heuristic. The pre-specified rule, reported in Online Resource~1, Table~S9, recommends weighting only if its extra miss rate at $\times 1.0$ is at most 0.05. The extra rate is 0.070, so the unweighted residual stays the default.
+Likelihood-ratio weighting holds the level at every shift tested, but its power falls. Its miss rate is 0.095 at $\times 1.0$, against 0.025 unweighted, and rises to 0.540, 0.930 and 1.000 at $\times 1.5$, $\times 2.0$ and $\times 3.0$. The Kish effective-sample-size substitution has no calibration-conditional proof, so the weighted path is a heuristic. The pre-specified rule, reported in Online Resource~1, Table~S8, recommends weighting only if its extra miss rate at $\times 1.0$ is at most 0.05. The extra rate is 0.070, so the unweighted residual stays the default.
 
-The held-out context gate, which would switch weighting on, is a classifier two-sample test with AUC at least 0.60. It fired on every null stream at every level, including the unshifted $\times 1.0$. A deployment block covers a narrow slice of the diurnal cycle, while calibration spans a day, so a context gate is confounded with benign drift that the residual normalisation already absorbs. A calibrated reference threshold and a phase-invariant variant also fired on most null blocks. Context gating therefore does not separate shifted from unshifted streams.
+The held-out context gate, which would switch weighting on, is a classifier two-sample test with AUC at least 0.60. It fired on every null stream at every level, including the unshifted $\times 1.0$. A deployment block covers a narrow slice of the diurnal cycle, while calibration spans a day, so a context gate is confounded with benign drift that the residual normalisation already absorbs. Context gating therefore does not separate shifted from unshifted streams.
 
 A stricter support region addresses the boundary failure. The residual calibrator abstains on a frame whose context falls outside a per-coordinate box, or whose Mahalanobis distance exceeds a slack multiple of the calibration 0.999 quantile. The default multiplier is 1.5. We set it to 0.5, so boundary frames abstain. An abstained frame receives a neutral bet, so the supermartingale argument is unchanged. The stricter region holds the level at every shift tested. At $\times 3.0$ the false-alarm probability falls from 0.0620 to 0.0007 (interval [0.0001, 0.0038]), and the abstention rate on null betting instants rises to 0.500. At $\times 1.0$ the miss rate equals the default, 0.025, and abstention is 0.010. Likelihood-ratio weighting is also valid, but its miss rate is 0.540 to 1.000 at $\times 1.5$ to $\times 3.0$, against 0.070 to 0.450 for the stricter region.
 
-The slack value 0.5 was chosen in a 300-stream pilot whose seeds overlap the main run. We therefore confirmed it on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The false-alarm probabilities are 0.0000, 0.0007, 0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ and $\times 3.0$, and all are valid. The miss rates are 0.010, 0.040, 0.140 and 0.470.
+The slack value 0.5 was chosen in a 300-stream pilot whose seeds overlap the main run. The pilot tried seven candidate variants: cool-down after an alarm at $k=10$, $25$ and $50$ frames, a box margin halved, slack 1.0, box margin with slack 1.0, and slack 0.5. Of these, only slack 0.5 and cool-down at $k=50$ met the pre-set criterion. We therefore confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000, 0.0007, 0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ and $\times 3.0$, and all are valid. The miss rates are 0.010, 0.040, 0.140 and 0.470.
 
-The abstention rate is the operator-visible shift monitor. With slack 0.5 it is 0.010 without shift and rises to 0.500 at $\times 3.0$, so a rising abstention rate signals that recalibration is due. The library default stays at 1.5, which the other experiments use. Where shift is expected, we recommend slack 0.5.
+The abstention rate is the operator-visible shift monitor. With slack 0.5 it is 0.010 at $\times 1.0$, 0.068 at $\times 1.5$ and 0.500 at $\times 3.0$. As a suggestion, not a validated rule, recalibrate when the abstention fraction over the monitoring window exceeds 0.05. That threshold separates the unshifted and $\times 1.5$ cases in this sweep, but no other rule or shift was tested. The library default stays at 1.5 because the other experiments were run with it, and changing it would change their results. Where activity shift is expected, slack 0.5 is the suggested setting.
 
 \Cref{tab:coverage} varies coverage instead. With calibration from one daytime
 window, the residual construction keeps its level, but its miss rate reaches
@@ -360,11 +371,15 @@ This part of the fleet layer is the part worth keeping.
 \inputtable{tab_cost_breakdown}
 
 The conformal p-value and the e-detector step run only at betting instants,
-one per decorrelation lag. With $L=\CostLag{}$, the predicted cost per frame is
-$(0.34+13.69)/20$\,\textmu s, or $0.702$\,\textmu s with unrounded timings. The
-pipeline calls the batch e-detector, so the batch step of 13.69\,\textmu s per
-bet enters the prediction. The streaming step, at 39.28\,\textmu s per bet, is
-shown for reference.
+one per decorrelation lag. With $L=\CostLag{}$, the batch path costs
+$(0.34+13.69)/20 = 0.702$\,\textmu s per frame predicted, with the measured cost
+given below. The streaming path, which a deployed camera runs, costs
+$(0.34+39.28)/20 = 1.98$\,\textmu s per frame predicted. The guarantee layer therefore
+costs one to two microseconds per frame on either path. The lag $L=20$ is the
+decorrelation lag estimated on the 200{,}000-frame benchmark stream. The simulation
+experiments use a lag of 18, and the lags selected on real video range from 1 to
+30. Because the batch cost scales as $1/L$, a lag of 1 gives about 14\,\textmu s per
+frame.
 
 The measured end-to-end cost is $0.610$\,\textmu s per frame, or 0.122\,s over a
 200,000-frame stream. It includes the $O(T)$ expansion of the bets onto the
@@ -385,11 +400,10 @@ Fitting a camera's calibration takes \CostFitSec{}\,s, once.
 \inputtable{tab10_pcoverage}
 
 The guarantee rests on two premises. The first is conditional super-uniformity of
-the betting increments. The second is marginal calibration of the p-values.
-Conditional super-uniformity cannot be verified from data, so it is an
-assumption. Only the marginal premise can be tested, and the operational
-consequence of the first is the per-video false-alarm rate measured on real
-video in \cref{sec:real-data}.
+the betting increments. The second is marginal calibration of the p-values, which is checked in simulation
+below. The first is testable, and the conditional-mean test on real video
+contradicts it (\cref{sec:real-data}). The operational consequence of both is the
+per-video false-alarm rate measured on real video in \cref{sec:real-data}.
 
 \Cref{tab:diagnostics} shows the conditional-independence diagnostics on the
 calibration residuals of \DiagStreams{} simulated cameras. Betting on every frame leaves a
@@ -441,7 +455,7 @@ $0.0387$ [0.0300, 0.0497], nearly four times nominal. Without the correction the
 guarantee fails, and pooled calibration is not a valid substitute.
 
 The other twelve variants of the 200-stream table are descriptive. They are
-listed in Online Resource~1, Table~S8. At 200 streams, 14 of the 19 variants are
+listed in Online Resource~1, Table~S7. At 200 streams, 14 of the 19 variants are
 unresolved, so that table gives point estimates, not verdicts. Two of the twelve
 resolve as invalid at that count: bet once per five frames (PFA 0.935) and
 Mondrian conformal (0.025 [0.011, 0.057]). The fixed-start variant, which has no

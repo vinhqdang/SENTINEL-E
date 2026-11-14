@@ -22,15 +22,16 @@ Mivia-IWDD-500 release \citep{greco2026iwdd}.
 
 \paragraph{Video anomaly detection benchmarks.}
 CUHK Avenue \citep{lu2013avenue} and UCSD Ped2 \citep{mahadevan2010ucsd} are
-classical benchmarks, and recent work reports frame-level ROC-AUC on them. One
+classical benchmarks, and recent work reports frame-level area under the ROC curve (AUC) on them. One
 reconstruction-based method reports 99.03\% AUC on Ped2 and 92.40\% on Avenue
 \citep{dong2025rvadign}. For a survey, see \citet{liu2024generalized}. AUC is
 computed after the fact on a labelled test set. It does not measure how often a
 rule alarms on an unlabelled stream, which is what our protocol measures.
-\citet{rashidi2026benchmarkauc} show the consequence. Eleven off-the-shelf feature
-sets that average 70.4\% AUC on their training distribution fall to 49.9\%, which
-is chance, under cross-dataset shift. At thresholds that a same-dataset evaluation
-would call operational, false-alarm rates are around $3.2\times 10^{4}$ per hour.
+\citet{rashidi2026benchmarkauc} show the consequence. Off-the-shelf feature sets from
+four backbones, evaluated on four datasets, average 70.4\% AUC on their training
+distribution and fall to 49.9\%, which is chance, under cross-dataset shift. At an
+operating point that reaches 0.9 recall on the source dataset, the false-alarm
+rate is around $3.2\times 10^{4}$ per hour.
 
 Our real-data backbones are optical flow, estimated by Farneb\"{a}ck's method
 \citep{farneback2003}, and PatchCore. PatchCore scores each patch by its
@@ -72,7 +73,7 @@ CUSUM \citep{page1954}, Shiryaev's statistic \citep{shiryaev1963} and
 Shiryaev--Roberts \citep{roberts1966} are the classical procedures, with optimality
 due to \citet{lorden1971} and \citet{moustakides1986}. A full treatment is in
 \citet{tartakovsky2014sequential}. Their guarantees are asymptotic
-average-run-length statements under a correctly specified pre-change law. Footage
+statements about the average run length (ARL) under a correctly specified pre-change law. Footage
 scores are autocorrelated, heavy-tailed and diurnally non-stationary, and both
 procedures lose control in our experiments. \citet{shin2024edetectors} give a
 nonparametric e-detector framework with non-asymptotic ARL bounds. \citet{saha2026nonpartitioned}
@@ -91,7 +92,7 @@ episode-end axis.
 \paragraph{Anytime-valid inference and e-values.}
 Testing by betting \citep{shafer2021testing} turns Ville's inequality into a design
 principle, and \citet{waudby2024betting} develop the betting strategies we adapt.
-\citet{wang2022ebh} introduce e-BH, which controls the false discovery rate under
+\citet{wang2022ebh} introduce e-BH, which controls the false discovery rate (FDR) under
 arbitrary dependence and underpins our fleet layer. The closest work in spirit is
 E-SHIFT \citep{khan2026eshift}, a sub-exponential e-process for distribution shift
 in streaming systems. We reimplement it as a baseline. It differs in three ways.

@@ -44,7 +44,7 @@
 
 \begin{abstract}
 \noindent
-Streaming visual-anomaly detectors, including those for illegal dumping, are evaluated per clip but deployed on continuous streams, where alerting at the first threshold crossing is optional stopping. Fed valid 1\% p-values, a per-frame rule raises a false alarm on \ValidityPfaPvaluePct\% of 40-minute null streams. We introduce the episodic e-process, a mixture over episodes that start, flicker, end and recur. We prove that it is a non-negative supermartingale when the p-values are conditionally super-uniform, so Ville's inequality gives time-uniform false-alarm control, and that it contains the changepoint mixture as the case where episodes never end. A two-state forward recursion evaluates it in constant time per frame on conformal p-values with exact calibration-conditional Beta levels, and e-BH combines cameras. In simulation it raised no false alarm on 200 week-long streams, on which per-frame thresholds fail within an hour. Paired comparisons show that episodes shorten detection delay for long, intermittent, recurring events but not for single or permanent changes. On real video (UCSD Ped2, CUHK Avenue and Mivia-IWDD, each with optical-flow and PatchCore backbones), operating points are chosen on training videos only and each test video is monitored alone. The thinned p-values remain serially dependent there, so validity is empirical rather than guaranteed. False-alarm proportions are consistent with the nominal level on the short single-camera corpora but exceed it in point estimate on Mivia-IWDD (9 of 50 normal videos at $\alpha=0.1$). Detection power is limited and backbone-dependent, and tuned classical baselines perform comparably. The guarantee layer costs one to two microseconds per frame.
+Streaming visual-anomaly detectors, including those for illegal dumping, are evaluated per clip but deployed on continuous streams, where alerting at the first threshold crossing is optional stopping. Fed valid 1\% p-values, a per-frame rule raises a false alarm on \ValidityPfaPvaluePct\% of 40-minute null streams. We introduce the episodic e-process, a mixture over episodes that start, flicker, end and recur. We prove that it is a non-negative supermartingale when the p-values are conditionally super-uniform, so Ville's inequality gives time-uniform false-alarm control, and that it contains the changepoint mixture as the case where episodes never end. A two-state forward recursion evaluates it in constant time per frame on conformal p-values with exact calibration-conditional Beta levels, and e-BH combines cameras. In simulation it raised no false alarm on 200 week-long streams, on which per-frame thresholds fail within an hour. Paired comparisons show episodes shorten detection delay for long, intermittent, recurring events but not for single or permanent changes. On real video (UCSD Ped2, CUHK Avenue, Mivia-IWDD; optical-flow and PatchCore backbones), operating points are chosen on training videos only and each test video is monitored alone. The thinned p-values remain serially dependent there, so validity is empirical rather than guaranteed. False-alarm proportions are consistent with the nominal level on the short single-camera corpora but exceed it in point estimate on Mivia-IWDD (9 of 50 normal videos at $\alpha=0.1$). Detection power is limited and backbone-dependent, and classical baselines selected by the same rule perform comparably. The guarantee layer costs one to two microseconds per frame.
 \end{abstract}
 
 \vspace{0.5em}
@@ -52,11 +52,11 @@ Streaming visual-anomaly detectors, including those for illegal dumping, are eva
 
 \section*{Highlights}
 \begin{itemize}
-  \item An episodic e-process with a supermartingale guarantee for recurring events
-  \item Time-uniform false-alarm control at \CostSentinelUs\,\textmu s per frame
-  \item Per-frame thresholds fail within an hour; SENTINEL-E holds over simulated weeks
-  \item Real video: per-video false alarms within sampling error, power backbone-limited
-  \item Pooled calibration on Mivia-IWDD gives 9 of 50 false alarms at $\alpha=0.1$
+  \item An episodic e-process mixes over events that start, end and recur
+  \item Time-uniform false-alarm control at constant cost per frame
+  \item No false alarm on 200 simulated week-long streams; per-frame rules fail in 1 h
+  \item Leak-free per-video evaluation on Ped2, Avenue and Mivia-IWDD dumping videos
+  \item On real video, power is backbone-limited and validity is empirical
 \end{itemize}
 
 
@@ -74,7 +74,7 @@ uses UCSD Ped2, CUHK Avenue and Mivia-IWDD-500
 (github.com/MiviaLab/IllegalWasteDumping), and ImageNet-pretrained
 WideResNet-50-2 weights from torchvision. These and the other corpora cited
 in the manuscript are distributed by their respective authors under their own
-terms; no data from them is redistributed here.
+terms; no data from them is redistributed here, apart from a few illustrative still frames in the qualitative figure.
 \paragraph{Ethical approval.} Not applicable. No human-subjects data was
 collected for this work. The real video corpora used (UCSD Ped2, CUHK Avenue, Mivia-IWDD-500)
 are publicly released video benchmarks

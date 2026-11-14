@@ -18,7 +18,7 @@ The quantifier is the whole point. A per-frame guarantee $\Pinf(\text{alarm at }
 
 Dumping is episodic, so we write $\mathbb{P}_{\mathcal{E}}$ for the law when a set of episodes $\mathcal{E} = \{[\nu_1, \nu_1 + L_1], \ldots\}$ occurs, within each of which a fraction $\pi$ of frames are anomalous. The single persistent change is the special case of one episode with $L = \infty$ and $\pi = 1$.
 
-We report, over Monte Carlo replicates: $\PFA$, the probability that a null stream of a stated length raises at least one alarm; $\ARL$, the mean frames to a false alarm on a null stream, censored at the horizon; $\ADD$, the mean frames from the first onset $\nu_1$ to the first alarm at or after it, over runs that alarm; and the miss rate, the fraction of post-change segments ending unflagged.
+We report, over Monte Carlo replicates: $\PFA$, the false-alarm probability: the probability that a null stream of a stated length raises at least one alarm; $\ARL$, the average run length: the mean frames to a false alarm on a null stream, censored at the horizon; $\ADD$, the average detection delay: the mean frames from the first onset $\nu_1$ to the first alarm at or after it, over runs that alarm; and the miss rate, the fraction of post-change segments ending unflagged.
 
 \paragraph{A measurement pitfall, and the fix.}
 Conditional $\ADD$ is averaged over a different subset of runs for each method. A detector that misses the hard events is scored only on the easy ones, and so looks fast. Because the methods compared here differ in miss rate, we also report a censored delay, in which a run that never alarms is charged the whole remaining horizon. The two can rank methods in opposite order. In \cref{sec:episodes} the changepoint mixture has the shorter conditional delay and the longer censored delay. Where they disagree, the censored figure is the comparable one, and head-to-head claims in this paper rest on it.
@@ -188,7 +188,7 @@ $\rho \to 0$ limit under the appropriate rescaling recovers the classical
 Shiryaev--Roberts sum with unit start weights \citep{roberts1966}.
 \end{proof}
 
-The statement thus separates two objects that are easy to conflate: the changepoint mixture, which the episodic process contains exactly at $\eta=0$, and Shiryaev--Roberts, which differs from it at any fixed $\rho>0$. \Cref{sec:episodes} gives the empirical consequence.
+The statement thus separates two objects that are easy to conflate: the changepoint mixture, which the episodic process contains exactly at $\eta=0$, and Shiryaev--Roberts, which differs from it at any fixed $\rho>0$.
 
 \subsubsection{Intermittency by dilation (a negative result)}
 \label{sec:dilation}
@@ -198,7 +198,7 @@ Within an episode only a fraction $\pi$ of frames show the act, which suggests \
 \label{eq:dilated}
   f_\pi(p) \;=\; (1-\pi) + \pi\, f(p).
 \end{equation}
-This is a legal betting function. It is a convex combination of the neutral bet and $f$, hence non-increasing with $\int_0^1 f_\pi \le 1$, so \cref{thm:episodic} applies verbatim. It does not help. Mixing over $\kappa$ already covers intermittency, because a milder bet suits an episode with fewer anomalous frames. In the ablation, dilation lengthens censored detection delay from \AblFullDelay\,s to \AblDilationDelay\,s (Online Resource~1, Table~S8), and no intermittency level repays that cost. The default grid therefore sets $\pi = 1$. The construction stays in the implementation for backbones whose anomalous frames are much stronger relative to quiet ones than ours.
+This is a legal betting function. It is a convex combination of the neutral bet and $f$, hence non-increasing with $\int_0^1 f_\pi \le 1$, so \cref{thm:episodic} applies verbatim. It does not help. Mixing over $\kappa$ already covers intermittency, because a milder bet suits an episode with fewer anomalous frames. In the ablation, dilation lengthens censored detection delay from \AblFullDelay\,s to \AblDilationDelay\,s (Online Resource~1, Table~S7), and no intermittency level repays that cost. The default grid therefore sets $\pi = 1$. The construction stays in the implementation for backbones whose anomalous frames are much stronger relative to quiet ones than ours.
 
 \subsubsection{Staying parameter-free}
 \label{sec:parameterfree}
