@@ -194,7 +194,7 @@ def video_source(ds: str, raw: Path, split: str, name: str, limit, indices):
     mivia: exactly the native frames listed in ``indices`` (sampled_indices.json).
     """
     if ds == "ped2":
-        d = ped2_root(raw) / split / name
+        d = ped2_root(raw) / ("Train" if split == "train" else "Test") / name
         files = sorted(f for f in os.listdir(d) if f.endswith(".tif"))
         if limit is not None:
             files = files[:limit]
