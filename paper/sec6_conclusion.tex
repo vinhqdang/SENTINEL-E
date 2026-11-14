@@ -1,0 +1,70 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+Waste-surveillance systems are evaluated per clip and deployed per month, and
+the statistical consequence of that mismatch is larger than the field's
+reporting practice reveals: valid per-frame p-values, applied with the obvious
+stopping rule, produce a false alarm on essentially every multi-hour null stream
+we simulated. The 2026 IWDD contest, drawing ten teams, reports per-clip $F_1$
+plus a notification-delay measure and, in its own overview, a per-clip ROC
+analysis; none of that reports a rate over a continuous monitoring horizon.
+
+Closing \emph{that} gap does not need the episodic construction: any
+finite-sample anytime-valid e-process --- including the changepoint mixture
+this paper takes as its own point of departure, which by
+\cref{prop:generalisation} is a faithful instance of prior work
+\citep{saha2026nonpartitioned} --- composed with the same conformal front end
+already holds the nominal level in our own experiments (\cref{sec:ablation}).
+What required the new construction is a narrower, and still real, claim: a
+dumping event is an episode that ends and recurs, and mixing over episodes
+rather than changepoint locations buys back detection power in that regime
+without touching the guarantee. The episodic e-process mixes over when an
+episode starts \emph{and stops}, remains an exact supermartingale so Ville's
+inequality applies unchanged, costs $O(1)$ per frame, and contains the
+changepoint mixture exactly as the boundary case $\eta = 0$. Around it,
+conformal calibration conditional on observable context makes the p-values
+honest, and e-BH turns per-camera evidence into fleet-wide decisions under
+arbitrary dependence. Three components did not survive contact with
+measurement and are reported rather than removed: the dilated emission for
+within-episode intermittency, which the betting mixture already handles; the
+learned spatial prior, which leaves the guarantee exactly intact --- as its
+theorem promises --- while failing to improve detection; and the size, and
+even the sign, of the episodic mixture's power advantage over the changepoint
+mixture, which \cref{sec:episodes} resolves with a paired analysis on matched
+seeds and a shared betting grid rather than the unpaired comparison an
+earlier, confounded version of that experiment reported.
+Both mixtures are, in our comparison, among the methods that hold their
+nominal false-alarm level; SENTINEL-E is the only one of the two that keeps
+the episode-recurrence axis available at the same $O(1)$ cost, at
+\CostSentinelPct\% of the cost of the backbone it wraps --- with a measured
+boundary, reported rather than elided, beyond which a shift in an unmodelled
+covariate breaks it unless the conservative safeguard is engaged.
+
+This revision closes part of the first empirical direction the earlier version
+of this paper deferred: \cref{sec:real-data} runs the identical pipeline,
+unmodified, on real per-frame scores from two real surveillance corpora,
+CUHK Avenue and UCSD Ped2, rather than on simulated streams alone. What it
+finds is not unqualified success. The guarantee holds on both real corpora at
+the lag each dataset's own diagnostic selects, and every classical baseline
+tested fails to hold it on the same real streams --- but the window in which
+validity and power coexist at all is narrow, narrower than any simulated
+configuration in this paper, because real optical-flow scores are far more
+autocorrelated than an AR(1) process and real anomalous episodes are
+correspondingly brief. Two directions follow from that finding specifically.
+The nearer one is a stronger backbone: what \cref{sec:real-data} exposes is a
+property of the scores, not of the sequential layer, and a backbone whose
+frame-to-frame errors are more nearly independent than optical-flow
+magnitude's would widen the window without touching the theory. The further
+one is the corpus itself: this paper's real-data validation runs on
+pedestrian-walkway anomaly footage because no continuously-labelled real
+illegal-dumping stream of the required length is publicly available, and
+closing that gap needs a released corpus, from Mivia-IWDD or an operational
+municipal deployment, rather than a change to the method. Neither the
+argument nor the algorithm is specific to dumping in the first place.
+Episodic, intermittent, recurring events observed through a
+continuously-monitored sensor describe wildlife poaching, illegal fishing,
+gas leaks and infrastructure faults as well as the loitering, wrong-direction
+motion and abandoned-object anomalies the real corpora above already
+represent; wherever a field evaluates on clips and deploys on streams, the
+same optional-stopping problem and the same remedy apply.
+

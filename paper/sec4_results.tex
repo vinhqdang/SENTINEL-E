@@ -1,0 +1,572 @@
+\section{Experiments and results}
+\label{sec:results}
+
+\subsection{Protocol}
+\label{sec:protocol}
+
+\paragraph{Two evidence sources, used for different things.}
+This paper reports both simulated and real streams, and they answer different
+questions. \Cref{sec:real-data} is the paper's empirical basis for what a real
+backbone, on real surveillance footage, actually delivers: real per-frame
+optical-flow scores from two public video-anomaly-detection corpora, real
+train/test splits, real spliced anomalous events, and --- reported as a
+finding rather than a footnote --- a real, severe autocorrelation structure
+that leaves only a narrow band of usable operating points. It is also, by
+construction, limited to the two datasets' native horizons (minutes, not
+weeks) and to the one backbone we computed scores with. The simulated streams
+that follow exist to answer the question the real corpora cannot: what
+happens at the $10^5$--$10^6$-frame horizons, the wide range of episode counts
+and intermittency levels, and the calibration/deployment shift severities a
+municipal deployment must survive, but that no released corpus --- Mivia-IWDD
+included --- provides months of continuously-labelled per-frame detector
+output to test directly. Neither source substitutes for the other, and
+\cref{sec:limitations} states plainly what each does and does not establish.
+
+\paragraph{Simulated streams.}
+SENTINEL-E consumes one scalar per frame, so the faithful way to stress the
+guarantee layer at the timescales that matter --- weeks of video, $10^6$ frames
+--- is to model that scalar. Our simulator is deliberately unfriendly in the ways
+real footage is: a diurnal illumination cycle and a two-state weather chain shift
+the null score distribution after calibration; scores follow an AR(1) with
+Student-$t$ innovations, so they are autocorrelated and heavy-tailed; a
+log-scale Ornstein--Uhlenbeck scene-activity process drives the backbone's
+false-positive rate and is deliberately \emph{not} part of the operator's obvious
+(clock, weather) taxonomy; dumping events are episodic and recurring, with
+a configurable number of episodes per camera separated by exponential gaps, only
+a fraction $\pi$ of the frames within an episode anomalous, and a ramp at each
+end; and episodes propagate along the camera graph with a lag. Defaults put the null score near $0.24$ and
+an anomalous frame near $0.75$, i.e.\ a per-frame signal weak enough that it
+must accumulate over time --- the regime where sequential methods earn their
+keep. \Cref{sec:limitations} states plainly what this does and does not
+establish.
+
+\paragraph{Baselines.}
+A fixed score threshold with an optional $k$-of-$m$ persistence filter; a
+per-frame threshold on the \emph{same} conformal p-values SENTINEL-E consumes,
+which isolates optional stopping from calibration; CUSUM \citep{page1954};
+Shiryaev--Roberts \citep{roberts1966}; a parametric e-detector using the same
+changepoint mixture with a Gaussian likelihood-ratio bet instead of a conformal
+one; a reimplementation of E-SHIFT \citep{khan2026eshift}; and, as the ablation that
+isolates the paper's core, the same pipeline with the changepoint mixture in
+place of the episodic one. That last baseline is not a straw man: by
+\cref{prop:generalisation} it is a faithful instance of the PFA-controlled
+non-partitioned e-detector of \citet{saha2026nonpartitioned} --- a mixture over
+start times with weights summing to one, under a geometric prior and a fixed
+betting family rather than an infimum over a composite pre-change class --- so
+the episodes-versus-changepoints comparison in \cref{sec:episodes} is a
+comparison against the current state of the art in anytime-valid change
+detection, run through an identical conformal front end. Every baseline is
+fitted on the same calibration set and evaluated on the same decorrelated
+betting grid, so none is helped or penalised by the frame-rate choice.
+
+Every method also \emph{restarts} after an alarm. This matters more than it
+sounds. Under the single-shot convention of \cref{def:tuv} a detector stops at
+its first alarm, so a method that false-alarms early is disabled for the rest of
+the stream and records a missed detection for an event it never got to see. That
+convention is right for stating the guarantee and wrong for measuring delay,
+because an operator investigates an alert and resumes monitoring. Restarting
+leaves the null metrics untouched --- the probability of at least one false
+alarm, and the time to the first one, do not depend on what happens afterwards
+--- and can only help a method that cries wolf. Under the single-shot convention
+the classical baselines score miss rates near one; we report the restarting
+numbers because they are the ones that give those baselines a fair hearing. Each is
+swept over its own knob and plotted at its realised false-alarm rate.
+
+\paragraph{Reproducibility.}
+Seeds are fixed in each script; \texttt{experiments/run\_all.py} reproduces every
+number, and every quantity quoted in this text is generated into a macro file
+from the experiment output, so a stale number is not possible. All timings are
+single-thread CPU on the machine that produced the statistical results.
+
+\subsection{Real-video validation}
+\label{sec:real-data}
+
+\input{real_data_section}
+
+\subsection{A single stream, worked through}
+\label{sec:worked-example}
+
+Every quantity in the sections that follow is an aggregate over hundreds of
+simulated streams. Before reporting any of them, it is worth looking at one
+stream in full, because the abstract objects in \cref{sec:method} --- a
+p-value, a betting factor, accumulated wealth, an alarm --- are otherwise easy
+to read only as symbols.
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig6_worked_example}{}
+  \caption{One simulated \WorkedT{}-second stream with \WorkedNEpisodes{}
+  episodes (shaded), chosen for its episode count rather than for how
+  favourably it behaves. \textbf{(a)} the raw backbone score, spiking during
+  each episode but also, by construction, during ordinary null activity.
+  \textbf{(b)} the conformal p-value at each betting instant (log scale);
+  gaps are frames the decorrelation lag skips or the calibration abstains on.
+  Notice that the score spikes in (a) do not translate into uniformly small
+  p-values in (b) --- the score distribution the conformal layer calibrates
+  against already absorbs much of the diurnal and weather-driven variation, so
+  only the residual that context cannot explain shows up as evidence.
+  \textbf{(c)} the episodic e-process's accumulated log-wealth. The dash-dot
+  line is the labelled onset; the process is already drifting down slightly
+  beforehand (an ordinary null fluctuation, licensed by the supermartingale
+  property), climbs sharply once the first episode's evidence accumulates, and
+  crosses $\log(1/\alpha)$ \WorkedDelaySec{}\,s after onset --- the red point.}
+  \label{fig:worked-example}
+\end{figure}
+
+This particular stream is not cherry-picked for a fast detection: it is the
+first seed tried at this configuration, and its three episodes are placed at
+$\WorkedEp{}$. What it shows, concretely, is the mechanism the rest of the
+paper measures in aggregate. The wealth process spends most of the stream
+essentially flat --- a slow, licensed drift rather than a trend, since
+$(W_t)$ is a supermartingale under the null and has no reason to grow --- and
+climbs by more than four orders of magnitude in the roughly \WorkedClimbSec\,s
+it takes the first episode's evidence to accumulate. After the alarm, further
+episodes in this stream do not visibly move the trace: the wealth has already
+crossed threshold and, in this single-alarm illustration, the detector is not
+restarted, which is exactly the deployment convention (restart on alarm,
+\cref{sec:protocol}) that the Monte Carlo experiments use and this one figure
+does not. A reader who wants to see the restarted, multi-alarm behaviour on
+this same stream, or to regenerate this figure on a different seed, can do so
+with \texttt{experiments/exp11\_worked\_example.py}, which costs one stream
+simulation and one pipeline run.
+
+\subsection{False-alarm control is time-uniform}
+\label{sec:validity}
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig1_validity}{}
+  \caption{Time-uniform false-alarm control, \ExpOneReps{} null streams per
+  point in (a) and \ExpOneHorizonReps{} in (b). Open downward triangles mark
+  operating points at which \emph{no} false alarm was observed; they are drawn
+  at the 95\% Wilson upper confidence limit, which is the strongest statement
+  the sample supports, and the dotted line connects them.
+  \textbf{(a)} Realised against nominal level. SENTINEL-E stays below the
+  diagonal everywhere; the per-frame p-value threshold, fed \emph{identical}
+  conformal p-values, sits at the top of the plot, so the difference is
+  attributable to the stopping rule alone. The middle curve is the same
+  e-detector fed exactly uniform p-values, which separates the slack in Ville's
+  inequality from the conservatism of the conformal layer.
+  \textbf{(b)} Against the monitoring horizon at $\alpha=0.01$. The per-frame
+  rules approach one; SENTINEL-E is flat.}
+  \label{fig:validity}
+\end{figure}
+
+\inputtable{tab1_validity}
+\inputtable{tab2_horizon}
+
+\Cref{fig:validity} and \cref{tab:validity,tab:horizon} establish the basic
+claim, and with \ExpOneReps{} streams per level the statement can be made
+statistically rather than descriptively: at every level swept, the \emph{upper}
+end of the $95\%$ interval on SENTINEL-E's realised false-alarm probability is
+at most \ValidityWorstCiHi, and at the tightest level tested
+($\alpha = \ValidityTightestAlpha$) it is \ValidityTightestCiHi{} --- below
+nominal. The per-frame threshold on the same p-values reaches
+\ValidityPfaPvaluePct\% at $\alpha=0.01$, with a mean of only
+\ValidityPvalueArl{} frames --- \ValidityPvalueArlMin{} minutes of video --- to
+its first false alarm. An operator running that rule across a hundred cameras
+would field a false dispatch every few seconds. Extending the horizon from
+\HorizonMinHours{} to \HorizonMaxHours{} hours drives the p-value threshold to
+\HorizonPvaluePfa{} and the fixed score threshold from \HorizonFixedPfaShort{} to
+\HorizonFixedPfa, while SENTINEL-E remains at \HorizonSentinelPfa.
+
+SENTINEL-E is conservative, and it is worth saying where the conservatism comes
+from rather than presenting it as free. Feeding the same e-detector exactly
+uniform p-values yields a realised \ValidityPfaOracleLoose{} at a nominal
+\ValidityAlphaLoose: most of the gap is slack in Ville's inequality and in the
+changepoint prior, not a cost of the conformal layer. Ville's bound is not tight,
+and a practitioner who wants a realised rate close to nominal should calibrate
+the threshold empirically; what the theory provides, and what a fixed threshold
+cannot, is that the bound never degrades with the horizon.
+
+\subsection{Episodes versus changepoints}
+\label{sec:episodes}
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig5_episodes}{}
+  \caption{What mixing over episodes buys, and where it does not, on the
+  unpaired point estimates (\cref{tab:episodes}). With a single episode the
+  episodic mixture is nominally behind rather than tied with the changepoint
+  mixture --- \cref{tab:paired_episodes} resolves this as a real, if small,
+  cost; the paired analysis below is what head-to-head claims in this section
+  rest on.}
+  \label{fig:episodes}
+\end{figure}
+
+\inputtable{tab11_episodes}
+\inputtable{tab12_intermittency}
+\inputtable{tab13_paired_episodes}
+
+This is the experiment that isolates the paper's main contribution, and it
+needed a second pass to actually isolate it. \Cref{tab:episodes,tab:intermittency}
+sweep the two axes along which an episode differs from a changepoint, but their
+two arms do \emph{not} share a betting grid: the episodic arm mixes over
+\EpiGridKappa{} values of $\kappa$, the changepoint arm over $32$ log-spaced
+values, so an unpaired point-estimate reading of these tables confounds the
+episode-end axis with a grid-size effect that \cref{sec:ablation}'s own
+``single bet aggressiveness'' row shows can be comparably large on its own.
+\Cref{tab:paired_episodes} repairs this: both arms there run the identical
+class over the identical \EpiGridKappa$\times$\EpiGridEta{} grid restricted to
+$\eta=0$ against the full grid, differing only in whether $\eta$ ranges over
+one value or four, and every seed is shared, so the delay difference is
+reported as a paired bootstrap and the miss difference as an exact McNemar test
+on discordant pairs rather than as two independent point estimates. Both arms
+hold the false-alarm level throughout, as \cref{thm:episodic} and
+\cref{prop:generalisation} require of both, so the comparison is entirely about
+power.
+
+The paired result is not monotone the way the unpaired tables suggested, and it
+is more informative for not being so. At one episode the episodic mixture is
+significantly \emph{behind}: mean censored-delay difference
+\EpiPairedDiffOne\,s, $95\%$ CI \EpiPairedCIOne, bootstrap
+$p=\EpiPairedPbootOne$, with the changepoint arm detecting
+\EpiPairedDiscordantOne{} events the episodic arm misses and none of the reverse
+(McNemar $p=\EpiPairedPMcnemarOne$). That is the price of the extra axis,
+spending prior mass on episode-end hypotheses that never fire, and it is what
+\cref{prop:generalisation} leads one to expect --- and it is a real, resolved
+cost, not noise. At two and four episodes the sign reverses and is significant
+in the same paired sense: at \EpiMidCount{} episodes the mean difference is
+\EpiPairedDiffMid\,s in the episodic mixture's favour (CI \EpiPairedCIMid,
+$p=\EpiPairedPbootMid$), with \EpiPairedDiscordantMid{} events caught only by
+the episodic arm against none caught only by the changepoint arm
+($p=\EpiPairedPMcnemarMid$). By \EpiMaxCount{} episodes the delay advantage is
+smaller but still resolved (\EpiPairedDiffMany\,s, $p=\EpiPairedPbootMany$),
+while the miss advantage --- \EpiPairedDiscordantMany{} discordant pairs out of
+\ExpNineReps{} --- no longer clears significance on its own
+($p=\EpiPairedPMcnemarMany$). None of this licenses the stronger, and wrong,
+claim that the episodic mixture ``misses none at all'' in some meaningful
+sense: \cref{sec:per-episode} shows that even where the \emph{stream}-level
+miss rate is zero, the majority of individual episodes within that stream are
+still missed, which is the mechanism this section's comparison is silent
+about.
+
+The crossover itself is the signature \cref{sec:episodic} predicts: it appears
+exactly when there is more than one episode to accumulate over. Where the
+mechanism claim needs qualifying is at the level of a single episode, which
+\cref{sec:per-episode} checks directly.
+
+\subsection{What the mechanism actually explains}
+\label{sec:per-episode}
+
+\inputtable{tab14_per_episode}
+
+Every result so far scores a \emph{stream}: a run counts as detected once any
+alarm follows the first onset, so a detector that sleeps through episodes $1$
+through $k-1$ and only fires on episode $k$ is scored a clean detection. That
+is not a hypothetical --- it is what happens here. \Cref{tab:per_episode} scores
+every episode's own detection window independently (\ExpTenReps{} streams per
+row) and the two columns diverge sharply: at \EpiMaxCount{} episodes the stream
+miss rate is \PerEpiManyEpiStreamMiss{} for the episodic mixture, matching the
+``misses none at all'' language earlier in this section, while the
+\emph{per-episode} miss rate over the same streams is \PerEpiManyEpiMiss{} ---
+the vast majority of individual episodes are never flagged inside their own
+window. The stream-level statistic is not wrong, but it answers a narrower
+question than ``does the detector catch dumping episodes'': it answers ``does
+enough evidence eventually accumulate somewhere in the stream'', and with
+\EpiMaxCount{} chances per stream, a per-episode catch rate as low as
+$1 - \PerEpiManyEpiMiss{} \approx 0.13$ is compatible with a near-zero stream
+miss rate.
+
+The more surprising finding is that this per-episode miss rate is not where the
+episodic mixture's advantage lives. At every episode count the episodic and
+changepoint mixtures have statistically indistinguishable per-episode miss
+rates --- \PerEpiOneEpiMiss{} against \PerEpiOneCpMiss{} at one episode,
+\PerEpiMidEpiMiss{} against \PerEpiMidCpMiss{} at \EpiMidCount, and
+\PerEpiManyEpiMiss{} against \PerEpiManyCpMiss{} at \EpiMaxCount. Neither
+construction reliably resolves a single \EpiEventLenSec{}-second episode inside
+its own narrow window; what differs between them, and what
+\cref{tab:paired_episodes} establishes with a paired test, is how quickly
+evidence that does not resolve within one episode's window compounds toward
+the first stream-level alarm. The changepoint mixture carries a channel's worth
+of burned wealth from a reverted bet into the next episode; the episodic
+process's quiet state does not. That shows up as a shorter censored delay and,
+at two and four episodes, as more streams resolved before the horizon --- both
+already established in \cref{sec:episodes} --- but it is a claim about how fast
+evidence accumulates \emph{across} a stream's episodes taken together, not a
+claim that the episodic mixture independently catches more of them one at a
+time. The contributions list and abstract should be read with that scope.
+
+We report the single-episode row rather than omitting it. A strict
+generalisation should cost something where its extra structure is absent, and
+quantifying that cost is what makes the rest of the table trustworthy.
+
+\Cref{tab:intermittency} varies the fraction $\pi$ of episode frames that show
+the act, at \EpiBestCount{} episodes and with both mixtures using the same
+undilated grid (\cref{sec:dilation}). Down to $\pi = 0.5$ the task is easy
+enough that the two are indistinguishable and neither misses anything; the
+separation appears only at $\pi = \EpiMinPi$, where the episodes become weak
+enough that several are needed before the evidence crosses the threshold ---
+which is, again, precisely when accumulating across episodes is what matters.
+Below $\pi \approx 0.2$ neither variant detects reliably at any setting we
+tried, and we take that as the honest edge of the operating envelope rather than
+a tuning problem.
+
+\subsection{Detection delay at a controlled false-alarm rate}
+\label{sec:delay}
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig2_delay_far}{}
+  \caption{Detection delay against realised false-alarm rate,
+  \ExpTwoReps{} null and \ExpTwoReps{} post-change streams per operating point.
+  Lower and further left is better; the operating region a municipality can live
+  with is the left-hand edge. Each method is swept over its own knob and plotted
+  where it actually lands, not where it claims to.}
+  \label{fig:delayfar}
+\end{figure}
+
+\inputtable{tab3_delay_far}
+
+This is the comparison the paper exists to make, and to our knowledge no
+existing waste-surveillance paper reports its analogue. \Cref{fig:delayfar} and
+\cref{tab:delay_far} give delay against realised false-alarm rate for every
+method. SENTINEL-E detects in \DelaySentinelSec\,s
+($\pm$\,\DelaySentinelCi\,s) at a realised \DelaySentinelPfa, missing
+\DelaySentinelMiss{} of events. \DelayNumInadmissible{} of the baselines never
+reach a realised false-alarm probability of $0.05$ at any knob setting while
+still detecting events (\DelayInadmissibleList), which is the substantive
+finding: on streams with drift, heavy tails and autocorrelation, the classical
+procedures cannot be tuned into the operating region at all, because the
+assumptions their thresholds rest on do not hold.
+
+\subsection{Robustness to calibration/deployment mismatch}
+\label{sec:shift}
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig3_shift}{}
+  \caption{Shift in an \emph{unbinned} covariate (scene activity). Binning the
+  context cannot help with a variable outside the taxonomy, so Mondrian
+  calibration fails alongside the pooled baseline; conformalising the
+  context-normalised residual holds throughout.}
+  \label{fig:shift}
+\end{figure}
+
+\inputtable{tab4_coverage}
+\inputtable{tab5_activity}
+
+Two kinds of mismatch, both routine between the week a calibration set is
+labelled and the month a camera is monitored, and the more interesting of the
+two produces the clearest limitation in this paper.
+
+\Cref{tab:activity} and \cref{fig:shift} shift an \emph{unbinned} covariate:
+deployment scene activity is a multiple of the labelling window's. Pooled and
+Mondrian calibration lose control immediately --- both reach
+\ShiftPooledPfa{} and \ShiftMondrianPfa{} at the largest shift --- and the
+Mondrian failure is instructive rather than embarrassing, since it is exactly
+group-conditional on the variables it bins and activity is not one of them. An
+operator cannot bin on every covariate that matters, which is the argument for
+\cref{eq:residual}.
+
+The residual construction does far better but it does not hold indefinitely,
+and reporting where it breaks needs the same care as \cref{sec:ablation}: at
+\ExpThreeReps{} replicates per shift level, a point estimate of PFA $0.000$ or
+$0.02$ against nominal $0.01$ is not, by itself, evidence of validity or its
+absence. Judged by the Wilson interval rather than the point estimate, shifts
+of \ShiftResidualUnresolvedRatios{} are unresolved --- their intervals contain
+nominal in both directions --- and only at $\times\ShiftResidualBreaks$ does
+the lower end of the interval clear nominal, at a realised rate of
+\ShiftBreakResidualPfa{} $\in[\ShiftBreakResidualPfaLo,\ShiftBreakResidualPfaHi]$.
+That is the one shift level this design can certify as broken, not the
+smallest shift at which it might be. We report this plainly because it is the
+honest boundary of the method: normalising by a fitted $\hat g$ and
+$\hat\sigma$ absorbs a shift in $P(c)$ only while the model stays adequate,
+and a large enough move in an unmodelled direction breaks it, but pinning down
+exactly how large would need many more replicates than run here.
+
+This is where the likelihood-ratio weighting of \cref{sec:layer1} earns its
+place, and where our own expectation was wrong. Weighting holds the realised
+rate at \ShiftBreakWeightedPfa{} at every shift level tested, including the ones
+where the plain residual construction fails --- but it does so by becoming
+drastically conservative, with the miss rate rising from
+\ShiftBreakResidualMiss{} to \ShiftBreakWeightedMiss{} at
+$\times\ShiftResidualBreaks$. It buys validity with power, which is the correct
+trade for a guarantee and a poor one for a detector.
+
+The practical recommendation follows directly and is implemented in the library:
+run the classifier two-sample test continuously, use the plain residual
+construction while it reports no detectable shift, and enable weighting once it
+does --- accepting that the camera has become a conservative detector and that
+the operator should be told the calibration set no longer covers the conditions.
+An abstention or miss rate that jumps is a signal to recalibrate, not a defect
+to hide.
+
+\Cref{tab:coverage} varies coverage instead. Validity survives all three
+regimes, but power does not, and it should not: with calibration from a single
+daytime window the miss rate reaches \CoverDaytimeMiss{} and the abstention rate
+\CoverDaytimeAbstain\%. Degradation appears in the abstention and miss columns,
+where an operator can see it, rather than silently in the alarm rate, where they
+cannot. The operational implication is a requirement rather than a caveat: the
+calibration set must span the conditions you intend to monitor, and the
+abstention rate tells you whether it does.
+
+\subsection{The camera network}
+\label{sec:network}
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig4_network}{}
+  \caption{Fleet of \NetCameras{} cameras over \NetFleets{} held-out fleets with
+  events and \NetFleets{} all-null fleets. The learned spatial prior does
+  \emph{not} shorten delay --- it is worse than no graph at all, the negative
+  result detailed below --- while e-BH holds the false-discovery rate under
+  the dependence the graph induces regardless of which controller feeds it.}
+  \label{fig:network}
+\end{figure}
+
+\inputtable{tab6_network}
+
+\Cref{tab:network} separates the two questions, and they get different answers.
+
+\paragraph{The guarantee survives learned control, as claimed.}
+This is the part \cref{thm:predictable} is about, and it holds empirically as
+well as formally. On all-null fleets every controller --- none, hand-designed,
+and learned --- produces an alarm rate of \NetGnnNullPfa{} and an e-BH
+false-discovery rate of \NetGnnFdr{} against a target of \NetFdrLevel. The
+learned controller does this while actively \emph{hurting} power, which is the
+sharpest available demonstration of the theorem: a badly-behaved learned
+component degrades detection and leaves the false-alarm guarantee untouched,
+because it can only enter through a predictable modulation.
+
+\paragraph{The learned spatial prior does not earn its place.}
+We expected the graph to shorten delay and it does not, on either delay
+statistic: conditional delay is \NetHeuristicDelaySec\,s (heuristic) and
+\NetGnnDelaySec\,s (learned) against \NetNoGraphDelaySec\,s with no graph, and
+censored delay --- the comparable statistic per \cref{sec:problem}, since the
+three controllers' miss rates differ --- is \NetHeuristicCensDelaySec\,s and
+\NetGnnCensDelaySec\,s against \NetNoGraphCensDelaySec\,s. The hand-designed
+prior is indistinguishable from no graph at all on either statistic, with power
+\NetHeuristicPower{} against \NetNoGraphPower. The learned controller is worse
+than both on every axis: delay, censored delay, and power \NetGnnPower.
+
+We made two attempts to fix this before concluding it, and the second is worth
+recording because it failed in an informative direction. The first was
+initialisation: the controller's heads are set so that an untrained network
+reproduces the ungoverned detector exactly, rather than starting at half stake
+and a twenty-five-fold hazard, so training begins from the baseline and can only
+improve on it in-sample. That is now the default and it is what the table
+reports. The second was the objective. Maximising terminal log-wealth is
+plainly the wrong target --- detection delay is the time the wealth takes to
+reach $1/\alpha$, so a camera that ends the stream rich but climbed slowly is no
+use --- and we replaced it with log-wealth credited over a
+\NetCreditWindowSec\,s window opening at each camera's own onset, trained and
+evaluated exactly as the terminal-objective controller was. The
+better-motivated objective performed \emph{worse}: power fell from
+\NetGnnPower{} to \NetGnnWindowedPower. We report the stronger of the two
+configurations in \cref{tab:network} and include both there, and keep the
+windowed objective in the library behind a flag so the comparison reproduces.
+
+That a better-motivated objective makes things worse, and that the training gain
+under it drifts downward rather than up, both point the same way: the gradient
+signal is weak, not the optimiser mistuned. There is little for the controller
+to learn.
+
+Our reading is that the spatial signal in these streams is real but small
+relative to what a camera learns from its own p-values: an episode propagates to
+a neighbour with probability $0.45$ after a lag of order a thousand frames, by
+which time the neighbour's own evidence usually dominates. A denser fleet,
+stronger propagation, or a site layout where a single access road feeds many
+cameras might change that, and we have not tested those. What we can say is that
+on the configuration reported here the graph layer's value lies entirely in
+e-BH, not in the spatial prior.
+
+\paragraph{Fleet-level FDR control does earn its place.}
+e-BH recovers the affected cameras at power \NetNoGraphPower{} with a realised
+false-discovery rate of \NetNoGraphFdr{} against a target of \NetFdrLevel,
+under dependence induced by shared weather, shared lighting and correlated
+episodes. That is the part of Layer 3 we would keep.
+
+\subsection{Computational cost}
+\label{sec:compute}
+
+\inputtable{tab7_compute}
+
+\Cref{tab:compute} measures what an added-cost claim can be measured to mean:
+a same-CPU ratio against a stand-in backbone we built to the scale of a real
+edge detector, not a measurement on a specific published model or deployed
+hardware, and one that excludes the cost of extracting the low-dimensional
+context features Layer 1 consumes (time of day, a weather flag, a
+background-subtraction motion measure) and the peak memory the guarantee layer
+needs, neither of which this table reports. Within that scope: the reference
+backbone --- a depthwise-separable stack with \CostBackboneParams\,M
+parameters at $320\times320$, timed on the same CPU --- costs
+\CostBackboneMs\,ms per frame. SENTINEL-E adds \CostSentinelUs\,\textmu s per
+frame amortised, or \CostSentinelPct\% of the backbone, running at
+\CostRealtimeFactor$\times$ real time on one thread. Fitting a camera's
+calibration takes \CostFitSec\,s once. The reason the added cost is this small
+is structural rather than incidental: the per-frame arithmetic is the $O(1)$
+forward recursion of \cref{eq:forward}, and it runs once per decorrelation lag
+rather than once per frame. Hardware that already runs the detector in real time,
+and already extracts the context features, needs no additional
+budget.
+
+\subsection{Checking the assumptions}
+\label{sec:diagnostics}
+
+\inputtable{tab9_diagnostics}
+\inputtable{tab10_pcoverage}
+
+The guarantee rests on two premises that are assumptions rather than theorems.
+The first, conditional independence, is checkable from the calibration set
+alone, so an operator can run it on their own camera before trusting the alarm
+rate; the second needs labelled null deployment data an operator does not
+normally have, and we report it here as a check on the library rather than a
+field-deployable one. \Cref{tab:diagnostics} reports conditional independence:
+betting on every frame leaves a lag-one residual autocorrelation of
+\DiagAcfRaw{} and a Ljung--Box p-value of \DiagLjungRaw, which rejects the
+premise outright, while betting once per estimated lag gives \DiagAcfThin{}
+and \DiagLjungThin{} --- markedly better, but \cref{tab:diagnostics}'s own
+pass-rate row shows this reduces the violation rather than removing it: see
+\cref{sec:limitations}. \Cref{tab:pcoverage} checks Layer 1 in isolation on
+$191{,}890$ betting instants pooled from labelled null streams: the deployment
+p-values are super-uniform at every level tested, with a smallest attainable
+value of \DiagPmin{} --- the tail resolution that \cref{thm:beta} buys and that
+the DKW inflation would forfeit --- but this is a validation of the library
+against ground truth we constructed, not a check an operator can run on an
+unlabelled camera.
+
+\subsection{Ablation}
+\label{sec:ablation}
+
+\inputtable{tab8_ablation}
+
+\Cref{tab:ablation} removes one decision at a time, and reports a Wilson 95\%
+interval on the realised PFA rather than the point estimate alone: at
+\AblReps{} replicates per row, far fewer than the \ExpOneReps{} used for the
+validity sweep in \cref{sec:validity}, most rows reporting PFA $0.000$ have a
+Wilson upper bound above nominal and are honestly unresolved, not certified
+valid. \AblNumInvalid{} of \AblNumVariants{} variants are nonetheless \emph{clearly}
+invalid --- their interval's lower end already exceeds $\alpha$ --- and the
+pattern the design was built to show survives that correction: every row whose
+invalidity is resolvable is a temporal or calibration one (betting every frame,
+\AblEveryFramePfa; betting once every five frames rather than at the estimated
+decorrelation lag; pooled conformal, \AblPooledPfa; Mondrian conformal;
+omitting the calibration-conditional correction, \AblNoCcPfa), while no row
+that only changes the betting family or the onset prior is ever resolved as
+invalid. \AblNumUnresolved{} rows --- among them raw (unthinned) calibration,
+the DKW inflation, and residual conformal with likelihood-ratio weighting ---
+are unresolved rather than confirmed valid at this replication count; a point
+estimate of $0.010$ for unthinned calibration in particular is not evidence
+that skipping the thinning is safe, only that \AblReps{} replicates cannot
+show it is not. Properly resolving these would need the replication count of
+\cref{sec:validity} (\ExpOneReps{}), run there for the episodic detector alone;
+see \cref{sec:limitations}.
+
+Three rows deserve comment regardless. Replacing the episodic mixture with the
+changepoint mixture costs power --- \AblChangepointMiss{} of events missed
+against \AblFullMiss, with censored delay \AblChangepointDelay\,s against
+\AblFullDelay\,s, on the \emph{same} \AblReps{} seeded streams as the
+\EpiMaxCount{}-episode row of \cref{sec:episodes} rather than an independent
+replication of it --- while both remain in the unresolved class on validity,
+not confirmed as differing there. The DKW inflation is markedly slower at the
+same nominal PFA, \AblDkwDelay\,s against \AblFullDelay\,s for the exact Beta
+levels --- a factor of \AblDkwSpeedup{} --- which quantifies what
+\cref{thm:beta} buys conditional on both being valid. And the fixed-start
+product martingale (no changepoint prior) misses \AblPointPriorMiss{} of
+events: with the change arriving deep into the stream, a wealth process
+started at frame one has burned too much to recover, which is precisely the
+failure mode the mixture over onsets in \cref{eq:episodic} exists to prevent,
+and the structural reason SENTINEL-E outperforms E-SHIFT here: E-SHIFT's
+wealth also starts at frame one.
+

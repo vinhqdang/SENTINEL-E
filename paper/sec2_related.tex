@@ -1,0 +1,166 @@
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Waste and dumping detection.}
+Image-level litter detection is well served by TACO \citep{proenca2020taco};
+industrial waste-sorting imagery, a related but distinct acquisition regime of
+cluttered conveyor-belt scenes rather than in-the-wild litter, by ZeroWaste
+\citep{bashkirova2022zerowaste}. UAV and wide-area monitoring is served by
+UAVVaste \citep{kraft2021uavvaste} and AerialWaste
+\citep{torres2023aerialwaste}; marine pollution by MARIDA
+\citep{kikaki2022marida} and MADOS \citep{kikaki2024mados}.
+
+Video-based dumping detection now has a public benchmark and an active contest
+around it. The 2026 IWDD contest \citep{bouwmans2026overview} drew ten teams,
+trained on the released Mivia-IWDD set (400 videos, 200 positive/200 negative)
+and ranked on a private 100-video test set by precision, recall and F1 plus
+normalised notification delay, processing frame rate and peak memory; the
+larger Mivia-IWDD-500 release we build our protocol on \citep{greco2026iwdd}
+postdates the contest rather than having supplied it. Seven of the ten entries
+are published: 3D CNNs with temporal localisation \citep{almorsy2026x3d},
+cross-fold transformer ensembles \citep{kim2026kfold}, multi-head classifiers
+\citep{scarrica2026garberus}, vision--language temporal reasoning
+\citep{kairanbay2026vlm}, novelty detection \citep{zbuce2026novelty},
+onset-centric boundary-sensitive estimation \citep{bhat2026imslab}, and a
+lightweight two-stage recurrent framework \citep{putzu2026unicass}. These are
+strong backbones and our work does not compete with them: SENTINEL-E consumes a
+frozen backbone's scores, so a better backbone and this work compound. What
+none of them reports --- and what the clip-level protocol they share cannot
+express --- is a false-alarm rate over a continuous monitoring horizon, an
+average run length, or a detection delay under continuous monitoring; the
+contest overview does analyse the field in ROC space with an explicit
+false-positive-rate axis, which is still a per-clip quantity rather than a
+rate over a horizon, so the distinction we draw survives with that
+qualification attached.
+
+\paragraph{Video anomaly detection benchmarks (2025--2026).}
+The classical video anomaly detection (VAD) literature this paper's real-data
+protocol draws its streams from --- CUHK Avenue \citep{lu2013avenue} and UCSD
+Ped2 \citep{mahadevan2010ucsd} --- continues to report clip- or frame-level
+ROC-AUC as its primary metric: a reconstruction-based idempotent generative
+network reaches 99.03\% AUC on Ped2 and 92.40\% on Avenue
+\citep{dong2025rvadign}. That method post-dates this paper's original
+submission and outperforms, on frame-level AUC alone, the Farneback
+optical-flow backbone \cref{sec:real-data} uses
+(\RealPedTwoAuc{}/\RealAvenueAuc{}). We do not run it head to head against
+SENTINEL-E, and the reason is the point this paper makes rather than an
+omission: AUC is computed after the fact over a fixed, already-labelled test
+set and says nothing about the rate at which a rule raises an alarm on a
+continuously monitored, unlabelled stream, which is the quantity
+\cref{sec:real-data} actually measures. \citet{rashidi2026benchmarkauc} audits
+this gap directly: eleven off-the-shelf VAD feature sets that average 70.4\%
+AUC on their own training distribution collapse to 49.9\% --- chance --- under
+a cross-dataset shift, with false-alarm rates around $3.2\times 10^4$ per hour
+at thresholds a same-dataset evaluation would call operational. That finding
+and \cref{sec:real-data}'s own (the narrow, dataset-specific lag window a
+time-uniform guarantee actually needs on real footage) are independent
+audits of the same failure mode from opposite ends: a benchmark-AUC number
+does not certify what happens when the clock keeps running.
+
+\paragraph{Sequential detection of changes that end.}
+Classical quickest-detection theory treats a permanent shift, but a
+sub-literature treats exactly the object this paper does: a change of finite,
+possibly unknown duration. Transient change detection
+\citep{guepie2012transient,guepie2017transient} minimises worst-case missed
+detection under a false-alarm constraint for a change that must be caught
+before it disappears, using a window-limited CUSUM; the intermittent-change
+line \citep{sokolov2023intermittent} treats a change of \emph{unknown}
+duration directly, and a two-state hidden Markov model is used for quickest
+detection in \citet{fuh2015hmm} --- structurally the closest classical relative
+of the two-state chain in \cref{eq:episodic}. Epidemic changepoint detection
+\citep{fisch2022capa,juodakis2020epidemic} treats a related but distinct
+problem, a segment that departs from and then returns to a background level
+estimated from the same series, going back to the original two-changepoint
+epidemic-alternative formulation. None of this literature is ARL- or
+Ville-type time-uniform: it is CUSUM-, SPRT- or window-shaped with asymptotic
+or fixed-sample-size guarantees, not an e-process. What we add is not the
+finite-duration change itself but an anytime-valid, conformal-fed construction
+of it; \cref{sec:episodic} states that scope explicitly rather than claiming
+the axis itself is new.
+
+On the construction: mixing a bounded-wealth process over the trajectories of a
+two-state chain and collapsing them by a forward pass is an instance of the
+fixed-share, or switching-expert, family
+\citep{herbster1998fixedshare,vanerven2012switch}, of which
+\cref{eq:episodic} is a two-expert case with one expert held at the neutral
+bet. What that literature does not supply is the martingale property under
+optional stopping that \cref{thm:episodic} establishes; conversely, what we do
+not claim is that mixing over a switching structure is itself new.
+
+Closer to our architecture than either of these are the conformal test
+martingales of \citet{vovk2003exchangeability} and their successors, which
+combine a conformal front end with a Ville-thresholded martingale for online
+change and exchangeability testing --- the same two-layer shape as
+\cref{sec:layer1,sec:episodic}. We found no instance of that combination, nor of
+any other e-process or anytime-valid conformal machinery, applied to waste,
+dumping, or pollution surveillance specifically, though classical sequential
+change detection has reached adjacent environmental problems, including
+contamination detection in water-distribution networks
+\citep{guepie2012watercontamination}.
+
+\paragraph{Sequential change detection.}
+CUSUM \citep{page1954}, Shiryaev's Bayesian statistic \citep{shiryaev1963} and
+Shiryaev--Roberts \citep{roberts1966} are the classical procedures, with
+optimality theory due to \citet{lorden1971} and \citet{moustakides1986}. Their
+guarantees are asymptotic average-run-length statements presuming a correctly
+specified pre-change law; detector scores from real footage are autocorrelated,
+heavy-tailed and diurnally non-stationary, so the presumption fails and both
+lose control in our experiments. \citet{shin2024edetectors} give a nonparametric
+e-detector framework with non-asymptotic ARL bounds, and
+\citet{saha2026nonpartitioned} extend it to composite pre-change classes,
+including a PFA-controlled variant that mixes over start times with weights
+summing to one and thereby achieves $\mathbb{P}(\tau<\infty) \le \alpha$. That
+variant is exactly what our \cref{prop:generalisation} reduces to, and we claim
+no credit for it.
+
+The difference is the change model. All of these mix over the changepoint
+\emph{location} of a persistent shift, and none of them is an e-process: what
+they lack is not the finite-duration axis itself, which classical
+quickest-detection theory has treated since the transient- and
+intermittent-change literature discussed above, but a time-uniform,
+optional-stopping-safe construction of it that stays $O(1)$ per frame and feeds
+from a conformal front end rather than a parametric one. That is the axis
+\cref{sec:episodic} adds \emph{to this family}. A secondary but practical
+difference is cost. Evaluated exactly across all active starts, a
+non-partitioned e-detector is $O(t)$ per observation
+\citep{saha2026nonpartitioned}; under a geometric prior over start times the
+sum telescopes to an $O(1)$ recursion, which is the special case of
+\cref{eq:forward} at $\eta=0$. The point is that the episodic process retains
+that $O(1)$ cost \emph{while adding the episode-end axis to the e-process
+family specifically} --- the extra generality is free arithmetically as well
+as statistically, which matters when the horizon is a month of video and the
+hardware is a camera.
+
+\paragraph{Anytime-valid inference and e-values.}
+Testing by betting \citep{shafer2021testing,ramdas2023savi,grunwald2024evalues}
+turns Ville's inequality into a design principle; \citet{waudby2024betting}
+develop the betting strategies we adapt. \citet{wang2022ebh} introduce e-BH,
+which controls FDR under arbitrary dependence and underpins our fleet layer;
+\citet{vovk2021evalues} characterise e-value merging. Closest to this work in
+spirit is E-SHIFT \citep{khan2026eshift}, which detects distribution shift in
+streaming learning systems with a sub-exponential e-process built on a
+composite non-conformity score, and which already provides an $\alpha$-mixing
+extension for temporally correlated streams. We reimplement it as a baseline.
+It differs from SENTINEL-E in three ways that matter here: its
+log-moment-generating-function bound is estimated, so by the authors' own
+account validity is asymptotic in the calibration size rather than
+finite-sample; it assumes i.i.d.\ calibration and deployment scores, which is
+stronger than the exchangeability our conformal layer needs and which a
+diurnal cycle breaks regardless; and its wealth starts at frame one after each
+alert, so evidence arriving hours into a stream must first repay what was
+burned before it, exactly as our own restart convention does between alarms.
+
+\paragraph{Conformal prediction.}
+Split conformal prediction \citep{vovk2005alrw} supplies the distribution-free
+p-values we bet on. \citet{vovk2012conditional} studies calibration-conditional
+validity, which is the concern our Beta levels address, and
+\citet{tibshirani2019covariate} handle covariate shift by likelihood-ratio
+weighting, which we implement and evaluate. Conformalising a normalised
+regression residual is standard practice
+\citep{lei2018distribution,romano2019cqr}, and localisation
+\citep{guan2023localized} pursues conditional coverage by other means. Our Layer
+1 combines these with the sequential requirement, which imposes a constraint the
+prediction-interval literature does not face: the p-values must be
+super-uniform \emph{conditionally on the past}, not merely marginally, or the
+wealth process is not a supermartingale.
+
