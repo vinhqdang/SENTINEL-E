@@ -1,4 +1,4 @@
-"""Experiment 9 --- does the episode axis survive a paired test on a shared grid?
+"""Experiment 9 --- does the episode axis survive a paired test on equal-size grids?
 
 Experiment 8 compared ``EpisodicEDetector`` over a 6x4 (kappa, eta) grid with
 ``EDetector`` over 32 log-spaced kappa values and reported unpaired point
@@ -161,12 +161,13 @@ def _report(n_ep: int, row: Dict) -> None:
 
 
 def make_table(payload: Dict) -> None:
-    """Paired episodic-vs-changepoint comparison, on a shared 24-point kappa grid.
+    """Paired episodic-vs-changepoint comparison at equal grid size.
 
-    Reports the ``epi_vs_cp24`` contrast: same class, same grid size, differing
-    only in the eta axis, so a significant delay or miss difference here is not
-    confounded with the grid-size effect the ablation shows can be comparably
-    large (\\cref{sec:ablation}, "single bet aggressiveness").
+    Reports the ``epi_vs_cp24`` contrast.  The episodic arm has 6 kappa values
+    times 4 eta values (24 grid points); the changepoint arm has 24 kappa values
+    at eta = 0 (24 grid points).  The grids are equal in size but not shared:
+    the changepoint arm covers kappa more finely, which biases the comparison
+    against the episodic arm.
     """
     rows = []
     for k in payload["episode_counts"] if "episode_counts" in payload else sorted(
@@ -187,14 +188,18 @@ def make_table(payload: Dict) -> None:
         ["episodes", "mean diff.\\ (s)", "95\\% CI", "$p$ (boot.)",
          "miss discordant", "$p$ (McNemar)"],
         caption=(
-            r"Paired episodic-vs-changepoint comparison on a shared "
-            f"{len(KAPPA24)}-point $\\kappa$ grid ({payload['reps']} seeded "
-            r"pairs per row): the changepoint-mixture minus episodic censored "
-            r"delay, and the discordant miss counts (episodic-detects-only / "
-            r"changepoint-detects-only) with an exact two-sided McNemar test. "
-            r"A positive mean difference favours the episodic mixture. Unlike "
-            r"the unpaired comparison in Online Resource~1, Sect.~S2, which uses "
-            r"different grids, every row here isolates the episode-end axis alone."
+            r"Paired episodic-vs-changepoint comparison on grids of equal size "
+            f"({len(KAPPA24)} points each): the episodic arm uses "
+            f"{len(KAPPA6)} $\\kappa$ values by {len(ETA)} $\\eta$ values, and "
+            f"the changepoint arm uses {len(KAPPA24)} $\\kappa$ values at "
+            r"$\eta=0$. The grids are not shared, and the changepoint arm covers "
+            r"$\kappa$ more finely, which biases the comparison against the episodic "
+            f"arm. {payload['reps']} seeded pairs per row. Entries are the "
+            r"changepoint-mixture minus episodic censored delay, and the discordant "
+            r"miss counts (episodic-detects-only / changepoint-detects-only) with an "
+            r"exact two-sided McNemar test. A positive mean difference favours the "
+            r"episodic mixture. The unpaired comparison in Online Resource~1, "
+            r"Sect.~S2, is descriptive."
         ),
         label="tab:paired_episodes", name="tab13_paired_episodes", align="rrrrrr",
     )

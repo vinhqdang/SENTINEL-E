@@ -388,10 +388,6 @@ def collect() -> Dict[str, str]:
         e2e = e5["end_to_end"]
         m["CostBackboneMs"] = _fmt(bb * 1e3, 1) if bb else "--"
         m["CostBackboneParams"] = _fmt(e5["backbone"]["parameters"] / 1e6, 1)
-        m["CostSentinelUs"] = _fmt(e2e["microseconds_per_frame"], 2)
-        m["CostSentinelPct"] = (
-            f"{100 * e2e['microseconds_per_frame'] * 1e-6 / bb:.4f}" if bb else "--"
-        )
         m["CostRealtimeFactor"] = _int(e2e["realtime_factor"])
         m["CostLag"] = str(e2e["decorrelation_lag"])
         m["CostFitSec"] = _fmt(e2e["calibration_fit_seconds"], 2)
@@ -429,6 +425,22 @@ def collect() -> Dict[str, str]:
             m[f"{tag}Delay"] = _fmt(
                 None if r.get("add_censored") is None else r["add_censored"] / FPS, 1)
             m[f"{tag}Miss"] = _fmt(r["miss_rate"], 2)
+        # exp6b re-runs the load-bearing rows at 1,500 null streams (the first
+        # 200 post-change streams are shared with exp6), so its values replace
+        # the 200-stream ones wherever it has the row.  Dilation, the fixed start
+        # and linear betting are not re-run and keep their exp6 values.
+        try:
+            e6b = load_json("exp6b_ablation_highrep")
+            rows_b = {r["name"]: r for r in e6b["rows"]}
+            for name, tag in pairs:
+                rb = rows_b.get(name)
+                if not rb:
+                    continue
+                m[f"{tag}Pfa"] = _fmt(rb["pfa"], 3)
+                m[f"{tag}Delay"] = _fmt(rb["censored_delay_s"], 1)
+                m[f"{tag}Miss"] = _fmt(rb["miss_rate"], 2)
+        except FileNotFoundError:
+            pass
         m["AblLag"] = str(rows["SENTINEL-E (full)"]["lag"])
         full, dkw = rows.get("SENTINEL-E (full)"), rows.get("DKW inflation")
         if (full and dkw and full.get("add_censored")
@@ -756,27 +768,39 @@ def collect() -> Dict[str, str]:
     except (FileNotFoundError, KeyError, StopIteration):
         pass
 
-    # ---- Cost derivation (exp5 end-to-end and component benchmarks) ------- #
+    # ---- Cost derivation (exp5b pipeline-path breakdown) ------------------ #
+    # Per-frame costs of the default pipeline come from exp5b, which times the
+    # p-value, the episodic step and the end-to-end run on the pipeline's own
+    # code path.  exp5 supplies the backbone reference and the component
+    # benchmarks (CostStepUs, CostStepVecUs, CostGnnPerCameraUs) only.
+    try:
+        e5b = load_json("exp5b_cost_breakdown")
+        meas = e5b["measurement"]
+        bb_us = e5b["backbone_us_per_frame"]
+        e2e_us = meas["measured_end_to_end_us_per_frame"]["median"]
+        conf_us = 1e6 * meas["p_value_sec_per_bet"]["median"]
+        step_us = 1e6 * meas["episodic_step_sec_per_bet_streaming"]["median"]
+        lag = meas["decorrelation_lag"]
+        m["CostSentinelUs"] = _fmt(e2e_us, 2)
+        m["CostSentinelPct"] = f"{100 * e2e_us / bb_us:.4f}" if bb_us else "--"
+        m["CostMonitorSec"] = _fmt(meas["measured_end_to_end_run_sec"]["median"], 3)
+        m["CostConformalUs"] = _fmt(conf_us, 2)
+        m["CostConformalN"] = _int(meas["calibration_frames"])
+        m["CostAmortStreamUs"] = _fmt((conf_us + step_us) / lag, 2)
+        m["CostFrames"] = _int(meas["frames"])
+        m["CostBetSteps"] = _int(meas["betting_steps"])
+        m["CostBetEndToEndUs"] = _fmt(
+            1e6 * meas["measured_end_to_end_run_sec"]["median"] / meas["betting_steps"], 1)
+    except (FileNotFoundError, KeyError, StopIteration):
+        pass
     try:
         e5 = load_json("exp5_compute")
-        e2e = e5["end_to_end"]
-        conf = max(e5["conformal"], key=lambda d: d["n_calibration"])
         det32 = next(d for d in e5["detector"] if d["n_grid"] == 32)
-        lag = e2e["decorrelation_lag"]
-        conf_us = conf["sec_per_frame"] * 1e6
-        step_us = det32["sec_per_step_streaming"] * 1e6
         vec_us = det32["sec_per_step_vectorised"] * 1e6
-        m["CostConformalUs"] = _fmt(conf_us, 2)
-        m["CostConformalN"] = _int(conf["n_calibration"])
+        vec_lag = e5["end_to_end"]["decorrelation_lag"]
         m["CostStepVecUs"] = _fmt(vec_us, 1)
-        m["CostAmortStreamUs"] = _fmt(conf_us + step_us / lag, 1)
-        m["CostAmortVecUs"] = _fmt(conf_us + vec_us / lag, 2)
-        m["CostFrames"] = _int(e2e["frames"])
-        m["CostBetSteps"] = _int(e2e["betting_steps"])
-        m["CostMonitorSec"] = _fmt(e2e["monitor_seconds"], 3)
-        m["CostBetEndToEndUs"] = _fmt(
-            1e6 * e2e["monitor_seconds"] / e2e["betting_steps"], 1)
-    except (FileNotFoundError, KeyError, StopIteration):
+        m["CostAmortVecUs"] = _fmt((conf_us + vec_us) / vec_lag, 2)
+    except (FileNotFoundError, KeyError, StopIteration, NameError):
         pass
 
     # ---- Fleet (exp4) and diagnostic (exp7) configuration counts ---------- #

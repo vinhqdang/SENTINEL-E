@@ -136,9 +136,10 @@ def make_table(by_episodes, by_pi):
             r"Mixing over episodes against mixing over changepoints, as the "
             r"number of episodes at a camera grows ($\alpha=0.01$, "
             f"{REPS} null and {REPS} post-change streams per row, episodes of "
-            r"800 frames at intermittency $\pi=0.35$). With one episode the two "
-            r"agree, as a strict generalisation should; the gap opens as events "
-            r"recur, which is what a dumping hotspot does."
+            r"800 frames at intermittency $\pi=0.35$). The comparison is unpaired "
+            r"and uses different grids, so it is descriptive only; the paired "
+            r"comparison in Sect.~4.5 of the main text supersedes it. The gap "
+            r"opens as events recur, which is what a dumping hotspot does."
         ),
         label="tab:episodes", name="tab11_episodes", align="rlrrr",
     )

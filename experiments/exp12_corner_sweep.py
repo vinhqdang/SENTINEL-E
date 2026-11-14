@@ -18,9 +18,11 @@ representative calibration.  Configurations:
   event runs to the horizon), pi = 1.0 (the simulator draws
   ``rng.random < pi``, so pi = 1 marks every frame active).
 
-Verdict: "episodic better" when the 95% bootstrap CI of the censored delay
-difference (cp24 minus epi, positive = episodic faster) lies above zero,
-"changepoint better" when it lies below zero, otherwise "no resolved difference".
+Verdict: "equivalent (|diff| < 1 s)" when the point estimate of the censored
+delay difference (cp24 minus epi, positive = episodic faster) is smaller than
+the 1 s practical margin in absolute value.  Otherwise "episodic better" when the
+95% bootstrap CI lies above zero, "changepoint better" when it lies below zero,
+and "no resolved difference" when the CI contains zero.
 """
 
 from __future__ import annotations
@@ -85,8 +87,14 @@ def build_configs() -> List[Dict]:
     return cfgs
 
 
-def _verdict(ci_frames) -> str:
-    lo, hi = ci_frames
+MARGIN_S = 1.0   # practical equivalence margin on the delay difference, seconds
+
+
+def _verdict(diff_s: float, ci_s) -> str:
+    """Verdict on the cp24-minus-epi delay difference (seconds, > 0 = episodic faster)."""
+    if abs(diff_s) < MARGIN_S:
+        return f"equivalent (|diff| < {MARGIN_S:g} s)"
+    lo, hi = ci_s
     if lo > 0:
         return "episodic better"
     if hi < 0:
@@ -123,7 +131,7 @@ def run_config(entry: Dict, reps: int) -> Dict:
         "miss_epi_only_detect": m["b01"],            # epi detects, cp24 misses
         "miss_cp24_only_detect": m["b10"],           # cp24 detects, epi misses
         "miss_p_mcnemar": m["p_exact"],
-        "verdict": _verdict(ci_s),
+        "verdict": _verdict(d["mean_diff"] / FPS, ci_s),
     }
     print(f"  {entry['name']:36s} cp24 PFA={arms['cp24']['pfa']:.3f} "
           f"epi PFA={arms['epi']['pfa']:.3f} | diff={row['delay_diff_s']:+.2f}s "
@@ -145,6 +153,7 @@ def make_table(payload: Dict) -> None:
     reps = payload["reps"]
     body = []
     for r in payload["rows"]:
+        r["verdict"] = _verdict(r["delay_diff_s"], r["delay_diff_ci95_s"])
         c, e = r["cp24"], r["epi"]
         lo, hi = r["delay_diff_ci95_s"]
         body.append([
@@ -171,12 +180,23 @@ def make_table(payload: Dict) -> None:
             r"charged the remaining horizon); the difference is cp24 minus epi, so "
             r"a positive value favours the episodic arm. Miss discordance counts "
             r"streams that only the episodic arm (epi) or only the changepoint arm "
-            r"(cp24) detect."
+            r"(cp24) detect. Verdicts treat a difference smaller than 1\,s in "
+            r"absolute value as equivalent, whatever its CI."
         ),
         label="tab:corner_sweep",
         name="tab_corner_sweep",
         align="lrrrrrrrrrrl",
     )
+
+
+def _short_name(r: Dict) -> str:
+    """Compact tick label: L = event length, g = gap, pi = intermittency."""
+    c = r["cfg"]
+    if r["group"] == "corner":
+        return f"L{c['event_length']} g{c['episode_gap']} pi{c['event_intermittency']:g}"
+    if r["group"] == "single":
+        return "single episode"
+    return "permanent change"
 
 
 def make_figure(payload: Dict) -> None:
@@ -186,17 +206,17 @@ def make_figure(payload: Dict) -> None:
     d = np.array([r["delay_diff_s"] for r in rows])
     lo = np.array([r["delay_diff_ci95_s"][0] for r in rows])
     hi = np.array([r["delay_diff_ci95_s"][1] for r in rows])
-    fig, ax = plt.subplots(figsize=(7.0, 3.4))
+    fig, ax = plt.subplots(figsize=(7.0, 3.8))
     ax.axhline(0.0, color="k", lw=1.0)
     colors = ["#0b3d91" if r["verdict"] == "episodic better" else
               ("#f9a825" if r["verdict"] == "changepoint better" else "#777777")
-              for r in rows]
+              for r in rows]  # equivalent and unresolved rows are grey
     for xi, di, l, h, c in zip(x, d, lo, hi, colors):
         ax.errorbar(xi, di, yerr=[[di - l], [h - di]], fmt="o", color=c,
                     capsize=3, ms=5)
     ax.set_xticks(x)
-    ax.set_xticklabels([r["name"].replace(", ", "\n", 1) for r in rows],
-                       rotation=0, fontsize=6)
+    ax.set_xticklabels([_short_name(r) for r in rows], rotation=40,
+                       ha="right", fontsize=6.5)
     ax.set_ylabel("cp24 minus epi censored delay (s)\n(> 0: episodic faster)")
     ax.set_title("Paired delay difference with 95% bootstrap CI")
     fig.tight_layout()

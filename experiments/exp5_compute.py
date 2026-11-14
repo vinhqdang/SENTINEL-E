@@ -21,7 +21,7 @@ from typing import Dict, List
 
 import numpy as np
 
-from experiments.common import fmt, save_json, write_latex_table
+from experiments.common import save_json
 from sentinel_e.conformal import ResidualConformalCalibrator
 from sentinel_e.edetector import EDetector
 from sentinel_e.graph import CameraGraph
@@ -173,46 +173,7 @@ def main():
                "fleet": fleet, "end_to_end": e2e}
     save_json(payload, "exp5_compute")
 
-    bb = backbone.get("seconds_per_frame")
-    rows = [
-        ["frozen backbone (reference, 320$\\times$320)",
-         fmt(bb * 1e3, 2) if bb else "--", "--"],
-        ["conformal p-value (per frame scored)",
-         fmt(conf[-1]["sec_per_frame"] * 1e3, 5),
-         fmt(100 * conf[-1]["sec_per_frame"] / bb, 4) if bb else "--"],
-        ["e-detector step, 32-point mixture (per bet)",
-         fmt(layers[2]["sec_per_step_streaming"] * 1e3, 4),
-         fmt(100 * layers[2]["sec_per_step_streaming"] / bb, 3) if bb else "--"],
-        ["graph controller, 32 cameras (per camera-bet)",
-         fmt(fleet[2]["sec_per_camera_step"] * 1e3, 4) if fleet else "--",
-         fmt(100 * fleet[2]["sec_per_camera_step"] / bb, 3) if (fleet and bb) else "--"],
-        ["\\textbf{SENTINEL-E, amortised per video frame}",
-         "\\textbf{" + fmt(e2e["microseconds_per_frame"] / 1e3, 5) + "}",
-         "\\textbf{" + (fmt(100 * e2e["microseconds_per_frame"] * 1e-6 / bb, 4) if bb else "--") + "}"],
-    ]
-    write_latex_table(
-        rows,
-        ["component", "cost (ms)", "\\% of backbone"],
-        caption=(
-            "Single-thread CPU cost of each layer, measured on the machine that "
-            "produced every other result in this paper. The guarantee layer runs "
-            "once per decorrelation lag rather than once per frame, so its "
-            "amortised cost is the last row: about "
-            f"{100 * e2e['microseconds_per_frame'] * 1e-6 / bb:.4f}\\% of the "
-            "backbone it wraps. Deploying SENTINEL-E on hardware that already "
-            "runs the detector in real time therefore requires no additional "
-            "compute budget."
-        ) if bb else "Single-thread CPU cost of each layer.",
-        label="tab:compute",
-        name="tab7_compute",
-        align="lrr",
-        notes=(
-            r"The reference backbone is a depthwise-separable stack of the scale "
-            r"used on edge hardware, timed on the same CPU; it stands in for a "
-            r"deployed detector rather than reproducing a specific published one."
-        ),
-    )
-    print(" wrote results/exp5_compute.json, tab7")
+    print(" wrote results/exp5_compute.json")
 
 
 if __name__ == "__main__":

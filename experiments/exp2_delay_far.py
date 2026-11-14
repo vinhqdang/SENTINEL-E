@@ -104,7 +104,7 @@ def _finite(rows, pfa_max=1.01):
 
 def make_figure(results):
     plt = setup_matplotlib()
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.0))
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.6))
 
     for ax, xkey, xlabel, title in (
         (axes[0], "pfa", "realised false-alarm probability over 40 min",
@@ -135,8 +135,11 @@ def make_figure(results):
     axes[0].axvline(0.01, color="k", ls=":", lw=1.0)
     axes[0].text(0.011, axes[0].get_ylim()[1] * 0.95, r"$\alpha=0.01$",
                  fontsize=7, va="top")
-    axes[0].legend(loc="upper right", ncol=1)
-    fig.tight_layout()
+    # One legend below both panels, so it cannot cover the curves.
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=4, fontsize=7,
+               frameon=False, bbox_to_anchor=(0.5, 0.0))
+    fig.tight_layout(rect=(0, 0.13, 1, 1))
     for ext in ("pdf", "png"):
         fig.savefig(FIGURES / f"fig2_delay_far.{ext}")
     plt.close(fig)
@@ -169,7 +172,8 @@ def make_table(results, cap: float = 0.05):
     at a false-alarm probability of one --- true, but not an operating point any
     municipality would run. Requiring the cap and blanking the rest hides how
     the baselines fail. So each method is shown at the smallest realised
-    false-alarm probability it achieves while still detecting most events, which
+    false-alarm probability it achieves among settings whose miss rate is below
+    0.9 (at least one event in ten detected), which
     is the question an operator actually asks: if I insist on few false alarms,
     what does this method cost me in delay? The full trade-off is in
     \\cref{fig:delayfar}.
@@ -220,7 +224,9 @@ def make_table(results, cap: float = 0.05):
          "cond. delay (s)", "censored delay (s)", "miss rate"],
         caption=(
             "Baselines are shown at the tightest realised false-alarm probability "
-            "they achieve while still detecting most events. The two exact "
+            "they achieve among settings with a miss rate below 0.9, that is, "
+            "detecting at least one event in ten (the miss-rate column gives the "
+            "value achieved). The two exact "
             "e-processes are shown at a common nominal level "
             f"$\\alpha={COMMON_E_ALPHA:g}$, so they are compared at equal nominal "
             "level. Streams are 60 minutes long "
@@ -257,7 +263,8 @@ def make_table(results, cap: float = 0.05):
             r"events; the censored delay charges a miss the whole remaining "
             r"horizon and is the comparable figure. A bold rate violates the "
             r"constraint in the fourth column; ``--'' means the method never "
-            r"detects at any setting."
+            r"detects at any setting. The $\pm$ values are 1.96 standard errors "
+            r"of the censored-delay mean over streams."
         ),
     )
 

@@ -27,6 +27,7 @@ import numpy as np
 
 from experiments.common import (
     FIGURES,
+    TABLES,
     fmt,
     fmt_int,
     save_json,
@@ -127,7 +128,7 @@ def make_figure(activity):
         ax.set_title(title)
     axes[0].axhline(0.01, color="k", ls="--", lw=1.0, label=r"$\alpha=0.01$")
     axes[0].set_ylim(-0.04, 1.04)
-    axes[0].legend(loc="center left", fontsize=7)
+    axes[0].legend(loc="center right", fontsize=7)
     fig.tight_layout()
     for ext in ("pdf", "png"):
         fig.savefig(FIGURES / f"fig3_shift.{ext}")
@@ -161,29 +162,53 @@ def make_tables(coverage, activity):
         align="llrrrrr",
     )
 
-    rows = []
+    write_activity_table(activity)
+
+
+ACTIVITY_METRICS = ("PFA", "miss", "abstain")
+ACTIVITY_CAPTION = (
+    r"Shift in an \emph{unbinned} covariate (scene activity) at $\alpha=0.01$. "
+    r"Each calibration method has three columns: the realised false-alarm "
+    r"probability (PFA), the miss rate and the abstention rate. \emph{pooled} "
+    r"calibrates one set of scores for all streams; \emph{Mondrian} calibrates "
+    r"within bins of the taxonomy; \emph{residual} conformalises the "
+    r"context-normalised residual; \emph{residual + LR wts} adds likelihood-ratio "
+    r"weights to the residual calibration. Binning cannot help with a variable "
+    r"that is not in the taxonomy, so Mondrian calibration fails with the pooled "
+    r"baseline; conformalising the context-normalised residual handles it. Delay "
+    r"and ARL$_0$ are in the JSON output."
+)
+
+
+def write_activity_table(activity: Dict) -> None:
+    """Activity-shift table with one spanning column group per calibration method."""
+    methods = [r["variant"] for r in activity[str(ACTIVITY_SHIFTS[0])]]
+    k = len(ACTIVITY_METRICS)
+    col_spec = "l" + "r" * (k * len(methods))
+    cmid = "".join(f"\\cmidrule(lr){{{2 + j * k}-{1 + (j + 1) * k}}}"
+                   for j in range(len(methods)))
+    lines = [
+        r"\begin{table}[t]",
+        r"\centering",
+        f"\\caption{{{ACTIVITY_CAPTION}}}",
+        r"\label{tab:activity}",
+        r"\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%",
+        f"\\begin{{tabular}}{{{col_spec}}}",
+        r"\toprule",
+        " & ".join([""] + [f"\\multicolumn{{{k}}}{{c}}{{{m}}}" for m in methods]) + r" \\",
+        cmid,
+        " & ".join(["activity shift"] + list(ACTIVITY_METRICS) * len(methods)) + r" \\",
+        r"\midrule",
+    ]
     for a in ACTIVITY_SHIFTS:
-        for i, r in enumerate(activity[str(a)]):
-            rows.append([
-                f"$\\times {a}$" if i == 0 else "",
-                r["variant"], fmt(r["pfa"], 3), fmt_int(r["arl0"]),
-                fmt(None if r["add_censored"] is None else r["add_censored"] / FPS, 1),
-                fmt(r["miss_rate"], 2), fmt(r["abstention"], 2),
-            ])
-    write_latex_table(
-        rows,
-        ["activity shift", "variant", "PFA", "ARL$_0$", "cens. delay (s)", "miss", "abstain"],
-        caption=(
-            r"Shift in an \emph{unbinned} covariate (scene activity) at "
-            r"$\alpha=0.01$. Binning the context cannot help with a variable "
-            r"that is not in the taxonomy, so Mondrian calibration fails with "
-            r"the pooled baseline; conformalising the context-normalised "
-            r"residual handles it."
-        ),
-        label="tab:activity",
-        name="tab5_activity",
-        align="llrrrrr",
-    )
+        by_variant = {r["variant"]: r for r in activity[str(a)]}
+        cells = [f"$\\times {a}$"]
+        for m in methods:
+            r = by_variant[m]
+            cells += [fmt(r["pfa"], 3), fmt(r["miss_rate"], 2), fmt(r["abstention"], 2)]
+        lines.append(" & ".join(cells) + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}}", r"\end{table}", ""]
+    (TABLES / "tab5_activity.tex").write_text("\n".join(lines))
 
 
 def main(reps: int = REPS):

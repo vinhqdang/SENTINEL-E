@@ -1,22 +1,22 @@
 \begin{table}[t]
 \centering
-\caption{Paired episodic-versus-changepoint comparison across simulator configurations at $\alpha=0.01$, 200 seeded pairs per configuration. Delay is censored (misses charged the remaining horizon); the difference is cp24 minus epi, so a positive value favours the episodic arm. Miss discordance counts streams that only the episodic arm (epi) or only the changepoint arm (cp24) detect.}
+\caption{Paired episodic-versus-changepoint comparison across simulator configurations at $\alpha=0.01$, 200 seeded pairs per configuration. Delay is censored (misses charged the remaining horizon); the difference is cp24 minus epi, so a positive value favours the episodic arm. Miss discordance counts streams that only the episodic arm (epi) or only the changepoint arm (cp24) detect. Verdicts treat a difference smaller than 1\,s in absolute value as equivalent, whatever its CI.}
 \label{tab:corner_sweep}
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{lrrrrrrrrrrl}
 \toprule
 configuration & PFA cp24 [95\% CI] & PFA epi [95\% CI] & miss cp24 & miss epi & delay cp24 (s) & delay epi (s) & diff.\ (s) [95\% CI] & miss disc.\ epi/cp24 & $p$ McNemar & verdict \\
 \midrule
-L=200, gap=1500, pi=0.2, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 1.00 & 1.00 & 2800.0 & 2800.0 & +0.0 [+0.0, +0.0] & 0/0 & 1.000 & no resolved difference \\
-L=200, gap=1500, pi=0.7, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 1.00 & 1.00 & 2800.0 & 2800.0 & +0.0 [+0.0, +0.0] & 0/0 & 1.000 & no resolved difference \\
-L=200, gap=12000, pi=0.2, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 1.00 & 1.00 & 2800.0 & 2800.0 & +0.0 [+0.0, +0.0] & 0/0 & 1.000 & no resolved difference \\
-L=200, gap=12000, pi=0.7, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 1.00 & 1.00 & 2800.0 & 2800.0 & +0.0 [+0.0, +0.0] & 0/0 & 1.000 & no resolved difference \\
+L=200, gap=1500, pi=0.2, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 1.00 & 1.00 & 2800.0 & 2800.0 & +0.0 [+0.0, +0.0] & 0/0 & 1.000 & equivalent (|diff| < 1 s) \\
+L=200, gap=1500, pi=0.7, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 1.00 & 1.00 & 2800.0 & 2800.0 & +0.0 [+0.0, +0.0] & 0/0 & 1.000 & equivalent (|diff| < 1 s) \\
+L=200, gap=12000, pi=0.2, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 1.00 & 1.00 & 2800.0 & 2800.0 & +0.0 [+0.0, +0.0] & 0/0 & 1.000 & equivalent (|diff| < 1 s) \\
+L=200, gap=12000, pi=0.7, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 1.00 & 1.00 & 2800.0 & 2800.0 & +0.0 [+0.0, +0.0] & 0/0 & 1.000 & equivalent (|diff| < 1 s) \\
 L=1600, gap=1500, pi=0.2, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 0.03 & 0.01 & 193.2 & 154.7 & +38.5 [+1.4, +86.5] & 3/0 & 0.250 & episodic better \\
-L=1600, gap=1500, pi=0.7, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 0.00 & 0.00 & 12.1 & 12.3 & -0.1 [-0.2, -0.1] & 0/0 & 1.000 & changepoint better \\
+L=1600, gap=1500, pi=0.7, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 0.00 & 0.00 & 12.1 & 12.3 & -0.1 [-0.2, -0.1] & 0/0 & 1.000 & equivalent (|diff| < 1 s) \\
 L=1600, gap=12000, pi=0.2, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 0.15 & 0.07 & 684.7 & 543.7 & +141.1 [+79.6, +210.2] & 16/0 & 0.000 & episodic better \\
-L=1600, gap=12000, pi=0.7, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 0.00 & 0.00 & 12.1 & 12.3 & -0.1 [-0.2, -0.1] & 0/0 & 1.000 & changepoint better \\
+L=1600, gap=12000, pi=0.7, 4 ep. & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 0.00 & 0.00 & 12.1 & 12.3 & -0.1 [-0.2, -0.1] & 0/0 & 1.000 & equivalent (|diff| < 1 s) \\
 single episode, L=800, pi=0.35 & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 0.42 & 0.45 & 1201.6 & 1257.3 & -55.7 [-111.2, -14.0] & 0/4 & 0.125 & changepoint better \\
-permanent change, pi=1.0 (L=70000) & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 0.00 & 0.00 & 8.7 & 8.7 & -0.1 [-0.1, -0.0] & 0/0 & 1.000 & changepoint better \\
+permanent change, pi=1.0 (L=70000) & 0.000 [0.000, 0.019] & 0.000 [0.000, 0.019] & 0.00 & 0.00 & 8.7 & 8.7 & -0.1 [-0.1, -0.0] & 0/0 & 1.000 & equivalent (|diff| < 1 s) \\
 \bottomrule
 \end{tabular}}
 \end{table}
