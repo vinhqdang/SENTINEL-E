@@ -25,31 +25,29 @@ lag.
 
 The simulated day has \SimDiurnalFrames{} frames, which is \SimDiurnalMin{}\,min
 at 25\,fps. This is the diurnal period in Experiments 1--12. Their streams last
-40 to 60 minutes. A shorter horizon sweep, up to 2.7\,h, is in Online Resource~1,
+40 to 60 minutes. A shorter horizon sweep, up to \HorizonMaxHours\,h, is in Online Resource~1,
 Sect.~S3. Only the week-long experiment in \cref{sec:validity} uses a real
 24\,h day.
 
 \paragraph{Baselines.}
-The baselines are a fixed score threshold, and a per-frame threshold on the
-same conformal p-values that SENTINEL-E consumes. The second isolates the
-stopping rule from calibration. The rest are CUSUM \citep{page1954},
-Shiryaev--Roberts \citep{roberts1966}, a parametric e-detector with a Gaussian
-likelihood-ratio bet, a reimplementation of E-SHIFT \citep{khan2026eshift}, and
-the changepoint mixture. The changepoint mixture is SENTINEL-E with the episodic
-mixture replaced. By \cref{prop:generalisation} it is an instance of the
-non-partitioned e-detector of \citet{saha2026nonpartitioned}. The episodes
-comparison in \cref{sec:episodes} is therefore against a published
-anytime-valid method, run through the same conformal front end. All methods
-share one calibration set and the same decorrelated betting instants.
+A fixed score threshold, and a per-frame threshold on the same conformal p-values
+that SENTINEL-E consumes, which isolates the stopping rule from calibration. The
+others are CUSUM \citep{page1954}, Shiryaev--Roberts \citep{roberts1966}, a
+parametric e-detector with a Gaussian likelihood-ratio bet, a reimplementation of
+E-SHIFT \citep{khan2026eshift}, and the changepoint mixture. The changepoint
+mixture is an instance of the non-partitioned e-detector of
+\citet{saha2026nonpartitioned} by \cref{prop:generalisation}, so \cref{sec:episodes}
+compares against a published anytime-valid method under the same conformal front
+end. All methods share one calibration set.
 
-\paragraph{Restarts.}
+
 Every method restarts after an alarm, as an operator does once an alert has been
 investigated. Under the single-shot convention of \cref{def:tuv}, a detector
 stops at its first alarm and records a miss for every later event. Restarting
-leaves the null metrics unchanged, because the probability of any false alarm,
-and the time to the first one, do not depend on what follows.
+leaves the null metrics unchanged, because the false-alarm probability and the
+time to the first alarm do not depend on what follows.
 
-\paragraph{Statistics and seeds.}
+
 Monte Carlo rates carry Wilson 95\% intervals. An upper limit of zero counts
 gives the strongest statement that a zero count supports. Each experiment draws
 its own seed range, so the same configuration in two tables is an independent
@@ -75,16 +73,12 @@ not one chosen for a fast detection.
   \centering
   \resultfig{fig6_worked_example}{}
   \caption{One simulated \WorkedT{}-second stream with \WorkedNEpisodes{}
-  episodes (shaded). \textbf{(a)} The raw backbone score, which spikes during
-  each episode and also during ordinary null activity. \textbf{(b)} The
-  conformal p-value at each betting instant (log scale). Gaps are frames that the
-  decorrelation lag skips. Score spikes do not map onto uniformly small
-  p-values, because the conformal layer already absorbs much of the diurnal and
-  weather variation. \textbf{(c)} The episodic e-process's log-wealth. The
-  dash-dot line marks the labelled onset. The wealth drifts slightly down before
-  it, as a null process should, then climbs once the first episode's evidence
-  accumulates. It crosses $\log(1/\alpha)$ \WorkedDelaySec{}\,s after onset (red
-  point).}
+  episodes (shaded). \textbf{(a)} The raw backbone score. \textbf{(b)} The
+  conformal p-value at each betting instant (log scale). Score spikes do not map
+  onto uniformly small p-values, because the conformal layer absorbs much of the
+  diurnal and weather variation. \textbf{(c)} The episodic log-wealth. The
+  dash-dot line marks the labelled onset, and the red point marks the alarm at
+  $\log(1/\alpha)$, \WorkedDelaySec{}\,s after onset.}
   \label{fig:worked-example}
 \end{figure}
 
@@ -169,7 +163,7 @@ on different grids are in Online Resource~1, Sect.~S2. They are descriptive only
 
 The sign of the difference depends on the number of episodes. At one episode,
 the episodic mixture is behind. The censored-delay difference is
-\EpiPairedDiffOne\,s (95\% CI \EpiPairedCIOne{}, bootstrap $p=\EpiPairedPbootOne$),
+\EpiPairedDiffOne\,s (95\% CI \EpiPairedCIOne{}, bootstrap $p<0.001$),
 and the changepoint arm detects \EpiPairedDiscordantOne{} events the episodic arm
 misses, with none in reverse (McNemar $p=\EpiPairedPMcnemarOne$). This is the
 cost of the extra axis, which places prior mass on episode-end hypotheses that
@@ -183,7 +177,7 @@ $p=\EpiPairedPbootMany$), and the miss difference is not significant
 
 The configuration matters too. \Cref{tab:corner_sweep} and \cref{fig:corner}
 repeat the paired comparison at $\alpha=0.01$ across the event shapes the
-simulator exposes, with 200 seeded pairs each.
+simulator exposes, with \CornerReps{} seeded pairs each.
 
 \begin{figure}[t]
   \centering
@@ -209,8 +203,9 @@ frames favours the changepoint mixture by \CornerSingleAbsDiff\,s (CI
 $\alpha=0.01$, a miss rate of \CornerFloorMiss{}, which marks the detection floor
 for that event length.
 
+\label{sec:per-episode}
 Stream-level scores can hide episode-level misses. \Cref{tab:per_episode} scores
-each episode's own window, using 200 streams per row. At four episodes the
+each episode's own window, using \ExpTenReps{} streams per row. At four episodes the
 stream miss rate is \PerEpiMidEpiStreamMiss{}, but the per-episode miss rate is
 \PerEpiMidEpiMiss{}. At eight episodes, the stream miss rate is
 \PerEpiManyEpiStreamMiss{} and the per-episode rate is \PerEpiManyEpiMiss{}.
@@ -275,13 +270,13 @@ month a camera is monitored. An unbinned covariate can drift, and calibration ca
 cover only some of the conditions. \Cref{tab:activity} shows the first. At
 $\times 3.0$ activity, pooled and Mondrian calibration both reach a false-alarm
 probability of \ShiftPooledPfa{}, because activity is not one of the bins. The
-context-normalised residual construction does far better, but at 200 streams per
+context-normalised residual construction does far better, but at \ExpThreeReps{} streams per
 row several shift levels cannot be resolved (\ShiftResidualUnresolvedRatios{}).
 
 \inputtable{tab_shift_default}
 
 \Cref{tab:shift_default} repeats the sweep for the two candidate defaults, with
-1500 null streams per level. The unweighted residual is valid at $\times 1.0$ and
+\ShiftDefNullStreams{} null streams per level. The unweighted residual is valid at $\times 1.0$ and
 $\times 1.5$, with false-alarm probability \ShiftDefOneHalfResPfa{} at $\times 1.5$.
 It is unresolved at $\times 2.0$ (\ShiftDefTwoResPfa{}, interval
 $[\ShiftDefTwoResCiLo, \ShiftDefTwoResCiHi]$). At $\times 3.0$ it is invalid
@@ -356,17 +351,14 @@ and \NetGnnCensDelaySec\,s, against \NetNoGraphCensDelaySec\,s. Power is
 and \NetGnnPower{} for the learned controller. The learned controller is worse
 than no graph on every axis.
 
-Two attempts to fix this failed. The first initialised the heads so that the
-untrained network reproduces the ungoverned detector. That is now the default,
-and it is what \cref{tab:network} reports. The second changed the objective from
-terminal log-wealth to log-wealth credited over a window of
-\NetCreditWindowSec\,s from each camera's onset. The better-motivated objective
-performed worse, with power falling from \NetGnnPower{} to
-\NetGnnWindowedPower{}. Both configurations are in \cref{tab:network}, and the
-windowed objective stays in the library behind a flag. The signal the controller
-could learn is weak, not badly tuned. A denser fleet, stronger propagation, or a
-layout where one access road feeds many cameras might change this, but these
-were not tested.
+Two changes to the controller did not help. Initialising the heads to reproduce
+the ungoverned detector is now the default, and it is what \cref{tab:network}
+reports. Replacing terminal log-wealth with log-wealth credited over a window of
+\NetCreditWindowSec\,s from each camera's onset made power fall from
+\NetGnnPower{} to \NetGnnWindowedPower{}. Both configurations are reported, and
+the windowed objective stays in the library behind a flag. The controller has
+little signal to learn from. A denser fleet, stronger propagation or a shared
+access road might change this, but these were not tested.
 
 \paragraph{Fleet-level FDR control does earn its place.}
 e-BH recovers the affected cameras at power \NetNoGraphPower{}, with a realised
@@ -416,7 +408,7 @@ consequence of the first is the per-video false-alarm rate measured on real
 video in \cref{sec:real-data}.
 
 \Cref{tab:diagnostics} shows the conditional-independence diagnostics on the
-calibration residuals of 60 simulated cameras. Betting on every frame leaves a
+calibration residuals of \DiagStreams{} simulated cameras. Betting on every frame leaves a
 lag-one autocorrelation of \DiagAcfRaw{} and a median Ljung--Box $p$ of
 \DiagLjungRaw. Betting once per estimated lag, at a mean lag of \DiagLagMean{}
 frames, gives \DiagAcfThin{} and a median $p$ of \DiagLjungThin{}. Thinning reduces
@@ -440,7 +432,7 @@ does not have. The thinned calibration set is the quantity an operator can compu
 \inputtable{tab8_ablation}
 
 \todo{high-replicate ablation (1500 null streams per row) pending; the table above
-uses 200 streams per row}
+uses \AblReps{} streams per row}
 
 \Cref{tab:ablation} removes one component at a time and reports a Wilson 95\%
 interval on the realised false-alarm probability. At \AblReps{} streams per row, a
@@ -453,7 +445,7 @@ calibration changes: betting on every frame (\AblEveryFramePfa), pooled conforma
 correction (\AblNoCcPfa). No row that changes only the betting family or the onset
 prior is resolved as invalid. Unthinned calibration (\AblRawCalPfa) is unresolved.
 A point estimate of that size does not show that skipping the thinning is safe,
-but 200 streams cannot show that it is not.
+but \AblReps{} streams cannot show that it is not.
 
 Replacing the episodic mixture with the changepoint mixture misses
 \AblChangepointMiss{} of events, against \AblFullMiss{} for the episodic mixture.

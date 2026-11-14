@@ -618,6 +618,9 @@ def collect() -> Dict[str, str]:
         m["HorizonWeekFixedOneHour"] = _fmt(one_h["fixed"]["pfa"], 3)
         m["HorizonWeekFixedSixHour"] = _fmt(six_h["fixed"]["pfa"], 3)
         m["HorizonWeekPvalueSixHour"] = _fmt(six_h["pvalue"]["pfa"], 3)
+        m["HorizonWeekCalN"] = _int(e13["n_calibration"])
+        m["HorizonWeekCalDefaultPct"] = _fmt(
+            100 * e13["default_calibration_cycle_fraction"], 1)
     except (FileNotFoundError, KeyError, StopIteration):
         pass
 
