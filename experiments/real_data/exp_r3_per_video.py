@@ -667,7 +667,7 @@ def write_outputs(payload: Dict) -> None:
                "test videos for UCSD Ped2 and CUHK Avenue, and over the negative test videos for Mivia-IWDD (pre-onset "
                "segments of positive Mivia videos are reported in the supporting data). Episodes are the labelled "
                "runs; for Mivia-IWDD, one per positive video. Median delay is over detected episodes. "
-               "Baseline knobs are chosen on training videos (first admissible knob in sweep order)."),
+               "Baseline knobs are chosen on training videos (first admissible knob in sweep order; if no knob is admissible, the most conservative one)."),
     )
 
     # tabr3_test_alphas
@@ -686,7 +686,7 @@ def write_outputs(payload: Dict) -> None:
         caption=("SENTINEL-E alone at each nominal $\\alpha$, at $L^\\ast(\\alpha)$, on the test videos "
                  f"(each monitored alone; calibration on all training videos). Test videos: {video_note}."),
         label="tab:r3_test_alphas", name="tabr3_test_alphas", align="llrrrrrr",
-        notes="Null-trial definitions as in Table~\\ref{tab:r3_test}.",
+        notes="Null-trial definitions as in the main-text test table.",
     )
 
     # tabr3_mivia_types

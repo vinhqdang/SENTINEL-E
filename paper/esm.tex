@@ -57,8 +57,28 @@ number is generated from the same experiment outputs as the main text.
 \section{Additional real-video results}
 \label{sec:esm-real}
 
-\todo{Supplementary real-video tables and figures (per-video test results,
-lag selection, alternative $\alpha$ levels, Mivia-IWDD-500 types) to be added.}
+\Cref{tab:r3_test_alphas} repeats the SENTINEL-E test at each nominal level,
+$\alpha\in\{0.05,0.1,0.2\}$, with the lag selected on training videos for that
+level. Each level is an independent selection, so the rows are not a single
+curve. Every entry uses the same per-video null trials as the main text.
+
+\inputtable{tabr3_test_alphas}
+
+\Cref{tab:r3_lags} shows the sensitivity of the test results to the betting lag
+across the whole grid. The selected lag is marked, and it is chosen on training
+videos only. It is a sensitivity analysis, not a basis for choosing a
+different operating point after the test results are known.
+
+\inputtable{tabr3_lags}
+
+\Cref{tab:r3_mivia_types} splits the Mivia-IWDD test results by event type at
+$\alpha=0.1$ and gives every baseline's normal-video false alarms. Detection
+is by episode, one per positive video. The static and dynamic counts for
+PatchCore do not differ at this sample size of 25 videos per type. The
+baseline knobs are those of the main text, including the conservative fallback
+where no training knob was admissible.
+
+\inputtable{tabr3_mivia_types}
 
 \section{Unpaired episode comparisons (descriptive)}
 \label{sec:esm-episodes}

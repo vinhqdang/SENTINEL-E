@@ -1,174 +1,185 @@
-Every result in this subsection runs the identical, unmodified pipeline ---
-the same conformal calibration, the same episodic e-process, the same
-classical baselines --- on real per-frame scores rather than the simulator.
-Two classical video-anomaly-detection corpora supply continuous, real,
-frame-labelled surveillance footage: CUHK Avenue \citep{lu2013avenue}
-(\RealAvenueNTrainVideos{} training / \RealAvenueNTestVideos{} testing
-videos, a campus walkway, \RealAvenueNEpisodes{} distinct labelled anomalous
-runs across the test split) and UCSD Ped2 \citep{mahadevan2010ucsd}
-(\RealPedTwoNTrainVideos{} training / \RealPedTwoNTestVideos{} testing videos, a
-pedestrian walkway, \RealPedTwoNEpisodes{} runs, one per test video). Neither
-ships per-frame detector scores, so we compute our own: Farneback dense
-optical-flow magnitude \citep{farneback2003}, averaged per frame and denoised
-by a 3-frame per-video median filter (disclosed below), reaching frame-level
-ROC-AUC \RealPedTwoAuc{} on Ped2 and \RealAvenueAuc{} on Avenue --- a real,
-classical, unsupervised backbone chosen for transparency over benchmark
-leaderboard position; \cref{sec:related} situates it against 2025--2026
-methods that reach substantially higher AUC on the same pair. Streams are
-built by \texttt{build\_stream\_from\_clips} exactly as \cref{sec:problem}
-describes: calibration is the official training split, and the deployment
-stream is spliced from real labelled runs inside the test split, with no
-frame ever eligible for both roles.
+Real video tests whether the guarantee holds per video on footage that the
+simulator does not produce. Three corpora supply it: CUHK Avenue
+\citep{lu2013avenue}, UCSD Ped2 \citep{mahadevan2010ucsd} and Mivia-IWDD
+\citep{greco2026iwdd}, an illegal-dumping corpus. Each corpus is run with two
+frozen backbones, and no backbone is fine-tuned.
+
+\paragraph{Data and backbones.} Ped2 has \RealPedTwoNTrainVideos{} training
+videos, all normal, and \RealPedTwoNTestVideos{} test videos from one fixed
+camera. Avenue has \RealAvenueNTrainVideos{} training and
+\RealAvenueNTestVideos{} test videos from one fixed camera. Mivia-IWDD has 200
+training videos, all labelled negative, and 100 test videos: 50 negative, 25
+static dumping and 25 dynamic dumping. Each Mivia video comes from a different
+camera, so Mivia calibration pools cameras. The labels mark only the
+dumping onset. Mivia is sampled at 10\,fps; the other two corpora at 25\,fps.
+
+The flow backbone is Farneback optical-flow magnitude \citep{farneback2003},
+averaged per frame at $64\times64$ resolution and median-filtered over three
+frames within each video. The appearance backbone is PatchCore
+\citep{roth2022total} with a frozen WideResNet-50-2 pretrained on ImageNet.
+It uses layers 2 and 3, a 1\% coreset of training patches, and the maximum
+over patches of the nearest-neighbour distance as the frame score. Its frame
+AUCs are \RThreePedTwoFlowAuc{} (Ped2 flow), \RThreePedTwoPCAuc{} (Ped2 PatchCore),
+\RThreeAvenueFlowAuc{} (Avenue flow), \RThreeAvenuePCAuc{} (Avenue PatchCore),
+\RThreeMiviaFlowAuc{} (Mivia flow) and \RThreeMiviaPCAuc{} (Mivia PatchCore).
+The Mivia flow score is below chance.
+
+\paragraph{Protocol.} The unit of replication is the video. Each test video is
+monitored alone by a freshly started detector, and no frame is reused between
+calibration and monitoring. Calibration uses training videos only. For Ped2
+and Avenue it uses all training videos of the same camera. For Mivia it uses
+the training videos of the other folds, pooled across cameras.
+
+Operating points are selected on training videos only, before any test video
+is read. SENTINEL-E's betting lag $L^\ast(\alpha)$ is the smallest lag on the
+grid $\{1,2,3,5,7,10,15,20,30,50\}$ whose leave-one-video-out (LOVO)
+per-video false-alarm proportion is at most $\alpha$. Ped2 and Avenue use
+LOVO over their 16 training videos. Mivia uses 10 folds by video index, each
+holding out 20 training videos. Each classical baseline is thinned at the same
+$L^\ast(\alpha)$. Its knob is the first admissible knob in sweep order, from the
+most aggressive. A knob is admissible when its LOVO proportion is at most
+$\alpha$. If no knob is admissible, the most conservative knob is used. This
+happens for \RThreeBaselineNoKnob{} of the \RThreeBaselineConfigs{} baseline
+configurations at $\alpha=0.1$, and those results describe a conservative
+setting, not a tuned one.
+
+This replaces an earlier evaluation in which the betting lag was tuned on test
+streams and normal frames were reused across spliced streams.
+
+A null trial is a video with no anomaly, or the pre-onset part of an anomalous
+video that lasts at least 2\,s. On Mivia the null trials are the 50 negative
+test videos. A detection is an alarm inside an episode window, extended by a
+one-second grace period. The detector restarts after each alarm, so a video
+can contribute more than one alarm to the rate per hour. It counts once in the
+per-video proportion. All proportions use exact Clopper--Pearson intervals.
+False alarms per hour use an exact Poisson interval. The effective sample size
+is stated with each result: the number of null videos, and the number of
+episodes. Avenue has 74 episodes in 21 videos, so its detection intervals treat
+episodes as independent and are optimistic.
+
+\paragraph{Results.} \Cref{tab:r3_selection} gives the selected lags, and
+\cref{tab:r3_test} the test results at $\alpha=0.1$. \Cref{fig:r3_per_video}
+plots each method's test false alarms per hour against its detection rate.
+
+\inputtable{tabr3_selection}
+
+\inputtable{tabr3_test}
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig_r3_per_video}{}
+  \caption{Test results at $\alpha=0.1$, one panel per dataset and backbone.
+  Each point is one method at its training-selected knob and $L^\ast(0.1)$.
+  The horizontal axis is test false alarms per hour on a log scale, with zero
+  drawn at $0.1$ per hour. The vertical bars are 95\% Clopper--Pearson
+  intervals for the episode detection rate.}
+  \label{fig:r3_per_video}
+\end{figure}
+
+The first finding concerns validity. On Ped2 and Avenue the false-alarm counts
+are small. Ped2 flow has \RThreePedTwoFlowFAk{}/\RThreePedTwoFlowFAn{} false
+alarms, Ped2 PatchCore has \RThreePedTwoPCFAk{}/\RThreePedTwoPCFAn{}, Avenue
+flow has \RThreeAvenueFlowFAk{}/\RThreeAvenueFlowFAn{} and Avenue PatchCore has
+\RThreeAvenuePCFAk{}/\RThreeAvenuePCFAn{}. The intervals are wide, and the
+Ped2 null count of three is too small for a precise estimate. Mivia flow has
+\RThreeMiviaFlowFAk{}/\RThreeMiviaFlowFAn{} false alarms, inside the level.
+Mivia PatchCore has \RThreeMiviaPCFAk{}/\RThreeMiviaPCFAn{}, a proportion of
+\RThreeMiviaPCFAp{} with interval $[\RThreeMiviaPCFALo{},\RThreeMiviaPCFAHi{}]$.
+This exceeds $0.1$ at the point estimate. The one-sided exact binomial
+probability of at least nine false alarms in 50 videos at $p=0.1$ is $0.058$,
+so the excess is not significant at the 5\% level. The count also moves with
+$\alpha$. It is 3 of 50 at $\alpha=0.05$ and 12 of 50 at $\alpha=0.2$, with
+the full sweep in Online Resource 1, Sect.~S1. One candidate cause is pooled calibration.
+Mivia calibrates across cameras, but the guarantee is per camera, so
+exchangeability does not hold. The dependence diagnostic in the next
+paragraph shows a second possible source, and 50 null videos cannot separate
+the two.
+
+The second finding concerns power, which depends strongly on the backbone.
+Ped2 flow detects \RThreePedTwoFlowDetk{} of \RThreePedTwoFlowDetn{} episodes
+and Ped2 PatchCore detects \RThreePedTwoPCDetk{} of \RThreePedTwoPCDetn{}.
+Avenue detects only \RThreeAvenueFlowDetk{} of \RThreeAvenueFlowDetn{} with
+flow and \RThreeAvenuePCDetk{} of \RThreeAvenuePCDetn{} with PatchCore. Mivia
+flow detects none of its \RThreeMiviaFlowDetn{} positive videos. Mivia
+PatchCore detects \RThreeMiviaPCDetk{} of \RThreeMiviaPCDetn{}. Its median
+delay is \RThreeMiviaPCDelayMed{}\,s after onset.
+
+The third finding concerns the baselines. On Mivia PatchCore every baseline
+exceeds $0.1$ on test, with between 9 and 18 of 50 negative videos raising an
+alarm. On Avenue PatchCore, the tuned baselines detect more episodes than
+SENTINEL-E but exceed $\alpha$ on test. The parametric e-detector detects 24 of 74
+episodes and has 3 of 16 false alarms.
+E-SHIFT detects 29 of 74 and has 4 of 16 false alarms. On Avenue and Mivia
+with PatchCore, every baseline that detects more episodes than SENTINEL-E also
+exceeds $\alpha$. On Ped2 PatchCore the fixed threshold detects 8 of 12
+episodes against 7 of 12. Its three null videos show no false alarm, which is
+too little evidence to rule out an excess.
+
+\paragraph{Dependence.} The guarantee rests on the thinned p-values, so
+\cref{tab:r3_dependence} measures their dependence. Two quantities are
+reported. The pooled autocorrelation of the concatenated training scores
+exceeds $0.05$ at every lag up to 200. That length reflects differences
+between the mean scores of videos, not the time scale of the process, and
+it is not used. The within-video autocorrelation is the relevant quantity. At
+lag one it averages \RThreeWithinLagOneMin{} to \RThreeWithinLagOneMax{}. At
+lag 25 it averages between essentially zero and \RThreeWithinLagTwentyFiveMax{}.
+Lag 25 is 1\,s at 25\,fps and 2.5\,s at 10\,fps.
+
+The thinned p-values remain positively correlated. At the selected lags the
+lag-one correlation ranges from \RThreeDepCorrMin{} to \RThreeDepCorrMax{}. The
+empirical CDF shows no excess of small values. The largest positive deviation
+is \RThreeDepSupMax{} at the selected lags, and \RThreeDepSupOneMax{} at lag one.
+The conditional means are not compatible with conditional super-uniformity.
+For a sequence that is conditionally super-uniform, the mean of $p_t$ given
+$p_{t-1}\le0.1$ would be at least $0.5$. The observed means lie between
+\RThreeDepCondMin{} and \RThreeDepCondMax{}, on
+\RThreeDepCountMin{} to \RThreeDepCountMax{} pairs. A small p-value is followed
+by another small one. Conditional super-uniformity is therefore an assumption
+that the data do not support. It cannot be certified from these data. What
+the test checks is its observable consequence, the per-video false-alarm
+rate. That holds within sampling error on Ped2 and Avenue. It exceeds $0.1$ on
+Mivia PatchCore, where the conditional means are lowest.
+
+\inputtable{tabr3_dependence}
+
+\paragraph{Action or residue.} The Mivia labels mark only the onset. They do
+not say whether the detector responds to the dumping action or to the waste
+left behind. Flow measures motion. Flow scores are higher on negative videos
+than before onset in positive videos, so flow can at best respond to the
+action, and the motion of other activity in the scene confuses it. Appearance
+can in principle see deposited waste. Under PatchCore, static dumping is
+detected in \RThreeMiviaPCStaticDetk{} of \RThreeMiviaPCStaticDetn{} videos and
+dynamic dumping in \RThreeMiviaPCDynDetk{} of \RThreeMiviaPCDynDetn{}. These
+counts do not differ at this sample size. The per-type split for all methods
+is in Online Resource 1, Sect.~S1. A residue that persists after the action is
+the permanent-change case, in which the episode never ends, $\eta=0$. The
+episodic mixture contains that case. A dedicated residue model would change
+the background model itself, and we leave it to future work.
+
+\paragraph{Scope.} The real test videos last seconds to about a minute. The
+real data therefore certify per-video false-alarm control. The long-horizon
+claim rests on the simulated streams in \cref{sec:validity}, which run for up
+to a week of simulated time.
 
 \begin{figure}[t]
   \centering
   \resultfig{fig_r0_qualitative}{}
-  \caption{What the backbone actually sees. One normal and one anomalous
-  frame from each real corpus, with the Farneback flow-magnitude field and
-  the resulting scalar score computed at the identical 64$\times$64
-  resolution the rest of this subsection runs on --- these are the real
-  numbers the pipeline consumes, not an illustration of them. The Ped2
-  anomaly is a cyclist among pedestrians; the Avenue anomaly is a loitering
-  pedestrian. Purely for legibility in print, the \emph{frame} panels are
-  re-read from each dataset's original higher-resolution release at the
-  identical frame index; the flow field and the score never are. Notice how
-  little the score moves between the two conditions
-  (\QualExamplePedTwoNormal{}$\to$\QualExamplePedTwoAnomalous{} on Ped2,
-  \QualExampleAvenueNormal{}$\to$\QualExampleAvenueAnomalous{} on Avenue) ---
-  a concrete picture of the weak per-frame signal \cref{sec:intro} motivates
-  accumulating sequentially rather than thresholding on its own.}
-  \label{fig:real-qualitative}
+  \caption{Real frames, real scores. Ped2 and Avenue rows: one normal and one
+  anomalous frame, with the Farneback flow-magnitude field and its score, at
+  the $64\times64$ resolution the pipeline uses. Mivia rows: the static and
+  dynamic test videos, each with one pre-onset frame, one post-onset frame and
+  the PatchCore score over time. Each video is the first positive test video of
+  its type, in video-id order, with at least 3\,s before onset. It was not
+  chosen on its score. The dashed line marks onset, and the coloured points mark
+  the two frames. The frame panels are shown at display resolution, from the
+  original releases. The Mivia release is not redistributed, so only downscaled
+  stills are stored. The flow and score panels are computed from the pipeline
+  inputs.}
+  \label{fig:qualitative}
 \end{figure}
 
-\paragraph{A real train/test shift, disclosed and quantified.} Before any
-sequential machinery runs, a direct quantile check on the raw scores shows
-that \RealPedTwoShiftFrac{}\% of Ped2's confirmed-normal test frames, and
-\RealAvenueShiftFrac{}\% of Avenue's, exceed the 95th percentile of the
-\emph{official training} split's score distribution --- both far above the
-5\% a well-calibrated split would show. Real footage across a train/test
-boundary is not, in this backbone's scores, the same distribution twice; this
-is a fact about the datasets and the backbone, not an artefact of splicing.
-
-\paragraph{Real autocorrelation, and why it is the headline finding here.}
-\Cref{thm:beta} needs the calibration draws to be close to i.i.d., which is
-why \cref{sec:layer1} thins the betting grid to the decorrelation lag. On the
-AR(1) simulator that lag is small and an anomalous episode lasts thousands of
-frames, so thinning costs almost nothing. Real Farneback-flow scores behave
-nothing like that: the sample autocorrelation of the official training split
-does not fall below 0.05 until lag \RealPedTwoFullLag{} on Ped2 and lag
-\RealAvenueFullLag{} on Avenue --- two orders of magnitude past anything the
-simulator produced --- while a real labelled episode lasts a median of
-\RealPedTwoEpiMedian{} frames on Ped2 (\RealPedTwoEpiMin{}--\RealPedTwoEpiMax{}) and
-just \RealAvenueEpiMedian{} on Avenue (\RealAvenueEpiMin{}--\RealAvenueEpiMax{}).
-Thinning to the fully rigorous lag leaves at most one or two betting
-opportunities inside a typical real event --- too few for any sequential test,
-at any $\alpha$, to detect reliably.
-
-\begin{figure}[t]
-  \centering
-  \resultfig{fig_r1_validity}{}
-  \caption{Real video: validity and power against the betting-grid lag
-  (\RealLagReps{} streams per point, $\alpha=0.1$), and time-uniform
-  false-alarm control at the fixed operating lag each dataset's sweep
-  selects. \textbf{(a)} Below a sharp threshold the realised false-alarm rate
-  (solid) is uncontrolled; above it the miss rate (dashed) is near one. The
-  two curves cross in a window of a handful of frames --- not the wide margin
-  the simulated streams left --- and the vertical line marks the lag used
-  everywhere else in this subsection. \textbf{(b)} PFA against the nominal
-  level at that fixed lag; open markers are zero-count outcomes plotted at
-  their 95\% Wilson upper limit.}
-  \label{fig:real-validity}
-\end{figure}
-
-\Cref{tab:real_lag_sweep} reports that crossing directly. Rather than pick
-the one lag that works best and report only it, every lag swept is shown,
-because the crossing itself --- not the single surviving operating point ---
-is the finding: real per-frame anomaly scores do not leave a comfortable
-region in which both validity and power hold simultaneously, the way the
-simulated AR(1) streams did throughout \cref{sec:validity,sec:episodes}. The
-lag this sweep selects (\RealPedTwoLag{} on Ped2, \RealAvenueLag{} on Avenue)
-is fixed once, from this diagnostic alone, and reused unchanged for every
-other real-data result in this subsection --- including the classical
-baselines in \cref{tab:real_delay_far}, which are thinned to the identical
-grid so that no method is favoured by a different frame rate.
-
-\inputtable{tabr1_lag_sweep}
-
-\Cref{tab:real_validity} sweeps $\alpha$ at that fixed lag.
-Ped2 controls its false-alarm rate at \RealPedTwoPfaHeadline{}
-(95\% CI upper end \RealPedTwoCiHiHeadline{}) at $\alpha=0.1$, with roughly two
-thirds of real spliced events detected (miss rate \RealPedTwoMissHeadline{}) --- a
-real, modest, but genuine detection window. Avenue is harder: its shorter,
-sparser real episodes leave a realised PFA of \RealAvenuePfaHeadline{} at the same
-$\alpha$, but a miss rate of \RealAvenueMissHeadline{}. At the loosest level swept,
-$\alpha=\RealAvenueWorstAlpha$, Avenue's realised rate (\RealAvenueWorstPfa{})
-still does not exceed the nominal level, so the guarantee itself is not
-violated anywhere on this grid; what real footage costs Avenue is power, not
-validity. This is not the failure the simulated experiments were built to
-surface, and it could not have been --- it is specific to what real
-optical-flow scores from real short-duration events actually look like, and
-\cref{sec:limitations} returns to it as the paper's central open problem
-rather than a number to look past.
-
-\inputtable{tabr1b_validity}
-
-\paragraph{Classical baselines on the same real streams.}
-\Cref{tab:real_delay_far} repeats the delay-vs-false-alarm-rate comparison of
-\cref{sec:delay} on real video, with every method --- SENTINEL-E, a fixed
-threshold, the per-frame p-value threshold, CUSUM, Shiryaev--Roberts, a
-parametric e-detector, and E-SHIFT --- thinned to the identical fixed lag
-\cref{tab:real_lag_sweep} selects for that dataset. SENTINEL-E is the only
-method that reaches the target false-alarm probability while still detecting
-most events on either dataset (\RealDelayPedTwoNBaselinesPass{} of
-\RealDelayPedTwoNBaselines{} classical baselines pass on Ped2,
-\RealDelayAvenueNBaselinesPass{} of \RealDelayAvenueNBaselines{} on Avenue).
-The per-frame p-value threshold --- consuming the identical conformal
-p-values SENTINEL-E does, differing only in the stopping rule --- never fires
-at any swept threshold on either dataset: no single real frame's score is
-extreme enough on its own to cross even a lenient per-frame significance
-level, which is exactly the argument \cref{sec:episodic} makes for accumulating
-evidence sequentially rather than thresholding one frame at a time, now
-confirmed on real scores rather than simulated ones. The classical
-parametric procedures (CUSUM, Shiryaev--Roberts, the parametric e-detector)
-reach a false-alarm probability near one at essentially every setting of
-their own tuning knob on real footage, consistent with \cref{sec:delay}'s
-simulated finding and for the same underlying reason: their pre-change model
-is a poor fit to real, heavy-tailed, strongly autocorrelated detector output.
-
-\begin{figure}[t]
-  \centering
-  \resultfig{fig_r2_delay_far}{}
-  \caption{Detection delay against realised false-alarm probability on real
-  video (\RealDelayReps{} null and signal streams per operating point), at
-  each dataset's fixed operating lag from \cref{fig:real-validity}. Both axes
-  are log-scaled: every classical baseline's knob sweep saturates at, or
-  near, a false-alarm probability of one on real footage, so without a log
-  delay axis their whole operating range collapses into an illegible cluster
-  against SENTINEL-E's much larger delays. Points are additionally jittered
-  horizontally by a small, fixed, method-specific, never-positive offset
-  (at most 3\%, disclosed in \texttt{exp\_r2\_delayfar.py}) purely so
-  distinct methods' markers at the same realised PFA do not print on top of
-  one another; no offset changes which side of any false-alarm threshold a
-  point falls on. Curves that never reach the plotted range detect too
-  rarely, on real spliced events, at any realised false-alarm rate their
-  swept knob achieves.}
-  \label{fig:real-delayfar}
-\end{figure}
-
-\inputtable{tabr2_delay_far}
-
-\paragraph{What this subsection does and does not establish.} It establishes
-that the pipeline runs end to end on real, unmodified video --- real
-backbone, real train/test split, real spliced events, real classical
-baselines --- and that SENTINEL-E's time-uniform guarantee holds on both
-corpora at the lag each one's own diagnostic selects, which the naive
-classical alternatives do not manage on either. It does not establish that
-this backbone, at this frame rate, is adequate for deployment: Avenue's
-power is weak, the horizon tested is minutes rather than weeks, and the two
-datasets are pedestrian-walkway anomaly corpora, not illegal-dumping
-footage, because no continuously-labelled real dumping corpus of the
-required length is publicly available (\cref{sec:limitations}). What
-transfers is the pipeline and the diagnostic, not the specific power number:
-a stronger backbone with genuinely independent frame-to-frame errors, run
-through the identical calibration and episodic layers, is the direction most
-likely to close the gap \cref{tab:real_lag_sweep} exposes.
+The qualitative panels show how small the per-frame signal is. Ped2 moves from
+\QualExamplePedTwoNormal{} to \QualExamplePedTwoAnomalous{}, and Avenue moves
+from \QualExampleAvenueNormal{} to \QualExampleAvenueAnomalous{}. These are
+the values the pipeline consumes, and they explain why the method accumulates
+evidence over time.
