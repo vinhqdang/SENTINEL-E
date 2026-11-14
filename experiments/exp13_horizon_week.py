@@ -114,13 +114,13 @@ def run(hours: Sequence[float] = HOURS, reps_sentinel: int = REPS_SENTINEL,
     return rows
 
 
-def make_figure(rows: List[Dict]) -> None:
+def make_figure(rows: List[Dict], n_sentinel: int) -> None:
     plt = setup_matplotlib()
     fig, ax = plt.subplots(figsize=(4.6, 3.2))
     FLOOR = 2e-3
     hours = np.array([r["hours"] for r in rows])
 
-    def draw(key: str, label: str, ci: bool) -> None:
+    def draw(key: str, label: str) -> None:
         style = style_for(label)
         y = np.array([r[key]["pfa"] for r in rows], dtype=float)
         obs = y > 0
@@ -131,20 +131,41 @@ def make_figure(rows: List[Dict]) -> None:
                     marker="v", markerfacecolor="white",
                     markeredgecolor=style["color"], markersize=6,
                     label=None if obs.any() else label)
-        if ci:
-            lo = np.array([r[key]["pfa_ci"][0] for r in rows])
-            hi = np.array([r[key]["pfa_ci"][1] for r in rows])
-            ok = y > 0
-            ax.fill_between(hours[ok], np.maximum(lo[ok], FLOOR * 0.5), hi[ok],
-                            color=style["color"], alpha=0.15, lw=0)
 
-    draw("sentinel", "SENTINEL-E", ci=True)
-    draw("pvalue", "p-value threshold", ci=False)
-    draw("fixed", "Fixed threshold", ci=False)
+    draw("pvalue", "p-value threshold")
+    draw("fixed", "Fixed threshold")
+
+    # SENTINEL-E: zero observed alarms are drawn at a marked plotting floor,
+    # not at their value.  The vertical bar runs from the floor up to the
+    # 95% Wilson upper bound on the false-alarm probability.
+    se = style_for("SENTINEL-E")
+    y = np.array([r["sentinel"]["pfa"] for r in rows], dtype=float)
+    hi = np.array([r["sentinel"]["pfa_ci"][1] for r in rows], dtype=float)
+    counts = np.rint(y * n_sentinel).astype(int)
+    obs = y > 0
+    if obs.any():
+        lo_ = np.array([r["sentinel"]["pfa_ci"][0] for r in rows], dtype=float)
+        ax.plot(hours[obs], y[obs], label="SENTINEL-E", **se)
+        ax.fill_between(hours[obs], np.maximum(lo_[obs], FLOOR * 0.5), hi[obs],
+                        color=se["color"], alpha=0.15, lw=0)
+    if (~obs).any():
+        zeros = ~obs
+        ax.errorbar(hours[zeros], [FLOOR] * int(zeros.sum()),
+                    yerr=[np.zeros(int(zeros.sum())),
+                          hi[zeros] - FLOOR],
+                    fmt="none", ecolor=se["color"], elinewidth=1.2,
+                    capsize=3, zorder=se["zorder"])
+        ax.plot(hours[zeros], [FLOOR] * int(zeros.sum()), linestyle="none",
+                marker="o", markerfacecolor="white", markeredgecolor=se["color"],
+                markersize=6, zorder=se["zorder"],
+                label=f"SENTINEL-E: {int(counts[zeros].max())} of {n_sentinel} "
+                      "(bar: 95% upper bound)")
+        ax.text(hours[zeros][0] * 1.08, FLOOR * 0.62, "0 alarms: plotted at floor",
+                fontsize=6, color=se["color"], va="top")
     ax.axhline(ALPHA, color="k", ls="--", lw=1.0, label=r"$\alpha=0.01$")
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.set_ylim(FLOOR * 0.5, 1.6)
+    ax.set_ylim(FLOOR * 0.35, 1.6)
     ax.set_xticks(hours)
     ax.set_xticklabels([f"{h:g}" for h in hours])
     ax.minorticks_off()
@@ -161,23 +182,25 @@ def make_table(rows: List[Dict], reps_sentinel: int, reps_baseline: int) -> None
     body = []
     for r in rows:
         s = r["sentinel"]
+        alarms = int(round(s["pfa"] * s["n"]))
         body.append([
             fmt(r["hours"], 0),
             fmt_int(r["frames"]),
-            f"{fmt(s['pfa'], 3)} [{fmt(s['pfa_ci'][0], 3)}, {fmt(s['pfa_ci'][1], 3)}]",
+            f"{alarms}/{s['n']} [{fmt(s['pfa_ci'][0], 3)}, {fmt(s['pfa_ci'][1], 3)}]",
             fmt(r["pvalue"]["pfa"], 3),
             fmt(r["fixed"]["pfa"], 3),
         ])
     write_latex_table(
         body,
-        ["hours", "frames", "SENTINEL-E PFA [95\\% CI]", "p-value thr. PFA",
+        ["hours", "frames", "SENTINEL-E alarms/streams [95\\% CI]", "p-value thr. PFA",
          "fixed thr. PFA"],
         caption=(
             r"False-alarm probability over week-long null streams at $\alpha=0.01$, "
             r"with a realistic 24\,h diurnal cycle at 25\,fps. "
             f"SENTINEL-E: {reps_sentinel} streams per horizon; the two per-frame "
             f"baselines: {reps_baseline} streams per horizon (fixed threshold at a "
-            r"$10^{-3}$ per-frame rate). Calibration spans one full day."
+            r"$10^{-3}$ per-frame rate). SENTINEL-E cells give alarms over streams with "
+            r"Wilson 95\% intervals. Calibration spans one full day."
         ),
         label="tab:horizon_week",
         name="tab_horizon_week",
@@ -217,7 +240,7 @@ def main(argv=None) -> None:
         "workers": WORKERS,
         "total_seconds": total,
     }, "exp13_horizon_week")
-    make_figure(rows)
+    make_figure(rows, REPS_SENTINEL)
     make_table(rows, REPS_SENTINEL, REPS_BASELINE)
     print(f" wrote results/exp13_horizon_week.json, fig_horizon_week, tab_horizon_week "
           f"({total:.0f}s total)")
