@@ -270,6 +270,7 @@ def collect() -> Dict[str, str]:
             m[f"Net{tag}DelaySec"] = _fmt(r["add"] / FPS, 1)
             m[f"Net{tag}CensDelaySec"] = _fmt(
                 None if r.get("add_censored") is None else r["add_censored"] / FPS, 1)
+            m[f"Net{tag}Miss"] = _fmt(r["miss_rate"], 2)
             m[f"Net{tag}Power"] = _fmt(r["power"], 3)
             m[f"Net{tag}Fdr"] = _fmt(r["fdr"], 3)
             m[f"Net{tag}NullPfa"] = _fmt(r["null_fleet_alarm_rate"], 3)
@@ -591,6 +592,7 @@ def collect() -> Dict[str, str]:
             r = rows12[name]
             d, ci = r["delay_diff_s"], r["delay_diff_ci95_s"]
             m[f"{tag}Diff"] = _fmt(d, 1)
+            m[f"{tag}AbsDiff"] = _fmt(abs(d), 1)
             m[f"{tag}Ci"] = f"[{d_sign(ci[0])}, {d_sign(ci[1])}]"
             m[f"{tag}EpiOnly"] = str(r["miss_epi_only_detect"])
             m[f"{tag}CpOnly"] = str(r["miss_cp24_only_detect"])
@@ -680,6 +682,7 @@ def collect() -> Dict[str, str]:
     try:
         e7 = load_json("exp7_diagnostics")
         m["DiagPN"] = _int(e7["coverage"]["0.02"]["n"])
+        m["DiagLjungFrac"] = _fmt(e7["ljung_box_thinned_frac_above_005"], 3)
     except (FileNotFoundError, KeyError):
         pass
 
