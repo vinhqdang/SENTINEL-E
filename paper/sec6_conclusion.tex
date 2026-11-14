@@ -5,7 +5,7 @@ Clip-level evaluation hides a statistical problem. A per-frame rule fed valid p-
 
 The theory is an episodic e-process. It mixes over episodes that start, end and recur. It is a non-negative supermartingale, so Ville's inequality gives time-uniform false-alarm control, and it contains the changepoint mixture as the case in which episodes never end.
 
-The algorithm is a two-state forward recursion. It runs in constant time per frame, at \CostSentinelUs\,\textmu s per frame including conformal scoring of every frame.
+The algorithm is a two-state forward recursion. It runs in constant time per frame, at \CostSentinelUs\,\textmu s per frame, with the p-value and the e-detector step computed once per betting lag.
 
 The evaluation reports realised rather than nominal false-alarm rates, censored delays and paired comparisons on a shared betting grid.
 

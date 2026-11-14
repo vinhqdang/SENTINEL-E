@@ -170,7 +170,7 @@ def make_table(rows: List[Dict], null_reps: int, signal_reps: int) -> None:
         name="tab_ablation_highrep",
         align="lrrrrrr",
         notes=(
-            r"Same configuration, options and seeds as \cref{tab:ablation}; the "
+            r"Same configuration, options and seeds as Online Resource~1, Table~S8; the "
             r"first 200 post-change streams are identical to exp6's."
         ),
     )

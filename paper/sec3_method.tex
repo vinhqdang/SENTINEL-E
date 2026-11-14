@@ -90,7 +90,7 @@ and $q_j$ is non-decreasing in $j$, super-uniformity at the atoms extends to all
 $u$.
 \end{proof}
 
-We spend the budget as $\delta_j \propto (j+1)^{-2}$, concentrating confidence where the betting functions look. Under this allocation $\{q_j\}$ is verified non-decreasing in $j$, which identifies $\{\tilde p \le q_j\} = \{J \le j\}$ in the proof above. The implementation takes a running maximum as a safeguard for any allocation where this fails. At $n=\CalN{}$, $\delta=\CalDelta{}$ this gives $q_0 = \BetaPmin{}$, against DKW's $\DkwPmin{}$. \Cref{thm:beta} assumes i.i.d.\ calibration draws, which is why the calibration set is thinned. \cref{sec:ablation} does not settle whether skipping the thinning costs validity at its replication count (\cref{sec:limitations}).
+We spend the budget as $\delta_j \propto (j+1)^{-2}$, concentrating confidence where the betting functions look. Under this allocation $\{q_j\}$ is verified non-decreasing in $j$, which identifies $\{\tilde p \le q_j\} = \{J \le j\}$ in the proof above. The implementation takes a running maximum as a safeguard for any allocation where this fails. At $n=\CalN{}$, $\delta=\CalDelta{}$ this gives $q_0 = \BetaPmin{}$, against DKW's $\DkwPmin{}$. \Cref{thm:beta} assumes i.i.d.\ calibration draws, which is why the calibration set is thinned. At 1,500 null streams, unthinned calibration stayed valid (\cref{sec:ablation}), so the experiments do not show that thinning is needed in practice.
 
 When deployment reweights context that $\cD$ covers, weighted conformal calibration \citep{tibshirani2019covariate} applies. We use a logistic density-ratio estimate, gated behind a two-sample test, and replace $n$ in \cref{eq:betalevels} by the Kish effective sample size \citep{kish1965}. This substitution has no calibration-conditional proof, because \cref{thm:beta} assumes equal weights. The weighted path is therefore a heuristic safeguard, evaluated empirically in \cref{sec:shift}.
 
@@ -198,7 +198,7 @@ Within an episode only a fraction $\pi$ of frames show the act, which suggests \
 \label{eq:dilated}
   f_\pi(p) \;=\; (1-\pi) + \pi\, f(p).
 \end{equation}
-This is a legal betting function. It is a convex combination of the neutral bet and $f$, hence non-increasing with $\int_0^1 f_\pi \le 1$, so \cref{thm:episodic} applies verbatim. It does not help. Mixing over $\kappa$ already covers intermittency, because a milder bet suits an episode with fewer anomalous frames. In the ablation, dilation lengthens censored detection delay from \AblFullDelay\,s to \AblDilationDelay\,s (\cref{tab:ablation}), and no intermittency level repays that cost. The default grid therefore sets $\pi = 1$. The construction stays in the implementation for backbones whose anomalous frames are much stronger relative to quiet ones than ours.
+This is a legal betting function. It is a convex combination of the neutral bet and $f$, hence non-increasing with $\int_0^1 f_\pi \le 1$, so \cref{thm:episodic} applies verbatim. It does not help. Mixing over $\kappa$ already covers intermittency, because a milder bet suits an episode with fewer anomalous frames. In the ablation, dilation lengthens censored detection delay from \AblFullDelay\,s to \AblDilationDelay\,s (Online Resource~1, Table~S8), and no intermittency level repays that cost. The default grid therefore sets $\pi = 1$. The construction stays in the implementation for backbones whose anomalous frames are much stronger relative to quiet ones than ours.
 
 \subsubsection{Staying parameter-free}
 \label{sec:parameterfree}

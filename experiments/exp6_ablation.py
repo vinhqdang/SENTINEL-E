@@ -159,7 +159,7 @@ def make_table(rows):
             f"{len(rows)} are unresolved at {REPS} replicates --- most rows "
             "reporting PFA $0.000$ fall in this last class, since their Wilson "
             "upper bound already exceeds $\\alpha$; see "
-            "\\cref{sec:limitations} for what this design can and cannot "
+            "Sect.~5 of the main text for what this design can and cannot "
             "certify."
         ),
         label="tab:ablation",

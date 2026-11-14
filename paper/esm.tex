@@ -127,10 +127,23 @@ realistic day.
 \section{Per-component cost breakdown}
 \label{sec:esm-cost}
 
-The end-to-end and component costs are reported in Sect.~4.9 of the main text.
-\todo{Per-component breakdown (experiment exp5b: conformal scoring, streaming and
-vectorised e-detector steps, fleet controller) pending; it is not in the results
-directory yet.}
+The per-component breakdown is in Sect.~4.9 of the main text. \Cref{tab:compute}
+is the earlier single-run timing, kept for transparency and superseded by that
+breakdown. It times the 32-point e-detector at 18.3\,\textmu s per bet, a figure
+that neither the batch nor the streaming path in the breakdown reproduces.
+
+\inputtable{tab7_compute}
+
+\section{Full ablation at 200 streams}
+\label{sec:esm-ablation}
+
+\Cref{tab:ablation} lists all 19 variants at 200 null and 200 post-change
+streams per row. At this count, 14 of the 19 variants are unresolved, so the
+table gives point estimates and intervals, not verdicts. The seven load-bearing
+rows are resolved at 1,500 null streams in Sect.~4.11 of the main text, and that
+table supersedes their verdicts here.
+
+\inputtable{tab8_ablation}
 
 \section{Simulator configuration}
 \label{sec:esm-simulator}

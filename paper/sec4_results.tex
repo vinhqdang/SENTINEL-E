@@ -369,30 +369,26 @@ This part of the fleet layer is the part worth keeping.
 \subsection{Computational cost}
 \label{sec:compute}
 
-\inputtable{tab7_compute}
+\inputtable{tab_cost_breakdown}
 
-The headline is the end-to-end measurement. Over \CostFrames{} frames the monitor
-took \CostMonitorSec\,s, which is \CostSentinelUs\,\textmu s per frame. This
-includes conformal scoring of every frame and \CostBetSteps{} bets, one per
-decorrelation lag of \CostLag{} frames. The component benchmarks give the same
-accounting. Conformal scoring takes \CostConformalUs\,\textmu s per frame at a
-calibration size of \CostConformalN{} frames. One streaming e-detector step on
-the 32-point grid takes \CostStepUs\,\textmu s per bet, and the vectorised step
-takes \CostStepVecUs\,\textmu s. Amortising one bet over \CostLag{} frames gives
-\CostAmortStreamUs\,\textmu s per frame with streaming bets, and
-\CostAmortVecUs\,\textmu s with vectorised bets. The measured value lies between
-them and is closer to the vectorised estimate, as expected for a batch run.
+The conformal p-value and the e-detector step run only at betting instants,
+one per decorrelation lag. With $L=\CostLag{}$, the predicted cost per frame is
+$(0.34+13.69)/20$\,\textmu s, or $0.702$\,\textmu s with unrounded timings. The
+pipeline calls the batch e-detector, so the batch step of 13.69\,\textmu s per
+bet enters the prediction. The streaming step, at 39.28\,\textmu s per bet, is
+shown for reference.
 
-The reference backbone is a depthwise-separable stack with \CostBackboneParams{}\,M
-parameters at $320\times320$, taking \CostBackboneMs{}\,ms per frame on the same
-CPU. Against that, the guarantee layer adds \CostSentinelPct\% per frame. It runs
-at \CostRealtimeFactor{} times real time on one thread. Fitting a camera's
-calibration takes \CostFitSec\,s, once.
+The measured end-to-end cost is $0.610$\,\textmu s per frame, or 0.122\,s over a
+200,000-frame stream. It includes the $O(T)$ expansion of the bets onto the
+frame grid, which costs 0.017\,\textmu s per frame. The prediction is about 15\%
+above the measurement, because the per-call component timings carry overhead
+that one long run amortises. Against the 36.84\,ms frozen backbone, the measured
+cost is 0.0017\% per frame, and the predicted cost is 0.0019\%.
 
-The figures exclude extracting the context features (time of day, a weather flag
-and a background-subtraction motion measure) and peak memory. The backbone is a
-stand-in for an edge detector, not a published model. \todo{exp5b per-component
-cost breakdown pending; see Online Resource~1, Sect.~S4}.
+The figures exclude context-feature extraction, video decoding, the backbone
+itself and peak memory. The backbone is a stand-in for an edge detector, with
+\CostBackboneParams{}\,M parameters at $320\times320$, not a published model.
+Fitting a camera's calibration takes \CostFitSec{}\,s, once.
 
 \subsection{Checking the assumptions}
 \label{sec:diagnostics}
@@ -429,33 +425,38 @@ does not have. The thinned calibration set is the quantity an operator can compu
 \subsection{Ablation}
 \label{sec:ablation}
 
-\inputtable{tab8_ablation}
+\inputtable{tab_ablation_highrep}
 
-\todo{high-replicate ablation (1500 null streams per row) pending; the table above
-uses \AblReps{} streams per row}
+At 1,500 null streams per row, all seven load-bearing rows resolve. Four are
+valid and three are invalid at $\alpha=0.01$.
 
-\Cref{tab:ablation} removes one component at a time and reports a Wilson 95\%
-interval on the realised false-alarm probability. At \AblReps{} streams per row, a
-point estimate of $0.000$ has an upper limit above nominal, so most rows are
-unresolved, not certified valid. Of the \AblNumVariants{} variants,
-\AblNumInvalid{} are clearly invalid, with interval lower limits above $\alpha$,
-and \AblNumUnresolved{} are unresolved. The invalid rows are all temporal or
-calibration changes: betting on every frame (\AblEveryFramePfa), pooled conformal
-(\AblPooledPfa), Mondrian conformal, and omitting the calibration-conditional
-correction (\AblNoCcPfa). No row that changes only the betting family or the onset
-prior is resolved as invalid. Unthinned calibration (\AblRawCalPfa) is unresolved.
-A point estimate of that size does not show that skipping the thinning is safe,
-but \AblReps{} streams cannot show that it is not.
+The valid rows are as follows. The full SENTINEL-E has realised PFA
+$0.0000$ [0.0000, 0.0026] and a censored delay of 244.5\,s. The changepoint
+mixture ($\eta=0$) is also valid, with PFA $0.0000$ [0.0000, 0.0026]. It misses
+0.055 of events against 0.015 for the episodic mixture, and its censored delay
+is 311.3\,s. The DKW inflation is valid with PFA $0.0000$ [0.0000, 0.0026]. It
+misses 0.675 of events, with a censored delay of 2025.8\,s, against 244.5\,s for
+the exact Beta levels. Both rows are valid, so the gap is a difference in power
+at the same level, not a trade-off against validity.
 
-Replacing the episodic mixture with the changepoint mixture misses
-\AblChangepointMiss{} of events, against \AblFullMiss{} for the episodic mixture.
-The censored delays are \AblChangepointDelay\,s and \AblFullDelay\,s. These rows
-reuse the four-episode configuration of \cref{sec:delay}, and they match the
-$\alpha=0.01$ row of \cref{tab:delay_far}. The DKW inflation is slower at the same
-nominal level, with censored delay \AblDkwDelay\,s, a factor of
-\AblDkwSpeedup{} against the exact Beta levels. That factor measures the gain from
-\cref{thm:beta} only if both rows are valid. The fixed-start product martingale,
-with no changepoint prior, misses \AblPointPriorMiss{} of events. A wealth process
-started at frame one has spent too much when the change arrives late. The mixture
-over onsets in \cref{eq:episodic} prevents that failure. It is also why
-SENTINEL-E outperforms E-SHIFT here, since E-SHIFT's wealth also starts at frame one.
+Unthinned calibration is valid too, with PFA $0.0020$ [0.0007, 0.0059]. Its
+censored delay is 68.4\,s, against 244.5\,s for the thinned calibration set.
+\Cref{thm:beta} assumes i.i.d.\ calibration draws, and thinning by the
+decorrelation lag is what supplies that premise. The experiment does not show
+that thinning is necessary for validity.
+
+The invalid rows are as follows. Betting on every frame gives PFA $1.0000$
+[0.9974, 1.0000], so every null stream alarms, with a mean time to false alarm
+of 337 frames. Pooled conformal calibration gives PFA $0.9887$ [0.9819, 0.9929].
+Omitting the calibration-conditional correction ($\delta=0$) gives PFA
+$0.0387$ [0.0300, 0.0497], nearly four times nominal. Without the correction the
+guarantee fails, and pooled calibration is not a valid substitute.
+
+The other twelve variants of the 200-stream table are descriptive. They are
+listed in Online Resource~1, Table~S8. At 200 streams, 14 of the 19 variants are
+unresolved, so that table gives point estimates, not verdicts. Two of the twelve
+resolve as invalid at that count: bet once per five frames (PFA 0.935) and
+Mondrian conformal (0.025 [0.011, 0.057]). The fixed-start variant, which has no
+changepoint prior, misses 1.00 of events. A wealth process started at frame one
+has spent too much when a late change arrives. The mixture over onsets in
+\cref{eq:episodic} prevents that failure.
