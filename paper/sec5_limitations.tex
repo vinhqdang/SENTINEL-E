@@ -1,178 +1,23 @@
-\section{Limitations}
+\section{Discussion and limitations}
 \label{sec:limitations}
 
-\paragraph{Real video exposes a real power gap this paper does not close, and
-it is not illegal-dumping footage.} This is the main limitation and we do not
-want it buried. \Cref{sec:real-data} runs the full pipeline on real,
-continuous surveillance video with a real backbone, and it is the paper's most
-important negative-adjacent result: on CUHK Avenue, real autocorrelation and
-real episode brevity leave a valid but weak detection window
-(\RealAvenuePfaHeadline{} realised false-alarm rate at $\alpha=0.1$, but a
-\RealAvenueMissHeadline{} miss rate); Ped2 fares better but is still far from a
-comfortable margin. That gap did not exist in the simulated streams, and no
-simulator we could have built would have exposed it, because it comes from a
-specific, measured property of real optical-flow scores --- a decorrelation
-lag (\RealAvenueFullLag{} frames on Avenue, \RealPedTwoFullLag{} on Ped2)
-close to or exceeding a real episode's own duration --- that an AR(1)
-process with a short memory
-cannot reproduce by construction. What \cref{sec:real-data} establishes is
-that the guarantee holds on real video at the lag its own diagnostic selects,
-on two different real camera scenes, and that every classical baseline tested
-fails to hold it on the same real streams. What it does not establish is that
-this backbone, at this frame rate, is adequate for deployment, or that the
-result transfers to illegal dumping specifically: Avenue and Ped2 are
-classical pedestrian-walkway anomaly corpora, not dumping footage, because no
-released corpus --- Mivia-IWDD included --- provides months of
-continuously-labelled per-frame dumping-detector output, and the two are not
-the same task (dumping is committed once and its evidence often persists in
-the scene; a pedestrian or vehicle anomaly is transient by construction, which
-is part of why Avenue's episodes are so short). The library ships the
-splicing protocol and dataset adapters needed to run the identical evaluation
-on any other corpus with real per-frame scores, and the adapters raise an
-error rather than substituting synthetic data when those scores are absent;
-what would close the gap \cref{sec:real-data} exposes is not a different
-evaluation but a backbone whose frame-to-frame errors are more nearly
-independent than optical-flow magnitude's, which is future work.
+\paragraph{Power on real video depends on the backbone.}
+Optical flow detects 11 of 12 Ped2 episodes, but 3 of 74 Avenue episodes and none of the 50 Mivia-IWDD dumping videos. PatchCore detects 7, 9 and 10 respectively (\cref{tab:r3_test}). On Mivia-IWDD, PatchCore detects 5 of 25 static and 5 of 25 dynamic dumping events, and flow detects none (\cref{tab:r3_mivia_types}). The labels give onset only, so this split cannot show whether the detector responds to the action or to the waste left behind. A persistent residue is the permanent-change special case of the episodic mixture, but no run here tests an appearance backbone on residue. The false-alarm side holds on the single-camera corpora: 1 of 3 and 0 of 3 Ped2 videos, and 0 of 16 and 1 of 16 Avenue videos. On Mivia-IWDD at $\alpha=0.1$, PatchCore raises alarms on 9 of 50 normal videos, with a 95\% interval of [0.086, 0.314] that contains the nominal level, and flow raises them on 4 of 50. The guarantee needs calibration from the monitored camera. The Mivia-IWDD run pools calibration across training videos, and the point estimate exceeds the nominal level there.
 
-\paragraph{The tested horizon is two orders of magnitude short of the
-motivating claim.}
-The abstract and introduction motivate the problem with a camera running
-``continuously for weeks'' between recalibrations. The longest horizon actually
-swept in \cref{tab:horizon} is \HorizonMaxHours{} hours; a week is $168$ hours,
-roughly $60\times$ longer, and a month roughly $260\times$ longer. Nothing in
-\cref{thm:episodic} or \cref{thm:beta} depends on the horizon --- the
-time-uniform guarantee holds at $10^6$ frames exactly as it does at $10^4$, and
-that is the entire content of the word ``time-uniform'' --- so the theoretical
-claim is unaffected. What is untested is whether the \emph{simulator}'s
-non-stationarity assumptions, and in particular the diurnal and weather
-processes that drive the shift studied in \cref{sec:shift}, remain plausible
-representations of real footage at a week's scale rather than a few hours';
-slow drifts that do not appear inside \HorizonMaxHours{} hours could plausibly
-compound over a week in ways this experiment cannot show either way. Extending
-\cref{tab:horizon}'s sweep by two orders of magnitude is mechanical (the
-simulator scales to any $T$) and is one of the two directions we would
-prioritise in revision.
+\paragraph{Long-horizon evidence is simulated.}
+The real videos last seconds to minutes, so the week-long result rests on simulation. \Cref{tab:horizon_week} runs 200 streams per horizon from 1\,h to 168\,h, with a simulated 24\,h diurnal cycle at 25\,fps. SENTINEL-E's false-alarm probability is 0.000 (upper 95\% limit 0.019) at every horizon, while the fixed threshold reaches 0.980 within an hour. The simulator's assumptions, namely the diurnal and weather processes and Student-$t$ AR(1) noise, are untested against weeks of real footage. A slow drift invisible within a day could compound over a week, and no experiment here shows either way. The time-uniform guarantee does not depend on the horizon, so this is a question about the simulator, not the theorem. The shorter sweep, up to \HorizonMaxHours\,h, is in Online Resource~1, Table~S3.
 
-\paragraph{Conditional super-uniformity is an assumption, not a theorem.}
-\Cref{thm:episodic} needs the p-values to be super-uniform given the past. Thinning
-by the decorrelation lag makes the residual dependence small ---
-\cref{tab:diagnostics} reports the Ljung--Box check \citep{ljung1978} --- but it
-does not eliminate it, and no finite-sample test can certify its absence.
-\Cref{thm:beta} additionally assumes i.i.d.\ calibration draws, which is why the
-calibration set is thinned too.
+\paragraph{Conditional super-uniformity is assumed, not certified.}
+\Cref{thm:episodic} requires the betting p-values to be super-uniform given the past. No finite sample can certify that. After thinning, the Ljung--Box test still rejects independence for most simulated cameras \citep{ljung1978}, and the thinned real p-values remain positively correlated at lag one (between 0.758 and 0.985 at the selected lags, \cref{tab:r3_dependence}). What can be checked is marginal super-uniformity (\cref{sec:diagnostics}) and the realised per-video false-alarm rate on real video (\cref{sec:real-data}). These are the operational consequences of the assumption.
 
-\paragraph{The residual model can be wrong.}
-\Cref{eq:residual} assumes the normalised residual is context-free. Where it is
-not, calibration is approximate; the exactly group-conditional Mondrian variant
-is available for the cases where a single context variable dominates, and the
-support check bounds the damage from extrapolation but does not detect
-misspecification inside the support.
+\paragraph{Covariate shift is the main threat to calibration.}
+The unweighted residual default is valid at $\times 1.0$ and $\times 1.5$, with a false-alarm probability of 0.002 at $\times 1.5$. It is unresolved at $\times 2.0$ (0.014, interval [0.009, 0.021]) and invalid at $\times 3.0$ (0.062) (\cref{tab:shift_default}). Likelihood-ratio weighting holds the level at every shift tested, but its miss rate rises to 0.54, 0.93 and 1.00 at $\times 1.5$, $\times 2.0$ and $\times 3.0$. It also raises the miss rate at $\times 1.0$ from 0.025 to 0.095. Its effective-sample-size substitution has no calibration-conditional proof, so the weighted path is a heuristic. The held-out context gate fired on every null stream, so context-based gating is not yet a usable monitor. A slow residual drift monitor is evaluated in \todo{drift monitor results pending}. A miss rate that rises under an unmodelled shift produces fewer alarms, not more, and the alarm stream alone does not reveal it. Operators should therefore see the abstention rate and the shift statistic (\cref{sec:shift}).
 
-\paragraph{Calibration robustness has one measured breaking point, and several
-unresolved shift levels below it.} The residual construction is clearly
-invalid at $\times\ShiftResidualBreaks$ shift in an unmodelled covariate
-(\cref{tab:activity}): the Wilson interval's lower end clears nominal there.
-At \ShiftResidualUnresolvedRatios{} shift the realised rate is not
-distinguishable from nominal at the replication count run here, which is not
-the same claim as validity --- only \cref{sec:validity}'s much larger
-replicate count resolves that question, and it was not re-run at every shift
-level. Likelihood-ratio weighting holds a realised rate of \ShiftBreakWeightedPfa{}
-at the one level we can certify as broken for the unweighted construction, but
-costs most of the power there (miss rate \ShiftBreakWeightedMiss{} against
-\ShiftBreakResidualMiss{}); we did not verify it holds at the unresolved
-levels below that, and \cref{sec:layer1} discloses that its calibration
-substitutes an approximation (the Kish effective sample size) for the exact
-order-statistic argument, which is not itself derived to be valid under
-likelihood-ratio weights. So the honest summary is that SENTINEL-E's
-false-alarm guarantee is robust to the shift a well-specified residual model
-can absorb and to anything the two-sample test catches, and is \emph{not}
-unconditionally robust: a large shift in a direction the model does not
-capture, arriving faster than the shift test can react, will inflate the rate,
-and exactly how large is not established by this experiment beyond the one
-level that clearly breaks. We know of no distribution-free method for which
-robustness is unconditional, but that does not make it a non-issue, and an
-operator should treat a rising abstention or miss rate as a prompt to
-recalibrate.
+\paragraph{The learned spatial prior does not improve delay.}
+The learned prior keeps the false-alarm guarantee, as \cref{thm:predictable} requires, but it does not shorten delay (\cref{sec:network}). Its transfer to other camera topologies is untested.
 
-\paragraph{The episode model is a model.}
-The two-state chain of \cref{eq:episodic} assumes episodes with geometric
-durations and geometric gaps, and a constant within-episode anomalous fraction.
-Real dumping episodes are none of those exactly. The prior grid spans a wide
-range of each, and \cref{thm:episodic} holds whatever the truth is --- the
-guarantee never depends on the episode model being correct, only the power does.
-But we have not characterised how power degrades when the true duration
-distribution is far from anything on the grid, and a heavy-tailed duration
-distribution is the case we would expect to be worst. The generalisation also
-costs a little where it is not needed: with a single persistent change the
-episodic mixture is marginally behind the changepoint mixture
-(\cref{tab:episodes}), because the prior spends mass on episode-end hypotheses
-that never fire.
+\paragraph{The episodic advantage is configuration-specific.}
+In the corner sweep (\cref{tab:corner_sweep}), episodes help when they are long, intermittent and recurring. With 1600-frame episodes, $\pi=0.2$ and a 12{,}000-frame gap, the episodic mixture is ahead by 141.1\,s (95\% CI +79.6 to +210.2\,s). A single 800-frame episode favours the changepoint mixture by 55.7\,s (95\% CI $-111.2$ to $-14.0$). Dense and permanent changes are practically equivalent, and 200-frame episodes are missed by both mixtures. The delay comparison and the ablation use one configuration, four episodes in 60 minutes (\cref{sec:delay}). Unpaired comparisons on different grids are descriptive (Online Resource~1, Tables~S1 and~S2). The guarantee does not depend on the episode model, but power does, and heavy-tailed episode durations, which dumping may produce, are untested.
 
-\paragraph{Every headline comparison runs at one simulator configuration.}
-\Cref{tab:delay_far,tab:ablation,tab:episodes} all use $800$-frame episodes at
-$35\%$ intermittency with a $6{,}000$-frame mean gap; \cref{sec:episodes}'s own
-sweep over episode count and intermittency (\cref{tab:episodes,tab:intermittency})
-shows the episodic mixture's advantage is not uniform across that grid --- it
-is absent or reversed at one episode and at low intermittency
-(\cref{sec:dilation}) --- so a reader should not extrapolate the headline
-numbers to a configuration outside the swept range. We have not run the full
-baseline comparison or the ablation at multiple points in
-$(\text{episode length}, \text{gap}, \pi)$-space, only at the two axes
-\cref{sec:episodes} varies one at a time; a joint sweep is mechanical but was
-not run here.
-
-\paragraph{Fleet scale and graph knowledge.}
-Experiments use \NetCameras{} cameras with a known planar geometry. Larger fleets
-are computationally trivial (\cref{tab:compute}), but we have not tested whether
-the learned prior transfers across topologies, and a municipality whose camera
-positions are poorly recorded would need to infer the graph.
-
-\paragraph{An operator cannot, from the alarm stream alone, tell a working
-camera from a silently conservative one.}
-A camera whose calibration set has drifted out of support abstains and bets
-neutrally (\cref{sec:layer1}); one whose realised miss rate has risen because
-of an unmodelled shift produces \emph{fewer} alarms, not more, and looks
-identical from outside to a camera at a genuinely quiet site. The miss rate
-itself is unobservable in the field, by definition --- it is a count over
-events that were never flagged --- and the one instrument that could catch a
-silent failure, the two-sample shift test of \cref{sec:layer1}, is off unless
-likelihood-ratio weighting is explicitly enabled, which is not the default
-path reported in \cref{tab:validity,tab:delay_far}. We do not have a fix for
-this in the present work; a deployed system should expose the abstention rate,
-the shift-test statistic, and the calibration set's age as first-class
-operator-facing signals rather than internal diagnostics, and should not
-default the shift test off.
-
-\paragraph{Deployment guidance this paper does not give.}
-Nothing here tells an operator how to choose $\alpha$, how large a calibration
-set to collect before trusting the alarm rate, or when a rising abstention or
-miss rate should trigger recalibration rather than a shrug. \Cref{sec:validity}
-fixes $\alpha$ and studies its consequences; it does not study how a
-municipality should set it against the cost of a false dispatch and the cost
-of a missed event, which is a decision-theoretic question this paper leaves
-open. Relevant literatures we have not engaged include alarm management and
-human factors (how many alerts per shift a human operator can act on before
-alarm fatigue sets in), classical signal detection theory (the ROC-operating-point
-framing a control-room already uses for other sensors), statistical process
-control practice (where a control chart's recalibration cadence is itself a
-studied design choice), and public-sector algorithmic accountability (what
-disclosure a municipality owes residents about an automated flagging system
-run against public spaces). Each bears directly on how this method would
-actually be operated, and none of it is in \cref{sec:related}.
-
-\paragraph{Governance and human oversight.}
-This is a detector, not a decision-maker, and the gap between those two is
-where the harder questions live. An alarm is a prompt for a human to look at
-footage and decide whether dumping occurred and who is responsible; the false-alarm
-guarantee in this paper says nothing about what happens after that prompt ---
-whether the human reviewing it is adequately resourced, whether the review is
-itself audited, or whether the system is used to justify automated
-enforcement action without one. Camera placement, retention policy, and who
-may query the alarm history are governance decisions this paper does not make
-and should not be read as endorsing any particular answer to. A municipality
-deploying this or a similar system should treat the statistical guarantee as
-one input to a decision that also needs an explicit data-retention policy, a
-named human reviewer in the loop before any enforcement action, and a
-mechanism by which a resident can contest a flagged event --- none of which
-follows from, or is addressed by, the anytime-valid construction itself.
-
+\paragraph{Deployment needs more than a false-alarm rate.}
+The time-uniform guarantee is the horizon-free analogue of the in-control run length $\ARL$. Control charts also need a recalibration cadence, which statistical process control treats as a design choice \citep{montgomery2020introduction}, and this paper does not set one. A ROC operating point \citep{fawcett2006introduction} describes a per-decision trade-off that control rooms already use for other sensors. By contrast, $\alpha$ bounds false alarms over a whole monitoring period, so an alarm budget per period is the operational counterpart. Choosing $\alpha$ against the costs of a false dispatch and a missed event is left open. Every alarm should go to a named human reviewer before any action. Public-space surveillance also raises accountability questions that the guarantee does not answer. A deployment needs a retention policy, a named reviewer before any enforcement step, and a route by which residents can contest a flagged event.

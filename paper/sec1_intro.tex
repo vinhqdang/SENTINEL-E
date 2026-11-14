@@ -27,7 +27,7 @@ $1-(1-q)^{T}$, which tends to one for any $q>0$. Feed that rule p-values that ar
 valid at the $1\%$ level, and at least one false alarm occurs on
 \ValidityPfaPvaluePct\% of $40$-minute null streams (\cref{fig:validity}\,(a)). A
 raw threshold tuned to a $10^{-3}$ per-frame rate reaches a false-alarm probability
-of $0.980$ within one hour and $1.000$ from six hours (\cref{fig:validity}\,(b)). A
+of $0.980$ within one hour and $1.000$ from six hours (\cref{tab:horizon_week}). A
 clip-level evaluation never runs the detector for hours, so it cannot see this.
 
 Nothing here is specific to dumping. Loitering, wrong-way motion or an abandoned
@@ -65,8 +65,8 @@ quiet frames inside the episode against the alternative. Both effects lengthen
 delay, and the second grows with intermittency. In paired simulations on a shared
 grid, the episodic mixture reduces the mean censored delay by 141.1\,s (95\% CI +79.6
 to +210.2\,s) for four recurring 1600-frame episodes with $\pi=0.2$ and a mean gap of
-12{,}000 frames. A single episode reverses the sign, by 55.7\,s (95\% CI 14.0 to
-111.2\,s) in favour of the changepoint mixture. \cref{sec:episodes} maps the regimes.
+12{,}000 frames (\cref{tab:corner_sweep}). A single episode reverses the sign, by 55.7\,s (95\% CI 14.0 to
+111.2\,s) in favour of the changepoint mixture (\cref{tab:corner_sweep}). \cref{sec:episodes} maps the regimes.
 
 \subsection{Contributions}
 
