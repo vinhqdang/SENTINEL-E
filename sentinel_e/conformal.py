@@ -1048,6 +1048,15 @@ class ResidualConformalCalibrator:
     # shift_auc_threshold.  "calibrated" replaces it with the (1 - gate_level)
     # quantile of the same statistic over gate_reference_windows contiguous
     # calibration windows of gate_window rows, computed once at fit time.
+    #
+    # Caveat: a context two-sample gate is confounded with benign context drift.
+    # Deployment can differ from calibration in its context distribution (weather
+    # chain, diurnal coverage) without any change to the score distribution, and
+    # the residual normalisation absorbs that drift, so both gate rules can fire
+    # on benign shift.  The calibrated threshold controls the gate's own null
+    # rate, not whether the gate's firing is a harmful shift.  Use the default
+    # "fixed" gate for weighting; use the p-value drift monitor in
+    # sentinel_e.diagnostics for recalibration requests.
     shift_gate: str = "fixed"
     gate_level: float = 0.05
     gate_reference_windows: int = 50

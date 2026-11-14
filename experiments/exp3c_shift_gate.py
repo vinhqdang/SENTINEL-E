@@ -1,228 +1,264 @@
-"""Experiment 3c --- a calibrated threshold for the likelihood-ratio shift gate.
+"""Experiment 3c --- a p-value drift monitor as a recalibration request.
 
-Experiment 3b shows that the held-out two-sample gate in front of the
-likelihood-ratio (LR) weights fires on every null stream, because the
-calibration set spans a whole simulated day while one deployment block covers a
-narrow slice of it: the classifier separates them by clock and luminance alone.
-The weights then also condition on the clock, the effective sample size
-collapses, and detection power is lost.
+Experiments 3b and 3c-gate showed that a context two-sample gate is confounded
+with benign context drift: the deployment context differs from calibration in
+the weather chain and in diurnal coverage even under no shift, and the residual
+normalisation absorbs that difference.  A gate on context therefore fires on
+benign shift, whichever threshold rule it uses.
 
-This script evaluates one new arm: residual calibration with LR weights whose
-held-out gate uses a calibrated threshold instead of the fixed AUC 0.60.  The
-threshold is the 0.95 quantile of the same gate statistic over contiguous
-calibration windows (``shift_gate="calibrated"``, all context columns).  The two
-arms from experiment 3b (``residual`` and ``residual + LR wts`` with the fixed
-gate) are loaded from ``results/exp3b_shift_default.json`` and are not recomputed.
+This script instead evaluates a slow monitor on the output of the default
+pipeline: the unweighted residual detector (``shift_gate`` fixed, no weights).
+:func:`sentinel_e.diagnostics.drift_monitor` looks at non-overlapping windows of
+one simulated day of betting-instant p-values and flags a window whose share of
+``p <= q`` exceeds ``q + z * sqrt(q (1 - q) / W)``.  The monitor sits outside the
+alarm guarantee: it does not change any alarm, it tells the operator when the
+conformal assumption looks broken and recalibration is due.
 
-Same configurations, seeds, alpha, replicate counts and verdict rule as
-experiment 3b (see that module's docstring).  Units are cached under
-``results/cache/exp3c/`` so an interrupted run resumes.
+Per shift the script reports, for the unweighted arm with the same configs and
+seeds as experiment 3b (1500 null streams, 200 post-change streams):
 
-Run with ``--smoke`` for a tiny check that writes nothing (no results files and
-no unit cache).
+* PFA and miss rate, which must reproduce experiment 3b's ``residual`` arm;
+* the fraction of null streams with at least one drift flag;
+* the median time (s) to the first flag on null streams;
+* among null streams with a false alarm, the fraction whose first flag comes
+  before that false alarm;
+* the fraction of post-change streams with at least one flag (flags caused by
+  dumping episodes are false recalibration requests).
+
+Units are cached under ``results/cache/exp3c/``.  Run with ``--smoke`` for a
+tiny check that writes nothing.
 """
 
 from __future__ import annotations
 
 import argparse
 import time
-from typing import Dict
+from typing import Dict, List
 
 import numpy as np
 
-from experiments.checkpoint import UnitCache, safe_name
+from experiments.checkpoint import UnitCache
 from experiments.common import fmt, load_json, parallel_map, save_json, write_latex_table
 from experiments.exp3_shift import CHANGE_POINT, FPS, T
 from experiments.exp3b_shift_default import (
     ACTIVITY_SHIFTS,
     ALPHA,
-    GATE_STREAMS,
     NULL_SEED0,
     REPS_NULL,
     REPS_SIGNAL,
     SIGNAL_SEED0,
-    assemble_cell,
     base_cfg,
-    null_part,
-    signal_part,
     verdict,
 )
+from experiments.runner import Trace, _to_alarm_array
+from sentinel_e.diagnostics import drift_monitor
+from sentinel_e.metrics import summarize_runs
 from sentinel_e.pipeline import SentinelE
 from sentinel_e.streams import StreamConfig, StreamSimulator
-from sentinel_e.temporal import thin_indices
 
 WORKERS = 2
-NEW_VARIANT = "residual + LR wts (calibrated gate)"
-NEW_OPTS = dict(calibration="residual", weighted=True, shift_gate="calibrated",
-                gate_level=0.05, gate_reference_windows=50)
-# Arms carried over from experiment 3b, in table order.
-LOADED_VARIANTS = ("residual", "residual + LR wts")
+Q = 0.1
+Z = 4.0
+DIURNAL_PERIOD = StreamConfig().diurnal_period  # frames per simulated day
+ARM = "residual (drift monitor)"
 SOURCE = "results/exp3b_shift_default.json"
+SMOKE_NULL_FLAG_STOP = 0.2
 
 
-def _gate_stream(args):
-    """Replay the shift-gate loop of SentinelE.p_values on one null stream.
-
-    Identical to exp3b's gate replay except that the calibrated threshold
-    (``gate_threshold``) replaces the fixed one.
-    """
-    seed, cfg = args
-    st = StreamSimulator(StreamConfig(**cfg), seed=seed).simulate_camera(change_point=None)
-    model = SentinelE(alpha=ALPHA, calibration="residual", weighted=True, restart=True,
-                      shift_gate="calibrated", gate_level=NEW_OPTS["gate_level"],
-                      gate_reference_windows=NEW_OPTS["gate_reference_windows"])
-    model.fit(st.calibration_scores, st.calibration_context)
-    cal = model.calibrator
-    idx = thin_indices(st.T, model.decorrelation_lag)
-    ctx = np.atleast_2d(np.asarray(st.context, dtype=float))[idx]
-    blk = model.shift_block
-    n_blocks = n_trig = 0
-    for start in range(blk, ctx.shape[0], blk):
-        cal.update_shift(ctx[start - blk:start])
-        n_blocks += 1
-        if cal.shift_auc >= cal.gate_threshold:
-            n_trig += 1
-    return n_blocks, n_trig
-
-
-def gate_stats(shift: float, n_streams: int, workers: int) -> Dict:
-    cfg = base_cfg(shift)
-    res = parallel_map(_gate_stream, [(NULL_SEED0 + i, cfg) for i in range(n_streams)],
-                       workers=workers)
-    n_blocks = np.array([r[0] for r in res], dtype=float)
-    n_trig = np.array([r[1] for r in res], dtype=float)
-    frac_per_stream = np.divide(n_trig, n_blocks, out=np.zeros_like(n_trig),
-                                where=n_blocks > 0)
+def _stream_unit(args):
+    """One stream of the unweighted residual arm plus its drift monitor."""
+    seed, cfg, change_point = args
+    st = StreamSimulator(StreamConfig(**cfg), seed=seed).simulate_camera(
+        change_point=change_point)
+    model = SentinelE(alpha=ALPHA, calibration="residual", weighted=False, restart=True)
+    res = model.run_stream(st)
+    alarms = np.flatnonzero(res.alarms)
+    nu = change_point if change_point is not None else 0
+    after = alarms[alarms >= nu]
+    # Drift monitor on the betting-instant p-values, active instants only.
+    bet = res.bet_index
+    window = max(1, int(round(DIURNAL_PERIOD / res.lag)))
+    out = drift_monitor(res.p_values[bet], active=res.active[bet],
+                        window=window, q=Q, z=Z)
+    first_flag = int(bet[out["first_flag"]]) if out["first_flag"] >= 0 else -1
     return {
-        "streams": int(n_streams),
-        "frac_streams_triggered": float(np.mean(n_trig >= 1)),
-        "mean_frac_blocks_triggered": float(np.mean(frac_per_stream)),
-        "mean_blocks_per_stream": float(np.mean(n_blocks)),
+        "T": int(st.T),
+        "first_alarm": int(alarms[0]) if alarms.size else -1,
+        "first_after_nu": int(after[0]) if after.size else -1,
+        "abstention": float(res.abstention_rate),
+        "lag": int(res.lag),
+        "n_alarms": int(alarms.size),
+        "window": int(window),
+        "n_windows": int(out["fraction"].size),
+        "n_flags": int(out["flags"].sum()),
+        "first_flag": first_flag,
     }
 
 
-def _gate_text(g: Dict) -> str:
-    return f"{g['frac_streams_triggered']:.2f} / {g['mean_frac_blocks_triggered']:.2f}"
+def part_units(shift: float, part: str, reps: int, workers: int) -> Dict:
+    """Unit (shift, part): all streams of one part, each with its drift result."""
+    cfg = base_cfg(shift)
+    if part == "null":
+        cp, seed0 = None, NULL_SEED0
+    else:
+        cp, seed0 = CHANGE_POINT, SIGNAL_SEED0 + 500_000
+    rows = parallel_map(_stream_unit,
+                        [(seed0 + i, cfg, cp) for i in range(reps)], workers=workers)
+    return {"rows": rows}
 
 
-def make_table(cells: Dict, gates: Dict, reps_null: int, reps_sig: int) -> None:
-    variants = list(LOADED_VARIANTS) + [NEW_VARIANT]
+def _outcome(rows: List[Dict], change_point):
+    """Operational metrics, computed exactly as runner.evaluate does."""
+    traces = [Trace(r["T"], r["first_alarm"], r["first_after_nu"], r["abstention"],
+                    r["lag"], r["n_alarms"]) for r in rows]
+    return summarize_runs([_to_alarm_array(t) for t in traces], [], [])
+
+
+def _signal_outcome(rows: List[Dict]):
+    traces = [Trace(r["T"], r["first_alarm"], r["first_after_nu"], r["abstention"],
+                    r["lag"], r["n_alarms"]) for r in rows]
+    return summarize_runs([], [_to_alarm_array(t) for t in traces],
+                          [CHANGE_POINT] * len(rows))
+
+
+def drift_stats(null_rows: List[Dict], sig_rows: List[Dict]) -> Dict:
+    flagged_null = [r for r in null_rows if r["first_flag"] >= 0]
+    fa_rows = [r for r in null_rows if r["first_alarm"] >= 0]
+    before = [r for r in fa_rows if 0 <= r["first_flag"] < r["first_alarm"]]
+    times = [r["first_flag"] / FPS for r in flagged_null]
+    return {
+        "null_streams": len(null_rows),
+        "null_flag_frac": float(np.mean([r["first_flag"] >= 0 for r in null_rows])),
+        "null_mean_flags_per_stream": float(np.mean([r["n_flags"] for r in null_rows])),
+        "median_t_first_flag_s": float(np.median(times)) if times else None,
+        "n_false_alarm_streams": len(fa_rows),
+        "fa_flagged_before_frac": (len(before) / len(fa_rows)) if fa_rows else None,
+        "signal_streams": len(sig_rows),
+        "signal_flag_frac": float(np.mean([r["first_flag"] >= 0 for r in sig_rows])),
+        "windows_per_stream": float(np.mean([r["n_windows"] for r in null_rows])),
+        "window_frames_median": float(np.median([r["window"] for r in null_rows])),
+    }
+
+
+def cell(null_rows: List[Dict], sig_rows: List[Dict]) -> Dict:
+    out_n = _outcome(null_rows, None)
+    out_s = _signal_outcome(sig_rows)
+    lo, hi = out_n.pfa_ci
+    cens = out_s.add_censored
+    return {
+        "pfa": out_n.pfa,
+        "pfa_ci": [lo, hi],
+        "verdict": verdict(lo, hi),
+        "n_null": out_n.n_null,
+        "miss_rate": out_s.miss_rate,
+        "add_censored_s": None if cens is None else float(cens) / FPS,
+        "n_signal": out_s.n_signal,
+        "drift": drift_stats(null_rows, sig_rows),
+    }
+
+
+def make_table(cells: Dict, reps_null: int, reps_sig: int, check: Dict) -> None:
     rows = []
     for a in ACTIVITY_SHIFTS:
-        for i, v in enumerate(variants):
-            c = cells[str(a)][v]
-            lo, hi = c["pfa_ci"]
-            if v == "residual":
-                gate_txt = "n/a (off)"
-            else:
-                gate_txt = _gate_text(gates[str(a)][v])
-            rows.append([
-                f"$\\times {a}$" if i == 0 else "",
-                v,
-                fmt(c["pfa"], 4),
-                f"[{lo:.4f}, {hi:.4f}]",
-                c["verdict"],
-                fmt(c["miss_rate"], 3),
-                fmt(c["add_censored_s"], 1),
-                gate_txt,
-            ])
+        c = cells[str(a)]
+        d = c["drift"]
+        lo, hi = c["pfa_ci"]
+        rows.append([
+            f"$\\times {a}$",
+            fmt(c["pfa"], 4),
+            f"[{lo:.4f}, {hi:.4f}]",
+            fmt(c["miss_rate"], 3),
+            fmt(d["null_flag_frac"], 3),
+            fmt(d["median_t_first_flag_s"], 0),
+            fmt(d["fa_flagged_before_frac"], 3),
+            fmt(d["signal_flag_frac"], 3),
+        ])
     notes = (
-        f"Null PFA over {reps_null} streams and signal metrics over {reps_sig} "
-        f"post-change streams per row, alpha = {ALPHA}. Verdict: valid if the Wilson "
-        "95\\% upper bound is at most alpha; invalid if the lower bound exceeds alpha; "
-        "otherwise unresolved. Gate trigger rate: fraction of null streams with at "
-        "least one shift block whose held-out AUC reaches the threshold / mean "
-        f"fraction of triggered blocks ({GATE_STREAMS} streams per shift). "
-        "The first two arms are taken unchanged from experiment 3b (fixed gate, "
-        "threshold AUC 0.60). The calibrated gate uses the 0.95 quantile of the gate "
-        "statistic over 50 contiguous calibration windows of one block length, "
-        "computed at fit time on all context columns."
+        f"Unweighted residual detector (default pipeline), alpha = {ALPHA}; "
+        f"{reps_null} null and {reps_sig} post-change streams per row. PFA and miss "
+        f"rate are reproduced from experiment 3b's residual arm (maximum absolute "
+        f"difference {check['max_abs_diff']:.2e}). Drift monitor on betting-instant "
+        f"p-values: windows of one simulated day (diurnal period / lag), flag when "
+        f"the share of $p \\le {Q}$ exceeds ${Q} + {Z}\\sqrt{{{Q}(1-{Q})/W}}$. The "
+        "monitor is outside the alarm guarantee and does not change any alarm. "
+        "Columns: null streams with at least one flag; median time to the first flag "
+        "on flagged null streams; among null streams with a false alarm, the fraction "
+        "flagged before it; post-change streams with at least one flag (false "
+        "recalibration requests caused by dumping episodes)."
     )
     write_latex_table(
         rows,
-        ["activity shift", "variant", "PFA", "95\\% CI", "verdict", "miss rate",
-         "censored delay (s)", "gate trigger rate"],
+        ["activity shift", "PFA", "95\\% CI", "miss rate", "null flag frac",
+         "median first flag (s)", "FA flagged before", "signal flag frac"],
         caption=(
-            r"Activity shift at $\alpha=0.01$: residual calibration with likelihood-ratio "
-            r"weights, with the fixed held-out gate and with the calibrated gate."
+            r"Residual detector at $\alpha=0.01$ with a slow p-value drift monitor "
+            r"as a recalibration request, across activity shifts."
         ),
-        label="tab:shift_gate",
-        name="tab_shift_gate",
-        align="llrlllrr",
+        label="tab:shift_monitor",
+        name="tab_shift_monitor",
+        align="lrlrrrrr",
         notes=notes,
     )
 
 
-def main(reps_null: int, reps_sig: int, gate_streams: int, workers: int, smoke: bool,
-         no_cache: bool = False):
+def main(reps_null: int, reps_sig: int, workers: int, smoke: bool, no_cache: bool = False):
     t0 = time.time()
-    print(f"Experiment 3c: calibrated shift gate (null={reps_null}, signal={reps_sig}, "
-          f"gate={gate_streams}, workers={workers}, smoke={smoke})", flush=True)
-    # Smoke runs write nothing, including the unit cache.
+    print(f"Experiment 3c: drift monitor on the unweighted residual arm (null={reps_null}, "
+          f"signal={reps_sig}, workers={workers}, smoke={smoke})", flush=True)
     cache = UnitCache("exp3c", enabled=not (no_cache or smoke))
-
-    ref = load_json("exp3b_shift_default")
+    ref = None if smoke else load_json("exp3b_shift_default")
     cells: Dict[str, Dict] = {}
-    gates: Dict[str, Dict] = {}
     for a in ACTIVITY_SHIFTS:
-        key_a = str(a)
-        cells[key_a] = {}
-        gates[key_a] = {}
-        for v in LOADED_VARIANTS:
-            cells[key_a][v] = ref["cells"][key_a][v]
-            if v != "residual":
-                gates[key_a][v] = ref["gate"][key_a]
-
-        base = dict(shift=a, variant=NEW_VARIANT, opts=NEW_OPTS, cfg=base_cfg(a))
-        nkey = f"x{a}__{safe_name(NEW_VARIANT)}__null"
-        skey = f"x{a}__{safe_name(NEW_VARIANT)}__signal"
+        base = dict(shift=a, arm=ARM, cfg=base_cfg(a), q=Q, z=Z, diurnal=DIURNAL_PERIOD)
         null = cache.get_or_compute(
-            nkey, dict(base, part="null", reps=reps_null, seed0=NULL_SEED0),
-            lambda: null_part(a, NEW_OPTS, reps_null, workers))
+            f"x{a}__null", dict(base, part="null", reps=reps_null, seed0=NULL_SEED0),
+            lambda: part_units(a, "null", reps_null, workers))
         sig = cache.get_or_compute(
-            skey, dict(base, part="signal", reps=reps_sig, seed0=SIGNAL_SEED0),
-            lambda: signal_part(a, NEW_OPTS, reps_sig, workers))
-        cells[key_a][NEW_VARIANT] = c = assemble_cell(null, sig)
-        print(f"  x{a:<4} {NEW_VARIANT:40s} PFA={c['pfa']:.4f} "
-              f"CI=[{c['pfa_ci'][0]:.4f},{c['pfa_ci'][1]:.4f}] {c['verdict']:10s} "
-              f"miss={c['miss_rate']:.3f} cens_s={c['add_censored_s']}", flush=True)
+            f"x{a}__signal", dict(base, part="signal", reps=reps_sig, seed0=SIGNAL_SEED0),
+            lambda: part_units(a, "signal", reps_sig, workers))
+        cells[str(a)] = c = cell(null["rows"], sig["rows"])
+        d = c["drift"]
+        print(f"  x{a:<4} PFA={c['pfa']:.4f} miss={c['miss_rate']:.3f} | null flag frac="
+              f"{d['null_flag_frac']:.3f} median t={d['median_t_first_flag_s']} "
+              f"FA before={d['fa_flagged_before_frac']} signal flag frac="
+              f"{d['signal_flag_frac']:.3f}", flush=True)
 
-        gates[key_a][NEW_VARIANT] = cache.get_or_compute(
-            f"x{a}__gate_calibrated",
-            dict(shift=a, part="gate", gate="calibrated", gate_level=0.05,
-                 gate_reference_windows=50,
-                 streams=gate_streams, seed0=NULL_SEED0, cfg=base_cfg(a)),
-            lambda: gate_stats(a, gate_streams, workers))
-        print(f"  x{a:<4} gate (calibrated): streams>=1 triggered="
-              f"{gates[key_a][NEW_VARIANT]['frac_streams_triggered']:.3f} "
-              f"mean block frac={gates[key_a][NEW_VARIANT]['mean_frac_blocks_triggered']:.3f}",
-              flush=True)
+    # Cross-check: the unweighted arm must reproduce experiment 3b's residual arm.
+    check = {"max_abs_diff": None, "compared": False}
+    if ref is not None and reps_null == REPS_NULL and reps_sig == REPS_SIGNAL:
+        diffs = []
+        for a in ACTIVITY_SHIFTS:
+            r = ref["cells"][str(a)]["residual"]
+            diffs += [abs(cells[str(a)]["pfa"] - r["pfa"]),
+                      abs(cells[str(a)]["miss_rate"] - r["miss_rate"])]
+        check = {"max_abs_diff": float(max(diffs)), "compared": True}
+        print(f" exp3b cross-check: max |diff| = {check['max_abs_diff']:.2e}", flush=True)
+        assert check["max_abs_diff"] <= 1e-9, "unweighted arm does not reproduce exp3b"
 
-    print(f" units computed={cache.computed} loaded from cache={cache.hits}", flush=True)
     runtime = time.time() - t0
+    print(f" units computed={cache.computed} loaded from cache={cache.hits}", flush=True)
     if smoke:
-        print(f" smoke run finished in {runtime:.1f}s; nothing written", flush=True)
+        x10 = cells["1.0"]["drift"]["null_flag_frac"]
+        print(f" SMOKE x1.0 null flag fraction = {x10:.3f} "
+              f"(stop threshold {SMOKE_NULL_FLAG_STOP}); smoke run finished in "
+              f"{runtime:.1f}s; nothing written", flush=True)
         return
     payload = {
-        "alpha": ALPHA,
-        "T": T,
-        "change_point": CHANGE_POINT,
-        "fps": FPS,
-        "reps_null": reps_null,
-        "reps_signal": reps_sig,
-        "gate_streams": gate_streams,
-        "seed0_null": NULL_SEED0,
-        "seed0_signal": SIGNAL_SEED0,
+        "alpha": ALPHA, "T": T, "change_point": CHANGE_POINT, "fps": FPS,
+        "reps_null": reps_null, "reps_signal": reps_sig,
+        "seed0_null": NULL_SEED0, "seed0_signal": SIGNAL_SEED0,
         "workers": workers,
-        "variants": {NEW_VARIANT: NEW_OPTS},
-        "loaded_from": {"file": SOURCE, "variants": list(LOADED_VARIANTS)},
+        "arm": {"name": ARM, "calibration": "residual", "weighted": False,
+                "shift_gate": "fixed"},
+        "monitor": {"q": Q, "z": Z, "window_rule": "diurnal_period / lag per stream",
+                    "diurnal_period": DIURNAL_PERIOD},
+        "exp3b_check": check,
         "cells": cells,
-        "gate": gates,
         "runtime_s": runtime,
     }
     save_json(payload, "exp3c_shift_gate")
-    make_table(cells, gates, reps_null, reps_sig)
-    print(f" wrote results/exp3c_shift_gate.json and results/tables/tab_shift_gate.tex "
+    make_table(cells, reps_null, reps_sig, check)
+    print(f" wrote results/exp3c_shift_gate.json and results/tables/tab_shift_monitor.tex "
           f"in {runtime:.1f}s", flush=True)
 
 
@@ -230,17 +266,14 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--reps-null", type=int, default=REPS_NULL)
     ap.add_argument("--reps-sig", type=int, default=REPS_SIGNAL)
-    ap.add_argument("--gate-streams", type=int, default=GATE_STREAMS)
     ap.add_argument("--workers", type=int, default=WORKERS)
     ap.add_argument("--smoke", action="store_true",
-                    help="tiny replicate counts (set here unless overridden); writes "
-                         "nothing and uses no unit cache")
+                    help="tiny counts (40 null, 20 signal unless set); writes nothing "
+                         "and uses no unit cache")
     ap.add_argument("--no-cache", action="store_true",
                     help="ignore the unit cache (neither read nor write it)")
     a = ap.parse_args()
     if a.smoke:
-        # Tiny counts unless the caller set them explicitly.
-        a.reps_null = min(a.reps_null, 20)
-        a.reps_sig = min(a.reps_sig, 10)
-        a.gate_streams = min(a.gate_streams, 3)
-    main(a.reps_null, a.reps_sig, a.gate_streams, a.workers, a.smoke, a.no_cache)
+        a.reps_null = min(a.reps_null, 40)
+        a.reps_sig = min(a.reps_sig, 20)
+    main(a.reps_null, a.reps_sig, a.workers, a.smoke, a.no_cache)
