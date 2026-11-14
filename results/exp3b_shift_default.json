@@ -1,0 +1,206 @@
+{
+  "generated_at": "2026-11-14T17:16:19Z",
+  "python": "3.11.18",
+  "numpy": "2.4.6",
+  "payload": {
+    "alpha": 0.01,
+    "T": 90000,
+    "change_point": 20000,
+    "fps": 25.0,
+    "reps_null": 1500,
+    "reps_signal": 200,
+    "gate_streams": 100,
+    "seed0_null": 10000,
+    "seed0_signal": 900000,
+    "workers": 1,
+    "variants": {
+      "residual": {
+        "calibration": "residual",
+        "weighted": false
+      },
+      "residual + LR wts": {
+        "calibration": "residual",
+        "weighted": true
+      }
+    },
+    "cells": {
+      "1.0": {
+        "residual": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            2.168404344971009e-19,
+            0.002554524359480413
+          ],
+          "verdict": "valid",
+          "n_null": 1500,
+          "arl0": 90000.0,
+          "miss_rate": 0.025,
+          "add_censored_frames": 5947.765,
+          "add_censored_s": 237.91060000000002,
+          "abstention_signal": 0.0006225415509883409,
+          "abstention_null": 0.000559023640665717,
+          "n_signal": 200
+        },
+        "residual + LR wts": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            2.168404344971009e-19,
+            0.002554524359480413
+          ],
+          "verdict": "valid",
+          "n_null": 1500,
+          "arl0": 90000.0,
+          "miss_rate": 0.095,
+          "add_censored_frames": 11330.115,
+          "add_censored_s": 453.20459999999997,
+          "abstention_signal": 0.0006225415509883409,
+          "abstention_null": 0.000559023640665717,
+          "n_signal": 200
+        }
+      },
+      "1.5": {
+        "residual": {
+          "pfa": 0.002,
+          "pfa_ci": [
+            0.0006803961574046876,
+            0.005863910104637805
+          ],
+          "verdict": "valid",
+          "n_null": 1500,
+          "arl0": 89904.00066666666,
+          "miss_rate": 0.06,
+          "add_censored_frames": 9234.485,
+          "add_censored_s": 369.37940000000003,
+          "abstention_signal": 0.009002071124899884,
+          "abstention_null": 0.008745843070271004,
+          "n_signal": 200
+        },
+        "residual + LR wts": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            2.168404344971009e-19,
+            0.002554524359480413
+          ],
+          "verdict": "valid",
+          "n_null": 1500,
+          "arl0": 90000.0,
+          "miss_rate": 0.54,
+          "add_censored_frames": 40507.955,
+          "add_censored_s": 1620.3182000000002,
+          "abstention_signal": 0.009002071124899884,
+          "abstention_null": 0.008745843070271004,
+          "n_signal": 200
+        }
+      },
+      "2.0": {
+        "residual": {
+          "pfa": 0.014,
+          "pfa_ci": [
+            0.009174870975983442,
+            0.02130812670143152
+          ],
+          "verdict": "unresolved",
+          "n_null": 1500,
+          "arl0": 89445.82933333333,
+          "miss_rate": 0.115,
+          "add_censored_frames": 13557.87,
+          "add_censored_s": 542.3148,
+          "abstention_signal": 0.04034291228044516,
+          "abstention_null": 0.03998260612249061,
+          "n_signal": 200
+        },
+        "residual + LR wts": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            2.168404344971009e-19,
+            0.002554524359480413
+          ],
+          "verdict": "valid",
+          "n_null": 1500,
+          "arl0": 90000.0,
+          "miss_rate": 0.93,
+          "add_censored_frames": 65436.205,
+          "add_censored_s": 2617.4482000000003,
+          "abstention_signal": 0.04034291228044516,
+          "abstention_null": 0.03998260612249061,
+          "n_signal": 200
+        }
+      },
+      "3.0": {
+        "residual": {
+          "pfa": 0.062,
+          "pfa_ci": [
+            0.05087907714322818,
+            0.07535868619567668
+          ],
+          "verdict": "invalid",
+          "n_null": 1500,
+          "arl0": 87045.60133333334,
+          "miss_rate": 0.265,
+          "add_censored_frames": 23479.565,
+          "add_censored_s": 939.1826,
+          "abstention_signal": 0.19345050207085912,
+          "abstention_null": 0.19218882848322358,
+          "n_signal": 200
+        },
+        "residual + LR wts": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            2.168404344971009e-19,
+            0.002554524359480413
+          ],
+          "verdict": "valid",
+          "n_null": 1500,
+          "arl0": 90000.0,
+          "miss_rate": 1.0,
+          "add_censored_frames": 70000.0,
+          "add_censored_s": 2800.0,
+          "abstention_signal": 0.19345050207085912,
+          "abstention_null": 0.19218882848322358,
+          "n_signal": 200
+        }
+      }
+    },
+    "gate": {
+      "1.0": {
+        "streams": 100,
+        "frac_streams_triggered": 1.0,
+        "mean_frac_blocks_triggered": 0.9856060606060606,
+        "mean_blocks_per_stream": 11.33
+      },
+      "1.5": {
+        "streams": 100,
+        "frac_streams_triggered": 1.0,
+        "mean_frac_blocks_triggered": 0.999090909090909,
+        "mean_blocks_per_stream": 11.33
+      },
+      "2.0": {
+        "streams": 100,
+        "frac_streams_triggered": 1.0,
+        "mean_frac_blocks_triggered": 1.0,
+        "mean_blocks_per_stream": 11.33
+      },
+      "3.0": {
+        "streams": 100,
+        "frac_streams_triggered": 1.0,
+        "mean_frac_blocks_triggered": 1.0,
+        "mean_blocks_per_stream": 11.33
+      }
+    },
+    "decision": {
+      "rule": "Recommend making \"residual + LR wts\" the default iff (a) its verdict is not \"invalid\" at every activity shift level, and (b) at activity shift 1.0 its miss rate exceeds the unweighted residual miss rate by at most 0.05 (absolute). Otherwise keep the unweighted residual default.",
+      "condition_a_no_invalid_verdict_weighted": true,
+      "verdicts_weighted": {
+        "1.0": "valid",
+        "1.5": "valid",
+        "2.0": "valid",
+        "3.0": "valid"
+      },
+      "condition_b_miss_delta_at_1.0": 0.07,
+      "condition_b_threshold": 0.05,
+      "condition_b_holds": false,
+      "recommend_weighted_default": false
+    },
+    "runtime_s": 7924.0799860954285
+  }
+}

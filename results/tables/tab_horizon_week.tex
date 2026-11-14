@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{False-alarm probability over week-long null streams at $\alpha=0.01$, with a realistic 24\,h diurnal cycle at 25\,fps. SENTINEL-E: 200 streams per horizon; the two per-frame baselines: 50 streams per horizon (fixed threshold at a $10^{-3}$ per-frame rate). Calibration spans one full day.}
+\label{tab:horizon_week}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{rrrrr}
+\toprule
+hours & frames & SENTINEL-E PFA [95\% CI] & p-value thr. PFA & fixed thr. PFA \\
+\midrule
+1 & 90,000 & 0.000 [0.000, 0.019] & 1.000 & 0.980 \\
+6 & 540,000 & 0.000 [0.000, 0.019] & 1.000 & 1.000 \\
+24 & 2,160,000 & 0.000 [0.000, 0.019] & 1.000 & 1.000 \\
+72 & 6,480,000 & 0.000 [0.000, 0.019] & 1.000 & 1.000 \\
+168 & 15,120,000 & 0.000 [0.000, 0.019] & 1.000 & 1.000 \\
+\bottomrule
+\end{tabular}}
+\end{table}
