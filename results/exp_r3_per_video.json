@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T15:37:28Z",
+  "generated_at": "2026-11-14T15:41:00Z",
   "python": "3.11.18",
   "numpy": "2.4.6",
   "payload": {
@@ -49,6 +49,21 @@
         "mivia_episode_structure_ok": null,
         "min_null_frames": 50
       },
+      "avenue_patchcore": {
+        "label": "CUHK Avenue (PatchCore)",
+        "family": "vad",
+        "fps": 25.0,
+        "grace_frames": 25,
+        "fold_scheme": "lovo",
+        "n_train_videos": 16,
+        "n_folds": 16,
+        "n_test_videos": 21,
+        "n_test_negative": 0,
+        "n_test_positive": 21,
+        "n_test_episodes": 74,
+        "mivia_episode_structure_ok": null,
+        "min_null_frames": 50
+      },
       "mivia_flow": {
         "label": "Mivia-IWDD (flow)",
         "family": "mivia",
@@ -65,14 +80,12 @@
         "min_null_frames": 20
       }
     },
-    "skipped": [
-      "avenue_patchcore",
-      "mivia_patchcore"
-    ],
+    "skipped": [],
     "datasets": [
       "ped2",
       "ped2_patchcore",
       "avenue",
+      "avenue_patchcore",
       "mivia_flow"
     ],
     "grid": [
@@ -602,6 +615,182 @@
               "k": 1,
               "n": 16,
               "pfa": 0.0625
+            },
+            "30": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0
+            },
+            "50": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0
+            }
+          }
+        }
+      },
+      "avenue_patchcore": {
+        "0.05": {
+          "lag": 30,
+          "selection_failed": false,
+          "lovo_k": 0,
+          "lovo_n": 16,
+          "lovo_curve": {
+            "1": {
+              "k": 12,
+              "n": 16,
+              "pfa": 0.75
+            },
+            "2": {
+              "k": 10,
+              "n": 16,
+              "pfa": 0.625
+            },
+            "3": {
+              "k": 9,
+              "n": 16,
+              "pfa": 0.5625
+            },
+            "5": {
+              "k": 7,
+              "n": 16,
+              "pfa": 0.4375
+            },
+            "7": {
+              "k": 6,
+              "n": 16,
+              "pfa": 0.375
+            },
+            "10": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25
+            },
+            "15": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875
+            },
+            "20": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125
+            },
+            "30": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0
+            },
+            "50": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0
+            }
+          }
+        },
+        "0.1": {
+          "lag": 30,
+          "selection_failed": false,
+          "lovo_k": 0,
+          "lovo_n": 16,
+          "lovo_curve": {
+            "1": {
+              "k": 12,
+              "n": 16,
+              "pfa": 0.75
+            },
+            "2": {
+              "k": 11,
+              "n": 16,
+              "pfa": 0.6875
+            },
+            "3": {
+              "k": 9,
+              "n": 16,
+              "pfa": 0.5625
+            },
+            "5": {
+              "k": 7,
+              "n": 16,
+              "pfa": 0.4375
+            },
+            "7": {
+              "k": 6,
+              "n": 16,
+              "pfa": 0.375
+            },
+            "10": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25
+            },
+            "15": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875
+            },
+            "20": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125
+            },
+            "30": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0
+            },
+            "50": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0
+            }
+          }
+        },
+        "0.2": {
+          "lag": 20,
+          "selection_failed": false,
+          "lovo_k": 3,
+          "lovo_n": 16,
+          "lovo_curve": {
+            "1": {
+              "k": 12,
+              "n": 16,
+              "pfa": 0.75
+            },
+            "2": {
+              "k": 11,
+              "n": 16,
+              "pfa": 0.6875
+            },
+            "3": {
+              "k": 10,
+              "n": 16,
+              "pfa": 0.625
+            },
+            "5": {
+              "k": 8,
+              "n": 16,
+              "pfa": 0.5
+            },
+            "7": {
+              "k": 6,
+              "n": 16,
+              "pfa": 0.375
+            },
+            "10": {
+              "k": 5,
+              "n": 16,
+              "pfa": 0.3125
+            },
+            "15": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25
+            },
+            "20": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875
             },
             "30": {
               "k": 0,
@@ -4215,6 +4404,1148 @@
                 "n": 16,
                 "pfa": 0.0,
                 "admissible": true
+              }
+            ]
+          }
+        }
+      },
+      "avenue_patchcore": {
+        "0.05": {
+          "Fixed threshold": {
+            "lag": 30,
+            "selected_knob": 1e-05,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 0.03,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 0.003,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 0.001,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 0.0003,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": false
+              },
+              {
+                "knob": 0.0001,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": false
+              },
+              {
+                "knob": 3e-05,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": false
+              },
+              {
+                "knob": 1e-05,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": false
+              }
+            ]
+          },
+          "p-value threshold": {
+            "lag": 30,
+            "selected_knob": 0.01,
+            "no_admissible_knob": false,
+            "lovo": [
+              {
+                "knob": 0.03,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.003,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.001,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.0003,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.0001,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 3e-05,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 1e-05,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              }
+            ]
+          },
+          "CUSUM": {
+            "lag": 30,
+            "selected_knob": 20.0,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 2.0,
+                "k": 10,
+                "n": 16,
+                "pfa": 0.625,
+                "admissible": false
+              },
+              {
+                "knob": 4.0,
+                "k": 8,
+                "n": 16,
+                "pfa": 0.5,
+                "admissible": false
+              },
+              {
+                "knob": 6.0,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 8.0,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 10.0,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 13.0,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 16.0,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 20.0,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              }
+            ]
+          },
+          "Shiryaev--Roberts": {
+            "lag": 30,
+            "selected_knob": 100000000.0,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 10.0,
+                "k": 11,
+                "n": 16,
+                "pfa": 0.6875,
+                "admissible": false
+              },
+              {
+                "knob": 100.0,
+                "k": 9,
+                "n": 16,
+                "pfa": 0.5625,
+                "admissible": false
+              },
+              {
+                "knob": 1000.0,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 10000.0,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 100000.0,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 1000000.0,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 10000000.0,
+                "k": 3,
+                "n": 16,
+                "pfa": 0.1875,
+                "admissible": false
+              },
+              {
+                "knob": 100000000.0,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              }
+            ]
+          },
+          "Parametric e-detector": {
+            "lag": 30,
+            "selected_knob": 0.002,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 0.5,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 0.2,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 0.1,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 0.05,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 0.02,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.005,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.002,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              }
+            ]
+          },
+          "E-SHIFT": {
+            "lag": 30,
+            "selected_knob": 0.002,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 0.5,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 0.2,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.1,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.05,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.02,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 3,
+                "n": 16,
+                "pfa": 0.1875,
+                "admissible": false
+              },
+              {
+                "knob": 0.005,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 0.002,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": false
+              }
+            ]
+          }
+        },
+        "0.1": {
+          "Fixed threshold": {
+            "lag": 30,
+            "selected_knob": 0.0003,
+            "no_admissible_knob": false,
+            "lovo": [
+              {
+                "knob": 0.03,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 0.003,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 0.001,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 0.0003,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": true
+              },
+              {
+                "knob": 0.0001,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": true
+              },
+              {
+                "knob": 3e-05,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": true
+              },
+              {
+                "knob": 1e-05,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": true
+              }
+            ]
+          },
+          "p-value threshold": {
+            "lag": 30,
+            "selected_knob": 0.01,
+            "no_admissible_knob": false,
+            "lovo": [
+              {
+                "knob": 0.03,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.003,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.001,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.0003,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.0001,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 3e-05,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 1e-05,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              }
+            ]
+          },
+          "CUSUM": {
+            "lag": 30,
+            "selected_knob": 20.0,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 2.0,
+                "k": 10,
+                "n": 16,
+                "pfa": 0.625,
+                "admissible": false
+              },
+              {
+                "knob": 4.0,
+                "k": 8,
+                "n": 16,
+                "pfa": 0.5,
+                "admissible": false
+              },
+              {
+                "knob": 6.0,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 8.0,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 10.0,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 13.0,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 16.0,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 20.0,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              }
+            ]
+          },
+          "Shiryaev--Roberts": {
+            "lag": 30,
+            "selected_knob": 100000000.0,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 10.0,
+                "k": 11,
+                "n": 16,
+                "pfa": 0.6875,
+                "admissible": false
+              },
+              {
+                "knob": 100.0,
+                "k": 9,
+                "n": 16,
+                "pfa": 0.5625,
+                "admissible": false
+              },
+              {
+                "knob": 1000.0,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 10000.0,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 100000.0,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 1000000.0,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 10000000.0,
+                "k": 3,
+                "n": 16,
+                "pfa": 0.1875,
+                "admissible": false
+              },
+              {
+                "knob": 100000000.0,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              }
+            ]
+          },
+          "Parametric e-detector": {
+            "lag": 30,
+            "selected_knob": 0.002,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 0.5,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 0.2,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 0.1,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 0.05,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 0.02,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.005,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.002,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              }
+            ]
+          },
+          "E-SHIFT": {
+            "lag": 30,
+            "selected_knob": 0.002,
+            "no_admissible_knob": false,
+            "lovo": [
+              {
+                "knob": 0.5,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 0.2,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.1,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.05,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.02,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 3,
+                "n": 16,
+                "pfa": 0.1875,
+                "admissible": false
+              },
+              {
+                "knob": 0.005,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": false
+              },
+              {
+                "knob": 0.002,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": true
+              }
+            ]
+          }
+        },
+        "0.2": {
+          "Fixed threshold": {
+            "lag": 20,
+            "selected_knob": 0.01,
+            "no_admissible_knob": false,
+            "lovo": [
+              {
+                "knob": 0.03,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": true
+              },
+              {
+                "knob": 0.003,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": true
+              },
+              {
+                "knob": 0.001,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": true
+              },
+              {
+                "knob": 0.0003,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": true
+              },
+              {
+                "knob": 0.0001,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": true
+              },
+              {
+                "knob": 3e-05,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": true
+              },
+              {
+                "knob": 1e-05,
+                "k": 1,
+                "n": 16,
+                "pfa": 0.0625,
+                "admissible": true
+              }
+            ]
+          },
+          "p-value threshold": {
+            "lag": 20,
+            "selected_knob": 0.03,
+            "no_admissible_knob": false,
+            "lovo": [
+              {
+                "knob": 0.03,
+                "k": 2,
+                "n": 16,
+                "pfa": 0.125,
+                "admissible": true
+              },
+              {
+                "knob": 0.01,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.003,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.001,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.0003,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 0.0001,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 3e-05,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              },
+              {
+                "knob": 1e-05,
+                "k": 0,
+                "n": 16,
+                "pfa": 0.0,
+                "admissible": true
+              }
+            ]
+          },
+          "CUSUM": {
+            "lag": 20,
+            "selected_knob": 20.0,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 2.0,
+                "k": 11,
+                "n": 16,
+                "pfa": 0.6875,
+                "admissible": false
+              },
+              {
+                "knob": 4.0,
+                "k": 9,
+                "n": 16,
+                "pfa": 0.5625,
+                "admissible": false
+              },
+              {
+                "knob": 6.0,
+                "k": 8,
+                "n": 16,
+                "pfa": 0.5,
+                "admissible": false
+              },
+              {
+                "knob": 8.0,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 10.0,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 13.0,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 16.0,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 20.0,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              }
+            ]
+          },
+          "Shiryaev--Roberts": {
+            "lag": 20,
+            "selected_knob": 100000000.0,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 10.0,
+                "k": 13,
+                "n": 16,
+                "pfa": 0.8125,
+                "admissible": false
+              },
+              {
+                "knob": 100.0,
+                "k": 10,
+                "n": 16,
+                "pfa": 0.625,
+                "admissible": false
+              },
+              {
+                "knob": 1000.0,
+                "k": 9,
+                "n": 16,
+                "pfa": 0.5625,
+                "admissible": false
+              },
+              {
+                "knob": 10000.0,
+                "k": 8,
+                "n": 16,
+                "pfa": 0.5,
+                "admissible": false
+              },
+              {
+                "knob": 100000.0,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 1000000.0,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 10000000.0,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 100000000.0,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              }
+            ]
+          },
+          "Parametric e-detector": {
+            "lag": 20,
+            "selected_knob": 0.002,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 0.5,
+                "k": 9,
+                "n": 16,
+                "pfa": 0.5625,
+                "admissible": false
+              },
+              {
+                "knob": 0.2,
+                "k": 8,
+                "n": 16,
+                "pfa": 0.5,
+                "admissible": false
+              },
+              {
+                "knob": 0.1,
+                "k": 8,
+                "n": 16,
+                "pfa": 0.5,
+                "admissible": false
+              },
+              {
+                "knob": 0.05,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 0.02,
+                "k": 7,
+                "n": 16,
+                "pfa": 0.4375,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 0.005,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 0.002,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              }
+            ]
+          },
+          "E-SHIFT": {
+            "lag": 20,
+            "selected_knob": 0.002,
+            "no_admissible_knob": true,
+            "lovo": [
+              {
+                "knob": 0.5,
+                "k": 8,
+                "n": 16,
+                "pfa": 0.5,
+                "admissible": false
+              },
+              {
+                "knob": 0.2,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 0.1,
+                "k": 6,
+                "n": 16,
+                "pfa": 0.375,
+                "admissible": false
+              },
+              {
+                "knob": 0.05,
+                "k": 5,
+                "n": 16,
+                "pfa": 0.3125,
+                "admissible": false
+              },
+              {
+                "knob": 0.02,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.01,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.005,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
+              },
+              {
+                "knob": 0.002,
+                "k": 4,
+                "n": 16,
+                "pfa": 0.25,
+                "admissible": false
               }
             ]
           }
@@ -10323,6 +11654,1659 @@
           }
         }
       },
+      "avenue_patchcore": {
+        "0.05": {
+          "SENTINEL-E": {
+            "knob": 0.05,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "false_alarms": 10,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 86.58008658008657,
+            "fa_per_hour_ci": [
+              41.51851684963145,
+              159.22386183565175
+            ],
+            "episodes": {
+              "k": 5,
+              "n": 74,
+              "pfa": 0.06756756756756757,
+              "ci": [
+                0.02230151232923524,
+                0.15067872854307848
+              ]
+            },
+            "delay": {
+              "median_s": 3.56,
+              "mean_s": 3.344
+            },
+            "by_event_type": {}
+          },
+          "Fixed threshold": {
+            "knob": 1e-05,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 66,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 571.4285714285714,
+            "fa_per_hour_ci": [
+              441.94281574581197,
+              726.9972505844744
+            ],
+            "episodes": {
+              "k": 15,
+              "n": 74,
+              "pfa": 0.20270270270270271,
+              "ci": [
+                0.11812409898639026,
+                0.31219502823361156
+              ]
+            },
+            "delay": {
+              "median_s": 0.92,
+              "mean_s": 1.3546666666666667
+            },
+            "by_event_type": {}
+          },
+          "p-value threshold": {
+            "knob": 0.01,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              31.9383502520687
+            ],
+            "episodes": {
+              "k": 0,
+              "n": 74,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.04862761623798953
+              ]
+            },
+            "delay": {
+              "median_s": null,
+              "mean_s": null
+            },
+            "by_event_type": {}
+          },
+          "CUSUM": {
+            "knob": 20.0,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 20,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 173.16017316017314,
+            "fa_per_hour_ci": [
+              105.77073234115969,
+              267.4318433132
+            ],
+            "episodes": {
+              "k": 14,
+              "n": 74,
+              "pfa": 0.1891891891891892,
+              "ci": [
+                0.10747302135107852,
+                0.297005338264365
+              ]
+            },
+            "delay": {
+              "median_s": 1.28,
+              "mean_s": 2.62
+            },
+            "by_event_type": {}
+          },
+          "Shiryaev--Roberts": {
+            "knob": 100000000.0,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 20,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 173.16017316017314,
+            "fa_per_hour_ci": [
+              105.77073234115969,
+              267.4318433132
+            ],
+            "episodes": {
+              "k": 13,
+              "n": 74,
+              "pfa": 0.17567567567567569,
+              "ci": [
+                0.09699276945158891,
+                0.28165670107764
+              ]
+            },
+            "delay": {
+              "median_s": 2.08,
+              "mean_s": 3.1507692307692308
+            },
+            "by_event_type": {}
+          },
+          "Parametric e-detector": {
+            "knob": 0.002,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "ci": [
+                0.040473733905945886,
+                0.4564565462316117
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "ci": [
+                0.040473733905945886,
+                0.4564565462316117
+              ]
+            },
+            "false_alarms": 26,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 225.1082251082251,
+            "fa_per_hour_ci": [
+              147.04816636879949,
+              329.83570634740255
+            ],
+            "episodes": {
+              "k": 24,
+              "n": 74,
+              "pfa": 0.32432432432432434,
+              "ci": [
+                0.220045777426374,
+                0.4431597018268024
+              ]
+            },
+            "delay": {
+              "median_s": 1.46,
+              "mean_s": 1.945
+            },
+            "by_event_type": {}
+          },
+          "E-SHIFT": {
+            "knob": 0.002,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25,
+              "ci": [
+                0.07266203825288216,
+                0.5237708198961273
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25,
+              "ci": [
+                0.07266203825288216,
+                0.5237708198961273
+              ]
+            },
+            "false_alarms": 73,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 632.034632034632,
+            "fa_per_hour_ci": [
+              495.4142590692567,
+              794.6886595929137
+            ],
+            "episodes": {
+              "k": 29,
+              "n": 74,
+              "pfa": 0.3918918918918919,
+              "ci": [
+                0.28038783150293123,
+                0.512328274884587
+              ]
+            },
+            "delay": {
+              "median_s": 0.92,
+              "mean_s": 1.3613793103448275
+            },
+            "by_event_type": {}
+          }
+        },
+        "0.1": {
+          "SENTINEL-E": {
+            "knob": 0.1,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "false_alarms": 10,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 86.58008658008657,
+            "fa_per_hour_ci": [
+              41.51851684963145,
+              159.22386183565175
+            ],
+            "episodes": {
+              "k": 9,
+              "n": 74,
+              "pfa": 0.12162162162162163,
+              "ci": [
+                0.05714955432267517,
+                0.21836109666944126
+              ]
+            },
+            "delay": {
+              "median_s": 0.96,
+              "mean_s": 2.32
+            },
+            "by_event_type": {}
+          },
+          "Fixed threshold": {
+            "knob": 0.0003,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 66,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 571.4285714285714,
+            "fa_per_hour_ci": [
+              441.94281574581197,
+              726.9972505844744
+            ],
+            "episodes": {
+              "k": 15,
+              "n": 74,
+              "pfa": 0.20270270270270271,
+              "ci": [
+                0.11812409898639026,
+                0.31219502823361156
+              ]
+            },
+            "delay": {
+              "median_s": 0.92,
+              "mean_s": 1.0346666666666666
+            },
+            "by_event_type": {}
+          },
+          "p-value threshold": {
+            "knob": 0.01,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              31.9383502520687
+            ],
+            "episodes": {
+              "k": 0,
+              "n": 74,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.04862761623798953
+              ]
+            },
+            "delay": {
+              "median_s": null,
+              "mean_s": null
+            },
+            "by_event_type": {}
+          },
+          "CUSUM": {
+            "knob": 20.0,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 20,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 173.16017316017314,
+            "fa_per_hour_ci": [
+              105.77073234115969,
+              267.4318433132
+            ],
+            "episodes": {
+              "k": 14,
+              "n": 74,
+              "pfa": 0.1891891891891892,
+              "ci": [
+                0.10747302135107852,
+                0.297005338264365
+              ]
+            },
+            "delay": {
+              "median_s": 1.28,
+              "mean_s": 2.62
+            },
+            "by_event_type": {}
+          },
+          "Shiryaev--Roberts": {
+            "knob": 100000000.0,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 20,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 173.16017316017314,
+            "fa_per_hour_ci": [
+              105.77073234115969,
+              267.4318433132
+            ],
+            "episodes": {
+              "k": 13,
+              "n": 74,
+              "pfa": 0.17567567567567569,
+              "ci": [
+                0.09699276945158891,
+                0.28165670107764
+              ]
+            },
+            "delay": {
+              "median_s": 2.08,
+              "mean_s": 3.1507692307692308
+            },
+            "by_event_type": {}
+          },
+          "Parametric e-detector": {
+            "knob": 0.002,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "ci": [
+                0.040473733905945886,
+                0.4564565462316117
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "ci": [
+                0.040473733905945886,
+                0.4564565462316117
+              ]
+            },
+            "false_alarms": 26,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 225.1082251082251,
+            "fa_per_hour_ci": [
+              147.04816636879949,
+              329.83570634740255
+            ],
+            "episodes": {
+              "k": 24,
+              "n": 74,
+              "pfa": 0.32432432432432434,
+              "ci": [
+                0.220045777426374,
+                0.4431597018268024
+              ]
+            },
+            "delay": {
+              "median_s": 1.46,
+              "mean_s": 1.945
+            },
+            "by_event_type": {}
+          },
+          "E-SHIFT": {
+            "knob": 0.002,
+            "lag": 30,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25,
+              "ci": [
+                0.07266203825288216,
+                0.5237708198961273
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25,
+              "ci": [
+                0.07266203825288216,
+                0.5237708198961273
+              ]
+            },
+            "false_alarms": 73,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 632.034632034632,
+            "fa_per_hour_ci": [
+              495.4142590692567,
+              794.6886595929137
+            ],
+            "episodes": {
+              "k": 29,
+              "n": 74,
+              "pfa": 0.3918918918918919,
+              "ci": [
+                0.28038783150293123,
+                0.512328274884587
+              ]
+            },
+            "delay": {
+              "median_s": 0.92,
+              "mean_s": 1.3613793103448275
+            },
+            "by_event_type": {}
+          }
+        },
+        "0.2": {
+          "SENTINEL-E": {
+            "knob": 0.2,
+            "lag": 20,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 23,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 199.13419913419912,
+            "fa_per_hour_ci": [
+              126.23400032073313,
+              298.7990726825371
+            ],
+            "episodes": {
+              "k": 15,
+              "n": 74,
+              "pfa": 0.20270270270270271,
+              "ci": [
+                0.11812409898639026,
+                0.31219502823361156
+              ]
+            },
+            "delay": {
+              "median_s": 0.92,
+              "mean_s": 2.317333333333333
+            },
+            "by_event_type": {}
+          },
+          "Fixed threshold": {
+            "knob": 0.01,
+            "lag": 20,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 100,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 865.8008658008657,
+            "fa_per_hour_ci": [
+              704.4501407006331,
+              1053.0458337006612
+            ],
+            "episodes": {
+              "k": 29,
+              "n": 74,
+              "pfa": 0.3918918918918919,
+              "ci": [
+                0.28038783150293123,
+                0.512328274884587
+              ]
+            },
+            "delay": {
+              "median_s": 0.68,
+              "mean_s": 1.616551724137931
+            },
+            "by_event_type": {}
+          },
+          "p-value threshold": {
+            "knob": 0.03,
+            "lag": 20,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 97,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 839.8268398268398,
+            "fa_per_hour_ci": [
+              681.0429919846954,
+              1024.517523224362
+            ],
+            "episodes": {
+              "k": 18,
+              "n": 74,
+              "pfa": 0.24324324324324326,
+              "ci": [
+                0.15098179372002143,
+                0.35691429658868995
+              ]
+            },
+            "delay": {
+              "median_s": 0.42,
+              "mean_s": 1.251111111111111
+            },
+            "by_event_type": {}
+          },
+          "CUSUM": {
+            "knob": 20.0,
+            "lag": 20,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "ci": [
+                0.040473733905945886,
+                0.4564565462316117
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "ci": [
+                0.040473733905945886,
+                0.4564565462316117
+              ]
+            },
+            "false_alarms": 31,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 268.3982683982684,
+            "fa_per_hour_ci": [
+              182.3636015510117,
+              380.96991777704545
+            ],
+            "episodes": {
+              "k": 21,
+              "n": 74,
+              "pfa": 0.28378378378378377,
+              "ci": [
+                0.1850110749279489,
+                0.400520363308156
+              ]
+            },
+            "delay": {
+              "median_s": 1.84,
+              "mean_s": 2.281904761904762
+            },
+            "by_event_type": {}
+          },
+          "Shiryaev--Roberts": {
+            "knob": 100000000.0,
+            "lag": 20,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "ci": [
+                0.040473733905945886,
+                0.4564565462316117
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "ci": [
+                0.040473733905945886,
+                0.4564565462316117
+              ]
+            },
+            "false_alarms": 31,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 268.3982683982684,
+            "fa_per_hour_ci": [
+              182.3636015510117,
+              380.96991777704545
+            ],
+            "episodes": {
+              "k": 21,
+              "n": 74,
+              "pfa": 0.28378378378378377,
+              "ci": [
+                0.1850110749279489,
+                0.400520363308156
+              ]
+            },
+            "delay": {
+              "median_s": 1.48,
+              "mean_s": 1.885714285714286
+            },
+            "by_event_type": {}
+          },
+          "Parametric e-detector": {
+            "knob": 0.002,
+            "lag": 20,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 5,
+              "n": 16,
+              "pfa": 0.3125,
+              "ci": [
+                0.11016995471711757,
+                0.5866206364513586
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 5,
+              "n": 16,
+              "pfa": 0.3125,
+              "ci": [
+                0.11016995471711757,
+                0.5866206364513586
+              ]
+            },
+            "false_alarms": 43,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 372.2943722943723,
+            "fa_per_hour_ci": [
+              269.4312832204951,
+              501.4780762803777
+            ],
+            "episodes": {
+              "k": 32,
+              "n": 74,
+              "pfa": 0.43243243243243246,
+              "ci": [
+                0.31765625349229454,
+                0.5527858052546087
+              ]
+            },
+            "delay": {
+              "median_s": 0.86,
+              "mean_s": 1.26
+            },
+            "by_event_type": {}
+          },
+          "E-SHIFT": {
+            "knob": 0.002,
+            "lag": 20,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25,
+              "ci": [
+                0.07266203825288216,
+                0.5237708198961273
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25,
+              "ci": [
+                0.07266203825288216,
+                0.5237708198961273
+              ]
+            },
+            "false_alarms": 108,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 935.0649350649351,
+            "fa_per_hour_ci": [
+              767.0518901193393,
+              1128.941214634622
+            ],
+            "episodes": {
+              "k": 37,
+              "n": 74,
+              "pfa": 0.5,
+              "ci": [
+                0.3814250061613941,
+                0.6185749938386059
+              ]
+            },
+            "delay": {
+              "median_s": 0.72,
+              "mean_s": 1.2551351351351352
+            },
+            "by_event_type": {}
+          }
+        },
+        "lag_sensitivity_alpha_0.1": {
+          "1": {
+            "lag": 1,
+            "is_lag_star": false,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 13,
+              "n": 16,
+              "pfa": 0.8125,
+              "ci": [
+                0.5435434537683883,
+                0.9595262660940541
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 13,
+              "n": 16,
+              "pfa": 0.8125,
+              "ci": [
+                0.5435434537683883,
+                0.9595262660940541
+              ]
+            },
+            "false_alarms": 851,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 7367.9653679653675,
+            "fa_per_hour_ci": [
+              6881.186878788699,
+              7880.092193126067
+            ],
+            "episodes": {
+              "k": 73,
+              "n": 74,
+              "pfa": 0.9864864864864865,
+              "ci": [
+                0.9269926114903352,
+                0.9996579259803352
+              ]
+            },
+            "delay": {
+              "median_s": 0.12,
+              "mean_s": 0.2635616438356164
+            },
+            "by_event_type": {}
+          },
+          "2": {
+            "lag": 2,
+            "is_lag_star": false,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 12,
+              "n": 16,
+              "pfa": 0.75,
+              "ci": [
+                0.4762291801038727,
+                0.9273379617471178
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 12,
+              "n": 16,
+              "pfa": 0.75,
+              "ci": [
+                0.4762291801038727,
+                0.9273379617471178
+              ]
+            },
+            "false_alarms": 417,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 3610.3896103896104,
+            "fa_per_hour_ci": [
+              3272.1368771317766,
+              3974.1137776497408
+            ],
+            "episodes": {
+              "k": 72,
+              "n": 74,
+              "pfa": 0.972972972972973,
+              "ci": [
+                0.9057556605154807,
+                0.9967099772818934
+              ]
+            },
+            "delay": {
+              "median_s": 0.36,
+              "mean_s": 0.4727777777777778
+            },
+            "by_event_type": {}
+          },
+          "3": {
+            "lag": 3,
+            "is_lag_star": false,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 10,
+              "n": 16,
+              "pfa": 0.625,
+              "ci": [
+                0.35434609430207814,
+                0.8480163249188779
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 10,
+              "n": 16,
+              "pfa": 0.625,
+              "ci": [
+                0.35434609430207814,
+                0.8480163249188779
+              ]
+            },
+            "false_alarms": 275,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 2380.9523809523807,
+            "fa_per_hour_ci": [
+              2107.8349905808573,
+              2679.635755211375
+            ],
+            "episodes": {
+              "k": 68,
+              "n": 74,
+              "pfa": 0.918918918918919,
+              "ci": [
+                0.8318287630907637,
+                0.969662427872403
+              ]
+            },
+            "delay": {
+              "median_s": 0.44,
+              "mean_s": 0.57
+            },
+            "by_event_type": {}
+          },
+          "5": {
+            "lag": 5,
+            "is_lag_star": false,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 6,
+              "n": 16,
+              "pfa": 0.375,
+              "ci": [
+                0.15198367508112207,
+                0.6456539056979218
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 6,
+              "n": 16,
+              "pfa": 0.375,
+              "ci": [
+                0.15198367508112207,
+                0.6456539056979218
+              ]
+            },
+            "false_alarms": 128,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 1108.2251082251082,
+            "fa_per_hour_ci": [
+              924.5656605454893,
+              1317.6832763365717
+            ],
+            "episodes": {
+              "k": 51,
+              "n": 74,
+              "pfa": 0.6891891891891891,
+              "ci": [
+                0.5709528209561199,
+                0.7917364731619986
+              ]
+            },
+            "delay": {
+              "median_s": 0.72,
+              "mean_s": 0.8988235294117647
+            },
+            "by_event_type": {}
+          },
+          "7": {
+            "lag": 7,
+            "is_lag_star": false,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 5,
+              "n": 16,
+              "pfa": 0.3125,
+              "ci": [
+                0.11016995471711757,
+                0.5866206364513586
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 5,
+              "n": 16,
+              "pfa": 0.3125,
+              "ci": [
+                0.11016995471711757,
+                0.5866206364513586
+              ]
+            },
+            "false_alarms": 85,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 735.9307359307359,
+            "fa_per_hour_ci": [
+              587.835333374844,
+              909.9897516787788
+            ],
+            "episodes": {
+              "k": 51,
+              "n": 74,
+              "pfa": 0.6891891891891891,
+              "ci": [
+                0.5709528209561199,
+                0.7917364731619986
+              ]
+            },
+            "delay": {
+              "median_s": 1.0,
+              "mean_s": 1.1631372549019607
+            },
+            "by_event_type": {}
+          },
+          "10": {
+            "lag": 10,
+            "is_lag_star": false,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25,
+              "ci": [
+                0.07266203825288216,
+                0.5237708198961273
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 4,
+              "n": 16,
+              "pfa": 0.25,
+              "ci": [
+                0.07266203825288216,
+                0.5237708198961273
+              ]
+            },
+            "false_alarms": 59,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 510.8225108225108,
+            "fa_per_hour_ci": [
+              388.86176301899076,
+              658.9238213210024
+            ],
+            "episodes": {
+              "k": 33,
+              "n": 74,
+              "pfa": 0.44594594594594594,
+              "ci": [
+                0.3302468186312488,
+                0.566105837537163
+              ]
+            },
+            "delay": {
+              "median_s": 0.92,
+              "mean_s": 1.1636363636363636
+            },
+            "by_event_type": {}
+          },
+          "15": {
+            "lag": 15,
+            "is_lag_star": false,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "ci": [
+                0.040473733905945886,
+                0.4564565462316117
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "ci": [
+                0.040473733905945886,
+                0.4564565462316117
+              ]
+            },
+            "false_alarms": 30,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 259.7402597402597,
+            "fa_per_hour_ci": [
+              175.2456625231248,
+              370.7953713836161
+            ],
+            "episodes": {
+              "k": 19,
+              "n": 74,
+              "pfa": 0.25675675675675674,
+              "ci": [
+                0.16220437270902388,
+                0.37156485488821084
+              ]
+            },
+            "delay": {
+              "median_s": 0.8,
+              "mean_s": 1.9957894736842103
+            },
+            "by_event_type": {}
+          },
+          "20": {
+            "lag": 20,
+            "is_lag_star": false,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 23,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 199.13419913419912,
+            "fa_per_hour_ci": [
+              126.23400032073313,
+              298.7990726825371
+            ],
+            "episodes": {
+              "k": 14,
+              "n": 74,
+              "pfa": 0.1891891891891892,
+              "ci": [
+                0.10747302135107852,
+                0.297005338264365
+              ]
+            },
+            "delay": {
+              "median_s": 1.72,
+              "mean_s": 2.777142857142857
+            },
+            "by_event_type": {}
+          },
+          "30": {
+            "lag": 30,
+            "is_lag_star": true,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "false_alarms": 10,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 86.58008658008657,
+            "fa_per_hour_ci": [
+              41.51851684963145,
+              159.22386183565175
+            ],
+            "episodes": {
+              "k": 9,
+              "n": 74,
+              "pfa": 0.12162162162162163,
+              "ci": [
+                0.05714955432267517,
+                0.21836109666944126
+              ]
+            },
+            "delay": {
+              "median_s": 0.96,
+              "mean_s": 2.32
+            },
+            "by_event_type": {}
+          },
+          "50": {
+            "lag": 50,
+            "is_lag_star": false,
+            "n_videos": 21,
+            "null_primary": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "false_alarms": 5,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 43.290043290043286,
+            "fa_per_hour_ci": [
+              14.056159221804506,
+              101.02452016729585
+            ],
+            "episodes": {
+              "k": 2,
+              "n": 74,
+              "pfa": 0.02702702702702703,
+              "ci": [
+                0.003290022718106618,
+                0.09424433948451921
+              ]
+            },
+            "delay": {
+              "median_s": 1.06,
+              "mean_s": 1.06
+            },
+            "by_event_type": {}
+          }
+        }
+      },
       "mivia_flow": {
         "0.05": {
           "SENTINEL-E": {
@@ -13071,6 +16055,50 @@
           }
         }
       },
+      "avenue_patchcore": {
+        "5a": {
+          "pooled_acf_length": null,
+          "pooled_acf_max_lag_checked": 200,
+          "within_video_acf": {
+            "1": {
+              "mean": 0.9706536915538234,
+              "n_videos": 16
+            },
+            "5": {
+              "mean": 0.8291520788608211,
+              "n_videos": 16
+            },
+            "10": {
+              "mean": 0.7452136911919722,
+              "n_videos": 16
+            },
+            "25": {
+              "mean": 0.5502004003910964,
+              "n_videos": 16
+            }
+          }
+        },
+        "5b": {
+          "L_star": {
+            "lag": 30,
+            "n_p_values": 519,
+            "n_pairs": 503,
+            "lag1_corr": 0.7576883567364688,
+            "sup_dev_pos": 1.6472166453063153e-07,
+            "cond_mean_pt_given_prev_le_0p1": 0.08258326207070477,
+            "cond_count": 20
+          },
+          "lag_1": {
+            "lag": 1,
+            "n_p_values": 15328,
+            "n_pairs": 15312,
+            "lag1_corr": 0.9867275286917564,
+            "sup_dev_pos": 0.002519693359881798,
+            "cond_mean_pt_given_prev_le_0p1": 0.04916412819639026,
+            "cond_count": 1370
+          }
+        }
+      },
       "mivia_flow": {
         "5a": {
           "pooled_acf_length": null,
@@ -13116,7 +16144,7 @@
         }
       }
     },
-    "runtime_s": 1772.0373587608337,
+    "runtime_s": 3.535395383834839,
     "protocol": {
       "alphas": [
         0.05,

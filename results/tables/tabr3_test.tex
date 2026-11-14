@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering
-\caption{Test results at nominal $\alpha=0.1$, each test video monitored alone, calibration on all training videos, and each method at $L^\ast(0.1)$ from Table~\ref{tab:r3_selection}. Test videos: UCSD Ped2 (flow): 12 test videos; UCSD Ped2 (PatchCore): 12 test videos; CUHK Avenue (flow): 21 test videos; Mivia-IWDD (flow): 100 test videos.}
+\caption{Test results at nominal $\alpha=0.1$, each test video monitored alone, calibration on all training videos, and each method at $L^\ast(0.1)$ from Table~\ref{tab:r3_selection}. Test videos: UCSD Ped2 (flow): 12 test videos; UCSD Ped2 (PatchCore): 12 test videos; CUHK Avenue (flow): 21 test videos; CUHK Avenue (PatchCore): 21 test videos; Mivia-IWDD (flow): 100 test videos.}
 \label{tab:r3_test}
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{llrrrrr}
@@ -28,6 +28,13 @@ CUHK Avenue (flow) & CUSUM & 20 & 0.000 [0.000, 0.206] (0/16) & 0.00 [0.00, 31.9
 CUHK Avenue (flow) & Shiryaev--Roberts & $10^{8}$ & 0.000 [0.000, 0.206] (0/16) & 0.00 [0.00, 31.94] & 0.05 [0.01, 0.13] (4/74) & 4.9 \\
 CUHK Avenue (flow) & Parametric e-detector & 0.002 & 0.000 [0.000, 0.206] (0/16) & 0.00 [0.00, 31.94] & 0.07 [0.02, 0.15] (5/74) & 1.2 \\
 CUHK Avenue (flow) & E-SHIFT & 0.5 & 0.000 [0.000, 0.206] (0/16) & 0.00 [0.00, 31.94] & 0.03 [0.00, 0.09] (2/74) & 5.9 \\
+CUHK Avenue (PatchCore) & SENTINEL-E & 0.1 & 0.062 [0.002, 0.302] (1/16) & 86.58 [41.52, 159.22] & 0.12 [0.06, 0.22] (9/74) & 1.0 \\
+CUHK Avenue (PatchCore) & Fixed threshold & $3\times 10^{-4}$ & 0.125 [0.016, 0.383] (2/16) & 571.43 [441.94, 727.00] & 0.20 [0.12, 0.31] (15/74) & 0.9 \\
+CUHK Avenue (PatchCore) & p-value threshold & 0.01 & 0.000 [0.000, 0.206] (0/16) & 0.00 [0.00, 31.94] & 0.00 [0.00, 0.05] (0/74) & -- \\
+CUHK Avenue (PatchCore) & CUSUM & 20 & 0.125 [0.016, 0.383] (2/16) & 173.16 [105.77, 267.43] & 0.19 [0.11, 0.30] (14/74) & 1.3 \\
+CUHK Avenue (PatchCore) & Shiryaev--Roberts & $10^{8}$ & 0.125 [0.016, 0.383] (2/16) & 173.16 [105.77, 267.43] & 0.18 [0.10, 0.28] (13/74) & 2.1 \\
+CUHK Avenue (PatchCore) & Parametric e-detector & 0.002 & 0.188 [0.040, 0.456] (3/16) & 225.11 [147.05, 329.84] & 0.32 [0.22, 0.44] (24/74) & 1.5 \\
+CUHK Avenue (PatchCore) & E-SHIFT & 0.002 & 0.250 [0.073, 0.524] (4/16) & 632.03 [495.41, 794.69] & 0.39 [0.28, 0.51] (29/74) & 0.9 \\
 Mivia-IWDD (flow) & SENTINEL-E & 0.1 & 0.080 [0.022, 0.192] (4/50) & 15.64 [6.29, 32.22] & 0.00 [0.00, 0.07] (0/50) & -- \\
 Mivia-IWDD (flow) & Fixed threshold & 0.003 & 0.080 [0.022, 0.192] (4/50) & 31.28 [17.10, 52.48] & 0.00 [0.00, 0.07] (0/50) & -- \\
 Mivia-IWDD (flow) & p-value threshold & 0.01 & 0.080 [0.022, 0.192] (4/50) & 33.51 [18.76, 55.27] & 0.00 [0.00, 0.07] (0/50) & -- \\
