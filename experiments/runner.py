@@ -134,6 +134,9 @@ def alarm_indices_on_stream(st, spec: Spec) -> Tuple[np.ndarray, float, int]:
             cc_mode=opt.get("cc_mode", "beta"),
             detector=opt.get("detector", "episodic"),
             shift_features=opt.get("shift_features", None),
+            shift_gate=opt.get("shift_gate", "fixed"),
+            gate_level=opt.get("gate_level", 0.05),
+            gate_reference_windows=opt.get("gate_reference_windows", 50),
         )
         if opt.get("episode_prior_kw"):
             from sentinel_e.episodic import EpisodePrior

@@ -1,4 +1,4 @@
-"""Experiment 3c --- a phase-invariant shift gate for likelihood-ratio weighting.
+"""Experiment 3c --- a calibrated threshold for the likelihood-ratio shift gate.
 
 Experiment 3b shows that the held-out two-sample gate in front of the
 likelihood-ratio (LR) weights fires on every null stream, because the
@@ -8,10 +8,11 @@ The weights then also condition on the clock, the effective sample size
 collapses, and detection power is lost.
 
 This script evaluates one new arm: residual calibration with LR weights whose
-gate and density ratio both use only context columns [1, 3] (weather and scene
-activity, i.e. no clock or luminance).  The two arms from experiment 3b
-(``residual`` and ``residual + LR wts`` with all columns) are loaded from
-``results/exp3b_shift_default.json`` and are not recomputed.
+held-out gate uses a calibrated threshold instead of the fixed AUC 0.60.  The
+threshold is the 0.95 quantile of the same gate statistic over contiguous
+calibration windows (``shift_gate="calibrated"``, all context columns).  The two
+arms from experiment 3b (``residual`` and ``residual + LR wts`` with the fixed
+gate) are loaded from ``results/exp3b_shift_default.json`` and are not recomputed.
 
 Same configurations, seeds, alpha, replicate counts and verdict rule as
 experiment 3b (see that module's docstring).  Units are cached under
@@ -51,9 +52,9 @@ from sentinel_e.streams import StreamConfig, StreamSimulator
 from sentinel_e.temporal import thin_indices
 
 WORKERS = 2
-SHIFT_FEATURES = (1, 3)  # weather and scene activity; clock and luminance excluded
-NEW_VARIANT = "residual + LR wts (phase-invariant gate)"
-NEW_OPTS = dict(calibration="residual", weighted=True, shift_features=SHIFT_FEATURES)
+NEW_VARIANT = "residual + LR wts (calibrated gate)"
+NEW_OPTS = dict(calibration="residual", weighted=True, shift_gate="calibrated",
+                gate_level=0.05, gate_reference_windows=50)
 # Arms carried over from experiment 3b, in table order.
 LOADED_VARIANTS = ("residual", "residual + LR wts")
 SOURCE = "results/exp3b_shift_default.json"
@@ -62,13 +63,14 @@ SOURCE = "results/exp3b_shift_default.json"
 def _gate_stream(args):
     """Replay the shift-gate loop of SentinelE.p_values on one null stream.
 
-    Identical to exp3b's gate replay except that the gate and the density ratio
-    use ``SHIFT_FEATURES`` only.
+    Identical to exp3b's gate replay except that the calibrated threshold
+    (``gate_threshold``) replaces the fixed one.
     """
     seed, cfg = args
     st = StreamSimulator(StreamConfig(**cfg), seed=seed).simulate_camera(change_point=None)
     model = SentinelE(alpha=ALPHA, calibration="residual", weighted=True, restart=True,
-                      shift_features=SHIFT_FEATURES)
+                      shift_gate="calibrated", gate_level=NEW_OPTS["gate_level"],
+                      gate_reference_windows=NEW_OPTS["gate_reference_windows"])
     model.fit(st.calibration_scores, st.calibration_context)
     cal = model.calibrator
     idx = thin_indices(st.T, model.decorrelation_lag)
@@ -78,7 +80,7 @@ def _gate_stream(args):
     for start in range(blk, ctx.shape[0], blk):
         cal.update_shift(ctx[start - blk:start])
         n_blocks += 1
-        if cal.shift_auc >= cal.shift_auc_threshold:
+        if cal.shift_auc >= cal.gate_threshold:
             n_trig += 1
     return n_blocks, n_trig
 
@@ -131,9 +133,10 @@ def make_table(cells: Dict, gates: Dict, reps_null: int, reps_sig: int) -> None:
         "otherwise unresolved. Gate trigger rate: fraction of null streams with at "
         "least one shift block whose held-out AUC reaches the threshold / mean "
         f"fraction of triggered blocks ({GATE_STREAMS} streams per shift). "
-        "The first two arms are taken unchanged from experiment 3b. The phase-invariant "
-        f"gate restricts the classifier and the density ratio to context columns "
-        f"{list(SHIFT_FEATURES)} (weather and scene activity)."
+        "The first two arms are taken unchanged from experiment 3b (fixed gate, "
+        "threshold AUC 0.60). The calibrated gate uses the 0.95 quantile of the gate "
+        "statistic over 50 contiguous calibration windows of one block length, "
+        "computed at fit time on all context columns."
     )
     write_latex_table(
         rows,
@@ -141,8 +144,7 @@ def make_table(cells: Dict, gates: Dict, reps_null: int, reps_sig: int) -> None:
          "censored delay (s)", "gate trigger rate"],
         caption=(
             r"Activity shift at $\alpha=0.01$: residual calibration with likelihood-ratio "
-            r"weights, with the held-out gate on all context columns and on the "
-            r"phase-invariant columns $\{1,3\}$."
+            r"weights, with the fixed held-out gate and with the calibrated gate."
         ),
         label="tab:shift_gate",
         name="tab_shift_gate",
@@ -154,7 +156,7 @@ def make_table(cells: Dict, gates: Dict, reps_null: int, reps_sig: int) -> None:
 def main(reps_null: int, reps_sig: int, gate_streams: int, workers: int, smoke: bool,
          no_cache: bool = False):
     t0 = time.time()
-    print(f"Experiment 3c: phase-invariant shift gate (null={reps_null}, signal={reps_sig}, "
+    print(f"Experiment 3c: calibrated shift gate (null={reps_null}, signal={reps_sig}, "
           f"gate={gate_streams}, workers={workers}, smoke={smoke})", flush=True)
     # Smoke runs write nothing, including the unit cache.
     cache = UnitCache("exp3c", enabled=not (no_cache or smoke))
@@ -186,11 +188,12 @@ def main(reps_null: int, reps_sig: int, gate_streams: int, workers: int, smoke: 
               f"miss={c['miss_rate']:.3f} cens_s={c['add_censored_s']}", flush=True)
 
         gates[key_a][NEW_VARIANT] = cache.get_or_compute(
-            f"x{a}__gate_phase_invariant",
-            dict(shift=a, part="gate", features=list(SHIFT_FEATURES),
+            f"x{a}__gate_calibrated",
+            dict(shift=a, part="gate", gate="calibrated", gate_level=0.05,
+                 gate_reference_windows=50,
                  streams=gate_streams, seed0=NULL_SEED0, cfg=base_cfg(a)),
             lambda: gate_stats(a, gate_streams, workers))
-        print(f"  x{a:<4} gate (phase-invariant): streams>=1 triggered="
+        print(f"  x{a:<4} gate (calibrated): streams>=1 triggered="
               f"{gates[key_a][NEW_VARIANT]['frac_streams_triggered']:.3f} "
               f"mean block frac={gates[key_a][NEW_VARIANT]['mean_frac_blocks_triggered']:.3f}",
               flush=True)
@@ -211,7 +214,6 @@ def main(reps_null: int, reps_sig: int, gate_streams: int, workers: int, smoke: 
         "seed0_null": NULL_SEED0,
         "seed0_signal": SIGNAL_SEED0,
         "workers": workers,
-        "shift_features": list(SHIFT_FEATURES),
         "variants": {NEW_VARIANT: NEW_OPTS},
         "loaded_from": {"file": SOURCE, "variants": list(LOADED_VARIANTS)},
         "cells": cells,

@@ -111,6 +111,9 @@ class SentinelE:
         continuous_cols: Sequence[int] = (0,),
         categorical_cols: Sequence[int] = (1,),
         shift_features: Optional[Sequence[int]] = None,
+        shift_gate: str = "fixed",
+        gate_level: float = 0.05,
+        gate_reference_windows: int = 50,
     ) -> None:
         if calibration not in {"residual", "mondrian", "pooled", "weighted"}:
             raise ValueError(
@@ -126,6 +129,13 @@ class SentinelE:
             None if shift_features is None
             else tuple(int(c) for c in shift_features)
         )
+        if shift_gate not in {"fixed", "calibrated"}:
+            raise ValueError("shift_gate must be 'fixed' or 'calibrated'")
+        if shift_gate == "calibrated" and calibration != "residual":
+            raise ValueError("shift_gate='calibrated' is supported for 'residual' calibration only")
+        self.shift_gate = shift_gate
+        self.gate_level = float(gate_level)
+        self.gate_reference_windows = int(gate_reference_windows)
         self.alpha = float(alpha)
         self.delta = float(delta)
         self.calibration = calibration
@@ -199,6 +209,9 @@ class SentinelE:
             self.calibrator = ResidualConformalCalibrator(
                 delta=self.delta, mode=self.cc_mode, weighted=self.weighted,
                 shift_features=self.shift_features,
+                shift_gate=self.shift_gate, gate_level=self.gate_level,
+                gate_reference_windows=self.gate_reference_windows,
+                gate_window=self.shift_block,
             ).fit(s, calibration_context)
         elif self.calibration == "mondrian":
             if calibration_context is None:

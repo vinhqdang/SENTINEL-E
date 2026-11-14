@@ -115,13 +115,13 @@ def test_out_of_range_or_unsupported_features_rejected():
 # --------------------------------------------------------------------------- #
 # Stream-level gate behaviour
 # --------------------------------------------------------------------------- #
-def _block_aucs(seed, activity_shift, features, T=90_000):
+def _block_aucs(seed, activity_shift, features, T=90_000, gate="fixed"):
     """Held-out gate AUC for each deployment block, as in exp3c's gate loop."""
     st = StreamSimulator(
         StreamConfig(T=T, activity_shift=activity_shift), seed=seed
     ).simulate_camera(change_point=None)
     model = SentinelE(alpha=0.01, calibration="residual", weighted=True,
-                      restart=True, shift_features=features)
+                      restart=True, shift_features=features, shift_gate=gate)
     model.fit(st.calibration_scores, st.calibration_context)
     idx = thin_indices(st.T, model.decorrelation_lag)
     ctx = np.atleast_2d(np.asarray(st.context, dtype=float))[idx]
@@ -130,28 +130,62 @@ def _block_aucs(seed, activity_shift, features, T=90_000):
     for start in range(blk, ctx.shape[0], blk):
         model.calibrator.update_shift(ctx[start - blk:start])
         aucs.append(model.calibrator.shift_auc)
-    return np.asarray(aucs)
+    return np.asarray(aucs), model.calibrator.gate_threshold
 
 
+# Measured on this simulator (see the report): with the fixed threshold 0.60 and
+# shift_features=[1,3], a stationary null reached AUC 0.60 on 96% of blocks
+# (median 0.67), because the binary weather column is nearly constant within a
+# block.  The calibrated gate with all columns is tested below.
 @pytest.mark.xfail(
     strict=True,
     reason=(
-        "Premise not met by the simulator: with shift_features=[1,3] a stationary "
-        "null still reaches AUC 0.60 on most blocks (96% of blocks over 4 seeds, "
-        "median AUC 0.67). Weather (column 1) is binary and nearly constant within "
-        "a 400-frame block, so it alone drives the gate (87% of blocks)."
+        "Calibrated gate (all columns, gate_level 0.05) is not quiet on a stationary "
+        "null in this simulator: about 0.49 of blocks fire over 8 seeds (90 blocks), "
+        "because deployment null blocks have median AUC 0.86 against reference-window "
+        "median 0.74. The cause is not isolated."
     ),
 )
-def test_phase_invariant_gate_quiet_on_stationary_null():
-    aucs = _block_aucs(seed=21, activity_shift=1.0, features=[1, 3])
-    assert aucs.size >= 5
-    assert np.mean(aucs < THRESHOLD) > 0.5
+def test_calibrated_gate_quiet_on_stationary_null():
+    rates = []
+    for seed in (31, 32, 33, 34):
+        aucs, thr = _block_aucs(seed=seed, activity_shift=1.0, features=None, gate="calibrated")
+        rates.append(np.mean(aucs >= thr))
+    assert np.mean(rates) <= 0.15
 
 
-def test_activity_shift_fires_phase_invariant_gate():
-    aucs = _block_aucs(seed=22, activity_shift=3.0, features=[1, 3])
+def test_calibrated_gate_reference_and_fallback():
+    scores, ctx, _ = _synthetic(seed=6, n_cal=2000)
+    cal = ResidualConformalCalibrator(weighted=True, shift_gate="calibrated",
+                                      gate_window=400, gate_reference_windows=50).fit(scores, ctx)
+    assert cal.gate_status == "calibrated"
+    assert cal.gate_window_used == 400
+    assert cal.gate_reference.shape == (50,)
+    assert cal.gate_threshold == pytest.approx(np.quantile(cal.gate_reference, 0.95))
+    # The reference uses the calibration half (n_cal // 2 rows).  If that holds
+    # fewer than two windows, the window shrinks to half of it and is still used.
+    short = ResidualConformalCalibrator(weighted=True, shift_gate="calibrated",
+                                        gate_window=400).fit(*_synthetic(seed=7, n_cal=200)[:2])
+    assert short.gate_status == "calibrated" and short.gate_window_used == 50
+    # Too short for any usable window: falls back to the fixed threshold.
+    tiny = ResidualConformalCalibrator(weighted=True, shift_gate="calibrated",
+                                       gate_window=400).fit(*_synthetic(seed=8, n_cal=60)[:2])
+    assert tiny.gate_status == "fallback_fixed"
+    assert tiny.gate_threshold == tiny.shift_auc_threshold
+
+
+def test_fixed_gate_is_default_and_uses_fixed_threshold():
+    scores, ctx, _ = _synthetic(seed=9)
+    cal = ResidualConformalCalibrator(weighted=True).fit(scores, ctx)
+    assert cal.shift_gate == "fixed" and cal.gate_status == "fixed"
+    assert cal.gate_threshold == cal.shift_auc_threshold
+    assert cal.gate_reference is None
+
+
+def test_activity_shift_fires_calibrated_gate():
+    aucs, thr = _block_aucs(seed=22, activity_shift=3.0, features=None, gate="calibrated")
     assert aucs.size >= 5
-    assert np.mean(aucs >= THRESHOLD) >= 0.8
+    assert np.mean(aucs >= thr) >= 0.8
 
 
 def test_p_values_use_the_same_column_subset_as_the_weights():

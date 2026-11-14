@@ -347,6 +347,31 @@ def _select_columns(x: np.ndarray, cols: Optional[Tuple[int, ...]]) -> np.ndarra
     return x[:, list(cols)]
 
 
+# Shortest contiguous reference window the calibrated gate will use.
+_MIN_GATE_WINDOW = 32
+
+
+def _holdout_auc(cal_ctx: np.ndarray, dep_ctx: np.ndarray, random_state: int,
+                 weight_clip: float) -> float:
+    """Held-out AUC of a calibration-vs-deployment classifier (AUC only).
+
+    Same split and probe as ``ResidualConformalCalibrator._shift_test``, without
+    the full refit, so the calibrated gate's reference is measured with exactly
+    the statistic it is compared against.
+    """
+    rng = np.random.default_rng(random_state)
+    ic, idp = rng.permutation(len(cal_ctx)), rng.permutation(len(dep_ctx))
+    ca, cb = ic[: len(ic) // 2], ic[len(ic) // 2:]
+    da, db = idp[: len(idp) // 2], idp[len(idp) // 2:]
+    if min(len(ca), len(cb), len(da), len(db)) < 8:
+        return 0.5
+    probe = LogisticDensityRatio(clip=weight_clip).fit(cal_ctx[ca], dep_ctx[da])
+    held = np.vstack([cal_ctx[cb], dep_ctx[db]])
+    y = np.concatenate([np.zeros(len(cb)), np.ones(len(db))])
+    auc = roc_auc(np.log(probe.ratio(held) + 1e-12), y)
+    return float(max(auc, 1.0 - auc))
+
+
 # --------------------------------------------------------------------------- #
 # Density-ratio estimation
 # --------------------------------------------------------------------------- #
@@ -1019,6 +1044,14 @@ class ResidualConformalCalibrator:
     # Context columns used by the shift gate *and* the density ratio.  None
     # uses every column (the original behaviour).
     shift_features: Optional[Sequence[int]] = None
+    # Gate threshold rule.  "fixed" compares the held-out AUC with
+    # shift_auc_threshold.  "calibrated" replaces it with the (1 - gate_level)
+    # quantile of the same statistic over gate_reference_windows contiguous
+    # calibration windows of gate_window rows, computed once at fit time.
+    shift_gate: str = "fixed"
+    gate_level: float = 0.05
+    gate_reference_windows: int = 50
+    gate_window: int = 400
 
     _mean_model: Optional[_RidgeBasis] = field(default=None, repr=False)
     _scale_model: Optional[_RidgeBasis] = field(default=None, repr=False)
@@ -1038,9 +1071,19 @@ class ResidualConformalCalibrator:
     _maha_max: float = field(default=np.inf, repr=False)
     _n_scored: int = field(default=0, repr=False)
     _n_abstained: int = field(default=0, repr=False)
+    _gate_thr: Optional[float] = field(default=None, repr=False, init=False)
+    _gate_ref: Optional[np.ndarray] = field(default=None, repr=False, init=False)
+    gate_window_used: Optional[int] = field(default=None, init=False)
+    gate_status: str = field(default="fixed", init=False)
 
     def __post_init__(self) -> None:
         self.shift_features = _normalise_features(self.shift_features)
+        if self.shift_gate not in {"fixed", "calibrated"}:
+            raise ValueError("shift_gate must be 'fixed' or 'calibrated'")
+        if not 0.0 < self.gate_level < 1.0:
+            raise ValueError("gate_level must lie in (0, 1)")
+        if int(self.gate_reference_windows) < 1:
+            raise ValueError("gate_reference_windows must be at least 1")
 
     # -- fitting ---------------------------------------------------------- #
     def fit(
@@ -1085,9 +1128,62 @@ class ResidualConformalCalibrator:
         else:
             self._levels, self._eps = None, 0.0
 
+        self._gate_thr, self._gate_ref = None, None
+        self.gate_window_used, self.gate_status = None, "fixed"
+        if self.shift_gate == "calibrated" and self.weighted:
+            # Time-ordered copy of the same rows the observed statistic uses.
+            self._fit_gate_reference(x[np.sort(cal_idx)])
+
         self._fit_support(x)
         self._n_scored = self._n_abstained = 0
         return self
+
+    def _fit_gate_reference(self, ctx_time: np.ndarray) -> None:
+        """Null distribution of the gate statistic from contiguous calibration windows.
+
+        Each reference window is ``gate_window`` consecutive rows of the
+        time-ordered calibration context, drawn at a uniform random start (no
+        wrap-around is needed because the window is at most half the set).  Its
+        held-out AUC against the remaining calibration rows is the same statistic
+        the gate computes for a deployment block.  Contiguous windows share the
+        within-block autocorrelation and phase concentration of deployment blocks,
+        so under no shift the observed AUC should exceed the threshold with
+        probability about ``gate_level``.
+
+        If the calibration set holds fewer than two windows, the window is
+        shortened to ``n // 2``.  If that is below ``_MIN_GATE_WINDOW`` the
+        calibrated threshold is unavailable and the gate falls back to
+        ``shift_auc_threshold`` (``gate_status == "fallback_fixed"``).
+        """
+        n = ctx_time.shape[0]
+        length = min(int(self.gate_window), n // 2)
+        if length < _MIN_GATE_WINDOW:
+            self.gate_window_used, self.gate_status = length, "fallback_fixed"
+            return
+        ctx = _select_columns(ctx_time, self.shift_features)
+        rng = np.random.default_rng([self.random_state, 1])
+        aucs = np.empty(int(self.gate_reference_windows))
+        for b in range(aucs.size):
+            start = int(rng.integers(0, n - length + 1))
+            inside = np.zeros(n, dtype=bool)
+            inside[start:start + length] = True
+            aucs[b] = _holdout_auc(ctx[~inside], ctx[inside],
+                                   self.random_state, self.weight_clip)
+        self._gate_ref = aucs
+        self._gate_thr = float(np.quantile(aucs, 1.0 - self.gate_level))
+        self.gate_window_used, self.gate_status = length, "calibrated"
+
+    @property
+    def gate_threshold(self) -> float:
+        """AUC at or above which a deployment block is declared shifted."""
+        if self.shift_gate == "calibrated" and self._gate_thr is not None:
+            return self._gate_thr
+        return self.shift_auc_threshold
+
+    @property
+    def gate_reference(self) -> Optional[np.ndarray]:
+        """Reference AUCs of the calibrated gate (None unless calibrated)."""
+        return self._gate_ref
 
     # -- calibrated-support region ---------------------------------------- #
     def _fit_support(self, x: np.ndarray) -> None:
@@ -1155,7 +1251,7 @@ class ResidualConformalCalibrator:
             sorted_ctx, _select_columns(dep, self.shift_features)
         )
         self._shift_auc = auc
-        if auc < self.shift_auc_threshold or dr is None:
+        if auc < self.gate_threshold or dr is None:
             # No detectable shift: keep the exact order-statistic levels.
             self._weights, self._levels_eff, self._dr = None, None, None
             self._n_eff = float(self._sorted_resid.size)
