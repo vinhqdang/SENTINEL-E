@@ -1,0 +1,429 @@
+{
+  "generated_at": "2026-11-13T23:49:33Z",
+  "python": "3.11.18",
+  "numpy": "2.4.6",
+  "payload": {
+    "reps": 200,
+    "T": 90000,
+    "change_point": 20000,
+    "alpha": 0.01,
+    "fps": 25.0,
+    "calibration_regime": "representative",
+    "arms": {
+      "cp24": "changepoint mixture, 24-point kappa grid (eta=0)",
+      "epi": "episodic, shipped 6x4 grid (kappa x eta)"
+    },
+    "rows": [
+      {
+        "name": "L=200, gap=1500, pi=0.2, 4 ep.",
+        "group": "corner",
+        "cfg": {
+          "T": 90000,
+          "n_episodes": 4,
+          "event_length": 200,
+          "episode_gap": 1500,
+          "event_intermittency": 0.2,
+          "calibration_regime": "representative"
+        },
+        "cp24": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 1.0,
+          "censored_delay_s": 2800.0
+        },
+        "epi": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 1.0,
+          "censored_delay_s": 2800.0
+        },
+        "delay_diff_s": 0.0,
+        "delay_diff_ci95_s": [
+          0.0,
+          0.0
+        ],
+        "delay_diff_se_s": 0.0,
+        "delay_p_boot": 1.0,
+        "miss_epi_only_detect": 0,
+        "miss_cp24_only_detect": 0,
+        "miss_p_mcnemar": 1.0,
+        "verdict": "no resolved difference"
+      },
+      {
+        "name": "L=200, gap=1500, pi=0.7, 4 ep.",
+        "group": "corner",
+        "cfg": {
+          "T": 90000,
+          "n_episodes": 4,
+          "event_length": 200,
+          "episode_gap": 1500,
+          "event_intermittency": 0.7,
+          "calibration_regime": "representative"
+        },
+        "cp24": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 1.0,
+          "censored_delay_s": 2800.0
+        },
+        "epi": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 1.0,
+          "censored_delay_s": 2800.0
+        },
+        "delay_diff_s": 0.0,
+        "delay_diff_ci95_s": [
+          0.0,
+          0.0
+        ],
+        "delay_diff_se_s": 0.0,
+        "delay_p_boot": 1.0,
+        "miss_epi_only_detect": 0,
+        "miss_cp24_only_detect": 0,
+        "miss_p_mcnemar": 1.0,
+        "verdict": "no resolved difference"
+      },
+      {
+        "name": "L=200, gap=12000, pi=0.2, 4 ep.",
+        "group": "corner",
+        "cfg": {
+          "T": 90000,
+          "n_episodes": 4,
+          "event_length": 200,
+          "episode_gap": 12000,
+          "event_intermittency": 0.2,
+          "calibration_regime": "representative"
+        },
+        "cp24": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 1.0,
+          "censored_delay_s": 2800.0
+        },
+        "epi": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 1.0,
+          "censored_delay_s": 2800.0
+        },
+        "delay_diff_s": 0.0,
+        "delay_diff_ci95_s": [
+          0.0,
+          0.0
+        ],
+        "delay_diff_se_s": 0.0,
+        "delay_p_boot": 1.0,
+        "miss_epi_only_detect": 0,
+        "miss_cp24_only_detect": 0,
+        "miss_p_mcnemar": 1.0,
+        "verdict": "no resolved difference"
+      },
+      {
+        "name": "L=200, gap=12000, pi=0.7, 4 ep.",
+        "group": "corner",
+        "cfg": {
+          "T": 90000,
+          "n_episodes": 4,
+          "event_length": 200,
+          "episode_gap": 12000,
+          "event_intermittency": 0.7,
+          "calibration_regime": "representative"
+        },
+        "cp24": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 1.0,
+          "censored_delay_s": 2800.0
+        },
+        "epi": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 1.0,
+          "censored_delay_s": 2800.0
+        },
+        "delay_diff_s": 0.0,
+        "delay_diff_ci95_s": [
+          0.0,
+          0.0
+        ],
+        "delay_diff_se_s": 0.0,
+        "delay_p_boot": 1.0,
+        "miss_epi_only_detect": 0,
+        "miss_cp24_only_detect": 0,
+        "miss_p_mcnemar": 1.0,
+        "verdict": "no resolved difference"
+      },
+      {
+        "name": "L=1600, gap=1500, pi=0.2, 4 ep.",
+        "group": "corner",
+        "cfg": {
+          "T": 90000,
+          "n_episodes": 4,
+          "event_length": 1600,
+          "episode_gap": 1500,
+          "event_intermittency": 0.2,
+          "calibration_regime": "representative"
+        },
+        "cp24": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.025,
+          "censored_delay_s": 193.158
+        },
+        "epi": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.01,
+          "censored_delay_s": 154.7064
+        },
+        "delay_diff_s": 38.4516,
+        "delay_diff_ci95_s": [
+          1.3507100000000003,
+          86.49686
+        ],
+        "delay_diff_se_s": 21.502719156021023,
+        "delay_p_boot": 0.0289,
+        "miss_epi_only_detect": 3,
+        "miss_cp24_only_detect": 0,
+        "miss_p_mcnemar": 0.25,
+        "verdict": "episodic better"
+      },
+      {
+        "name": "L=1600, gap=1500, pi=0.7, 4 ep.",
+        "group": "corner",
+        "cfg": {
+          "T": 90000,
+          "n_episodes": 4,
+          "event_length": 1600,
+          "episode_gap": 1500,
+          "event_intermittency": 0.7,
+          "calibration_regime": "representative"
+        },
+        "cp24": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.0,
+          "censored_delay_s": 12.124600000000001
+        },
+        "epi": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.0,
+          "censored_delay_s": 12.274000000000001
+        },
+        "delay_diff_s": -0.1494,
+        "delay_diff_ci95_s": [
+          -0.2096,
+          -0.0962
+        ],
+        "delay_diff_se_s": 0.028900769407782363,
+        "delay_p_boot": 0.0,
+        "miss_epi_only_detect": 0,
+        "miss_cp24_only_detect": 0,
+        "miss_p_mcnemar": 1.0,
+        "verdict": "changepoint better"
+      },
+      {
+        "name": "L=1600, gap=12000, pi=0.2, 4 ep.",
+        "group": "corner",
+        "cfg": {
+          "T": 90000,
+          "n_episodes": 4,
+          "event_length": 1600,
+          "episode_gap": 12000,
+          "event_intermittency": 0.2,
+          "calibration_regime": "representative"
+        },
+        "cp24": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.15,
+          "censored_delay_s": 684.7434
+        },
+        "epi": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.07,
+          "censored_delay_s": 543.6914
+        },
+        "delay_diff_s": 141.05200000000002,
+        "delay_diff_ci95_s": [
+          79.628625,
+          210.17305999999994
+        ],
+        "delay_diff_se_s": 33.5818506450094,
+        "delay_p_boot": 0.0,
+        "miss_epi_only_detect": 16,
+        "miss_cp24_only_detect": 0,
+        "miss_p_mcnemar": 3.0517578125e-05,
+        "verdict": "episodic better"
+      },
+      {
+        "name": "L=1600, gap=12000, pi=0.7, 4 ep.",
+        "group": "corner",
+        "cfg": {
+          "T": 90000,
+          "n_episodes": 4,
+          "event_length": 1600,
+          "episode_gap": 12000,
+          "event_intermittency": 0.7,
+          "calibration_regime": "representative"
+        },
+        "cp24": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.0,
+          "censored_delay_s": 12.1196
+        },
+        "epi": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.0,
+          "censored_delay_s": 12.2578
+        },
+        "delay_diff_s": -0.1382,
+        "delay_diff_ci95_s": [
+          -0.1936,
+          -0.0886
+        ],
+        "delay_diff_se_s": 0.027042936268276235,
+        "delay_p_boot": 0.0,
+        "miss_epi_only_detect": 0,
+        "miss_cp24_only_detect": 0,
+        "miss_p_mcnemar": 1.0,
+        "verdict": "changepoint better"
+      },
+      {
+        "name": "single episode, L=800, pi=0.35",
+        "group": "single",
+        "cfg": {
+          "T": 90000,
+          "n_episodes": 1,
+          "event_length": 800,
+          "episode_gap": 6000,
+          "event_intermittency": 0.35,
+          "calibration_regime": "representative"
+        },
+        "cp24": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.425,
+          "censored_delay_s": 1201.5896
+        },
+        "epi": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.445,
+          "censored_delay_s": 1257.2908
+        },
+        "delay_diff_s": -55.7012,
+        "delay_diff_ci95_s": [
+          -111.2224,
+          -14.0304
+        ],
+        "delay_diff_se_s": 27.519038682388853,
+        "delay_p_boot": 0.0,
+        "miss_epi_only_detect": 0,
+        "miss_cp24_only_detect": 4,
+        "miss_p_mcnemar": 0.125,
+        "verdict": "changepoint better"
+      },
+      {
+        "name": "permanent change, pi=1.0 (L=70000)",
+        "group": "permanent",
+        "cfg": {
+          "T": 90000,
+          "n_episodes": 1,
+          "event_length": 70000,
+          "episode_gap": 6000,
+          "event_intermittency": 1.0,
+          "calibration_regime": "representative"
+        },
+        "cp24": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.0,
+          "censored_delay_s": 8.6604
+        },
+        "epi": {
+          "pfa": 0.0,
+          "pfa_ci": [
+            0.0,
+            0.018846005918320894
+          ],
+          "miss_rate": 0.0,
+          "censored_delay_s": 8.7254
+        },
+        "delay_diff_s": -0.065,
+        "delay_diff_ci95_s": [
+          -0.0956,
+          -0.037599999999999995
+        ],
+        "delay_diff_se_s": 0.015136066282643017,
+        "delay_p_boot": 0.0,
+        "miss_epi_only_detect": 0,
+        "miss_cp24_only_detect": 0,
+        "miss_p_mcnemar": 1.0,
+        "verdict": "changepoint better"
+      }
+    ]
+  }
+}
