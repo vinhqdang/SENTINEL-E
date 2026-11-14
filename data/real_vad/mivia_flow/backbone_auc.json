@@ -1,0 +1,8 @@
+{
+ "auc": 0.34408308241773794,
+ "note": "Farneback optical-flow magnitude at 64x64 gray, 3-frame per-video median filter; Mivia-IWDD test set, labels from timestamp onset",
+ "fps": 10.0,
+ "sampled_fps_note": "Frames sampled at 10 fps by time; videos with native fps below 10 use every native frame (their timestamps are native_index/fps).",
+ "n_test": 22283,
+ "n_anomalous": 6169
+}
