@@ -273,31 +273,19 @@ probability of \ShiftPooledPfa{}, because activity is not one of the bins. The
 context-normalised residual construction does far better, but at \ExpThreeReps{} streams per
 row several shift levels cannot be resolved (\ShiftResidualUnresolvedRatios{}).
 
-\inputtable{tab_shift_default}
+\inputtable{tab_shift_remedy}
 
-\Cref{tab:shift_default} repeats the sweep for the two candidate defaults, with
-\ShiftDefNullStreams{} null streams per level. The unweighted residual is valid at $\times 1.0$ and
-$\times 1.5$, with false-alarm probability \ShiftDefOneHalfResPfa{} at $\times 1.5$.
-It is unresolved at $\times 2.0$ (\ShiftDefTwoResPfa{}, interval
-$[\ShiftDefTwoResCiLo, \ShiftDefTwoResCiHi]$). At $\times 3.0$ it is invalid
-(\ShiftDefThreeResPfa{}, interval $[\ShiftDefThreeResCiLo, \ShiftDefThreeResCiHi]$).
+\Cref{tab:shift_remedy} gives the sweep at 1,500 null streams and 200 post-change streams per level. The unweighted residual default is valid at $\times 1.0$ and $\times 1.5$, with a false-alarm probability of 0.0020 at $\times 1.5$. It is unresolved at $\times 2.0$ (0.0140, interval [0.0092, 0.0213]) and invalid at $\times 3.0$ (0.0620, interval [0.0509, 0.0754]). Its p-values are marginally conservative at every shift tested. False alarms cluster immediately after the detector re-enters the calibrated context region, at frames near the support edge where the residual model extrapolates.
 
-Likelihood-ratio weighting holds the level at every shift tested, but its power
-falls. Its miss rate is \ShiftDefOneWtMiss{} at $\times 1.0$, against
-\ShiftDefOneResMiss{} unweighted, and \ShiftDefThreeWtMiss{} at $\times 3.0$.
-The Kish effective-sample-size substitution in the weighted quantile has no
-calibration-conditional proof, so the weighted path is a heuristic.
+Likelihood-ratio weighting holds the level at every shift tested, but its power falls. Its miss rate is 0.095 at $\times 1.0$, against 0.025 unweighted, and rises to 0.540, 0.930 and 1.000 at $\times 1.5$, $\times 2.0$ and $\times 3.0$. The Kish effective-sample-size substitution has no calibration-conditional proof, so the weighted path is a heuristic. The pre-specified rule, reported in Online Resource~1, Table~S9, recommends weighting only if its extra miss rate at $\times 1.0$ is at most 0.05. The extra rate is 0.070, so the unweighted residual stays the default.
 
-The pre-specified rule recommends weighting only if its verdict is never invalid
-and its extra miss rate at $\times 1.0$ is at most \ShiftDefMissDeltaMax{}. The
-weighted verdicts are never invalid, but the extra miss rate at $\times 1.0$ is
-\ShiftDefMissDelta{}. The unweighted residual therefore stays the default.
+The held-out context gate, which would switch weighting on, is a classifier two-sample test with AUC at least 0.60. It fired on every null stream at every level, including the unshifted $\times 1.0$. A deployment block covers a narrow slice of the diurnal cycle, while calibration spans a day, so a context gate is confounded with benign drift that the residual normalisation already absorbs. A calibrated reference threshold and a phase-invariant variant also fired on most null blocks. Context gating therefore does not separate shifted from unshifted streams.
 
-The held-out gate that would switch weighting on fired on every null stream at
-every level (minimum fraction of streams triggered \ShiftDefGateMinFrac{}), including
-the unshifted $\times 1.0$. As configured, the gate does not separate shifted
-from unshifted streams, so it cannot yet trigger the switch. This is a limitation
-of the gate, not a result about weighting.
+A stricter support region addresses the boundary failure. The residual calibrator abstains on a frame whose context falls outside a per-coordinate box, or whose Mahalanobis distance exceeds a slack multiple of the calibration 0.999 quantile. The default multiplier is 1.5. We set it to 0.5, so boundary frames abstain. An abstained frame receives a neutral bet, so the supermartingale argument is unchanged. The stricter region holds the level at every shift tested. At $\times 3.0$ the false-alarm probability falls from 0.0620 to 0.0007 (interval [0.0001, 0.0038]), and the abstention rate on null betting instants rises to 0.500. At $\times 1.0$ the miss rate equals the default, 0.025, and abstention is 0.010. Likelihood-ratio weighting is also valid, but its miss rate is 0.540 to 1.000 at $\times 1.5$ to $\times 3.0$, against 0.070 to 0.450 for the stricter region.
+
+The slack value 0.5 was chosen in a 300-stream pilot whose seeds overlap the main run. We therefore confirmed it on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The false-alarm probabilities are 0.0000, 0.0007, 0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ and $\times 3.0$, and all are valid. The miss rates are 0.010, 0.040, 0.140 and 0.470.
+
+The abstention rate is the operator-visible shift monitor. With slack 0.5 it is 0.010 without shift and rises to 0.500 at $\times 3.0$, so a rising abstention rate signals that recalibration is due. The library default stays at 1.5, which the other experiments use. Where shift is expected, we recommend slack 0.5.
 
 \Cref{tab:coverage} varies coverage instead. With calibration from one daytime
 window, the residual construction keeps its level, but its miss rate reaches
