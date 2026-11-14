@@ -1,0 +1,29 @@
+\begin{table}[t]
+\centering
+\caption{Temporal dependence of the scores and the conformal p-values on real normal footage. (a) pooled autocorrelation length of the concatenated training scores (first lag with $|\mathrm{ACF}|<0.05$), and within-video autocorrelation averaged over training videos. (b) per-video lag-1 correlation of consecutive p-values on the thinned grid, the maximum positive deviation of the pooled empirical p-value CDF, and the mean of $p_t$ given $p_{t-1}\le0.1$. Training videos: UCSD Ped2 (flow): 16 training videos; UCSD Ped2 (PatchCore): 16 training videos; CUHK Avenue (flow): 16 training videos; Mivia-IWDD (flow): 200 training videos.}
+\label{tab:r3_dependence}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+dataset & a: length / b: grid & a: lag 1 / b: lag-1 corr. & a: lag 5 / b: sup dev. & a: lag 10 / b: cond. mean & a: lag 25 / b: count \\
+\midrule
+\multicolumn{6}{l}{\textit{(a) Score dependence on the raw training scores}} \\
+dataset & pooled ACF length & ACF lag 1 & ACF lag 5 & ACF lag 10 & ACF lag 25 \\
+UCSD Ped2 (flow) & >200 & 0.82 & 0.37 & 0.28 & 0.16 \\
+UCSD Ped2 (PatchCore) & >200 & 0.87 & 0.36 & 0.15 & -0.00 \\
+CUHK Avenue (flow) & >200 & 0.94 & 0.75 & 0.66 & 0.47 \\
+Mivia-IWDD (flow) & >200 & 0.88 & 0.58 & 0.36 & 0.05 \\
+\multicolumn{6}{l}{\textit{(b) Conformal p-values on the LOVO / fold null streams}} \\
+dataset & grid & lag-1 corr. & $\sup_u(F_n(u)-u)$ & $E[p_t\mid p_{t-1}\le 0.1]$ & pairs with $p_{t-1}\le0.1$ / p-values \\
+UCSD Ped2 (flow) & $L^\ast(0.1)=5$ & 0.818 & 0.000 & 0.091 & 32 / 510 \\
+UCSD Ped2 (flow) & $L=1$ & 0.946 & 0.004 & 0.054 & 224 / 2550 \\
+UCSD Ped2 (PatchCore) & $L^\ast(0.1)=5$ & 0.839 & 0.032 & 0.015 & 23 / 510 \\
+UCSD Ped2 (PatchCore) & $L=1$ & 0.965 & 0.044 & 0.035 & 167 / 2550 \\
+CUHK Avenue (flow) & $L^\ast(0.1)=20$ & 0.761 & 0.000 & 0.203 & 39 / 775 \\
+CUHK Avenue (flow) & $L=1$ & 0.975 & 0.000 & 0.063 & 1323 / 15328 \\
+Mivia-IWDD (flow) & $L^\ast(0.1)=10$ & 0.873 & 0.000 & 0.104 & 431 / 5472 \\
+Mivia-IWDD (flow) & $L=1$ & 0.972 & 0.000 & 0.057 & 5054 / 53884 \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Under valid, independent p-values the conditional mean is 0.5 and the CDF deviation is 0.\end{minipage}
+\end{table}
