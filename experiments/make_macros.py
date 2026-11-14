@@ -68,7 +68,39 @@ def _derived() -> Dict[str, str]:
     m["EpiGridEta"] = str(len(prior.eta))
     m["EpiGridPi"] = str(len(prior.pi))
     m["EpiEtaMin"] = f"{min(prior.eta):g}"
+
+    # Simulator configuration (defaults of sentinel_e.streams.StreamConfig).
+    from sentinel_e.streams import StreamConfig
+    sc = StreamConfig()
+    m["SimCalN"] = _int(sc.n_calibration)
+    m["SimDiurnalFrames"] = _int(sc.diurnal_period)
+    m["SimDiurnalMin"] = _fmt(sc.diurnal_period / FPS / 60.0, 1)
+    m["NetPropProb"] = _fmt(sc.propagation_prob, 2)
+    m["NetPropLagSec"] = _fmt(sc.propagation_lag / FPS, 0)
     return m
+
+
+def _at_alpha(rows, alpha):
+    """The sweep row whose knob is the given nominal level, or None."""
+    return next((r for r in rows if abs(r["knob"] - alpha) < 1e-12), None)
+
+
+# Real-video macros from the obsolete exp_r1 / exp_r2 protocol. Any of these
+# that cannot be computed from the current payloads is defined as \todo{obsolete}.
+_OBSOLETE_REAL = [
+    "RealReps", "RealLagReps",
+    "RealPedTwoLag", "RealAvenueLag",
+    "RealPedTwoPfaHeadline", "RealAvenuePfaHeadline",
+    "RealPedTwoMissHeadline", "RealAvenueMissHeadline",
+    "RealPedTwoCiHiHeadline", "RealAvenueCiHiHeadline",
+    "RealPedTwoWorstAlpha", "RealAvenueWorstAlpha",
+    "RealPedTwoWorstPfa", "RealAvenueWorstPfa",
+    "RealDelayReps",
+    "RealDelayPedTwoSec", "RealDelayPedTwoPfa", "RealDelayPedTwoMiss",
+    "RealDelayPedTwoNBaselinesPass", "RealDelayPedTwoNBaselines",
+    "RealDelayAvenueSec", "RealDelayAvenuePfa", "RealDelayAvenueMiss",
+    "RealDelayAvenueNBaselinesPass", "RealDelayAvenueNBaselines",
+]
 
 
 def collect() -> Dict[str, str]:
@@ -124,13 +156,26 @@ def collect() -> Dict[str, str]:
                    and r["pfa"] <= cap and r["miss_rate"] < 0.9]
             return min(pts, key=lambda r: r["add_censored"]) if pts else None
 
-        se = best_at("SENTINEL-E")
+        # Headline SENTINEL-E row = the common nominal level used in tab3
+        # (both exact e-processes are shown at alpha = 0.01 there).
+        se = _at_alpha(res["SENTINEL-E"], 0.01)
         if se:
             m["DelaySentinelSec"] = _fmt(se["add_censored"] / FPS, 1)
             m["DelaySentinelCondSec"] = _fmt(se["add"] / FPS, 1)
             m["DelaySentinelPfa"] = _fmt(se["pfa"], 3)
-            m["DelaySentinelMiss"] = _fmt(se["miss_rate"], 2)
+            m["DelaySentinelMiss"] = _fmt(se["miss_rate"], 3)
             m["DelaySentinelCi"] = _fmt(1.96 * (se["add_censored_se"] or 0) / FPS, 1)
+        # Equal-nominal-level comparison of the two exact e-processes.
+        for a, tag in ((0.5, "Half"), (0.2, "Fifth"), (0.01, "Hundredth")):
+            for name, vt in (("SENTINEL-E", "SE"), ("Changepoint mixture", "Cp")):
+                r = _at_alpha(res[name], a)
+                if r is None:
+                    continue
+                m[f"Eq{vt}{tag}DelaySec"] = _fmt(r["add_censored"] / FPS, 1)
+                m[f"Eq{vt}{tag}CiSec"] = _fmt(
+                    1.96 * (r["add_censored_se"] or 0) / FPS, 1)
+                m[f"Eq{vt}{tag}Miss"] = _fmt(r["miss_rate"], 3)
+                m[f"Eq{vt}{tag}Pfa"] = _fmt(r["pfa"], 3)
         admissible, inadmissible = [], []
         for name in res:
             if name == "SENTINEL-E":
@@ -374,8 +419,8 @@ def collect() -> Dict[str, str]:
         m["ExpNineReps"] = str(e9["reps"])
         counts9 = e9.get("episode_counts") or sorted(
             (int(k) for k in e9["by_episodes"]))
-        for k, tag in ((counts9[0], "One"), (counts9[len(counts9) // 2], "Mid"),
-                       (counts9[-1], "Many")):
+        for k, tag in ((counts9[0], "One"), (counts9[1], "Two"),
+                       (counts9[len(counts9) // 2], "Mid"), (counts9[-1], "Many")):
             d = e9["by_episodes"][str(k)]["paired"]["epi_vs_cp24"]["delay"]
             mi = e9["by_episodes"][str(k)]["paired"]["epi_vs_cp24"]["miss"]
             m[f"EpiPairedDiff{tag}"] = _fmt(d["mean_diff"] / FPS, 1)
@@ -436,52 +481,70 @@ def collect() -> Dict[str, str]:
         pass
 
     # ---- Experiment R1 (real-video validity) ------------------------------ #
+    # The exp_r1 payload is from an obsolete protocol. Keys it lacks are
+    # skipped; unfilled names fall back to \todo{obsolete} in collect().
     try:
         er1 = load_json("exp_r1_validity")
-        m["RealReps"] = str(er1["reps"])
-        m["RealLagReps"] = str(er1["lag_reps"])
+        try:
+            m["RealReps"] = str(er1["reps"])
+        except KeyError:
+            pass
+        try:
+            m["RealLagReps"] = str(er1["lag_reps"])
+        except KeyError:
+            pass
         labels = {"ped2": "PedTwo", "avenue": "Avenue"}
         for name, tag in labels.items():
-            m[f"Real{tag}Lag"] = str(er1["dataset_lag"][name])
-            rows = er1["alpha_sweep"][name]
-            at01 = next(r for r in rows if abs(r["alpha"] - 0.1) < 1e-12)
-            m[f"Real{tag}PfaHeadline"] = _fmt(at01["pfa"], 3)
-            m[f"Real{tag}MissHeadline"] = _fmt(at01["miss_rate"], 2)
-            m[f"Real{tag}CiHiHeadline"] = _fmt(at01["pfa_ci"][1], 3)
-            worst = max(rows, key=lambda r: r["pfa"])
-            m[f"Real{tag}WorstAlpha"] = _fmt(worst["alpha"], 2)
-            m[f"Real{tag}WorstPfa"] = _fmt(worst["pfa"], 3)
+            try:
+                m[f"Real{tag}Lag"] = str(er1["dataset_lag"][name])
+                rows = er1["alpha_sweep"][name]
+                at01 = next(r for r in rows if abs(r["alpha"] - 0.1) < 1e-12)
+                m[f"Real{tag}PfaHeadline"] = _fmt(at01["pfa"], 3)
+                m[f"Real{tag}MissHeadline"] = _fmt(at01["miss_rate"], 2)
+                m[f"Real{tag}CiHiHeadline"] = _fmt(at01["pfa_ci"][1], 3)
+                worst = max(rows, key=lambda r: r["pfa"])
+                m[f"Real{tag}WorstAlpha"] = _fmt(worst["alpha"], 2)
+                m[f"Real{tag}WorstPfa"] = _fmt(worst["pfa"], 3)
+            except (KeyError, StopIteration, TypeError):
+                pass
     except FileNotFoundError:
         pass
 
     # ---- Experiment R2 (real-video delay-vs-FAR against baselines) -------- #
+    # The exp_r2 payload is from the same obsolete protocol as exp_r1.
     try:
         er2 = load_json("exp_r2_delayfar")
-        m["RealDelayReps"] = str(er2["reps"])
+        try:
+            m["RealDelayReps"] = str(er2["reps"])
+        except KeyError:
+            pass
         labels = {"ped2": "PedTwo", "avenue": "Avenue"}
         for name, tag in labels.items():
-            res = er2["results"][name]
-            se = min(
-                (r for r in res["SENTINEL-E"]
-                 if r["add"] is not None and np.isfinite(r["add"])
-                 and r["pfa"] <= 0.1 and r["miss_rate"] < 0.9),
-                key=lambda r: (r["pfa"], r["add_censored"]), default=None,
-            )
-            if se:
-                m[f"RealDelay{tag}Sec"] = _fmt(se["add_censored"] / FPS, 1)
-                m[f"RealDelay{tag}Pfa"] = _fmt(se["pfa"], 3)
-                m[f"RealDelay{tag}Miss"] = _fmt(se["miss_rate"], 2)
-            n_pass = 0
-            for method, rs in res.items():
-                if method == "SENTINEL-E":
-                    continue
-                usable = [r for r in rs
-                          if r["add_censored"] is not None
-                          and np.isfinite(r["add_censored"]) and r["miss_rate"] < 0.9]
-                if usable and min(r["pfa"] for r in usable) <= 0.1:
-                    n_pass += 1
-            m[f"RealDelay{tag}NBaselinesPass"] = str(n_pass)
-            m[f"RealDelay{tag}NBaselines"] = str(len(res) - 1)
+            try:
+                res = er2["results"][name]
+                se = min(
+                    (r for r in res["SENTINEL-E"]
+                     if r["add"] is not None and np.isfinite(r["add"])
+                     and r["pfa"] <= 0.1 and r["miss_rate"] < 0.9),
+                    key=lambda r: (r["pfa"], r["add_censored"]), default=None,
+                )
+                if se:
+                    m[f"RealDelay{tag}Sec"] = _fmt(se["add_censored"] / FPS, 1)
+                    m[f"RealDelay{tag}Pfa"] = _fmt(se["pfa"], 3)
+                    m[f"RealDelay{tag}Miss"] = _fmt(se["miss_rate"], 3)
+                n_pass = 0
+                for method, rs in res.items():
+                    if method == "SENTINEL-E":
+                        continue
+                    usable = [r for r in rs
+                              if r["add_censored"] is not None
+                              and np.isfinite(r["add_censored"]) and r["miss_rate"] < 0.9]
+                    if usable and min(r["pfa"] for r in usable) <= 0.1:
+                        n_pass += 1
+                m[f"RealDelay{tag}NBaselinesPass"] = str(n_pass)
+                m[f"RealDelay{tag}NBaselines"] = str(len(res) - 1)
+            except (KeyError, TypeError, ValueError):
+                pass
     except FileNotFoundError:
         pass
 
@@ -511,7 +574,124 @@ def collect() -> Dict[str, str]:
     except FileNotFoundError:
         pass
 
+    # ---- Experiment 12 (episodic vs changepoint across simulator corners) -- #
+    try:
+        e12 = load_json("exp12_corner_sweep")
+        rows12 = {r["name"]: r for r in e12["rows"]}
+        m["CornerReps"] = str(e12["reps"])
+        m["CornerFloorMiss"] = _fmt(
+            rows12["L=200, gap=1500, pi=0.2, 4 ep."]["epi"]["miss_rate"], 2)
+        for name, tag in (
+            ("L=1600, gap=1500, pi=0.2, 4 ep.", "CornerShortGap"),
+            ("L=1600, gap=12000, pi=0.2, 4 ep.", "CornerLongGap"),
+            ("L=1600, gap=1500, pi=0.7, 4 ep.", "CornerDense"),
+            ("single episode, L=800, pi=0.35", "CornerSingle"),
+            ("permanent change, pi=1.0 (L=70000)", "CornerPermanent"),
+        ):
+            r = rows12[name]
+            d, ci = r["delay_diff_s"], r["delay_diff_ci95_s"]
+            m[f"{tag}Diff"] = _fmt(d, 1)
+            m[f"{tag}Ci"] = f"[{d_sign(ci[0])}, {d_sign(ci[1])}]"
+            m[f"{tag}EpiOnly"] = str(r["miss_epi_only_detect"])
+            m[f"{tag}CpOnly"] = str(r["miss_cp24_only_detect"])
+            m[f"{tag}P"] = _fmt(r["miss_p_mcnemar"], 3)
+    except (FileNotFoundError, KeyError, StopIteration):
+        pass
+
+    # ---- Experiment 13 (week-long horizon, real 24 h diurnal cycle) ------- #
+    try:
+        e13 = load_json("exp13_horizon_week")
+        rows13 = e13["rows"]
+        one_h = min(rows13, key=lambda r: r["hours"])
+        six_h = next(r for r in rows13 if abs(r["hours"] - 6.0) < 1e-9)
+        m["HorizonWeekReps"] = str(e13["reps_sentinel"])
+        m["HorizonWeekBaselineReps"] = str(e13["reps_baseline"])
+        m["HorizonWeekMaxHours"] = _fmt(max(r["hours"] for r in rows13), 0)
+        m["HorizonWeekMaxMFrames"] = _fmt(max(r["frames"] for r in rows13) / 1e6, 2)
+        m["HorizonWeekSentinelPfaMax"] = _fmt(
+            max(r["sentinel"]["pfa"] for r in rows13), 3)
+        m["HorizonWeekSentinelCiHi"] = _fmt(
+            max(r["sentinel"]["pfa_ci"][1] for r in rows13), 3)
+        m["HorizonWeekPvalueOneHour"] = _fmt(one_h["pvalue"]["pfa"], 3)
+        m["HorizonWeekFixedOneHour"] = _fmt(one_h["fixed"]["pfa"], 3)
+        m["HorizonWeekFixedSixHour"] = _fmt(six_h["fixed"]["pfa"], 3)
+        m["HorizonWeekPvalueSixHour"] = _fmt(six_h["pvalue"]["pfa"], 3)
+    except (FileNotFoundError, KeyError, StopIteration):
+        pass
+
+    # ---- Experiment 3b (activity shift, unweighted vs weighted, gate) ----- #
+    try:
+        e3b = load_json("exp3b_shift_default")
+        for key, tag in (("1.0", "ShiftDefOne"), ("1.5", "ShiftDefOneHalf"),
+                         ("2.0", "ShiftDefTwo"), ("3.0", "ShiftDefThree")):
+            cell = e3b["cells"][key]
+            r, w = cell["residual"], cell["residual + LR wts"]
+            m[f"{tag}ResPfa"] = _fmt(r["pfa"], 3)
+            m[f"{tag}ResCiLo"] = _fmt(r["pfa_ci"][0], 3)
+            m[f"{tag}ResCiHi"] = _fmt(r["pfa_ci"][1], 3)
+            m[f"{tag}ResVerdict"] = r["verdict"]
+            m[f"{tag}ResMiss"] = _fmt(r["miss_rate"], 3)
+            m[f"{tag}WtPfa"] = _fmt(w["pfa"], 3)
+            m[f"{tag}WtMiss"] = _fmt(w["miss_rate"], 3)
+        dec = e3b["decision"]
+        m["ShiftDefMissDelta"] = _fmt(dec["condition_b_miss_delta_at_1.0"], 3)
+        m["ShiftDefMissDeltaMax"] = _fmt(dec["condition_b_threshold"], 2)
+        m["ShiftDefRecommendWeighted"] = (
+            "recommend" if dec["recommend_weighted_default"] else "keep unweighted")
+        m["ShiftDefGateMinFrac"] = _fmt(min(
+            g["frac_streams_triggered"] for g in e3b["gate"].values()), 2)
+        m["ShiftDefGateMinBlocks"] = _fmt(min(
+            g["mean_frac_blocks_triggered"] for g in e3b["gate"].values()), 2)
+        m["ShiftDefNullStreams"] = str(e3b["reps_null"])
+        m["ShiftDefSignalStreams"] = str(e3b["reps_signal"])
+    except (FileNotFoundError, KeyError, StopIteration):
+        pass
+
+    # ---- Cost derivation (exp5 end-to-end and component benchmarks) ------- #
+    try:
+        e5 = load_json("exp5_compute")
+        e2e = e5["end_to_end"]
+        conf = max(e5["conformal"], key=lambda d: d["n_calibration"])
+        det32 = next(d for d in e5["detector"] if d["n_grid"] == 32)
+        lag = e2e["decorrelation_lag"]
+        conf_us = conf["sec_per_frame"] * 1e6
+        step_us = det32["sec_per_step_streaming"] * 1e6
+        vec_us = det32["sec_per_step_vectorised"] * 1e6
+        m["CostConformalUs"] = _fmt(conf_us, 2)
+        m["CostConformalN"] = _int(conf["n_calibration"])
+        m["CostStepVecUs"] = _fmt(vec_us, 1)
+        m["CostAmortStreamUs"] = _fmt(conf_us + step_us / lag, 1)
+        m["CostAmortVecUs"] = _fmt(conf_us + vec_us / lag, 2)
+        m["CostFrames"] = _int(e2e["frames"])
+        m["CostBetSteps"] = _int(e2e["betting_steps"])
+        m["CostMonitorSec"] = _fmt(e2e["monitor_seconds"], 3)
+        m["CostBetEndToEndUs"] = _fmt(
+            1e6 * e2e["monitor_seconds"] / e2e["betting_steps"], 1)
+    except (FileNotFoundError, KeyError, StopIteration):
+        pass
+
+    # ---- Fleet (exp4) and diagnostic (exp7) configuration counts ---------- #
+    try:
+        e4 = load_json("exp4_network")
+        m["NetEvalMinutes"] = _fmt(e4["T_eval"] / FPS / 60.0, 0)
+        m["NetTrainFleets"] = str(e4["n_train"])
+    except (FileNotFoundError, KeyError):
+        pass
+    try:
+        e7 = load_json("exp7_diagnostics")
+        m["DiagPN"] = _int(e7["coverage"]["0.02"]["n"])
+    except (FileNotFoundError, KeyError):
+        pass
+
+    for name in _OBSOLETE_REAL:
+        m.setdefault(name, "\\todo{obsolete}")
+
     return m
+
+
+def d_sign(x: float) -> str:
+    """A signed one-decimal delay, e.g. +38.5 or -55.7."""
+    return f"{float(x):+.1f}"
 
 
 # LaTeX control sequences the manuscript uses that are not result macros.
@@ -548,6 +728,9 @@ def main():
         "% Auto-generated by experiments/make_macros.py -- do not edit.",
         "% Every number quoted in the manuscript prose is defined here and comes",
         "% directly from the JSON payloads written by the experiment scripts.",
+        "",
+        "% Visible placeholder for a value that is still open or obsolete.",
+        "\\providecommand{\\todo}[1]{\\textbf{[TODO: #1]}}",
         "",
     ]
     for k, v in sorted(macros.items()):
