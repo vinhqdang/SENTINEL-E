@@ -1,7 +1,7 @@
 % SENTINEL-E: Anytime-Valid Sequential Detection for Streaming Illegal Dumping
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL /tmp/sentinel_e_scratch/old/paper/sentinel_e.tex   Thu Sep 10 02:23:51 2026
-%DIF ADD sentinel_e.tex                                                                                                 Sat Nov 14 20:39:58 2026
+%DIF ADD sentinel_e.tex                                                                                                 Sat Nov 14 21:00:47 2026
 % Surveillance.  Prepared for the Neural Computing and Applications topical
 % collection "Emerging Trends in Smart Waste Monitoring and Environmental
 % Surveillance".  For submission, replace the preamble with Springer's
@@ -815,7 +815,7 @@ corpora --- realised false-alarm rate \RealPedTwoPfaHeadline{} on Ped2 and
 baseline tested fails to hold it on the same real streams; detection power is real but modest on Ped2 and weak on Avenue, whose real episodes are shorter.
 This gap, not the simulated results, is the paper's central open problem. SENTINEL-E costs \CostSentinelUs\,}%DIFDELCMD < \textmu %%%
 \DIFdel{s per frame, \CostSentinelPct\% of
-the detector it wraps}\DIFdelend \DIFaddbegin \DIFadd{). Detection power is limited and backbone-dependent, and classical baselines selected by the same rule perform comparably. The guarantee layer costs one to two microseconds per frame}\DIFaddend .
+the detector it wraps}\DIFdelend \DIFaddbegin \DIFadd{). Detection power is limited and backbone-dependent, and classical baselines selected by the same rule perform comparably. The guarantee layer costs under two microseconds per frame}\DIFaddend .
 \end{abstract}
 
 \vspace{0.5em}
@@ -1062,7 +1062,7 @@ reports, as a negative result, that the one
 \cref{eq:forward,alg:episodic}}\hskip0pt%DIFAUXCMD
 ).
       Direct evaluation over active starts costs $O(t)$. The guarantee layer adds
-      one to two microseconds per frame (\mbox{%DIFAUXCMD
+      under two microseconds per frame (\mbox{%DIFAUXCMD
 \cref{sec:compute}}\hskip0pt%DIFAUXCMD
 ).
 }
@@ -2115,8 +2115,8 @@ at 25\,fps. This is the diurnal period in Experiments 1--12. Their streams last
 40 to 60 minutes. A shorter horizon sweep, up to \HorizonMaxHours\,h, is in Online Resource~1,
 Sect.~S3. Only the week-long experiment in \mbox{%DIFAUXCMD
 \cref{sec:validity} }\hskip0pt%DIFAUXCMD
-uses a real
-24\,h day}\DIFaddend .
+uses a full
+24\,h simulated day}\DIFaddend .
 
 \paragraph{Baselines.}
 A fixed score threshold\DIFdelbegin \DIFdel{with an optional $k$-of-$m$ persistence filter; }\DIFdelend \DIFaddbegin \DIFadd{, and }\DIFaddend a per-frame threshold on the \DIFdelbegin \emph{\DIFdel{same}} %DIFAUXCMD
@@ -3225,7 +3225,7 @@ trade for a guarantee and a poor one for a detector. }%DIFDELCMD <
 %DIFDELCMD < %%%
 \DIFdel{The practical recommendation follows directly and is implemented in the library:
 run the classifier two-sample test continuously, use the plain residual
-construction while it reports no detectable shift }\DIFdelend \DIFaddbegin \DIFadd{$25$ and $50$ frames, a box margin halved, slack 1.0, box margin with slack 1.0, and slack 0.5. Of these, only slack 0.5 and cool-down at $k=50$ met the pre-set criterion. We therefore confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000}\DIFaddend , \DIFaddbegin \DIFadd{0.0007, 0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ }\DIFaddend and \DIFdelbegin \DIFdel{enable weighting once it
+construction while it reports no detectable shift }\DIFdelend \DIFaddbegin \DIFadd{$25$ and $50$ frames, a box margin halved, slack 1.0, box margin with slack 1.0, and slack 0.5. Of these, only slack 0.5 and cool-down at $k=50$ met the pre-set criterion. We therefore confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000, 0.0007}\DIFaddend , \DIFaddbegin \DIFadd{0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ }\DIFaddend and \DIFdelbegin \DIFdel{enable weighting once it
 does --- accepting that the camera has become a conservative detector and that
 the operator should be told the calibration set no longer covers the conditions. An abstention or miss rate that jumps is a signal to recalibrate, not a defect
 to hide}\DIFdelend \DIFaddbegin \DIFadd{$\times 3.0$, and all are valid. The miss rates are 0.010, 0.040, 0.140 and 0.470.
@@ -3379,47 +3379,46 @@ dependence comes from }\DIFaddend shared weather, shared lighting and correlated
 \Cref{tab:compute} }\hskip0pt%DIFAUXCMD
 measures what an added-cost claim can be measured to mean:
 a same-CPU ratio against a stand-in backbone we built to the scale of a real
-edge detector,
-not a measurement on a specific published model or deployed hardware, and one that excludes the
-cost of extracting the low-dimensional
-context features Layer }\DIFdelend \DIFaddbegin \DIFadd{The conformal p-value and the e-detector step run only at betting instants,
+edge detector, not a measurement on a specific published model or deployed
+hardware,
+and one that excludes the cost of extracting the low-dimensional
+context features Layer 1 consumes (time of day, a weather flag, a
+background-subtraction motion measure) and the peak memory the guarantee layer needs, neither of which this table reports. Within that scope: the
+reference
+backbone --- a depthwise-separable stack with \CostBackboneParams}\DIFdelend \DIFaddbegin \DIFadd{The conformal p-value and the e-detector step run only at betting instants,
 one per decorrelation lag. With $L=\CostLag{}$, the batch path costs
-$(0.34+13.69)/20 = 0.702$\,}\textmu \DIFadd{s per frame predicted, with the measured cost
+$(0.34+13.69)/20 = 0.702$}\DIFaddend \,\DIFdelbegin \DIFdel{M
+parameters at $320\times320$, timed on the same CPU --- costs
+\CostBackboneMs}\DIFdelend \DIFaddbegin \textmu \DIFadd{s per frame predicted, with the measured cost
 given below. The streaming path, which a deployed camera runs, costs
-$(0.34+39.28)/20 = 1.98$\,}\textmu \DIFadd{s per frame predicted. The guarantee layer therefore
-costs one to two microseconds per frame on either path. The lag $L=20$ is the
+$(0.34+39.28)/20 = 1.98$}\DIFaddend \,\DIFdelbegin \DIFdel{ms }\DIFdelend \DIFaddbegin \textmu \DIFadd{s per frame predicted. The guarantee layer therefore
+costs under two microseconds per frame on either path. The lag $L=20$ is the
 decorrelation lag estimated on the 200}{\DIFadd{,}}\DIFadd{000-frame benchmark stream. The simulation
-experiments use a lag of 18, and the lags selected on real video range from }\DIFaddend 1 \DIFdelbegin \DIFdel{consumes (time of day,a weather flag, a
-background-subtraction motion measure) and the peak memory the guarantee layer
-needs, neither of which this table reports.
-Within that scope: the reference
-backbone --- a depthwise-separable stack with \CostBackboneParams}\DIFdelend \DIFaddbegin \DIFadd{to
-30. Because the batch cost scales as $1/L$, a lag of 1 gives about 14}\DIFaddend \,\DIFdelbegin \DIFdel{M
-parameters at $320\times320$, timed on the same CPU --- costs \CostBackboneMs}\DIFdelend \DIFaddbegin \textmu \DIFadd{s per
+experiments use a lag of 18, and the lags selected on real video range from 1 to
+30. Because the batch cost scales as $1/L$, a lag of 1 gives about 14\,}\textmu \DIFadd{s }\DIFaddend per
 frame.
-}
+\DIFdelbegin \DIFdel{SENTINEL-E adds \CostSentinelUs}\DIFdelend \DIFaddbegin 
 
-\DIFadd{The measured end-to-end cost is $0.610$}\DIFaddend \,\DIFdelbegin \DIFdel{ms }\DIFdelend \DIFaddbegin \textmu \DIFadd{s per frame, or 0.122\,s over a
-200,000-frame stream. It includes the $O(T)$ expansion of the bets onto the
-frame grid, which costs 0.017\,}\textmu \DIFadd{s }\DIFaddend per frame. \DIFdelbegin \DIFdel{SENTINEL-E adds \CostSentinelUs}\DIFdelend \DIFaddbegin \DIFadd{The prediction is about 15\%
-above the measurement, because the per-call component timings carry overhead
-that one long run amortises. Against the 36.84}\DIFaddend \,\DIFdelbegin %DIFDELCMD < \textmu %%%
-\DIFdel{s per frameamortised, or \CostSentinelPct\%of the backbone
-}\DIFdelend \DIFaddbegin \DIFadd{ms frozen backbone, the measured
-cost is 0.0017\% per frame}\DIFaddend , \DIFdelbegin \DIFdel{running at \CostRealtimeFactor$\times$ real time on one thread}\DIFdelend \DIFaddbegin \DIFadd{and the predicted cost is 0.0019\%.
-}
-
-\DIFadd{The figures exclude context-feature extraction, video decoding, the backbone
-itself and peak memory. The backbone is a stand-in for an edge detector, with
-\CostBackboneParams{}\,M parameters at $320\times320$, not a published model}\DIFaddend .
-Fitting a camera's calibration takes \DIFdelbegin \DIFdel{\CostFitSec}\DIFdelend \DIFaddbegin \DIFadd{\CostFitSec{}}\DIFaddend \,s\DIFdelbegin \DIFdel{once. The reason the added cost is this small
+\DIFadd{The measured end-to-end cost is $0.610$}\DIFaddend \,\textmu s per frame\DIFdelbegin \DIFdel{amortised, or \CostSentinelPct\% of the backbone, running at
+\CostRealtimeFactor$\times$ real time on one thread. Fitting a camera's
+calibration takes \CostFitSec}\DIFdelend \DIFaddbegin \DIFadd{, or 0.122}\DIFaddend \,\DIFdelbegin \DIFdel{s once. The reason the added cost is this small
 is structural rather than incidental: the per-frame arithmetic is the $O(1)$
 forward recursion of \mbox{%DIFAUXCMD
 \cref{eq:forward}}\hskip0pt%DIFAUXCMD
 , and it runs once per decorrelation lag
-rather than onceper frame. Hardware that already runs the detector in real time,
-and already extracts the context features, needs no additional
-budget}\DIFdelend \DIFaddbegin \DIFadd{, once}\DIFaddend .
+rather than once per frame. Hardware that already runs the detector in real time, and already extracts the context features, needs no additional
+budget}\DIFdelend \DIFaddbegin \DIFadd{s over a
+200,000-frame stream. It includes the $O(T)$ expansion of the bets onto the
+frame grid, which costs 0.017\,}\textmu \DIFadd{s per frame. The prediction is about 15\%
+above the measurement, because the per-call component timings carry overhead
+that one long run amortises. Against the 36.84\,ms frozen backbone, the measured
+cost is 0.0017\% per frame, and the predicted cost is 0.0019\%.
+}
+
+\DIFadd{The figures exclude context-feature extraction, video decoding, the backbone
+itself and peak memory. The backbone is a stand-in for an edge detector, with
+\CostBackboneParams{}\,M parameters at $320\times320$, not a published model.
+Fitting a camera's calibration takes \CostFitSec{}\,s, once}\DIFaddend .
 
 \subsection{Checking the assumptions}
 \label{sec:diagnostics}

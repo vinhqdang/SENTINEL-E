@@ -375,7 +375,7 @@ one per decorrelation lag. With $L=\CostLag{}$, the batch path costs
 $(0.34+13.69)/20 = 0.702$\,\textmu s per frame predicted, with the measured cost
 given below. The streaming path, which a deployed camera runs, costs
 $(0.34+39.28)/20 = 1.98$\,\textmu s per frame predicted. The guarantee layer therefore
-costs one to two microseconds per frame on either path. The lag $L=20$ is the
+costs under two microseconds per frame on either path. The lag $L=20$ is the
 decorrelation lag estimated on the 200{,}000-frame benchmark stream. The simulation
 experiments use a lag of 18, and the lags selected on real video range from 1 to
 30. Because the batch cost scales as $1/L$, a lag of 1 gives about 14\,\textmu s per

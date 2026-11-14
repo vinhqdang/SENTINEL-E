@@ -178,7 +178,7 @@ def make_table(payload: Dict) -> None:
          "verdict"],
         caption=(
             r"Paired episodic-versus-changepoint comparison across simulator "
-            r"configurations at $\alpha=0.01$, "
+            r"configurations at $\alpha=0.01$ ($L$: episode length in frames; gap: mean frames between episodes; $\pi$: fraction of anomalous frames within an episode; cp24: our reimplementation of the changepoint mixture of Saha and Ramdas on a 24-point $\kappa$ grid; epi: the episodic mixture on a grid of equal size), "
             f"{reps} seeded pairs per configuration. Delay is censored (misses "
             r"charged the remaining horizon); the difference is cp24 minus epi, so "
             r"a positive value favours the episodic arm. Miss discordance counts "

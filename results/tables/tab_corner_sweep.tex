@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering
-\caption{Paired episodic-versus-changepoint comparison across simulator configurations at $\alpha=0.01$, 200 seeded pairs per configuration. Delay is censored (misses charged the remaining horizon); the difference is cp24 minus epi, so a positive value favours the episodic arm. Miss discordance counts streams that only the episodic arm (epi) or only the changepoint arm (cp24) detect. Verdicts treat a difference smaller than 1\,s in absolute value as equivalent, whatever its CI.}
+\caption{Paired episodic-versus-changepoint comparison across simulator configurations at $\alpha=0.01$ ($L$: episode length in frames; gap: mean frames between episodes; $\pi$: fraction of anomalous frames within an episode; cp24: our reimplementation of the changepoint mixture of Saha and Ramdas on a 24-point $\kappa$ grid; epi: the episodic mixture on a grid of equal size), 200 seeded pairs per configuration. Delay is censored (misses charged the remaining horizon); the difference is cp24 minus epi, so a positive value favours the episodic arm. Miss discordance counts streams that only the episodic arm (epi) or only the changepoint arm (cp24) detect. Verdicts treat a difference smaller than 1\,s in absolute value as equivalent, whatever its CI.}
 \label{tab:corner_sweep}
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{lrrrrrrrrrrl}
