@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\caption{High-replicate re-run of the load-bearing ablation rows at $\alpha=0.01$: 1,500 null streams per row for the realised PFA and 200 post-change streams for the miss rate and censored delay. A row is \emph{valid} when the Wilson upper bound is at or below nominal, \emph{invalid} when the lower bound exceeds it, and \emph{unresolved} otherwise (0 of 7 rows unresolved).}
+\label{tab:ablation_highrep}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+variant & PFA [95\% CI] & verdict & ARL$_0$ & cens. delay (s) & miss & lag \\
+\midrule
+SENTINEL-E (full) & 0.0000 [0.0000, 0.0026] & valid & 90,000 & 244.5 & 0.015 & 18 \\
+changepoint mixture ($\eta = 0$) & 0.0000 [0.0000, 0.0026] & valid & 90,000 & 311.3 & 0.055 & 18 \\
+bet on every frame & 1.0000 [0.9974, 1.0000] & invalid & 337 & 3.3 & 0.000 & 1 \\
+raw calibration (not thinned) & 0.0020 [0.0007, 0.0059] & valid & 89,909 & 68.4 & 0.000 & 18 \\
+pooled conformal & 0.9887 [0.9819, 0.9929] & invalid & 15,615 & 391.0 & 0.005 & 18 \\
+DKW inflation & 0.0000 [0.0000, 0.0026] & valid & 90,000 & 2025.8 & 0.675 & 18 \\
+no correction ($\delta=0$) & 0.0387 [0.0300, 0.0497] & invalid & 88,561 & 43.1 & 0.000 & 18 \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Same configuration, options and seeds as Online Resource~1, Table~S7; the first 200 post-change streams are identical to exp6's.\end{minipage}
+\end{table}

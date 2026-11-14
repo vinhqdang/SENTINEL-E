@@ -1,0 +1,171 @@
+% Online Resource 1 for the SENTINEL-E manuscript (double-anonymous review).
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{pifont}
+\usepackage{caption}
+\usepackage{microtype}
+\PassOptionsToPackage{hidelinks}{hyperref}
+\usepackage{hyperref}
+\usepackage[capitalise,noabbrev]{cleveref}
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+
+\graphicspath{{figures/}}
+
+% Same tolerant include and figure macros as the main manuscript.
+\newcommand{\inputtable}[1]{%
+  \IfFileExists{tables/#1.tex}{\input{tables/#1}}%
+  {\begin{table}[t]\centering\fbox{\texttt{\detokenize{#1}}: results pending}\end{table}}}
+\newcommand{\resultfig}[2]{%
+  \IfFileExists{figures/#1.pdf}{\includegraphics[width=\linewidth]{#1.pdf}}%
+  {\fbox{\parbox{0.9\linewidth}{\centering\vspace{2em}\texttt{\detokenize{#1}}: figure pending\vspace{2em}}}}}
+\input{tables/macros}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\title{\textbf{Online Resource 1}\\[0.4em]
+       Supplementary material for \emph{SENTINEL-E: Anytime-Valid Sequential
+       Detection for Streaming Visual Anomaly Surveillance}}
+\author{}
+\date{}
+
+\hypersetup{pdfauthor={},pdftitle={SENTINEL-E: Online Resource 1},pdfsubject={},pdfkeywords={}}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\begin{center}
+  \emph{Manuscript prepared for double-anonymous peer review. Author names,
+  affiliations, and declarations appear on the separate title page.}
+\end{center}
+\vspace{0.5em}
+
+This document collects the material that supports the main text without
+belonging to its argument. Section and table numbers carry the prefix S. Every
+number is generated from the same experiment outputs as the main text.
+
+\section{Additional real-video results}
+\label{sec:esm-real}
+
+\Cref{tab:r3_test_alphas} repeats the SENTINEL-E test at each nominal level,
+$\alpha\in\{0.05,0.1,0.2\}$, with the lag selected on training videos for that
+level. Each level is an independent selection, so the rows are not a single
+curve. Every entry uses the same per-video null trials as the main text.
+
+\inputtable{tabr3_test_alphas}
+
+\Cref{tab:r3_lags} shows the sensitivity of the test results to the betting lag
+across the whole grid. The selected lag is marked, and it is chosen on training
+videos only. It is a sensitivity analysis, not a basis for choosing a
+different operating point after the test results are known.
+
+\inputtable{tabr3_lags}
+
+\Cref{tab:r3_mivia_types} splits the Mivia-IWDD test results by event type at
+$\alpha=0.1$ and gives every baseline's normal-video false alarms. Detection
+is by episode, one per positive video. The static and dynamic counts for
+PatchCore do not differ at this sample size of 25 videos per type. The
+baseline knobs are those of the main text, including the conservative fallback
+where no training knob was admissible.
+
+\inputtable{tabr3_mivia_types}
+
+\section{Unpaired episode comparisons (descriptive)}
+\label{sec:esm-episodes}
+
+\Cref{fig:esm-episodes}, \cref{tab:episodes} and \cref{tab:intermittency}
+compare the episodic and changepoint mixtures
+without pairing the seeds or matching the grids. The episodic arm uses its
+$6\times4$ grid, and the changepoint arm uses 32 log-spaced values of $\kappa$.
+Each row uses independent seeds. These tables are descriptive. The claims in
+the main text rest on the paired comparison (Sect.~4.5), which removes the grid
+confound and uses shared seeds.
+
+\Cref{tab:episodes} is unpaired and uses different grids, so it is descriptive
+only. The paired comparison in the main text, Sect.~4.5, supersedes it. At one
+episode the paired changepoint-minus-episodic delay difference is
+\EpiPairedDiffOne\,s (95\% CI \EpiPairedCIOne{}), so the changepoint mixture is
+faster.
+
+The stream miss rates in \Cref{tab:episodes} for two episodes differ from
+those in the main-text per-episode table. Those are independent runs of the same
+configuration, and differences of this size at 200 streams per row are within
+Monte Carlo error.
+
+\begin{figure}[t]
+  \centering
+  \resultfig{fig5_episodes}{}
+  \caption{Unpaired point estimates of the episodic and changepoint mixtures
+  against the number of episodes. The paired comparison in the main text,
+  Sect.~4.5, is the basis for the claims about the episode-end axis.}
+  \label{fig:esm-episodes}
+\end{figure}
+
+\inputtable{tab11_episodes}
+\inputtable{tab12_intermittency}
+
+\section{Shorter horizon sweep}
+\label{sec:esm-horizon}
+
+\Cref{tab:horizon} sweeps the horizon from about 10 minutes to 2.7\,h at
+$\alpha=0.01$, with 200 streams per point. SENTINEL-E keeps a false-alarm
+probability of zero. The per-frame rules approach one, and the p-value threshold reaches one by 40 minutes. The
+week-long sweep in the main text, Sect.~4.4, extends this to 168\,h with a
+realistic day.
+
+\inputtable{tab2_horizon}
+
+\section{Full ablation at 200 streams}
+\label{sec:esm-ablation}
+
+\Cref{tab:ablation} lists all 19 variants at 200 null and 200 post-change
+streams per row. At this count, 14 of the 19 variants are unresolved, so the
+table gives point estimates and intervals, not verdicts. The seven load-bearing
+rows are resolved at 1,500 null streams in Sect.~4.11 of the main text, and that
+table supersedes their verdicts here.
+
+\inputtable{tab8_ablation}
+
+\section{Shift-weighting gate diagnostics}
+\label{sec:esm-shift}
+
+\Cref{tab:shift_default} repeats the activity sweep for the two candidate defaults, with the held-out gate's trigger rate. The gate fired on every null stream at every level, so its trigger rate does not separate shifted from unshifted streams. The table's caption gives the pre-specified weighting rule, which the main text applies. The stricter support region is reported in Sect.~4.7 of the main text.
+
+\inputtable{tab_shift_default}
+
+\section{Simulator configuration}
+\label{sec:esm-simulator}
+
+The simulator generates one scalar per frame. Its parameters are the defaults of
+\texttt{sentinel\_e.streams.StreamConfig}, and the experiments override only
+those listed here.
+
+\begin{itemize}
+  \item \textbf{Diurnal period.} \SimDiurnalFrames{} frames per simulated day,
+  which is \SimDiurnalMin{}\,min at 25\,fps. Experiments 1--12 use this period.
+  The week-long experiment uses a 24\,h day of $2{,}160{,}000$ frames instead.
+  \item \textbf{Calibration.} \SimCalN{} raw no-dumping frames per camera by
+  default, which is \HorizonWeekCalDefaultPct\% of a day. The week-long
+  experiment instead calibrates on one full day of \HorizonWeekCalN{} frames.
+  \item \textbf{Weather and activity.} A two-state weather chain shifts the null
+  score. A log-scale Ornstein--Uhlenbeck process drives the scene activity. It
+  is not part of the context the conformal layer bins on.
+  \item \textbf{Score noise.} AR(1) innovations with Student-$t$ tails, so the
+  per-frame scores are autocorrelated and heavy-tailed.
+  \item \textbf{Episodes.} Episodes are separated by exponential gaps, with a
+  fraction $\pi$ of frames anomalous inside each episode and a ramp at each end.
+  \item \textbf{Fleet propagation.} An episode propagates to a neighbour with
+  probability \NetPropProb{} and a mean lag of \NetPropLagSec{}\,s.
+\end{itemize}
+
+\end{document}

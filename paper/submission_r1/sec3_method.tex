@@ -1,0 +1,325 @@
+\section{Method}
+\label{sec:method}
+
+\subsection{Problem formulation}
+\label{sec:problem}
+
+A camera produces frames $x_1, x_2, \ldots$, and a frozen detector $g$ produces scores $s_t = g(x_t) \in \mathbb{R}$, with higher meaning more dumping-like. Each frame also yields a low-dimensional context vector $c_t \in \mathbb{R}^d$: time of day, a weather flag, ambient luminance and a background-subtraction motion measure. Any deployed camera can observe these without privileged knowledge. The operator supplies a per-camera calibration set $\cD = \{(s_i^{\mathrm{cal}}, c_i^{\mathrm{cal}})\}_{i=1}^{n}$ of confirmed no-dumping frames.
+
+Write $\Pinf$ for the law of the stream under ``no dumping ever'' and $\mathbb{P}_{\nu}$ for the law when dumping begins at frame $\nu$. A detection rule is a stopping time $\tau$ with respect to the observation filtration $(\Fcal_t)$. We require:
+
+\begin{definition}[Time-uniform false-alarm control]
+\label{def:tuv}
+A rule has time-uniform false-alarm level $\alpha$ if
+$\Pinf(\tau < \infty) \le \alpha$.
+\end{definition}
+
+The quantifier is the whole point. A per-frame guarantee $\Pinf(\text{alarm at } t) \le \alpha$ for each fixed $t$ says nothing about $\Pinf(\exists t : \text{alarm at } t)$, and the gap grows with the horizon. \Cref{def:tuv} is what a municipality buys when told a detector has a $1\%$ false-alarm rate.
+
+Dumping is episodic, so we write $\mathbb{P}_{\mathcal{E}}$ for the law when a set of episodes $\mathcal{E} = \{[\nu_1, \nu_1 + L_1], \ldots\}$ occurs, within each of which a fraction $\pi$ of frames are anomalous. The single persistent change is the special case of one episode with $L = \infty$ and $\pi = 1$.
+
+We report, over Monte Carlo replicates: $\PFA$, the false-alarm probability: the probability that a null stream of a stated length raises at least one alarm; $\ARL$, the average run length: the mean frames to a false alarm on a null stream, censored at the horizon; $\ADD$, the average detection delay: the mean frames from the first onset $\nu_1$ to the first alarm at or after it, over runs that alarm; and the miss rate, the fraction of post-change segments ending unflagged.
+
+\paragraph{A measurement pitfall, and the fix.}
+Conditional $\ADD$ is averaged over a different subset of runs for each method. A detector that misses the hard events is scored only on the easy ones, and so looks fast. Because the methods compared here differ in miss rate, we also report a censored delay, in which a run that never alarms is charged the whole remaining horizon. The two can rank methods in opposite order. In \cref{sec:episodes} the changepoint mixture has the shorter conditional delay and the longer censored delay. Where they disagree, the censored figure is the comparable one, and head-to-head claims in this paper rest on it.
+
+Every comparison uses a method's \emph{realised} $\PFA$, not its nominal level. A method that misreports its own error rate would otherwise appear to dominate.
+
+\paragraph{Real-video protocol.}
+Each real video is monitored as its own stream, with a fresh detector. Calibration uses training videos only. The betting lag and every baseline knob are selected by leave-one-video-out on training videos, so no test frame informs an operating point (\cref{sec:real-data}). The splicing utility \texttt{build\_stream\_from\_clips} remains in the library for constructing long synthetic streams from clips.
+
+\subsection{Layer 1: conformal calibration}
+\label{sec:layer1}
+
+\paragraph{Betting rate.}
+The e-process of \cref{sec:episodic} needs increments that are conditionally super-uniform given the past. Video violates this badly. Four lags are in play, and they are distinct:
+\begin{itemize}
+\item \emph{Pooled autocorrelation length.} On concatenated training videos the autocorrelation stays above $0.05$ beyond 200 lags. This reflects differences between video means, so we do not use it.
+\item \emph{Within-video autocorrelation.} At lag one it is $0.82$--$0.97$ on the real backbones (\cref{sec:real-data}) and $\DiagAcfRaw$ in simulation.
+\item \emph{Decorrelation lag $\ell$.} In simulation it is estimated from the calibration set alone: $\ell = \AblLag$.
+\item \emph{Betting lag $L^\ast$.} On real footage it is chosen by leave-one-video-out on training videos, because short, heterogeneous videos make an autocorrelation estimate unreliable.
+\end{itemize}
+For the simulated streams, $\ell$ is estimated after projecting out the context-predictable drift with a quadratic least-squares fit, since the slow diurnal component would otherwise return a uselessly large $\ell$. We place one bet per $\ell$ frames. With $\ell = \AblLag$, bets occur more than once per second, far finer than a dumping event. Calibration frames are consecutive video too, so they are thinned by the same lag. The effective calibration size is $n/\ell$ (or $n/L^\ast$ on real footage), and the guarantee is stated in that number. \Cref{sec:ablation} shows that betting on every frame is the largest single source of invalidity we measured.
+
+\paragraph{Conditional calibration.}
+Let $S$ be a nonconformity score. The split-conformal p-value of a deployment frame is $p = (1 + |\{i : S_i \ge S\}|)/(n+1)$, which is super-uniform under exchangeability. A night-time frame is not exchangeable with a daylight-dominated $\cD$, so we conformalise the context-normalised residual
+\begin{equation}
+\label{eq:residual}
+  z \;=\; \frac{s - \hat g(c)}{\hat\sigma(c)},
+  \qquad
+  \hat g(c) \approx \mathbb{E}[s \mid c],
+  \quad
+  \hat\sigma(c) \approx \mathbb{E}\bigl[|s - \hat g(c)| \,\big|\, c\bigr].
+\end{equation}
+Here $\hat g$ and $\hat\sigma$ are ridge regressions on a quadratic-with-interactions basis in $c$, fitted on one half of $\cD$ and conformalised on the other. The split makes the conformalisation residuals independent of the fitted models, so \cref{thm:beta} applies conditionally on them. The remaining assumption is that the normalised residual is independent of $c$. The normalisation provides this, not the split (\cref{sec:limitations}). Mondrian calibration is also implemented, since it is exactly group-conditional. \cref{sec:shift} shows where each wins.
+
+Because a regression can be extrapolated but a guarantee cannot, frames whose context falls outside the region covered by $\cD$ are reported inactive, and the detector bets neutrally on them. The abstention rate reports how often this happens. Under shift the recommended safeguard is the stricter support region, with the Mahalanobis slack set to 0.5 instead of the default 1.5, and the abstention rate is the monitor that signals recalibration (\cref{sec:shift}).
+
+\paragraph{Calibration-conditional validity.}
+The same finite $\cD$ scores every frame for months, so the guarantee must hold conditionally on $\cD$. Conditionally, the p-values deviate from uniform by $O(n^{-1/2})$. The standard remedy adds the Dvoretzky--Kiefer--Wolfowitz deviation $\varepsilon_n(\delta) = \sqrt{\log(2/\delta)/(2n)}$ \citep{dkw1956,massart1990} to every p-value. At $n=\CalN{}$, $\delta=\CalDelta{}$ this moves the smallest attainable p-value from $\CalRawPmin{}$ to $\DkwPmin{}$, which is too blunt. A betting detector uses only the tail, so we use the exact distribution instead.
+
+\begin{theorem}[Exact calibration-conditional levels]
+\label{thm:beta}
+Let $S_1,\dots,S_n$ be i.i.d.\ from a continuous $F$ and let $S$ be an
+independent draw from $F$. For $j = 0,\dots,n-1$ let $\delta_j > 0$ with
+$\sum_j \delta_j \le \delta$, and set
+\begin{equation}
+\label{eq:betalevels}
+  q_j \;=\; \mathrm{Beta}^{-1}\bigl(1-\delta_j;\; j+1,\; n-j\bigr),
+  \qquad q_n = 1 .
+\end{equation}
+Define $\tilde p = q_{J}$ with $J = |\{i : S_i \ge S\}|$. Then there is an event
+$E$ with $\mathbb{P}(E) \ge 1-\delta$, measurable with respect to
+$S_1,\dots,S_n$, on which
+$\mathbb{P}\bigl(\tilde p \le u \mid S_1,\dots,S_n\bigr) \le u$
+for every $u \in [0,1]$.
+\end{theorem}
+
+\begin{proof}
+Conditionally on the calibration sample, $\{J \le j\} = \{S > S_{(n-j)}\}$ where
+$S_{(1)} \le \cdots \le S_{(n)}$ are the order statistics, so
+$\mathbb{P}(J \le j \mid \cD) = 1 - F(S_{(n-j)})$. Since $F$ is continuous,
+$F(S_{(k)}) \sim \mathrm{Beta}(k, n+1-k)$, hence
+$1 - F(S_{(n-j)}) \sim \mathrm{Beta}(j+1, n-j)$. By \cref{eq:betalevels},
+$\mathbb{P}\bigl(1 - F(S_{(n-j)}) > q_j\bigr) = \delta_j$. Let $E$ be the
+intersection over $j$ of the complements; a union bound gives
+$\mathbb{P}(E) \ge 1 - \sum_j \delta_j \ge 1-\delta$. On $E$,
+$\mathbb{P}(\tilde p \le q_j \mid \cD) = \mathbb{P}(J \le j \mid \cD) \le q_j$
+for every $j$, and since $\tilde p$ takes values only in $\{q_0,\dots,q_n\}$
+and $q_j$ is non-decreasing in $j$, super-uniformity at the atoms extends to all
+$u$.
+\end{proof}
+
+We spend the budget as $\delta_j \propto (j+1)^{-2}$, concentrating confidence where the betting functions look. Under this allocation $\{q_j\}$ is verified non-decreasing in $j$, which identifies $\{\tilde p \le q_j\} = \{J \le j\}$ in the proof above. The implementation takes a running maximum as a safeguard for any allocation where this fails. At $n=\CalN{}$, $\delta=\CalDelta{}$ this gives $q_0 = \BetaPmin{}$, against DKW's $\DkwPmin{}$. \Cref{thm:beta} assumes i.i.d.\ calibration draws, which is why the calibration set is thinned. At 1,500 null streams, unthinned calibration stayed valid (\cref{sec:ablation}), so the experiments do not show that thinning is needed in practice.
+
+When deployment reweights context that $\cD$ covers, weighted conformal calibration \citep{tibshirani2019covariate} applies. We use a logistic density-ratio estimate, gated behind a two-sample test, and replace $n$ in \cref{eq:betalevels} by the Kish effective sample size \citep{kish1965}. This substitution has no calibration-conditional proof, because \cref{thm:beta} assumes equal weights. The weighted path is therefore a heuristic, evaluated empirically in \cref{sec:shift}, and it is not the recommended safeguard.
+
+\subsection{Layer 2: the episodic e-process}
+\label{sec:episodic}
+
+Let $p_1, p_2, \ldots$ be the p-values at the betting instants. A \emph{betting function} is a non-increasing $f : (0,1] \to [0,\infty)$ with $\int_0^1 f \le 1$. Then $\mathbb{E}_{H_0}[f(p)] \le 1$ for any super-uniform $p$, so $f(p)$ is an e-value. We use the power family $f_\kappa(p) = \kappa p^{\kappa-1}$, $\kappa \in (0,1]$, with $\kappa = 1$ the neutral bet $f \equiv 1$.
+
+\subsubsection{Mixing over episodes}
+
+Let $z_t \in \{\text{quiet}, \text{active}\}$ be a two-state Markov chain with onset probability $\mathbb{P}(\text{quiet} \to \text{active}) = \rho$ and \emph{end} probability $\mathbb{P}(\text{active} \to \text{quiet}) = \eta$, started quiet. The wealth mixes over every trajectory of that chain:
+\begin{equation}
+\label{eq:episodic}
+  W_t \;=\; \sum_{z_{1:t}} \mathbb{P}(z_{1:t})
+            \prod_{s \le t} f(p_s)^{\ind{z_s = \text{active}}} .
+\end{equation}
+Each trajectory contributes the product of betting factors over the frames it declares active, weighted by its prior probability. The classical changepoint mixture is the special case in which the chain, once active, never returns. It mixes over when a change starts. \Cref{eq:episodic} mixes over when episodes start and stop, and over how many occur.
+
+The sum has $2^t$ terms and collapses to two numbers. Writing $A_t$ and $Q_t$ for the parts of the sum whose trajectories end active and quiet respectively,
+\begin{equation}
+\label{eq:forward}
+  A_t = \bigl[(1-\eta)A_{t-1} + \rho\,Q_{t-1}\bigr] f(p_t),
+  \qquad
+  Q_t = \eta\,A_{t-1} + (1-\rho)\,Q_{t-1},
+\end{equation}
+with $A_0 = 0$, $Q_0 = 1$ and $W_t = A_t + Q_t$. This is the forward recursion of a hidden Markov model. It costs $O(1)$ per frame in time and memory.
+
+\begin{theorem}[Time-uniform validity of the episodic e-process]
+\label{thm:episodic}
+Under $\Pinf$, if the $p_t$ are conditionally super-uniform given
+$\Fcal_{t-1}$, then $(W_t)$ defined by \cref{eq:episodic} is a non-negative
+supermartingale with $W_0 = 1$, and for any $\alpha \in (0,1)$
+\begin{equation*}
+  \Pinf\bigl(\exists\, t \ge 1 : W_t \ge 1/\alpha\bigr) \;\le\; \alpha .
+\end{equation*}
+\end{theorem}
+
+\begin{proof}
+Non-negativity is immediate and $W_0 = Q_0 = 1$. From \cref{eq:forward},
+$A_{t}$ carries exactly one factor $f(p_t)$ and $Q_t$ carries none, so
+\begin{align*}
+  \mathbb{E}[W_t \mid \Fcal_{t-1}]
+   &= \bigl[(1-\eta)A_{t-1} + \rho Q_{t-1}\bigr]\,
+      \mathbb{E}[f(p_t) \mid \Fcal_{t-1}]
+      \;+\; \eta A_{t-1} + (1-\rho) Q_{t-1} \\
+   &\le (1-\eta)A_{t-1} + \rho Q_{t-1} + \eta A_{t-1} + (1-\rho) Q_{t-1}
+    \;=\; A_{t-1} + Q_{t-1} \;=\; W_{t-1},
+\end{align*}
+using $\mathbb{E}[f(p_t) \mid \Fcal_{t-1}] \le 1$ and the fact that the
+transition probabilities out of each state sum to one. Ville's inequality
+\citep{ville1939} applied to the non-negative supermartingale $(W_t)$ started at
+one gives the bound.
+\end{proof}
+
+\begin{corollary}[End-to-end level]
+\label{cor:composition}
+Let $E$ be the calibration event of \cref{thm:beta}, with
+$\mathbb{P}(E) \ge 1 - \delta$, on which the deployment p-values $\tilde p_t$
+are conditionally super-uniform given $\Fcal_{t-1}$. Then the episodic
+e-process run on $(\tilde p_t)$ satisfies
+$\Pinf(\exists\, t \ge 1 : W_t \ge 1/\alpha) \le \alpha + \delta$.
+\end{corollary}
+\begin{proof}
+On $E$, \cref{thm:episodic} applies verbatim and gives probability at most
+$\alpha$ conditional on $\cD$; off $E$, the probability is bounded by $1$, and
+$\mathbb{P}(E^c) \le \delta$. Removing the conditioning,
+$\Pinf(\exists t : W_t \ge 1/\alpha) \le \mathbb{P}(E)\cdot\alpha +
+\mathbb{P}(E^c)\cdot 1 \le \alpha + \delta$.
+\end{proof}
+The end-to-end level is therefore $\alpha + \delta$, as the library documents in \texttt{sentinel\_e/pipeline.py}. With the default $\delta = 10^{-3}$, the relative loosening is $20\%$ at the smallest level in \cref{sec:validity}, $\alpha = 0.005$, and it falls as $\alpha$ grows. Every level plotted in this paper should be read as $\alpha + \delta$.
+
+The episode structure costs nothing in the guarantee, because the transition probabilities telescope exactly. A term-by-term mixture over candidate starts costs $O(t)$ work per observation \citep{saha2026nonpartitioned}, whereas \cref{eq:forward} keeps two numbers per grid point. The geometric-prior changepoint mixture also reduces to $O(1)$ (\cref{prop:generalisation}). The gain is therefore not speed over that special case, but episodes of finite duration at the same cost (\cref{sec:compute}).
+
+\begin{proposition}[Strict generalisation]
+\label{prop:generalisation}
+With $\eta = 0$ the recursion \cref{eq:forward} coincides with the mixture over
+changepoint locations under a geometric prior with hazard $\rho$, with the
+unspent tail mass retained. Discarding $Q_t$ yields a statistic that is not a
+supermartingale and that tends to the classical Shiryaev--Roberts statistic
+only in the limit $\rho \to 0$ after rescaling.
+\end{proposition}
+
+\begin{proof}
+With $\eta = 0$, $Q_t = (1-\rho)Q_{t-1}$ so $Q_t = (1-\rho)^t$ is the prior mass
+on ``no episode has begun by $t$'', and
+$A_t = (A_{t-1} + \rho Q_{t-1}) f(p_t)$ with $\rho Q_{t-1} = w_t$ the geometric
+prior mass on a change at $t$. Unrolling gives
+$A_t = \sum_{j \le t} w_j \prod_{s=j}^{t} f(p_s)$, whence
+$W_t = \sum_{j\le t} w_j \prod_{s=j}^t f(p_s) + \sum_{j>t} w_j$, Shiryaev's
+Bayesian statistic under the geometric prior with hazard $\rho$
+\citep{shiryaev1963}. Dropping $Q_t$ leaves $\sum_{j\le t} w_j \prod_{s=j}^t
+f(p_s)$ alone. This is not a supermartingale: the telescoping in
+\cref{thm:episodic} fails by exactly $w_t$ per step. Taking the
+$\rho \to 0$ limit under the appropriate rescaling recovers the classical
+Shiryaev--Roberts sum with unit start weights \citep{roberts1966}.
+\end{proof}
+
+The statement thus separates two objects that are easy to conflate: the changepoint mixture, which the episodic process contains exactly at $\eta=0$, and Shiryaev--Roberts, which differs from it at any fixed $\rho>0$.
+
+\subsubsection{Intermittency by dilation (a negative result)}
+\label{sec:dilation}
+
+Within an episode only a fraction $\pi$ of frames show the act, which suggests \emph{dilating} the emission:
+\begin{equation}
+\label{eq:dilated}
+  f_\pi(p) \;=\; (1-\pi) + \pi\, f(p).
+\end{equation}
+This is a legal betting function. It is a convex combination of the neutral bet and $f$, hence non-increasing with $\int_0^1 f_\pi \le 1$, so \cref{thm:episodic} applies verbatim. It does not help. Mixing over $\kappa$ already covers intermittency, because a milder bet suits an episode with fewer anomalous frames. In the ablation, dilation lengthens censored detection delay from \AblFullDelay\,s to \AblDilationDelay\,s (Online Resource~1, Table~S7), and no intermittency level repays that cost. The default grid therefore sets $\pi = 1$. The construction stays in the implementation for backbones whose anomalous frames are much stronger relative to quiet ones than ours.
+
+\subsubsection{Staying parameter-free}
+\label{sec:parameterfree}
+
+Nothing above needs $(\rho, \eta, \pi, \kappa)$. We place a prior grid over all four and run one recursion per grid point. The mixture $W_t = \sum_g \lambda_g W_t^{(g)}$ with $\sum_g \lambda_g = 1$ is a convex combination of supermartingales, hence a supermartingale. The deployed grid is \EpiGridKappa{} values of $\kappa$ by \EpiGridEta{} of $\eta$ by \EpiGridPi{} of $\pi$ (dilation off by default), giving \EpiGridPoints{} points. The cost is a constant number of operations per grid point, still $O(1)$ in $t$. An operator does not know how long a dumping event lasts, and the grid spans everything from a ten-second burst to a permanent change.
+
+\subsubsection{The episode posterior}
+
+The recursion also yields, at no extra cost, the posterior probability that the camera is inside an episode now,
+\begin{equation}
+\label{eq:posterior}
+  \Pi_t \;=\; \frac{A_t}{A_t + Q_t} \;\in\; [0, 1],
+\end{equation}
+prior-averaged over the grid. It is bounded and interpretable as a probability, and it is comparable between a camera installed last week and one that has run for a month. \Cref{sec:layer3} uses it as the message the camera graph exchanges.
+
+\subsubsection{Numerics}
+
+Working in log space would need two \texttt{logaddexp} calls per grid point per frame. Instead we renormalise $(A_t, Q_t)$ to sum to one at each step and accumulate the log of the scale factor, the standard HMM scaling trick. The two-state simplex cannot underflow. \Cref{alg:episodic} gives the per-frame update, which transcribes the inner loop of \texttt{sentinel\_e/episodic.py}.
+
+\begin{algorithm}[t]
+\caption{One frame of the episodic e-process, vectorised over the prior grid}
+\label{alg:episodic}
+\begin{algorithmic}[1]
+\Require prior grid $\{(\kappa_g, \eta_g, \pi_g)\}_{g=1}^G$ with log-prior
+  weights $\log\lambda_g$, $\sum_g \lambda_g = 1$; onset hazard $\rho$ (or
+  $\rho_t$, if predictable modulation is enabled, \cref{thm:predictable});
+  alarm threshold $1/\alpha$
+\State $A_g \gets 0,\; Q_g \gets 1,\; s_g \gets 0 \;\; \forall g$
+  \Comment{$s_g$: per-grid-point log-scale; $A_g + Q_g = 1$ is the invariant}
+\For{each betting instant $t = 1, 2, \ldots$}
+  \State receive conformal p-value $p_t$ (or skip this $t$: thinning / abstention)
+  \For{each grid point $g$ \textbf{(vectorised, not a real loop)}}
+    \State $f_g \gets (1 - \pi_g) + \pi_g\, \kappa_g\, p_t^{\,\kappa_g - 1}$
+      \Comment{dilated power bet, \cref{eq:dilated}; $\pi_g = 1$ if dilation off}
+    \State $A_g' \gets \bigl[(1-\eta_g)\, A_g + \rho\, Q_g\bigr] f_g$
+    \State $Q_g' \gets \eta_g\, A_g + (1-\rho)\, Q_g$
+      \Comment{\cref{eq:forward}, one grid point}
+    \State $c_g \gets A_g' + Q_g'$
+      \Comment{restores the invariant; $c_g > 0$ always}
+    \State $A_g \gets A_g' / c_g,\;\; Q_g \gets Q_g' / c_g$
+      \Comment{HMM scaling trick: the two-state simplex cannot underflow}
+    \State $s_g \gets s_g + \log c_g$
+  \EndFor
+  \State $\log W_t \gets \operatorname{logsumexp}_g\bigl(\log\lambda_g + s_g\bigr)$
+    \Comment{mixture happens here, in log space, not by renormalising a joint sum}
+  \State $\Pi_t \gets \sum_g \lambda_g\, e^{s_g} A_g \,\big/\, e^{\log W_t}$
+    \Comment{episode posterior, \cref{eq:posterior}}
+  \If{$\log W_t \ge \log(1/\alpha)$}
+    \State \textbf{alarm}; if restarting, reset $A_g \gets 0,\, Q_g \gets 1,\,
+      s_g \gets 0\;\; \forall g$
+  \EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+Two points about \cref{alg:episodic} are easy to miss from \cref{eq:forward} alone. Each grid point keeps its own invariant $A_g + Q_g = 1$ and log-scale $s_g$. The mixture is a single \texttt{logsumexp}, evaluated only when $\log W_t$ or $\Pi_t$ is read out, so adding grid points lengthens a vector without changing the algorithm. The normalising division is exact, and the only error beyond rounding is what the oracle p-value arm of \cref{sec:validity} is designed to expose.
+
+\paragraph{A worked numeric trace.}
+\Cref{tab:worked-recursion} runs four steps of \cref{alg:episodic} at a single grid point ($\kappa = 0.3$, $\eta = 0.1$, $\rho = 0.01$, dilation off), so every entry can be checked with a calculator. Here $c_t = A_t' + Q_t'$ and $W_t = \exp(\sum_{s\le t} \log c_s)$.
+
+\begin{table}[t]
+\centering
+\caption{Four steps of \cref{eq:forward} at a single grid point
+($A_0 = 0$, $Q_0 = 1$), computed to the precision shown; a reader can
+reproduce every column from the one before it and the stated $p_t$.}
+\label{tab:worked-recursion}
+\begin{tabular}{rrrrrrrrr}
+\toprule
+$t$ & $p_t$ & $f_t$ & $A_t'$ & $Q_t'$ & $c_t$ & $A_t$ & $Q_t$ & $W_t$ \\
+\midrule
+1 & 0.02 & 4.6387 & 0.046387 & 0.990000 & 1.036387 & 0.044759 & 0.955241 & 1.036387 \\
+2 & 0.40 & 0.5697 & 0.028393 & 0.950165 & 0.978558 & 0.029015 & 0.970985 & 1.014165 \\
+3 & 0.90 & 0.3230 & 0.011570 & 0.964176 & 0.975746 & 0.011857 & 0.988143 & 0.989568 \\
+4 & 0.05 & 2.4425 & 0.050202 & 0.979447 & 1.029649 & 0.048756 & 0.951244 & 1.018907 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A small p-value at $t=1$ ($p_1 = 0.02$) multiplies $A_t$ by $f_1 \approx 4.64$, yet $W_1$ rises by under $4\%$, because the prior mass $Q_0 = 1$ on ``no episode yet'' dilutes the bet. At $t=3$, $W_t$ falls below one. Wealth need not grow, only have conditional expectation at most its previous value. Over four frames $A_t \ll Q_t$, so $\Pi_4 \approx 0.049$ reflects too little evidence, not a fault.
+
+\subsection{Layer 3: the camera network}
+\label{sec:layer3}
+
+\paragraph{A predictable spatial prior.}
+Offenders return to the same lay-by and, when disturbed, move a few hundred metres and dump again. An episode at one camera is therefore prior information about its neighbours. We build a graph over the fleet, with edge weights combining spatial proximity and static-context similarity. A two-layer message-passing network maps each camera's features to an onset hazard $\rho_{i,t}$ and a stake scale $m_{i,t}$.
+
+The features use the episode posterior of \cref{eq:posterior}. Raw log-wealth grows without bound and depends on installation time, so a neighbourhood average of it would be dominated by the oldest camera. $\Pi_{i,t}$ is bounded and answers the same question at every camera, so a neighbourhood mean is meaningful. The network sees $\Pi_{i,t-1}$, the normalised log-wealth, three exponential moving averages of $-\log p$, static context and degree, all measurable at $t-1$.
+
+Because the network passes messages, $\rho_{i,t}$ and $m_{i,t}$ depend on the \emph{fleet's} joint history. Write $\Gfilt_{t-1} = \sigma(p_{j,s} : j \in \text{fleet},\, s \le t-1)$ for that filtration. Then $\Fcal_{t-1} \subseteq \Gfilt_{t-1}$ is camera $i$'s own, and the theorem below is stated at the joint level.
+
+\begin{theorem}[Learned control cannot break the guarantee]
+\label{thm:predictable}
+Suppose $\rho_{i,t} \in [0,1]$ and $m_{i,t} \in [0,1]$ are
+$\Gfilt_{t-1}$-measurable, the map $(m,\kappa) \mapsto f_{\pi,\kappa_{\mathrm{eff}}}$
+with $\kappa_{\mathrm{eff}} = 1-m(1-\kappa)$ is jointly measurable, and $p_{i,t}$
+is conditionally super-uniform given $\Gfilt_{t-1}$ (the joint history, not
+merely camera $i$'s own). Then \cref{thm:episodic} holds verbatim for every
+camera, for any such choice of $\rho_{i,t}, m_{i,t}$.
+\end{theorem}
+
+\begin{proof}
+For $m_{i,t} \in [0,1]$ and $\kappa \in (0,1]$ we have
+$\kappa_{\mathrm{eff}} \in (0,1]$, so $f_{\kappa_{\mathrm{eff}}}$ is a betting
+function and by \cref{eq:dilated} so is its dilation, for every fixed value of
+$\kappa_{\mathrm{eff}}$. Since $(m_{i,t}, \pi)$ is $\Gfilt_{t-1}$-measurable and
+the map to $f_{\pi,\kappa_{\mathrm{eff}}}$ is jointly measurable in its
+argument and in $p_{i,t}$, conditioning on $\Gfilt_{t-1}$ freezes
+$\kappa_{\mathrm{eff}}$ to its realised value and
+$\mathbb{E}[f_{\pi,\kappa_{\mathrm{eff}}}(p_{i,t}) \mid \Gfilt_{t-1}] \le 1$
+follows from conditional super-uniformity at that fixed value. This is the
+standard freezing argument for a regular conditional distribution, not a
+step that treats $f_{\kappa_{\mathrm{eff}}}$ as linear in $\kappa_{\mathrm{eff}}$.
+Replacing $\rho$ by $\rho_{i,t}$ in \cref{eq:forward} leaves the transition
+probabilities out of each state summing to one, which is all the telescoping in
+\cref{thm:episodic} uses, now run against $\Gfilt_{t-1}$ throughout. The
+supermartingale step is therefore unchanged.
+\end{proof}
+
+The hypothesis that matters in practice is conditional super-uniformity given the \emph{joint} fleet history. This is stronger than \cref{sec:layer1} establishes for one camera, because the message-passing layer couples cameras that share weather, lighting and traffic. \Cref{sec:diagnostics} does not certify it, so the theorem is conditional on it. Unconditionally, the learned outputs enter only as a predictable reweighting of a supermartingale step. A badly behaved component therefore cannot cause an invalid step that a well-behaved one would not also cause. \Cref{tab:network}'s all-null columns check the practical consequence.
+
+Training is offline on held-out simulated fleets. It maximises post-change log-wealth growth, the Kelly/GROW criterion \citep{kelly1956}, with a penalty on wealth burned at unaffected cameras. Growth rate proxies delay, since delay is roughly the time for wealth to climb to $1/\alpha$ at that rate. The recursion is differentiable, so gradients reach both heads.
+
+\paragraph{Fleet decisions.}
+At a stopping time $\tau_i = \min(\text{alarm}, T)$, optional stopping gives $\Einf[W_{i,\tau_i}] \le 1$, so each camera's wealth is a valid e-value. We apply e-BH \citep{wang2022ebh}: sort $E_{(1)} \ge \cdots \ge E_{(K)}$ and reject the top $k^\star = \max\{k : E_{(k)} \ge K/(\alpha k)\}$. This controls FDR at $\alpha$ under \emph{arbitrary} dependence, which the setting needs because adjacent cameras share weather, lighting and traffic. BH on p-values would need positive regression dependence or a Benjamini--Yekutieli $\log K$ penalty \citep{benjamini2001}. e-BH needs neither. The wealth is read at a stopping time, since a running maximum of the wealth would not be a valid e-value.

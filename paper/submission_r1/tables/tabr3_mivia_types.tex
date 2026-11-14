@@ -1,0 +1,55 @@
+\begin{table}[t]
+\centering
+\caption{Mivia-IWDD test results at $\alpha=0.1$ split by event type (static versus dynamic dumping), and per-video false alarms on the negative test videos (100 test videos: 50 negative, 25 static, 25 dynamic), for both backbones.}
+\label{tab:r3_mivia_types}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llrlrrrr}
+\toprule
+dataset & method & knob & event type & n & detection [95\% CI] (k/n) & median delay (s) & normal-video FA [95\% CI] (k/n) \\
+\midrule
+Mivia-IWDD (flow) & SENTINEL-E & 0.1 & static dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & SENTINEL-E & 0.1 & dynamic dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & SENTINEL-E & 0.1 & normal videos & 50 & -- & -- & 0.080 [0.022, 0.192] (4/50) \\
+Mivia-IWDD (flow) & Fixed threshold & 0.003 & static dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & Fixed threshold & 0.003 & dynamic dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & Fixed threshold & 0.003 & normal videos & 50 & -- & -- & 0.080 [0.022, 0.192] (4/50) \\
+Mivia-IWDD (flow) & p-value threshold & 0.01 & static dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & p-value threshold & 0.01 & dynamic dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & p-value threshold & 0.01 & normal videos & 50 & -- & -- & 0.080 [0.022, 0.192] (4/50) \\
+Mivia-IWDD (flow) & CUSUM & 16 & static dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & CUSUM & 16 & dynamic dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & CUSUM & 16 & normal videos & 50 & -- & -- & 0.100 [0.033, 0.218] (5/50) \\
+Mivia-IWDD (flow) & Shiryaev--Roberts & $10^{8}$ & static dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & Shiryaev--Roberts & $10^{8}$ & dynamic dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & Shiryaev--Roberts & $10^{8}$ & normal videos & 50 & -- & -- & 0.100 [0.033, 0.218] (5/50) \\
+Mivia-IWDD (flow) & Parametric e-detector & 0.002 & static dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & Parametric e-detector & 0.002 & dynamic dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & Parametric e-detector & 0.002 & normal videos & 50 & -- & -- & 0.120 [0.045, 0.243] (6/50) \\
+Mivia-IWDD (flow) & E-SHIFT & 0.05 & static dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & E-SHIFT & 0.05 & dynamic dumping & 25 & 0.00 [0.00, 0.14] (0/25) & -- & -- \\
+Mivia-IWDD (flow) & E-SHIFT & 0.05 & normal videos & 50 & -- & -- & 0.100 [0.033, 0.218] (5/50) \\
+Mivia-IWDD (PatchCore) & SENTINEL-E & 0.1 & static dumping & 25 & 0.20 [0.07, 0.41] (5/25) & 2.0 & -- \\
+Mivia-IWDD (PatchCore) & SENTINEL-E & 0.1 & dynamic dumping & 25 & 0.20 [0.07, 0.41] (5/25) & 3.5 & -- \\
+Mivia-IWDD (PatchCore) & SENTINEL-E & 0.1 & normal videos & 50 & -- & -- & 0.180 [0.086, 0.314] (9/50) \\
+Mivia-IWDD (PatchCore) & Fixed threshold & 0.03 & static dumping & 25 & 0.16 [0.05, 0.36] (4/25) & 0.5 & -- \\
+Mivia-IWDD (PatchCore) & Fixed threshold & 0.03 & dynamic dumping & 25 & 0.12 [0.03, 0.31] (3/25) & 0.5 & -- \\
+Mivia-IWDD (PatchCore) & Fixed threshold & 0.03 & normal videos & 50 & -- & -- & 0.260 [0.146, 0.403] (13/50) \\
+Mivia-IWDD (PatchCore) & p-value threshold & 0.03 & static dumping & 25 & 0.16 [0.05, 0.36] (4/25) & 0.5 & -- \\
+Mivia-IWDD (PatchCore) & p-value threshold & 0.03 & dynamic dumping & 25 & 0.12 [0.03, 0.31] (3/25) & 0.5 & -- \\
+Mivia-IWDD (PatchCore) & p-value threshold & 0.03 & normal videos & 50 & -- & -- & 0.200 [0.100, 0.337] (10/50) \\
+Mivia-IWDD (PatchCore) & CUSUM & 20 & static dumping & 25 & 0.20 [0.07, 0.41] (5/25) & 1.8 & -- \\
+Mivia-IWDD (PatchCore) & CUSUM & 20 & dynamic dumping & 25 & 0.24 [0.09, 0.45] (6/25) & 3.2 & -- \\
+Mivia-IWDD (PatchCore) & CUSUM & 20 & normal videos & 50 & -- & -- & 0.180 [0.086, 0.314] (9/50) \\
+Mivia-IWDD (PatchCore) & Shiryaev--Roberts & $10^{8}$ & static dumping & 25 & 0.20 [0.07, 0.41] (5/25) & 7.1 & -- \\
+Mivia-IWDD (PatchCore) & Shiryaev--Roberts & $10^{8}$ & dynamic dumping & 25 & 0.24 [0.09, 0.45] (6/25) & 6.5 & -- \\
+Mivia-IWDD (PatchCore) & Shiryaev--Roberts & $10^{8}$ & normal videos & 50 & -- & -- & 0.220 [0.115, 0.360] (11/50) \\
+Mivia-IWDD (PatchCore) & Parametric e-detector & 0.002 & static dumping & 25 & 0.36 [0.18, 0.57] (9/25) & 2.7 & -- \\
+Mivia-IWDD (PatchCore) & Parametric e-detector & 0.002 & dynamic dumping & 25 & 0.32 [0.15, 0.54] (8/25) & 5.8 & -- \\
+Mivia-IWDD (PatchCore) & Parametric e-detector & 0.002 & normal videos & 50 & -- & -- & 0.240 [0.131, 0.382] (12/50) \\
+Mivia-IWDD (PatchCore) & E-SHIFT & 0.002 & static dumping & 25 & 0.52 [0.31, 0.72] (13/25) & 2.3 & -- \\
+Mivia-IWDD (PatchCore) & E-SHIFT & 0.002 & dynamic dumping & 25 & 0.52 [0.31, 0.72] (13/25) & 1.9 & -- \\
+Mivia-IWDD (PatchCore) & E-SHIFT & 0.002 & normal videos & 50 & -- & -- & 0.360 [0.229, 0.508] (18/50) \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Detection by event type counts each positive video's episode separately. Normal-video false alarms are the primary null trials of the headline table.\end{minipage}
+\end{table}

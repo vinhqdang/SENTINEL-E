@@ -1,0 +1,90 @@
+% Title page for double-anonymous review.
+% Kept as a SEPARATE file from sentinel_e.tex (the blinded manuscript) so the
+% manuscript file itself carries no author-identifying information. Submit
+% both files together; do not merge this content back into sentinel_e.tex.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{microtype}
+\PassOptionsToPackage{hidelinks}{hyperref}
+\usepackage{hyperref}
+\usepackage{orcidlink}
+
+\graphicspath{{figures/}}
+\input{tables/macros}
+
+\title{\textbf{SENTINEL-E}: Anytime-Valid Sequential Detection for\\
+       Streaming Visual Anomaly Surveillance}
+
+\author{%
+  Quang-Vinh Dang\,\orcidlink{0000-0002-3877-8024}\\[2pt]
+  \small British University Vietnam, Hung Yen, Vietnam\\
+  \small \texttt{vinh.dq4@buv.edu.vn}
+}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+  \small\emph{Title page for double-anonymous review. The accompanying
+  manuscript file (\texttt{sentinel\_e.tex}/\texttt{.pdf}) carries no author
+  information; this page and its declarations are for editorial use and are
+  withheld from reviewers. Competing interests, data/code availability, and
+  ethical approval are also stated, in non-identifying form, in the
+  manuscript's own Declarations section; only funding and author
+  contributions appear on this page alone.}
+\end{center}
+\vspace{1em}
+
+\begin{abstract}
+\noindent
+Streaming visual-anomaly detectors, including illegal-dumping detectors, are evaluated per clip but deployed on continuous streams, where alerting at the first threshold crossing is optional stopping. Fed valid 1\% p-values, a per-frame rule raises a false alarm on \ValidityPfaPvaluePct\% of 40-minute null streams. We introduce the episodic e-process, a mixture over episodes that start, flicker, end and recur. We prove that it is a non-negative supermartingale when the p-values are conditionally super-uniform, so Ville's inequality gives time-uniform false-alarm control, and that it contains the changepoint mixture as the case where episodes never end. A two-state forward recursion evaluates it in constant time per frame on conformal p-values with exact calibration-conditional Beta levels, and e-BH combines cameras. In simulation it raised no false alarm on 200 week-long streams, on which per-frame thresholds fail within an hour. Paired comparisons show episodes shorten detection delay for long, intermittent, recurring events but not for single or permanent changes. On real video (UCSD Ped2, CUHK Avenue, Mivia-IWDD; optical-flow and PatchCore backbones), operating points are chosen on training videos only and each test video is monitored alone. The thinned p-values remain serially dependent there, so validity is empirical rather than guaranteed. False-alarm proportions are consistent with the nominal level on the short single-camera corpora but exceed it in point estimate on Mivia-IWDD (9 of 50 normal videos at $\alpha=0.1$). Detection power is limited and backbone-dependent, and classical baselines selected by the same rule perform comparably. The guarantee layer costs under two microseconds per frame.
+\end{abstract}
+
+\vspace{0.5em}
+\noindent\textbf{Keywords:} video anomaly detection; illegal dumping; anytime-valid inference; e-values; conformal prediction; sequential change detection; video surveillance.
+
+\section*{Highlights}
+\begin{itemize}
+  \item An episodic e-process mixes over events that start, end and recur
+  \item Time-uniform false-alarm control at constant cost per frame
+  \item No false alarm on 200 simulated week-long streams; per-frame rules fail in 1 h
+  \item Leak-free per-video evaluation on Ped2, Avenue and Mivia-IWDD dumping videos
+  \item On real video, power is backbone-limited and validity is empirical
+\end{itemize}
+
+
+\section*{Declarations}
+
+\paragraph{Funding.} No funding was received for this work.
+\paragraph{Competing interests.} The author declares no competing interests.
+\paragraph{Author contributions.} The sole author conceived the method,
+implemented the library and experiments, and wrote the manuscript.
+\paragraph{Data and code availability.} All code, experiment scripts and
+generated results are available in the project repository, to be disclosed
+upon acceptance to preserve the double-anonymous review process; a private
+link is available to editors and reviewers on request. The real-video evaluation
+uses UCSD Ped2, CUHK Avenue and Mivia-IWDD-500
+(github.com/MiviaLab/IllegalWasteDumping), and ImageNet-pretrained
+WideResNet-50-2 weights from torchvision. These and the other corpora cited
+in the manuscript are distributed by their respective authors under their own
+terms; no data from them is redistributed here, apart from a few illustrative still frames in the qualitative figure.
+\paragraph{Ethical approval.} Not applicable. No human-subjects data was
+collected for this work. The real video corpora used (UCSD Ped2, CUHK Avenue, Mivia-IWDD-500)
+are publicly released video benchmarks
+distributed by their original authors for research use; this paper is a
+downstream, secondary use of that already-public release, not new data
+collection, and involves no interaction with human subjects. This work
+concerns the statistical calibration of alerting systems, not the governance
+of their deployment; the manuscript's Discussion and limitations section gives a substantive
+treatment of the human-oversight, accountability, and disclosure questions
+that automated surveillance of public space raises, rather than treating the
+topic as out of scope.
+
+\end{document}

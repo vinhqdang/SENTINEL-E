@@ -1,0 +1,487 @@
+\begin{thebibliography}{65}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Almorsy and Torki(2026)]{almorsy2026x3d}
+Sajed Almorsy and Marwan Torki.
+\newblock {X3D}-based illegal waste dumping detection with temporal
+  localization.
+\newblock In \emph{2026 IEEE/CVF Winter Conference on Applications of Computer
+  Vision Workshops (WACVW)}, pages 603--612, 2026.
+\newblock \doi{10.1109/WACVW68408.2026.00068}.
+
+\bibitem[Angelopoulos and Bates(2023)]{angelopoulos2023gentle}
+Anastasios~N. Angelopoulos and Stephen Bates.
+\newblock Conformal prediction: A gentle introduction.
+\newblock \emph{Foundations and Trends in Machine Learning}, 16\penalty0
+  (4):\penalty0 494--591, 2023.
+\newblock \doi{10.1561/2200000101}.
+
+\bibitem[Barber et~al.(2023)Barber, Cand{\`e}s, Ramdas, and
+  Tibshirani]{barber2023beyond}
+Rina~Foygel Barber, Emmanuel~J. Cand{\`e}s, Aaditya Ramdas, and Ryan~J.
+  Tibshirani.
+\newblock Conformal prediction beyond exchangeability.
+\newblock \emph{The Annals of Statistics}, 51\penalty0 (2):\penalty0 816--845,
+  2023.
+\newblock \doi{10.1214/23-AOS2276}.
+
+\bibitem[Bashkirova et~al.(2022)Bashkirova, Abdelfattah, Zhu, Akl, Alladkani,
+  Hu, Ablavsky, Calli, Bargal, and Saenko]{bashkirova2022zerowaste}
+Dina Bashkirova, Mohamed Abdelfattah, Ziliang Zhu, James Akl, Fadi Alladkani,
+  Ping Hu, Vitaly Ablavsky, Berk Calli, Sarah~Adel Bargal, and Kate Saenko.
+\newblock {ZeroWaste} dataset: Towards deformable object segmentation in
+  cluttered scenes.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR)}, pages 21115--21125, 2022.
+
+\bibitem[Bates et~al.(2023)Bates, Cand{\`e}s, Lei, Romano, and
+  Sesia]{bates2023testing}
+Stephen Bates, Emmanuel Cand{\`e}s, Lihua Lei, Yaniv Romano, and Matteo Sesia.
+\newblock Testing for outliers with conformal p-values.
+\newblock \emph{The Annals of Statistics}, 51\penalty0 (1):\penalty0 149--178,
+  2023.
+\newblock \doi{10.1214/22-AOS2244}.
+
+\bibitem[Benjamini and Yekutieli(2001)]{benjamini2001}
+Yoav Benjamini and Daniel Yekutieli.
+\newblock The control of the false discovery rate in multiple testing under
+  dependency.
+\newblock \emph{The Annals of Statistics}, 29\penalty0 (4):\penalty0
+  1165--1188, 2001.
+\newblock \doi{10.1214/aos/1013699998}.
+
+\bibitem[Bhat and Lin(2026)]{bhat2026imslab}
+Mudasir~Hussain Bhat and Daw-Tung Lin.
+\newblock Boundary-sensitive start-time estimation with onset-centric temporal
+  detection for illegal waste dumping in surveillance video.
+\newblock In \emph{2026 IEEE/CVF Winter Conference on Applications of Computer
+  Vision Workshops (WACVW)}, pages 637--644, 2026.
+\newblock \doi{10.1109/WACVW68408.2026.00072}.
+
+\bibitem[Bouwmans et~al.(2026)Bouwmans, Greco, Pi{\'e}rard, Ricciardi, Sansone,
+  Van~Droogenbroeck, and Vento]{bouwmans2026overview}
+Thierry Bouwmans, Antonio Greco, S{\'e}bastien Pi{\'e}rard, Andrea~Vincenzo
+  Ricciardi, Carlo Sansone, Marc Van~Droogenbroeck, and Bruno Vento.
+\newblock Illegal waste dumping detection.
+\newblock In \emph{2026 IEEE/CVF Winter Conference on Applications of Computer
+  Vision Workshops (WACVW)}, pages 539--548, 2026.
+\newblock \doi{10.1109/WACVW68408.2026.00061}.
+
+\bibitem[Dong et~al.(2025)Dong, Zhang, Shi, Zheng, and Zhang]{dong2025rvadign}
+Wenmin Dong, Lifeng Zhang, Wenjuan Shi, Xiangwei Zheng, and Yuang Zhang.
+\newblock A novel reconstruction-based video anomaly detection with idempotent
+  generative network.
+\newblock \emph{Alexandria Engineering Journal}, 124:\penalty0 513--525, 2025.
+\newblock \doi{10.1016/j.aej.2025.03.106}.
+
+\bibitem[Doshi and Yilmaz(2021)]{doshi2021online}
+Keval Doshi and Yasin Yilmaz.
+\newblock Online anomaly detection in surveillance videos with asymptotic bound
+  on false alarm rate.
+\newblock \emph{Pattern Recognition}, 114:\penalty0 107865, 2021.
+\newblock \doi{10.1016/j.patcog.2021.107865}.
+
+\bibitem[Doshi and Yilmaz(2022)]{doshi2022rethinking}
+Keval Doshi and Yasin Yilmaz.
+\newblock Rethinking video anomaly detection -- a continual learning approach.
+\newblock In \emph{Proceedings of the IEEE/CVF Winter Conference on
+  Applications of Computer Vision (WACV)}, pages 3036--3045, 2022.
+\newblock \doi{10.1109/WACV51458.2022.00309}.
+
+\bibitem[Dvoretzky et~al.(1956)Dvoretzky, Kiefer, and Wolfowitz]{dkw1956}
+A.~Dvoretzky, J.~Kiefer, and J.~Wolfowitz.
+\newblock Asymptotic minimax character of the sample distribution function and
+  of the classical multinomial estimator.
+\newblock \emph{The Annals of Mathematical Statistics}, 27\penalty0
+  (3):\penalty0 642--669, 1956.
+\newblock \doi{10.1214/aoms/1177728174}.
+
+\bibitem[Farneb\"{a}ck(2003)]{farneback2003}
+Gunnar Farneb\"{a}ck.
+\newblock Two-frame motion estimation based on polynomial expansion.
+\newblock In \emph{Image Analysis (SCIA 2003)}, volume 2749 of \emph{Lecture
+  Notes in Computer Science}, pages 363--370, 2003.
+\newblock \doi{10.1007/3-540-45103-X_50}.
+
+\bibitem[Fawcett(2006)]{fawcett2006introduction}
+Tom Fawcett.
+\newblock An introduction to {ROC} analysis.
+\newblock \emph{Pattern Recognition Letters}, 27\penalty0 (8):\penalty0
+  861--874, 2006.
+\newblock \doi{10.1016/j.patrec.2005.10.010}.
+
+\bibitem[Fisch et~al.(2022)Fisch, Eckley, and Fearnhead]{fisch2022capa}
+Alexander T.~M. Fisch, Idris~A. Eckley, and Paul Fearnhead.
+\newblock A linear time method for the detection of collective and point
+  anomalies.
+\newblock \emph{Statistical Analysis and Data Mining: The ASA Data Science
+  Journal}, 15:\penalty0 494--508, 2022.
+\newblock \doi{10.1002/sam.11586}.
+
+\bibitem[Fuh and Mei(2015)]{fuh2015hmm}
+Cheng-Der Fuh and Yajun Mei.
+\newblock Quickest change detection and kullback--leibler divergence for
+  two-state hidden {Markov} models.
+\newblock \emph{IEEE Transactions on Signal Processing}, 63\penalty0
+  (18):\penalty0 4866--4878, 2015.
+\newblock \doi{10.1109/TSP.2015.2447506}.
+
+\bibitem[Greco et~al.(2026)Greco, Ricciardi, Sansone, and Vento]{greco2026iwdd}
+Antonio Greco, Andrea~Vincenzo Ricciardi, Carlo Sansone, and Bruno Vento.
+\newblock Benchmarking illegal waste dumping detection: A public video dataset
+  and a reference baseline.
+\newblock \emph{Image and Vision Computing}, 174:\penalty0 106125, 2026.
+\newblock \doi{10.1016/j.imavis.2026.106125}.
+\newblock Article 106125. Mivia-IWDD-500: 250 positive and 250 negative
+  surveillance videos with onset timestamps. Postdates the 2026 IWDD contest,
+  which ran on the smaller Mivia-IWDD release (400 videos, 200/200) with a
+  private 100-video test set; see \citet{bouwmans2026overview}.
+
+\bibitem[Gu\'{e}pi\'{e} et~al.(2012)Gu\'{e}pi\'{e}, Fillatre, and
+  Nikiforov]{guepie2012transient}
+Blaise~Kevin Gu\'{e}pi\'{e}, Lionel Fillatre, and Igor Nikiforov.
+\newblock Sequential detection of transient changes.
+\newblock \emph{Sequential Analysis}, 31\penalty0 (4):\penalty0 528--547, 2012.
+\newblock \doi{10.1080/07474946.2012.719443}.
+
+\bibitem[Gu\'{e}pi\'{e} et~al.(2017)Gu\'{e}pi\'{e}, Fillatre, and
+  Nikiforov]{guepie2017transient}
+Blaise~Kevin Gu\'{e}pi\'{e}, Lionel Fillatre, and Igor Nikiforov.
+\newblock Detecting a suddenly arriving dynamic profile of finite duration.
+\newblock \emph{IEEE Transactions on Information Theory}, 63\penalty0
+  (5):\penalty0 3039--3052, 2017.
+\newblock \doi{10.1109/TIT.2017.2679057}.
+
+\bibitem[He et~al.(2016)He, Zhang, Ren, and Sun]{he2016deep}
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun.
+\newblock Deep residual learning for image recognition.
+\newblock In \emph{Proceedings of the IEEE Conference on Computer Vision and
+  Pattern Recognition (CVPR)}, pages 770--778, 2016.
+\newblock \doi{10.1109/CVPR.2016.90}.
+
+\bibitem[Herbster and Warmuth(1998)]{herbster1998fixedshare}
+Mark Herbster and Manfred~K. Warmuth.
+\newblock Tracking the best expert.
+\newblock \emph{Machine Learning}, 32\penalty0 (2):\penalty0 151--178, 1998.
+\newblock \doi{10.1023/A:1007424614876}.
+
+\bibitem[Juodakis and Marsland(2023)]{juodakis2020epidemic}
+Julius Juodakis and Stephen Marsland.
+\newblock Epidemic changepoint detection in the presence of nuisance changes.
+\newblock \emph{Statistical Papers}, 64\penalty0 (1):\penalty0 17--39, 2023.
+
+\bibitem[Kairanbay(2026)]{kairanbay2026vlm}
+Magzhan Kairanbay.
+\newblock Vision-language temporal analysis for illegal waste dumping detection
+  in surveillance videos.
+\newblock In \emph{2026 IEEE/CVF Winter Conference on Applications of Computer
+  Vision Workshops (WACVW)}, pages 559--567, 2026.
+\newblock \doi{10.1109/WACVW68408.2026.00063}.
+
+\bibitem[Kelly(1956)]{kelly1956}
+J.~L. Kelly.
+\newblock A new interpretation of information rate.
+\newblock \emph{Bell System Technical Journal}, 35\penalty0 (4):\penalty0
+  917--926, 1956.
+\newblock \doi{10.1002/j.1538-7305.1956.tb03809.x}.
+
+\bibitem[Khan and Syed(2026)]{khan2026eshift}
+Behraj Khan and Tahir~Qasim Syed.
+\newblock {E-SHIFT}: Anytime-valid sequential hypothesis testing for
+  distribution shift in streaming learning systems.
+\newblock \emph{arXiv preprint arXiv:2510.03839v2}, 2026.
+
+\bibitem[Kikaki et~al.(2022)Kikaki, Kakogeorgiou, Mikeli, Raitsos, and
+  Karantzalos]{kikaki2022marida}
+Katerina Kikaki, Ioannis Kakogeorgiou, Paraskevi Mikeli, Dionysios~E. Raitsos,
+  and Konstantinos Karantzalos.
+\newblock {MARIDA}: A benchmark for marine debris detection from {Sentinel-2}
+  remote sensing data.
+\newblock \emph{PLOS ONE}, 17\penalty0 (1):\penalty0 e0262247, 2022.
+\newblock \doi{10.1371/journal.pone.0262247}.
+
+\bibitem[Kikaki et~al.(2024)Kikaki, Kakogeorgiou, Hoteit, and
+  Karantzalos]{kikaki2024mados}
+Katerina Kikaki, Ioannis Kakogeorgiou, Ibrahim Hoteit, and Konstantinos
+  Karantzalos.
+\newblock Detecting marine pollutants and sea surface features with deep
+  learning in {Sentinel-2} imagery.
+\newblock \emph{ISPRS Journal of Photogrammetry and Remote Sensing},
+  210:\penalty0 39--54, 2024.
+\newblock \doi{10.1016/j.isprsjprs.2024.02.017}.
+
+\bibitem[Kim et~al.(2026)Kim, Ryu, Hwang, Byeon, Lee, and Kim]{kim2026kfold}
+Seongrok Kim, Donghun Ryu, Donghwan Hwang, Sungwoo Byeon, Minhyeok Lee, and
+  Wonsuk Kim.
+\newblock K-fold ensemble of {Hiera} and {VideoMAE} for illegal waste dumping
+  detection.
+\newblock In \emph{2026 IEEE/CVF Winter Conference on Applications of Computer
+  Vision Workshops (WACVW)}, pages 613--620, 2026.
+\newblock \doi{10.1109/WACVW68408.2026.00069}.
+
+\bibitem[Kish(1965)]{kish1965}
+Leslie Kish.
+\newblock \emph{Survey Sampling}.
+\newblock Wiley, 1965.
+
+\bibitem[Kraft et~al.(2021)Kraft, Piechocki, Ptak, and
+  Walas]{kraft2021uavvaste}
+Marek Kraft, Mateusz Piechocki, Bartosz Ptak, and Krzysztof Walas.
+\newblock Autonomous, onboard vision-based trash and litter detection in low
+  altitude aerial images collected by an unmanned aerial vehicle.
+\newblock \emph{Remote Sensing}, 13\penalty0 (5):\penalty0 965, 2021.
+\newblock \doi{10.3390/rs13050965}.
+
+\bibitem[Lei et~al.(2018)Lei, G'Sell, Rinaldo, Tibshirani, and
+  Wasserman]{lei2018distribution}
+Jing Lei, Max G'Sell, Alessandro Rinaldo, Ryan~J. Tibshirani, and Larry
+  Wasserman.
+\newblock Distribution-free predictive inference for regression.
+\newblock \emph{Journal of the American Statistical Association}, 113\penalty0
+  (523):\penalty0 1094--1111, 2018.
+\newblock \doi{10.1080/01621459.2017.1307116}.
+
+\bibitem[Liu et~al.(2024)Liu, Yang, Wang, Liu, Liu, Boukerche, Sun, and
+  Song]{liu2024generalized}
+Yang Liu, Dingkang Yang, Yan Wang, Jing Liu, Jun Liu, Azzedine Boukerche, Peng
+  Sun, and Liang Song.
+\newblock Generalized video anomaly event detection: Systematic taxonomy and
+  comparison of deep models.
+\newblock \emph{ACM Computing Surveys}, 56\penalty0 (7):\penalty0 1--38, 2024.
+\newblock \doi{10.1145/3645101}.
+
+\bibitem[Ljung and Box(1978)]{ljung1978}
+G.~M. Ljung and G.~E.~P. Box.
+\newblock On a measure of lack of fit in time series models.
+\newblock \emph{Biometrika}, 65\penalty0 (2):\penalty0 297--303, 1978.
+\newblock \doi{10.1093/biomet/65.2.297}.
+
+\bibitem[Lorden(1971)]{lorden1971}
+Gary Lorden.
+\newblock Procedures for reacting to a change in distribution.
+\newblock \emph{The Annals of Mathematical Statistics}, 42\penalty0
+  (6):\penalty0 1897--1908, 1971.
+\newblock \doi{10.1214/aoms/1177693055}.
+
+\bibitem[Lu et~al.(2013)Lu, Shi, and Jia]{lu2013avenue}
+Cewu Lu, Jianping Shi, and Jiaya Jia.
+\newblock Abnormal event detection at 150 {FPS} in {MATLAB}.
+\newblock In \emph{Proceedings of the IEEE International Conference on Computer
+  Vision (ICCV)}, pages 2720--2727, 2013.
+\newblock \doi{10.1109/ICCV.2013.338}.
+
+\bibitem[Mahadevan et~al.(2010)Mahadevan, Li, Bhalodia, and
+  Vasconcelos]{mahadevan2010ucsd}
+Vijay Mahadevan, Weixin Li, Viral Bhalodia, and Nuno Vasconcelos.
+\newblock Anomaly detection in crowded scenes.
+\newblock In \emph{Proceedings of the IEEE Conference on Computer Vision and
+  Pattern Recognition (CVPR)}, pages 1975--1981, 2010.
+\newblock \doi{10.1109/CVPR.2010.5539872}.
+
+\bibitem[Massart(1990)]{massart1990}
+P.~Massart.
+\newblock The tight constant in the dvoretzky--kiefer--wolfowitz inequality.
+\newblock \emph{The Annals of Probability}, 18\penalty0 (3):\penalty0
+  1269--1283, 1990.
+\newblock \doi{10.1214/aop/1176990746}.
+
+\bibitem[Montgomery(2020)]{montgomery2020introduction}
+Douglas~C. Montgomery.
+\newblock \emph{Introduction to Statistical Quality Control}.
+\newblock John Wiley \& Sons, Hoboken, NJ, 8 edition, 2020.
+
+\bibitem[Moustakides(1986)]{moustakides1986}
+George~V. Moustakides.
+\newblock Optimal stopping times for detecting changes in distributions.
+\newblock \emph{The Annals of Statistics}, 14\penalty0 (4):\penalty0
+  1379--1387, 1986.
+\newblock \doi{10.1214/aos/1176350164}.
+
+\bibitem[Page(1954)]{page1954}
+E.~S. Page.
+\newblock Continuous inspection schemes.
+\newblock \emph{Biometrika}, 41\penalty0 (1/2):\penalty0 100--115, 1954.
+\newblock \doi{10.2307/2333009}.
+
+\bibitem[Proen\c{c}a and Sim\~{o}es(2020)]{proenca2020taco}
+Pedro~F. Proen\c{c}a and Pedro Sim\~{o}es.
+\newblock {TACO}: Trash annotations in context for litter detection.
+\newblock \emph{arXiv preprint arXiv:2003.06975}, 2020.
+
+\bibitem[Putzu et~al.(2026)Putzu, Delussu, and Fadda]{putzu2026unicass}
+Lorenzo Putzu, Rita Delussu, and Mauro Fadda.
+\newblock A lightweight temporal detection framework for illegal waste dumping
+  in real surveillance footage.
+\newblock In \emph{2026 IEEE/CVF Winter Conference on Applications of Computer
+  Vision Workshops (WACVW)}, pages 621--627, 2026.
+\newblock \doi{10.1109/WACVW68408.2026.00070}.
+
+\bibitem[Ramdas et~al.(2023)Ramdas, Gr\"{u}nwald, Vovk, and
+  Shafer]{ramdas2023savi}
+Aaditya Ramdas, Peter Gr\"{u}nwald, Vladimir Vovk, and Glenn Shafer.
+\newblock Game-theoretic statistics and safe anytime-valid inference.
+\newblock \emph{Statistical Science}, 38\penalty0 (4):\penalty0 576--601, 2023.
+\newblock \doi{10.1214/23-STS894}.
+
+\bibitem[Rashidi(2026)]{rashidi2026benchmarkauc}
+Mohammadreza Rashidi.
+\newblock Benchmark {AUC} is not deployable reliability: A cross-dataset audit
+  of off-the-shelf features for surveillance video anomaly detection.
+\newblock \emph{arXiv preprint arXiv:2606.29506}, 2026.
+
+\bibitem[Roberts(1966)]{roberts1966}
+S.~W. Roberts.
+\newblock A comparison of some control chart procedures.
+\newblock \emph{Technometrics}, 8\penalty0 (3):\penalty0 411--430, 1966.
+\newblock \doi{10.1080/00401706.1966.10490374}.
+
+\bibitem[Roth et~al.(2022)Roth, Pemula, Zepeda, Sch{\"o}lkopf, Brox, and
+  Gehler]{roth2022total}
+Karsten Roth, Latha Pemula, Joaquin Zepeda, Bernhard Sch{\"o}lkopf, Thomas
+  Brox, and Peter Gehler.
+\newblock Towards total recall in industrial anomaly detection.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR)}, pages 14298--14308, 2022.
+\newblock \doi{10.1109/CVPR52688.2022.01392}.
+
+\bibitem[Saha and Ramdas(2026)]{saha2026nonpartitioned}
+Aytijhya Saha and Aaditya Ramdas.
+\newblock Non-partitioned e-detectors for nonparametric sequential change
+  detection.
+\newblock \emph{arXiv preprint arXiv:2607.28322}, 2026.
+
+\bibitem[Scarrica et~al.(2026)Scarrica, Placitelli, and
+  Staiano]{scarrica2026garberus}
+Vincenzo~M. Scarrica, Alessio~Pierluigi Placitelli, and Antonino Staiano.
+\newblock Garberus: Three-headed video classifier to guard against illegal
+  waste dumps.
+\newblock In \emph{2026 IEEE/CVF Winter Conference on Applications of Computer
+  Vision Workshops (WACVW)}, pages 594--602, 2026.
+\newblock \doi{10.1109/WACVW68408.2026.00067}.
+
+\bibitem[Shafer(2021)]{shafer2021testing}
+Glenn Shafer.
+\newblock Testing by betting: A strategy for statistical and scientific
+  communication.
+\newblock \emph{Journal of the Royal Statistical Society Series A},
+  184\penalty0 (2):\penalty0 407--431, 2021.
+\newblock \doi{10.1111/rssa.12647}.
+
+\bibitem[Shafer and Vovk(2019)]{shafer2019game}
+Glenn Shafer and Vladimir Vovk.
+\newblock \emph{Game-Theoretic Foundations for Probability and Finance}.
+\newblock Wiley, 2019.
+
+\bibitem[Shin et~al.(2024)Shin, Ramdas, and Rinaldo]{shin2024edetectors}
+Jaehyeok Shin, Aaditya Ramdas, and Alessandro Rinaldo.
+\newblock E-detectors: A nonparametric framework for sequential change
+  detection.
+\newblock \emph{The New England Journal of Statistics in Data Science},
+  2\penalty0 (2):\penalty0 229--260, 2024.
+\newblock \doi{10.51387/23-NEJSDS51}.
+
+\bibitem[Shiryaev(1963)]{shiryaev1963}
+A.~N. Shiryaev.
+\newblock On optimum methods in quickest detection problems.
+\newblock \emph{Theory of Probability and Its Applications}, 8\penalty0
+  (1):\penalty0 22--46, 1963.
+\newblock \doi{10.1137/1108002}.
+
+\bibitem[Sokolov et~al.(2023)Sokolov, Spivak, and
+  Tartakovsky]{sokolov2023intermittent}
+Grigory Sokolov, Valentin~S. Spivak, and Alexander~G. Tartakovsky.
+\newblock Detecting an intermittent change of unknown duration.
+\newblock \emph{Sequential Analysis}, 42\penalty0 (3):\penalty0 269--302, 2023.
+\newblock \doi{10.1080/07474946.2023.2211126}.
+
+\bibitem[Tartakovsky et~al.(2014)Tartakovsky, Nikiforov, and
+  Basseville]{tartakovsky2014sequential}
+Alexander~G. Tartakovsky, Igor~V. Nikiforov, and Mich{\`e}le Basseville.
+\newblock \emph{Sequential Analysis: Hypothesis Testing and Changepoint
+  Detection}.
+\newblock Chapman and Hall/CRC, 2014.
+\newblock \doi{10.1201/b17279}.
+
+\bibitem[Tibshirani et~al.(2019)Tibshirani, Barber, Cand\`{e}s, and
+  Ramdas]{tibshirani2019covariate}
+Ryan~J. Tibshirani, Rina~Foygel Barber, Emmanuel~J. Cand\`{e}s, and Aaditya
+  Ramdas.
+\newblock Conformal prediction under covariate shift.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, volume~32, 2019.
+
+\bibitem[Torres and Fraternali(2023)]{torres2023aerialwaste}
+Rocio~Nahime Torres and Piero Fraternali.
+\newblock {AerialWaste} dataset for landfill discovery in aerial and satellite
+  images.
+\newblock \emph{Scientific Data}, 10\penalty0 (1):\penalty0 63, 2023.
+\newblock \doi{10.1038/s41597-023-01976-9}.
+
+\bibitem[van Erven et~al.(2012)van Erven, Gr\"{u}nwald, and
+  de~Rooij]{vanerven2012switch}
+Tim van Erven, Peter Gr\"{u}nwald, and Steven de~Rooij.
+\newblock Catching up faster by switching sooner: A predictive approach to
+  adaptive estimation with an application to the {AIC--BIC} dilemma.
+\newblock \emph{Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)}, 74\penalty0 (3):\penalty0 361--417, 2012.
+\newblock \doi{10.1111/j.1467-9868.2011.01025.x}.
+
+\bibitem[Ville(1939)]{ville1939}
+Jean Ville.
+\newblock \emph{\'{E}tude critique de la notion de collectif}.
+\newblock Gauthier-Villars, Paris, 1939.
+
+\bibitem[Vovk(2012)]{vovk2012conditional}
+Vladimir Vovk.
+\newblock Conditional validity of inductive conformal predictors.
+\newblock In \emph{Proceedings of the Asian Conference on Machine Learning},
+  volume~25 of \emph{PMLR}, pages 475--490, 2012.
+
+\bibitem[Vovk et~al.(2003)Vovk, Nouretdinov, and
+  Gammerman]{vovk2003exchangeability}
+Vladimir Vovk, Ilia Nouretdinov, and Alexander Gammerman.
+\newblock Testing exchangeability on-line.
+\newblock In \emph{Proceedings of the 20th International Conference on Machine
+  Learning (ICML)}, pages 768--775, 2003.
+
+\bibitem[Vovk et~al.(2005)Vovk, Gammerman, and Shafer]{vovk2005alrw}
+Vladimir Vovk, Alexander Gammerman, and Glenn Shafer.
+\newblock \emph{Algorithmic Learning in a Random World}.
+\newblock Springer, 2005.
+
+\bibitem[Wang and Ramdas(2022)]{wang2022ebh}
+Ruodu Wang and Aaditya Ramdas.
+\newblock False discovery rate control with e-values.
+\newblock \emph{Journal of the Royal Statistical Society Series B}, 84\penalty0
+  (3):\penalty0 822--852, 2022.
+\newblock \doi{10.1111/rssb.12489}.
+
+\bibitem[Waudby-Smith and Ramdas(2024)]{waudby2024betting}
+Ian Waudby-Smith and Aaditya Ramdas.
+\newblock Estimating means of bounded random variables by betting.
+\newblock \emph{Journal of the Royal Statistical Society Series B}, 86\penalty0
+  (1):\penalty0 1--27, 2024.
+\newblock \doi{10.1093/jrsssb/qkad009}.
+
+\bibitem[Xu and Xie(2023)]{xu2023sequential}
+Chen Xu and Yao Xie.
+\newblock Sequential predictive conformal inference for time series.
+\newblock In \emph{Proceedings of the 40th International Conference on Machine
+  Learning}, volume 202 of \emph{Proceedings of Machine Learning Research},
+  pages 38707--38727. PMLR, 2023.
+
+\bibitem[Zbuce et~al.(2026)Zbuce, Laza, Tic{\u{a}}rat, Moisi, and
+  Popescu]{zbuce2026novelty}
+Andrei~Daniel Zbuce, Lukas~Patrick Laza, Andrei~Ionu{\c{t}} Tic{\u{a}}rat,
+  Elisa~Valentina Moisi, and Daniela~Elena Popescu.
+\newblock Hybrid temporal-spatial novelty detection for illegal waste dumping
+  in surveillance video.
+\newblock In \emph{2026 IEEE/CVF Winter Conference on Applications of Computer
+  Vision Workshops (WACVW)}, pages 628--631, 2026.
+\newblock \doi{10.1109/WACVW68408.2026.00071}.
+
+\end{thebibliography}

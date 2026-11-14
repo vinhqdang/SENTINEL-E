@@ -1,0 +1,40 @@
+\begin{table}[t]
+\centering
+\caption{Lag selection on official training videos only. Each row is the fraction of permuted training-video streams (group \emph{sel}) with at least one alarm at $\alpha=0.1$. The test split is not used. The selected lag is the smallest lag at which the rate is at most $\alpha$ and stays so for every larger lag.}
+\label{tab:r1_lag_selection}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llrrl}
+\toprule
+dataset & lag & PFA & 95\% CI &  \\
+\midrule
+UCSD Ped2 & 1 & 1.000 & [0.981, 1.000] &  \\
+UCSD Ped2 & 2 & 1.000 & [0.981, 1.000] &  \\
+UCSD Ped2 & 3 & 0.000 & [0.000, 0.019] & $\leftarrow L^\ast$ \\
+UCSD Ped2 & 4 & 0.000 & [0.000, 0.019] &  \\
+UCSD Ped2 & 5 & 0.000 & [0.000, 0.019] &  \\
+UCSD Ped2 & 6 & 0.000 & [0.000, 0.019] &  \\
+UCSD Ped2 & 7 & 0.000 & [0.000, 0.019] &  \\
+UCSD Ped2 & 8 & 0.000 & [0.000, 0.019] &  \\
+UCSD Ped2 & 10 & 0.000 & [0.000, 0.019] &  \\
+UCSD Ped2 & 12 & 0.000 & [0.000, 0.019] &  \\
+UCSD Ped2 & 15 & 0.000 & [0.000, 0.019] &  \\
+UCSD Ped2 & 20 & 0.000 & [0.000, 0.019] &  \\
+UCSD Ped2 & 30 & 0.000 & [0.000, 0.019] &  \\
+UCSD Ped2 & 50 & 0.000 & [0.000, 0.019] &  \\
+CUHK Avenue & 1 & 1.000 & [0.981, 1.000] &  \\
+CUHK Avenue & 2 & 1.000 & [0.981, 1.000] &  \\
+CUHK Avenue & 3 & 1.000 & [0.981, 1.000] &  \\
+CUHK Avenue & 4 & 1.000 & [0.981, 1.000] &  \\
+CUHK Avenue & 5 & 1.000 & [0.981, 1.000] &  \\
+CUHK Avenue & 6 & 1.000 & [0.981, 1.000] &  \\
+CUHK Avenue & 7 & 1.000 & [0.981, 1.000] &  \\
+CUHK Avenue & 8 & 1.000 & [0.981, 1.000] &  \\
+CUHK Avenue & 10 & 1.000 & [0.981, 1.000] &  \\
+CUHK Avenue & 12 & 1.000 & [0.981, 1.000] &  \\
+CUHK Avenue & 15 & 0.000 & [0.000, 0.019] & $\leftarrow L^\ast$ \\
+CUHK Avenue & 20 & 0.000 & [0.000, 0.019] &  \\
+CUHK Avenue & 30 & 0.000 & [0.000, 0.019] &  \\
+CUHK Avenue & 50 & 0.000 & [0.000, 0.019] &  \\
+\bottomrule
+\end{tabular}}
+\end{table}

@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\caption{Cost breakdown of the default SENTINEL-E pipeline, single-thread, measured on one machine. Per-bet components are timed on the pipeline's own code path; the amortised prediction divides their sum by the decorrelation lag, because p-values and the e-detector step run only on betting instants. Excluded: context-feature extraction, decoding, the backbone, peak memory.}
+\label{tab:cost_breakdown}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{lrlr}
+\toprule
+component & cost (\textmu s) & unit & \% of backbone \\
+\midrule
+conformal p-value (per bet, pipeline path) & 0.34 & per bet & -- \\
+episodic e-detector step, batch (per bet) & 13.69 & per bet & -- \\
+episodic e-detector step, streaming (per bet) & 39.28 & per bet & -- \\
+changepoint 32-point step, streaming (reference) & 19.58 & per bet & -- \\
+decorrelation lag $L$ & 20 & frames & -- \\
+predicted amortised: $(p + \text{step})/L$ (batch) & 0.702 & per frame & 0.0019 \\
+predicted amortised: $(p + \text{step})/L$ (streaming) & 1.981 & per frame & 0.0054 \\
+O(T) expansion onto frame grid (measured) & 0.017 & per frame & -- \\
+measured end-to-end monitor (200,000 frames) & 0.610 & per frame & 0.0017 \\
+frozen backbone (reference, from exp5) & 36.84 ms & per frame & 100 \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Median of repeated timings; the measured end-to-end row is \texttt{SentinelE.run} on a 200{,}000-frame stream, as in exp5. The amortised prediction uses per-call component timings, which include call overhead that the end-to-end run amortises, so it slightly exceeds the measured figure; the O(T) expansion row is included in the measured figure.\end{minipage}
+\end{table}

@@ -1,0 +1,14 @@
+\begin{table}[t]
+\centering
+\caption{Three lag quantities per dataset, all computed on the training calibration videos. The ACF length is the first lag where $|\mathrm{acf}|<0.05$ (search up to $\min(500,n/3)$). The estimated lag uses the library default, which caps at 200.}
+\label{tab:r1_lags}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{lrrr}
+\toprule
+dataset & ACF decorrelation length & estimated lag (cap 200) & selected lag $L^\ast$ \\
+\midrule
+UCSD Ped2 & 75 & 75 & 3 \\
+CUHK Avenue & 133 & 133 & 15 \\
+\bottomrule
+\end{tabular}}
+\end{table}

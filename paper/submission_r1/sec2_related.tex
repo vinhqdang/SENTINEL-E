@@ -1,0 +1,125 @@
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Waste and dumping detection.}
+TACO \citep{proenca2020taco}, ZeroWaste \citep{bashkirova2022zerowaste},
+UAVVaste \citep{kraft2021uavvaste}, AerialWaste \citep{torres2023aerialwaste},
+MARIDA \citep{kikaki2022marida} and MADOS \citep{kikaki2024mados} are image,
+aerial, satellite or industrial datasets. None is a continuous video stream.
+
+The 2026 IWDD contest \citep{bouwmans2026overview} ranked ten teams on Mivia-IWDD by
+precision, recall, $F_1$, normalised notification delay, frame rate and peak memory.
+Seven entries are published: 3D CNNs with temporal localisation
+\citep{almorsy2026x3d}, transformer ensembles \citep{kim2026kfold}, multi-head
+classifiers \citep{scarrica2026garberus}, vision--language reasoning
+\citep{kairanbay2026vlm}, novelty detection \citep{zbuce2026novelty},
+onset-centric estimation \citep{bhat2026imslab} and a two-stage recurrent framework
+\citep{putzu2026unicass}. SENTINEL-E consumes a frozen backbone's scores, so it
+complements these entries. None of them reports a false-alarm rate over a
+continuous horizon, an average run length or a delay under continuous monitoring.
+The contest's ROC analysis is also per clip. Our real-data protocol uses the larger
+Mivia-IWDD-500 release \citep{greco2026iwdd}.
+
+\paragraph{Video anomaly detection benchmarks.}
+CUHK Avenue \citep{lu2013avenue} and UCSD Ped2 \citep{mahadevan2010ucsd} are
+classical benchmarks, and recent work reports frame-level area under the ROC curve (AUC) on them. One
+reconstruction-based method reports 99.03\% AUC on Ped2 and 92.40\% on Avenue
+\citep{dong2025rvadign}. For a survey, see \citet{liu2024generalized}. AUC is
+computed after the fact on a labelled test set. It does not measure how often a
+rule alarms on an unlabelled stream, which is what our protocol measures.
+\citet{rashidi2026benchmarkauc} show the consequence. Off-the-shelf feature sets from
+four backbones, evaluated on four datasets, average 70.4\% AUC on their training
+distribution and fall to 49.9\%, which is chance, under cross-dataset shift. At an
+operating point that reaches 0.9 recall on the source dataset, the false-alarm
+rate is around $3.2\times 10^{4}$ per hour.
+
+Our real-data backbones are optical flow, estimated by Farneb\"{a}ck's method
+\citep{farneback2003}, and PatchCore. PatchCore scores each patch by its
+nearest-neighbour distance to a memory bank of frozen ImageNet features from a
+residual network \citep{roth2022total,he2016deep}.
+
+\paragraph{Online detection with a false-alarm bound.}
+The closest prior work is \citet{doshi2021online}. It gives an online detector for
+surveillance video with an asymptotic bound on the false-alarm rate. Our guarantee
+is non-asymptotic and time-uniform, so it holds at all monitoring times at once.
+Doshi and Yilmaz also treat video anomaly detection as continual learning
+\citep{doshi2022rethinking}.
+
+\paragraph{Sequential detection of changes that end.}
+Quickest-detection theory mostly treats permanent shifts, but a sub-literature
+treats changes of finite duration. Transient change detection
+\citep{guepie2012transient,guepie2017transient} minimises worst-case missed
+detection under a false-alarm constraint. Intermittent changes of unknown duration
+are treated in \citet{sokolov2023intermittent}. \citet{fuh2015hmm} use a two-state
+hidden Markov model, the closest classical relative of the chain in
+\cref{eq:episodic}. Epidemic changepoint methods \citep{fisch2022capa,juodakis2020epidemic}
+handle a segment that departs from and returns to a background level. These methods
+use CUSUM, SPRT or window statistics with asymptotic or fixed-sample guarantees.
+None is time-uniform. We add an anytime-valid, conformal-fed construction of the
+finite-duration change. The finite-duration change itself is not new, and
+\cref{sec:episodic} states that scope.
+
+Mixing over the trajectories of a two-state chain belongs to the fixed-share, or
+switching-expert, family \citep{herbster1998fixedshare,vanerven2012switch}. That
+literature does not give the martingale property under optional stopping, which
+\cref{thm:episodic} establishes. Closer to our architecture are the conformal test
+martingales of \citet{vovk2003exchangeability}. They pair a conformal front end with
+a Ville-thresholded martingale for change and exchangeability testing. We know of no
+e-process or anytime-valid conformal method applied to waste, dumping or pollution
+surveillance.
+
+\paragraph{Sequential change detection.}
+CUSUM \citep{page1954}, Shiryaev's statistic \citep{shiryaev1963} and
+Shiryaev--Roberts \citep{roberts1966} are the classical procedures, with optimality
+due to \citet{lorden1971} and \citet{moustakides1986}. A full treatment is in
+\citet{tartakovsky2014sequential}. Their guarantees are asymptotic
+statements about the average run length (ARL) under a correctly specified pre-change law. Footage
+scores are autocorrelated, heavy-tailed and diurnally non-stationary, and both
+procedures lose control in our experiments. \citet{shin2024edetectors} give a
+nonparametric e-detector framework with non-asymptotic ARL bounds. \citet{saha2026nonpartitioned}
+extend it to composite pre-change classes. Their PFA-controlled variant mixes over
+start times with weights summing to one, which gives $\mathbb{P}(\tau<\infty)\le\alpha$.
+\cref{prop:generalisation} reduces to that variant at zero episode-end rate.
+
+All of these mix over the changepoint location of a persistent shift. None adds an
+episode-end axis with a time-uniform, optional-stopping-safe guarantee. Cost also
+separates them. Evaluated exactly over all active starts, a non-partitioned
+e-detector costs $O(t)$ per observation \citep{saha2026nonpartitioned}. Under a
+geometric prior over start times, the sum telescopes to the $O(1)$ recursion of
+\cref{eq:forward} at $\eta=0$. The episodic process keeps that cost while adding the
+episode-end axis.
+
+\paragraph{Anytime-valid inference and e-values.}
+Testing by betting \citep{shafer2021testing} turns Ville's inequality into a design
+principle, and \citet{waudby2024betting} develop the betting strategies we adapt.
+\citet{wang2022ebh} introduce e-BH, which controls the false discovery rate (FDR) under
+arbitrary dependence and underpins our fleet layer. The closest work in spirit is
+E-SHIFT \citep{khan2026eshift}, a sub-exponential e-process for distribution shift
+in streaming systems. We reimplement it as a baseline. It differs in three ways.
+Its log-moment-generating-function bound is estimated, so by the authors' account
+validity is asymptotic in the calibration size. It assumes i.i.d.\ calibration and
+deployment scores, which is stronger than the exchangeability our conformal layer
+needs, and a diurnal cycle breaks it. Its wealth restarts after each alert, so
+evidence arriving hours into a stream must first repay what was burned earlier. Our
+restart convention between alarms has the same effect.
+
+\paragraph{Conformal prediction.}
+Split conformal prediction \citep{vovk2005alrw,angelopoulos2023gentle} supplies the
+distribution-free p-values we bet on. Conformal p-values also test for outliers
+\citep{bates2023testing}, and exchangeability can be relaxed for sequential data
+\citep{barber2023beyond,xu2023sequential}. \citet{vovk2012conditional} studies
+calibration-conditional validity, which our Beta levels address. Covariate shift is
+handled by likelihood-ratio weighting \citep{tibshirani2019covariate}, which we
+implement and evaluate. Conformalised regression residuals \citep{lei2018distribution}
+pursue conditional coverage by other means. Layer 1 adds the sequential requirement.
+The p-values must be super-uniform conditionally on the past, not merely marginally,
+or the wealth process is not a supermartingale.
+
+\paragraph{Control charts and ROC practice.}
+Control charts are tuned to an in-control average run length, and their limits are
+revisited when the process changes \citep{montgomery2020introduction}. Our
+time-uniform false-alarm probability is the horizon-free analogue: it bounds the
+chance of any alarm at any time. ROC analysis fixes a per-decision operating point
+\citep{fawcett2006introduction}. A budget of false alarms per monitoring period
+depends on how many decisions are made, which a per-decision point does not show.
+\cref{sec:limitations} returns to alarm budgets.
