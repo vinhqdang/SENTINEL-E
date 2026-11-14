@@ -2,86 +2,71 @@
 \label{sec:intro}
 
 Illegal dumping is a persistent municipal problem with an obvious
-computer-vision framing, and the field has adopted that framing consistently.
-Researchers collect clips, label each one as containing a dumping event or not,
-train a classifier and report clip-level accuracy. The 2026 IWDD contest
-\citep{bouwmans2026overview} gave this protocol a shared benchmark. Ten teams
-trained on Mivia-IWDD (400 surveillance videos, balanced, with onset timestamps)
-and were ranked on a private test set of 100 videos. Seven entries are published
+computer-vision framing. The field has adopted that framing consistently: label
+clips as containing a dumping event or not, train a classifier and report
+clip-level accuracy. The 2026 IWDD contest \citep{bouwmans2026overview} gave this
+protocol a shared benchmark. Ten teams trained on Mivia-IWDD (400 balanced
+videos with onset timestamps) and were ranked on a private test set of 100 videos.
+Seven entries are published
 \citep{almorsy2026x3d,kim2026kfold,scarrica2026garberus,kairanbay2026vlm,zbuce2026novelty,bhat2026imslab,putzu2026unicass}.
-Each reports per-video precision, recall and $F_1$, together with a notification
-delay. Where an entry counts false alarms, it counts them per clip, as in ``six
-false alarms on thirty negative videos'' \citep{almorsy2026x3d}. That is
-specificity, not a rate over a monitoring period, and the organisers' ROC
-analysis is per clip too. The larger Mivia-IWDD-500 release \citep{greco2026iwdd},
-with 250 positive and 250 negative videos, postdates the contest.
+Where they count false alarms, they count them per clip, as in ``six false alarms
+on thirty negative videos'' \citep{almorsy2026x3d}. That is specificity, not a
+rate over a monitoring period. The larger Mivia-IWDD-500 release
+\citep{greco2026iwdd} postdates the contest.
 
-The framing does not match deployment. A camera watching a lay-by does not
-receive a curated clip and return a verdict. It produces frames for weeks, and
-the system alerts when its evidence first crosses a threshold. The municipality
-manages the number of enforcement dispatches wasted over a season, not per-clip
-precision. Testing a stream repeatedly and stopping at the first exceedance is
-optional stopping. It invalidates the level at which the threshold was
-calibrated.
+The framing does not match deployment. A camera does not return a verdict on a
+curated clip. It produces frames for weeks, and the system alerts when its
+evidence first crosses a threshold. The municipality manages the number of wasted
+enforcement dispatches over a season. Testing a stream repeatedly and stopping at
+the first exceedance is optional stopping, and it invalidates the level at which
+the threshold was calibrated.
 
-The gap is larger than it looks. A rule that raises a false alarm on each frame
-with probability $q$ raises at least one over $T$ frames with probability
-$1-(1-q)^{T}$, which tends to one for any $q>0$. Persistence filters and score
-smoothing change $q$, but not this limit. Feed a per-frame rule p-values that
-are valid at the $1\%$ level, and at least one false alarm occurs on
-\ValidityPfaPvaluePct\% of $40$-minute null streams (\cref{fig:validity}\,(a)).
-A raw score threshold tuned to a per-frame rate of $10^{-3}$ reaches a
-false-alarm probability of $0.980$ within one hour and $1.000$ from six hours
-(\cref{fig:validity}\,(b)). A clip-level evaluation never runs the detector for
-hours, so it cannot see this.
+The gap is larger than it looks. A per-frame rule that false-alarms with
+probability $q$ raises at least one alarm over $T$ frames with probability
+$1-(1-q)^{T}$, which tends to one for any $q>0$. Feed that rule p-values that are
+valid at the $1\%$ level, and at least one false alarm occurs on
+\ValidityPfaPvaluePct\% of $40$-minute null streams (\cref{fig:validity}\,(a)). A
+raw threshold tuned to a $10^{-3}$ per-frame rate reaches a false-alarm probability
+of $0.980$ within one hour and $1.000$ from six hours (\cref{fig:validity}\,(b)). A
+clip-level evaluation never runs the detector for hours, so it cannot see this.
 
-Nothing in this argument is specific to dumping. Any scene-level anomaly that a
-per-frame backbone scores, such as loitering, wrong-way motion, an abandoned
-object or a vehicle where pedestrians belong, faces the same gap. The method
-therefore targets streaming visual anomaly surveillance, with illegal dumping as
-the motivating case. Real-data validation covers UCSD Ped2 and CUHK Avenue, two
-pedestrian-walkway corpora, and Mivia-IWDD-500, which contains illegal-dumping
-footage. Each corpus is run with an optical-flow backbone and a PatchCore
-backbone, and each test video is monitored alone. The Mivia labels give onset
-times only, and the real streams are short. The long-horizon claims therefore
+Nothing here is specific to dumping. Loitering, wrong-way motion or an abandoned
+object faces the same gap. The method therefore targets streaming visual anomaly
+surveillance, with dumping as the motivating case. Real-data validation covers UCSD
+Ped2 and CUHK Avenue, which are pedestrian-walkway corpora, and Mivia-IWDD-500,
+which contains illegal-dumping footage. Each corpus is run with an optical-flow and
+a PatchCore backbone, and each test video is monitored alone. The Mivia labels give
+onset times only, and the real streams are short. The long-horizon claims therefore
 rest on simulation (\cref{sec:limitations}).
 
 \subsection{Why the existing sequential machinery is the wrong shape}
 
 The tools for optional stopping are mature. Ville's inequality \citep{ville1939}
 bounds the probability that a non-negative supermartingale ever exceeds a level.
-Game-theoretic work turns this into a construction: bet against the null, and
-the accumulated wealth is a time-uniform certificate \citep{shafer2019game,ramdas2023savi}.
-Conformal prediction \citep{vovk2005alrw} supplies distribution-free p-values to
-bet on. E-detectors \citep{shin2024edetectors} adapt the machinery to change
-detection, and e-BH \citep{wang2022ebh} combines evidence across streams under
-arbitrary dependence. We know of no application of this machinery to waste,
-dumping or pollution surveillance.
+Betting against the null turns the accumulated wealth into a time-uniform
+certificate \citep{shafer2019game,ramdas2023savi}. Conformal p-values
+\citep{vovk2005alrw} supply the bets. E-detectors \citep{shin2024edetectors} adapt
+the machinery to change detection, and e-BH \citep{wang2022ebh} combines evidence
+across streams. We know of no application of this machinery to waste, dumping or
+pollution surveillance.
 
-Importing it unchanged would not be enough, and the reason is structural. Every
-one of these procedures models a persistent change. At an unknown frame $\nu$
-the law switches from $P_0$ to $P_1$ and stays there. The mixtures run over
-$\nu$ alone, and the optimality theory, thresholds and delay bounds all presume
-this.
+Importing it unchanged would not be enough. Every one of these procedures models a
+persistent change. At an unknown frame $\nu$ the law switches from $P_0$ to $P_1$
+and stays there, and the mixtures run over $\nu$ alone.
 
-An illegal dumping event is not a persistent change. It is an \emph{episode}. A
-van pulls up, the offender unloads for forty seconds and drives away. Within the
-episode the signal is intermittent: the offender is occluded by the vehicle,
-steps out of frame and returns. Then the episode ends and the stream reverts to
-its null behaviour. A site used once is often used again, so another episode
-follows weeks later.
+An illegal dumping event is an \emph{episode}. A van pulls up, the offender unloads
+for forty seconds and drives away. Within the episode the signal is intermittent:
+the offender is occluded, leaves the frame and returns. Then the stream reverts to
+null. A site used once is often used again weeks later.
 
-Modelling that as a persistent change matters. A changepoint-mixture wealth
-process keeps betting at full aggression after the episode ends, and it hands
-back what the episode earned. It also counts the quiet frames inside an episode
-against the alternative. Both effects lengthen delay, and the second grows with
-intermittency, which is the regime this problem lives in. In paired simulations
-on a shared grid, the episodic mixture reduces the mean censored delay by
-141.1\,s (95\% CI +79.6 to +210.2\,s) for four recurring episodes of 1600 frames,
-intermittency $\pi=0.2$ and a mean gap of 12{,}000 frames. A single episode
-reverses the sign: the changepoint mixture is ahead by 55.7\,s (95\% CI 14.0 to
-111.2\,s). Recurrence alone favours the episodic mixture, and \cref{sec:episodes}
-maps the regimes.
+A persistent-change model pays for this mismatch. A changepoint-mixture wealth
+process keeps betting at full aggression after the episode ends. It also counts the
+quiet frames inside the episode against the alternative. Both effects lengthen
+delay, and the second grows with intermittency. In paired simulations on a shared
+grid, the episodic mixture reduces the mean censored delay by 141.1\,s (95\% CI +79.6
+to +210.2\,s) for four recurring 1600-frame episodes with $\pi=0.2$ and a mean gap of
+12{,}000 frames. A single episode reverses the sign, by 55.7\,s (95\% CI 14.0 to
+111.2\,s) in favour of the changepoint mixture. \cref{sec:episodes} maps the regimes.
 
 \subsection{Contributions}
 
@@ -89,46 +74,40 @@ The paper makes three kinds of contribution: theory, an algorithm and an
 evaluation method.
 
 \begin{itemize}
-\item \textbf{Theory: an episodic e-process.} Mixing over episodes rather than
-      changepoints gives a wealth process that is an exact non-negative
-      supermartingale, so Ville's inequality applies unchanged
-      (\cref{thm:episodic}). It is a strict generalisation: it equals the
-      changepoint mixture exactly when the episode-end rate is zero
-      (\cref{prop:generalisation}).
+\item \textbf{Theory: an episodic e-process.} Mixing over episodes, not
+      changepoints, gives an exact non-negative supermartingale, so Ville's
+      inequality applies unchanged (\cref{thm:episodic}). It equals the changepoint
+      mixture exactly when the episode-end rate is zero (\cref{prop:generalisation}).
 
 \item \textbf{Theory: exact conformal levels.} Each attainable p-value level is
       replaced by its exact Beta order-statistic bound (\cref{thm:beta}). At
       $n=\CalN$ and $\delta=\CalDelta$, the smallest usable p-value falls from
-      $\DkwPmin$ to $\BetaPmin$, an improvement of $\BetaOverDkwSpeedup\times$
-      over the Dvoretzky--Kiefer--Wolfowitz bound.
+      $\DkwPmin$ to $\BetaPmin$, an improvement of $\BetaOverDkwSpeedup\times$ over
+      the Dvoretzky--Kiefer--Wolfowitz bound.
 
-\item \textbf{Algorithm: a constant-time recursion.} The mixture runs as a
-      forward recursion with $O(1)$ time and memory per frame
-      (\cref{eq:forward,alg:episodic}). Direct evaluation over active starts
-      costs $O(t)$ per observation. The guarantee layer adds under a microsecond
-      per frame (\cref{sec:compute}).
+\item \textbf{Algorithm: a constant-time recursion.} A forward recursion runs the
+      mixture in $O(1)$ time and memory per frame (\cref{eq:forward,alg:episodic}).
+      Direct evaluation over active starts costs $O(t)$. The guarantee layer adds
+      under a microsecond per frame (\cref{sec:compute}).
 
 \item \textbf{A learned prior and a posterior, with a negative result.} A learned
-      spatial prior enters only as a predictable modulation, so it cannot break
-      the guarantee (\cref{thm:predictable}). The posterior probability of being
-      inside an episode is bounded in $[0,1]$, which suits a message-passing
-      layer across cameras. The spatial-prior architecture built on it did not
-      shorten delay (\cref{sec:network}).
+      spatial prior enters only as a predictable modulation, so the guarantee holds
+      whatever it outputs (\cref{thm:predictable}). The posterior probability of
+      being inside an episode is bounded in $[0,1]$. The spatial-prior architecture
+      built on it did not shorten delay (\cref{sec:network}).
 
 \item \textbf{An evaluation of guarantees.} We report realised false-alarm rates
-      over up to \ExpOneReps{} streams per operating point, against six baselines
-      including a reimplementation of E-SHIFT \citep{khan2026eshift}. Delay is
-      reported censored as well as conditionally (\cref{sec:problem}). Real video
-      is monitored per video, with operating points chosen on training videos
-      only (\cref{sec:real-data}). Dilated betting did not help intermittency
-      (\cref{sec:dilation}).
+      over up to \ExpOneReps{} streams per operating point, against six baselines,
+      including E-SHIFT \citep{khan2026eshift}. Delay is reported censored as well as
+      conditionally (\cref{sec:problem}). Real video is monitored per video, with
+      operating points chosen on training videos only (\cref{sec:real-data}).
+      Dilated betting did not help (\cref{sec:dilation}).
 \end{itemize}
 
 \paragraph{What we do not claim.}
 The changepoint mixture with retained tail mass is not new. It is the
 PFA-controlled e-detector of \citet{saha2026nonpartitioned}, which gives
-$\mathbb{P}(\tau<\infty)\le\alpha$ for a mixture over start times with weights
-summing to one. Our contribution is the episode axis on top of it, and the
-$O(1)$ recursion that makes that axis cheap. Conformal prediction and e-BH are
-existing machinery, used as intended. \cref{sec:limitations} sets out what the
-evaluation does and does not establish.
+$\mathbb{P}(\tau<\infty)\le\alpha$. Our contribution is the episode axis on top of
+it, and the $O(1)$ recursion that makes that axis cheap. Conformal prediction and
+e-BH are existing machinery. \cref{sec:limitations} sets out what the evaluation
+does and does not establish.
