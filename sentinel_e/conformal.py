@@ -321,6 +321,32 @@ class ConformalCalibrator:
         return np.clip(p, self.clip_min, 1.0)
 
 
+def _normalise_features(cols: Optional[Sequence[int]]) -> Optional[Tuple[int, ...]]:
+    """Canonical ``shift_features``: ``None`` (all columns) or a non-empty tuple."""
+    if cols is None:
+        return None
+    out = tuple(int(c) for c in cols)
+    if not out:
+        raise ValueError("shift_features must be None or a non-empty sequence")
+    if any(c < 0 for c in out):
+        raise ValueError("shift_features must be non-negative column indices")
+    return out
+
+
+def _check_features(cols: Optional[Tuple[int, ...]], width: int) -> None:
+    if cols is not None and max(cols) >= width:
+        raise ValueError(
+            f"shift_features {cols} out of range for {width} context columns"
+        )
+
+
+def _select_columns(x: np.ndarray, cols: Optional[Tuple[int, ...]]) -> np.ndarray:
+    """Restrict context rows to the shift-feature columns (identity when None)."""
+    if cols is None:
+        return x
+    return x[:, list(cols)]
+
+
 # --------------------------------------------------------------------------- #
 # Density-ratio estimation
 # --------------------------------------------------------------------------- #
@@ -633,8 +659,14 @@ class MondrianConformalCalibrator:
     weight_clip: float = 10.0
     shift_auc_threshold: float = 0.60
     weighted_bound: str = "effective_beta"
+    # Context columns used by the shift gate *and* the density ratio.  None
+    # uses every column (the original behaviour).
+    shift_features: Optional[Sequence[int]] = None
     clip_min: float = 1e-6
     _per_bin_delta: float = 1e-3
+
+    def __post_init__(self) -> None:
+        self.shift_features = _normalise_features(self.shift_features)
 
     _bins: dict = field(default_factory=dict, repr=False)
     _pooled: Optional[ConformalCalibrator] = field(default=None, repr=False)
@@ -653,6 +685,7 @@ class MondrianConformalCalibrator:
         ctx = np.atleast_2d(np.asarray(calibration_context, dtype=float))
         if len(ctx) != s.size:
             raise ValueError("context rows must match number of calibration scores")
+        _check_features(self.shift_features, ctx.shape[1])
         self.taxonomy.fit(ctx)
         bins = self.taxonomy(ctx)
         self._cal_scores, self._cal_context, self._cal_bin = s, ctx, bins
@@ -710,7 +743,10 @@ class MondrianConformalCalibrator:
             # size drops, the conservative fallback engages and detection power
             # is thrown away for no reason.  Weighting should cost something
             # only when there is a shift to correct.
-            auc, dr = self._shift_test(rec["context"], dep_b)
+            ctx_b = _select_columns(rec["context"], self.shift_features)
+            auc, dr = self._shift_test(
+                ctx_b, _select_columns(dep_b, self.shift_features)
+            )
             if auc < self.shift_auc_threshold:
                 rec["weights"] = np.ones(len(rec["scores"]))
                 rec["eps"] = 0.0
@@ -720,7 +756,7 @@ class MondrianConformalCalibrator:
                 continue
             rec["shift_auc"] = auc
             w = np.clip(
-                dr.ratio(rec["context"]),
+                dr.ratio(ctx_b),
                 np.exp(-self.weight_clip),
                 np.exp(self.weight_clip),
             )
@@ -980,6 +1016,9 @@ class ResidualConformalCalibrator:
     weight_clip: float = 10.0
     shift_auc_threshold: float = 0.60
     weighted_bound: str = "effective_beta"
+    # Context columns used by the shift gate *and* the density ratio.  None
+    # uses every column (the original behaviour).
+    shift_features: Optional[Sequence[int]] = None
 
     _mean_model: Optional[_RidgeBasis] = field(default=None, repr=False)
     _scale_model: Optional[_RidgeBasis] = field(default=None, repr=False)
@@ -1000,6 +1039,9 @@ class ResidualConformalCalibrator:
     _n_scored: int = field(default=0, repr=False)
     _n_abstained: int = field(default=0, repr=False)
 
+    def __post_init__(self) -> None:
+        self.shift_features = _normalise_features(self.shift_features)
+
     # -- fitting ---------------------------------------------------------- #
     def fit(
         self, calibration_scores: Sequence[float], calibration_context: np.ndarray
@@ -1008,6 +1050,7 @@ class ResidualConformalCalibrator:
         x = np.atleast_2d(np.asarray(calibration_context, dtype=float))
         if len(x) != s.size:
             raise ValueError("context rows must match number of calibration scores")
+        _check_features(self.shift_features, x.shape[1])
         if s.size < 50:
             raise ValueError("residual conformal needs at least 50 calibration frames")
 
@@ -1107,7 +1150,10 @@ class ResidualConformalCalibrator:
         if dep.shape[0] < 16 or self._sorted_ctx is None:
             return self._n_eff
 
-        auc, dr = self._shift_test(self._sorted_ctx, dep)
+        sorted_ctx = _select_columns(self._sorted_ctx, self.shift_features)
+        auc, dr = self._shift_test(
+            sorted_ctx, _select_columns(dep, self.shift_features)
+        )
         self._shift_auc = auc
         if auc < self.shift_auc_threshold or dr is None:
             # No detectable shift: keep the exact order-statistic levels.
@@ -1115,7 +1161,7 @@ class ResidualConformalCalibrator:
             self._n_eff = float(self._sorted_resid.size)
             return self._n_eff
 
-        w = np.clip(dr.ratio(self._sorted_ctx),
+        w = np.clip(dr.ratio(sorted_ctx),
                     np.exp(-self.weight_clip), np.exp(self.weight_clip))
         wn = np.append(w, float(np.median(w)))
         wn = wn / wn.sum()

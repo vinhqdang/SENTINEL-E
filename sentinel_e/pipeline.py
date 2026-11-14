@@ -110,11 +110,22 @@ class SentinelE:
         cc_mode: str = "beta",
         continuous_cols: Sequence[int] = (0,),
         categorical_cols: Sequence[int] = (1,),
+        shift_features: Optional[Sequence[int]] = None,
     ) -> None:
         if calibration not in {"residual", "mondrian", "pooled", "weighted"}:
             raise ValueError(
                 "calibration must be 'residual', 'mondrian', 'pooled' or 'weighted'"
             )
+        if shift_features is not None and calibration not in {"residual", "mondrian"}:
+            raise ValueError(
+                "shift_features is supported only for 'residual' and 'mondrian' calibration"
+            )
+        # Context columns used by the shift gate and the density ratio; None uses
+        # every column.  See ResidualConformalCalibrator.shift_features.
+        self.shift_features = (
+            None if shift_features is None
+            else tuple(int(c) for c in shift_features)
+        )
         self.alpha = float(alpha)
         self.delta = float(delta)
         self.calibration = calibration
@@ -186,7 +197,8 @@ class SentinelE:
             if calibration_context is None:
                 raise ValueError("residual calibration requires context features")
             self.calibrator = ResidualConformalCalibrator(
-                delta=self.delta, mode=self.cc_mode, weighted=self.weighted
+                delta=self.delta, mode=self.cc_mode, weighted=self.weighted,
+                shift_features=self.shift_features,
             ).fit(s, calibration_context)
         elif self.calibration == "mondrian":
             if calibration_context is None:
@@ -202,6 +214,7 @@ class SentinelE:
                 mode=self.cc_mode,
                 min_bin=self.min_bin,
                 weighted=self.weighted,
+                shift_features=self.shift_features,
             ).fit(s, calibration_context)
         elif self.calibration == "weighted":
             self.calibrator = WeightedConformalCalibrator(delta=self.delta).fit(

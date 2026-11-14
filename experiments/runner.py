@@ -133,6 +133,7 @@ def alarm_indices_on_stream(st, spec: Spec) -> Tuple[np.ndarray, float, int]:
             thin_calibration=opt.get("thin_calibration", True),
             cc_mode=opt.get("cc_mode", "beta"),
             detector=opt.get("detector", "episodic"),
+            shift_features=opt.get("shift_features", None),
         )
         if opt.get("episode_prior_kw"):
             from sentinel_e.episodic import EpisodePrior
