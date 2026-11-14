@@ -1,0 +1,150 @@
+{
+  "generated_at": "2026-11-14T19:46:45Z",
+  "python": "3.11.18",
+  "numpy": "2.4.6",
+  "payload": {
+    "rows": [
+      {
+        "name": "SENTINEL-E (full)",
+        "group": "",
+        "null_reps": 1500,
+        "signal_reps": 200,
+        "pfa": 0.0,
+        "pfa_ci": [
+          2.168404344971009e-19,
+          0.002554524359480413
+        ],
+        "false_alarms": 0,
+        "verdict": "valid",
+        "arl0": 90000.0,
+        "miss_rate": 0.015,
+        "censored_delay_s": 244.5176,
+        "lag": 18,
+        "seconds": 197.18689638200158
+      },
+      {
+        "name": "changepoint mixture ($\\eta = 0$)",
+        "group": "e-process core",
+        "null_reps": 1500,
+        "signal_reps": 200,
+        "pfa": 0.0,
+        "pfa_ci": [
+          2.168404344971009e-19,
+          0.002554524359480413
+        ],
+        "false_alarms": 0,
+        "verdict": "valid",
+        "arl0": 90000.0,
+        "miss_rate": 0.055,
+        "censored_delay_s": 311.3334,
+        "lag": 18,
+        "seconds": 172.6446082779985
+      },
+      {
+        "name": "bet on every frame",
+        "group": "temporal",
+        "null_reps": 1500,
+        "signal_reps": 200,
+        "pfa": 1.0,
+        "pfa_ci": [
+          0.9974454756405194,
+          0.9999999999999999
+        ],
+        "false_alarms": 1500,
+        "verdict": "invalid",
+        "arl0": 336.71933333333334,
+        "miss_rate": 0.0,
+        "censored_delay_s": 3.3036000000000003,
+        "lag": 1,
+        "seconds": 1708.3874350720016
+      },
+      {
+        "name": "raw calibration (not thinned)",
+        "group": "temporal",
+        "null_reps": 1500,
+        "signal_reps": 200,
+        "pfa": 0.002,
+        "pfa_ci": [
+          0.0006803961574046876,
+          0.005863910104637805
+        ],
+        "false_alarms": 3,
+        "verdict": "valid",
+        "arl0": 89908.82266666666,
+        "miss_rate": 0.0,
+        "censored_delay_s": 68.39020000000001,
+        "lag": 18,
+        "seconds": 1190.997555676
+      },
+      {
+        "name": "pooled conformal",
+        "group": "calibration",
+        "null_reps": 1500,
+        "signal_reps": 200,
+        "pfa": 0.9886666666666667,
+        "pfa_ci": [
+          0.9819245918688977,
+          0.9929121196571036
+        ],
+        "false_alarms": 1483,
+        "verdict": "invalid",
+        "arl0": 15614.53,
+        "miss_rate": 0.005,
+        "censored_delay_s": 390.96139999999997,
+        "lag": 18,
+        "seconds": 245.15588410599594
+      },
+      {
+        "name": "DKW inflation",
+        "group": "conditional validity",
+        "null_reps": 1500,
+        "signal_reps": 200,
+        "pfa": 0.0,
+        "pfa_ci": [
+          2.168404344971009e-19,
+          0.002554524359480413
+        ],
+        "false_alarms": 0,
+        "verdict": "valid",
+        "arl0": 90000.0,
+        "miss_rate": 0.675,
+        "censored_delay_s": 2025.8283999999999,
+        "lag": 18,
+        "seconds": 271.8216495230008
+      },
+      {
+        "name": "no correction ($\\delta=0$)",
+        "group": "conditional validity",
+        "null_reps": 1500,
+        "signal_reps": 200,
+        "pfa": 0.03866666666666667,
+        "pfa_ci": [
+          0.03002963169138969,
+          0.04966067611762424
+        ],
+        "false_alarms": 58,
+        "verdict": "invalid",
+        "arl0": 88561.122,
+        "miss_rate": 0.0,
+        "censored_delay_s": 43.1376,
+        "lag": 18,
+        "seconds": 264.7243592679988
+      }
+    ],
+    "null_reps": 1500,
+    "signal_reps": 200,
+    "alpha": 0.01,
+    "T": 90000,
+    "change_point": 20000,
+    "n_episodes": 4,
+    "cfg": {
+      "T": 90000,
+      "calibration_regime": "representative",
+      "n_episodes": 4,
+      "event_length": 800,
+      "episode_gap": 6000,
+      "event_intermittency": 0.35
+    },
+    "total_seconds": 4051.1328464769995
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "generated_at": "2026-11-14T19:46:51Z",
+  "python": "3.11.18",
+  "numpy": "2.4.6",
+  "payload": {
+    "machine": {
+      "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+      "processor": "x86_64",
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1"
+      }
+    },
+    "backbone_us_per_frame": 36844.4746665773,
+    "source_backbone": "results/exp5_compute.json",
+    "excluded": [
+      "context-feature extraction",
+      "video decoding",
+      "frozen backbone inference",
+      "peak memory"
+    ],
+    "measurement": {
+      "frames": 200000,
+      "calibration_frames": 150000,
+      "decorrelation_lag": 20,
+      "betting_steps": 10000,
+      "alarms_on_null_stream": 0,
+      "p_value_sec_per_bet": {
+        "min": 3.3854590001283215e-07,
+        "median": 3.44719399799942e-07,
+        "max": 3.470362000371097e-07,
+        "repeats": 5
+      },
+      "episodic_step_sec_per_bet_batch": {
+        "min": 1.3252338799793506e-05,
+        "median": 1.3691997600108153e-05,
+        "max": 1.970871449993865e-05,
+        "repeats": 5
+      },
+      "episodic_step_sec_per_bet_streaming": {
+        "min": 3.8782625500971333e-05,
+        "median": 3.9277166501051394e-05,
+        "max": 5.183976349871955e-05,
+        "repeats": 3
+      },
+      "changepoint32_step_sec_per_bet_streaming": {
+        "min": 1.9172656000591815e-05,
+        "median": 1.957529650098877e-05,
+        "max": 1.9702134499311796e-05,
+        "repeats": 3
+      },
+      "predicted_amortised_us_per_frame_batch": 0.7018358499954047,
+      "predicted_amortised_us_per_frame_streaming": 1.9810942950425665,
+      "measured_end_to_end_run_sec": {
+        "min": 0.12163765399964177,
+        "median": 0.12194598600035533,
+        "max": 0.1228732419986045,
+        "repeats": 5
+      },
+      "measured_end_to_end_us_per_frame": {
+        "min": 0.6081882699982089,
+        "median": 0.6097299300017767,
+        "max": 0.6143662099930225,
+        "repeats": 5
+      },
+      "per_bet_work_sec": {
+        "min": 0.11797619999924791,
+        "median": 0.11901167299947701,
+        "max": 0.12502377300188527,
+        "repeats": 5
+      },
+      "expansion_us_per_frame": {
+        "min": 0.01645189000555547,
+        "median": 0.01674032500886824,
+        "max": 0.018170114999520592,
+        "repeats": 5
+      },
+      "loadavg_before": [
+        8.01318359375,
+        8.2587890625,
+        8.00439453125
+      ],
+      "loadavg_after": [
+        8.01318359375,
+        8.2587890625,
+        8.00439453125
+      ]
+    }
+  }
+}

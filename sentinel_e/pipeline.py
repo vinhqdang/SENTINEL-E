@@ -114,6 +114,7 @@ class SentinelE:
         shift_gate: str = "fixed",
         gate_level: float = 0.05,
         gate_reference_windows: int = 50,
+        support_slack: float = 1.5,
     ) -> None:
         if calibration not in {"residual", "mondrian", "pooled", "weighted"}:
             raise ValueError(
@@ -133,6 +134,12 @@ class SentinelE:
             raise ValueError("shift_gate must be 'fixed' or 'calibrated'")
         if shift_gate == "calibrated" and calibration != "residual":
             raise ValueError("shift_gate='calibrated' is supported for 'residual' calibration only")
+        if not float(support_slack) > 0.0:
+            raise ValueError("support_slack must be positive")
+        # Mahalanobis abstention threshold multiplier of the residual calibrator
+        # (its 99.9th-percentile calibration distance times this).  1.5 is the
+        # default; smaller values abstain on more frames near the support edge.
+        self.support_slack = float(support_slack)
         self.shift_gate = shift_gate
         self.gate_level = float(gate_level)
         self.gate_reference_windows = int(gate_reference_windows)
@@ -212,6 +219,7 @@ class SentinelE:
                 shift_gate=self.shift_gate, gate_level=self.gate_level,
                 gate_reference_windows=self.gate_reference_windows,
                 gate_window=self.shift_block,
+                mahalanobis_slack=self.support_slack,
             ).fit(s, calibration_context)
         elif self.calibration == "mondrian":
             if calibration_context is None:
