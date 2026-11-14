@@ -224,8 +224,10 @@ def make_table(res: Dict, bb_us: float) -> None:
         notes=(
             r"Median of repeated timings; the measured end-to-end row is "
             r"\texttt{SentinelE.run} on a 200{,}000-frame stream, as in exp5. The "
-            r"gap between the predicted and measured rows is the O(T) expansion of "
-            r"the betting-grid output onto the frame grid."
+            r"amortised prediction uses per-call component timings, which include "
+            r"call overhead that the end-to-end run amortises, so it slightly "
+            r"exceeds the measured figure; the O(T) expansion row is included in "
+            r"the measured figure."
         ),
     )
 

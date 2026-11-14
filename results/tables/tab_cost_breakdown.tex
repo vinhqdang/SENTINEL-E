@@ -5,7 +5,7 @@
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{lrlr}
 \toprule
-component & cost ($\mu$s) & unit & \% of backbone \\
+component & cost (\textmu s) & unit & \% of backbone \\
 \midrule
 conformal p-value (per bet, pipeline path) & 0.34 & per bet & -- \\
 episodic e-detector step, batch (per bet) & 13.69 & per bet & -- \\
@@ -18,5 +18,5 @@ measured end-to-end monitor (200,000 frames) & 0.610 & per frame & 0.0017 \\
 frozen backbone (reference, from exp5) & 36.84 ms & per frame & 100 \\
 \bottomrule
 \end{tabular}}
-\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Median of repeated timings; the measured end-to-end row is \texttt{SentinelE.run} on a 200{,}000-frame stream, as in exp5. The gap between the predicted and measured rows is the O(T) expansion of the betting-grid output onto the frame grid.\end{minipage}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Median of repeated timings; the measured end-to-end row is \texttt{SentinelE.run} on a 200{,}000-frame stream, as in exp5. The amortised prediction uses per-call component timings, which include call overhead that the end-to-end run amortises, so it slightly exceeds the measured figure; the O(T) expansion row is included in the measured figure.\end{minipage}
 \end{table}
