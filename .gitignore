@@ -16,5 +16,5 @@ paper/*.synctex.gz
 paper/*.fdb_latexmk
 paper/*.fls
 
-# smoke-test checkpoint caches
-results/cache/*_smoke/
+# local checkpoint caches (final results are committed)
+results/cache/

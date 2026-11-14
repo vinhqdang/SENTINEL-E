@@ -187,7 +187,11 @@ def load_real_vad(name: str) -> RealVADCorpus:
             episodes.append((lo + s, lo + e))
 
     auc_path = root / "backbone_auc.json"
-    auc = json.loads(auc_path.read_text())["auc"] if auc_path.exists() else float("nan")
+    auc_doc = json.loads(auc_path.read_text()) if auc_path.exists() else {}
+    auc = auc_doc["auc"] if "auc" in auc_doc else float("nan")
+    # Frame rate of the scored frames: Mivia-IWDD is sampled at 10 fps, the VAD
+    # benchmarks at the native 25 fps. Backbones that record it override the default.
+    fps = float(auc_doc["fps"]) if "fps" in auc_doc else 25.0
 
     train_meta_path = root / "train_meta.json"
     train_boundaries: List[Tuple[str, int, int]] = []
@@ -211,6 +215,7 @@ def load_real_vad(name: str) -> RealVADCorpus:
         episodes=episodes,
         backbone_auc=float(auc),
         train_boundaries=train_boundaries,
+        fps=fps,
     )
 
 
