@@ -42,6 +42,12 @@ Method (fixed, published defaults; not tuned on test results):
     video are excluded. Test frames: full bank.
   * Raw scores only. The 3-frame per-video median filter is applied in assemble_patchcore.py.
 
+Checkpoints (``--ckpt-dir``, default ``<out stem>_ckpt`` next to ``--out``): ``bank.pt`` once the
+memory bank is built, one ``train_NNNN_<video>.npy`` / ``test_NNNN_<video>.npy`` per scored video, and
+``DONE`` (json, written with the final npz). Every file is written atomically. A rerun with the same
+settings loads what exists instead of recomputing it. Changing a setting that affects results (see
+``run_config_hash``) rebuilds the bank and rescores all videos.
+
 Output ``.npz``: ``train_scores`` (train_meta order), ``test_scores`` (test_meta order),
 ``config`` (JSON string with every setting, counts and names) and ``timing`` (JSON string).
 """
@@ -49,8 +55,10 @@ Output ``.npz``: ``train_scores`` (train_meta order), ``test_scores`` (test_meta
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import re
 import shutil
 import tarfile
 import time
@@ -119,19 +127,52 @@ def _fetch(url: str, dest: Path, tries: int = 3) -> None:
     raise RuntimeError(f"could not download {url}")
 
 
+def _nonempty_file(path: Path) -> bool:
+    """A downloaded archive counts as present only if it exists and is non-empty."""
+    return path.is_file() and path.stat().st_size > 0
+
+
+def _unpack(archive: Path, scratch: Path) -> None:
+    """Unpack into a fresh scratch folder; callers move it into place only when it is complete."""
+    shutil.rmtree(scratch, ignore_errors=True)
+    scratch.mkdir(parents=True)
+    if archive.suffix == ".zip":
+        with zipfile.ZipFile(archive) as zf:
+            zf.extractall(scratch)
+    else:
+        with tarfile.open(archive) as t:
+            if hasattr(tarfile, "data_filter"):
+                t.extractall(scratch, filter="data")
+            else:
+                t.extractall(scratch)
+
+
+def _unpack_into(archive: Path, final: Path) -> None:
+    scratch = final.with_name(final.name + ".partial")
+    _unpack(archive, scratch)
+    shutil.rmtree(final, ignore_errors=True)   # a half-unpacked folder from an interrupted run
+    os.replace(scratch, final)
+
+
 def ensure_ped2(raw: Path) -> None:
     if ped2_root(raw).exists():
         return
     base = raw / "ucsd"
     base.mkdir(parents=True, exist_ok=True)
     tgz = base / "UCSD_Anomaly_Dataset.tar.gz"
-    if not tgz.exists():
+    if not _nonempty_file(tgz):
         _fetch(UCSD_URL, tgz)
-    with tarfile.open(tgz) as t:
-        if hasattr(tarfile, "data_filter"):
-            t.extractall(base, filter="data")
-        else:
-            t.extractall(base)
+    scratch = base / "unpack.partial"
+    _unpack(tgz, scratch)
+    # Move the top-level folders into place only after the whole archive has been unpacked.
+    for entry in scratch.iterdir():
+        dst = base / entry.name
+        if dst.is_dir():
+            shutil.rmtree(dst)
+        elif dst.exists():
+            dst.unlink()
+        os.replace(entry, dst)
+    shutil.rmtree(scratch, ignore_errors=True)
     if not ped2_root(raw).exists():
         raise RuntimeError("UCSD archive did not contain UCSDped2")
 
@@ -140,16 +181,14 @@ def ensure_avenue(raw: Path) -> None:
     base = raw / "avenue"
     if not avenue_root(raw).exists():
         z = base / "Avenue_Dataset.zip"
-        if not z.exists():
+        if not _nonempty_file(z):
             _fetch(AVENUE_URL, z)
-        with zipfile.ZipFile(z) as zf:
-            zf.extractall(base / "extracted")
+        _unpack_into(z, base / "extracted")
     if not avenue_gt_root(raw).exists():
         z = base / "ground_truth_demo.zip"
-        if not z.exists():
+        if not _nonempty_file(z):
             _fetch(AVENUE_GT_URL, z)
-        with zipfile.ZipFile(z) as zf:
-            zf.extractall(base / "gt_extracted")
+        _unpack_into(z, base / "gt_extracted")
     if not avenue_root(raw).exists() or not avenue_gt_root(raw).exists():
         raise RuntimeError("Avenue archives did not contain the expected folders")
 
@@ -405,6 +444,88 @@ def _check_count(ds: str, split: str, name: str, got: int, expected: int) -> Non
         raise AssertionError(f"{ds} {split} {name}: decoded {got} frames, metadata says {expected}")
 
 
+# ----------------------------------------------------------------- checkpoints
+def _atomic_write(path: Path, writer) -> None:
+    """Write through a temp file in the same folder, fsync it, then os.replace it onto ``path``."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        with open(tmp, "wb") as f:
+            writer(f)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, path)
+    finally:
+        if tmp.exists():
+            tmp.unlink()
+
+
+def safe_name(name: str) -> str:
+    return re.sub(r"[^A-Za-z0-9._-]", "_", name)
+
+
+def score_file(ckpt: Path, split: str, j: int, name: str) -> Path:
+    return ckpt / f"{split}_{j:04d}_{safe_name(name)}.npy"
+
+
+def load_scores(path: Path, n_expected: int):
+    """The saved score array, or None when it is missing, unreadable or the wrong length."""
+    if not path.exists():
+        return None
+    try:
+        arr = np.load(path)
+    except Exception as e:  # torn or foreign file: recompute it
+        print(f"  checkpoint {path.name} unreadable ({e}); recomputing", flush=True)
+        return None
+    if arr.ndim != 1 or arr.shape[0] != n_expected:
+        print(f"  checkpoint {path.name} has shape {arr.shape}, expected ({n_expected},); "
+              f"recomputing", flush=True)
+        return None
+    return arr
+
+
+def run_config_hash(ds: str, device: torch.device, plan_tr, train_meta) -> str:
+    """sha256 over every setting that changes the memory bank or the scores.
+
+    Batch size and thread count are excluded: they only change how work is split up.
+    """
+    settings = {
+        "dataset": ds,
+        "img": IMG,
+        "feat_hw": FEAT_HW,
+        "patch_dim": PATCH_DIM,
+        "concat_dim": CONCAT_DIM,
+        "backbone": "torchvision wide_resnet50_2, IMAGENET1K_V1, eval, fp32",
+        "train_stride": TRAIN_STRIDE,
+        "coreset_frac": CORESET_FRAC,
+        "proj_dim": PROJ_DIM,
+        "proj_seed": SEED,
+        "coreset_seed": SEED,
+        "qchunk": QCHUNK,
+        "device": str(device),
+        "torch": torch.__version__,
+        "torchvision": torchvision.__version__,
+        "train_names": [p["name"] for p in plan_tr],
+        "train_n_frames": [m["n_frames"] for m in train_meta],
+        "train_indices": [p["indices"] for p in plan_tr],
+    }
+    return hashlib.sha256(json.dumps(settings, sort_keys=True).encode()).hexdigest()
+
+
+def load_bank(path: Path, chash: str):
+    if not path.exists():
+        return None
+    try:
+        obj = torch.load(path, map_location="cpu", weights_only=True)
+    except Exception as e:
+        print(f"  bank checkpoint unreadable ({e}); rebuilding", flush=True)
+        return None
+    if not isinstance(obj, dict) or obj.get("config_hash") != chash:
+        print("  bank checkpoint belongs to a different config; rebuilding", flush=True)
+        return None
+    return obj
+
+
 # ----------------------------------------------------------------- main
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -412,6 +533,8 @@ def main() -> None:
     ap.add_argument("--raw-root", required=True, type=Path)
     ap.add_argument("--meta-dir", required=True, type=Path)
     ap.add_argument("--out", required=True, type=Path)
+    ap.add_argument("--ckpt-dir", type=Path, default=None,
+                    help="checkpoint folder (default: <out stem>_ckpt next to --out)")
     ap.add_argument("--max-videos", type=int, default=None,
                     help="process only the first N training and first N test videos (smoke tests)")
     ap.add_argument("--device", choices=["cuda", "cpu"], default=None)
@@ -420,6 +543,8 @@ def main() -> None:
     args = ap.parse_args()
     if args.out.suffix != ".npz":
         raise SystemExit("--out must end in .npz")
+    ckpt = args.ckpt_dir or args.out.with_name(args.out.stem + "_ckpt")
+    ckpt.mkdir(parents=True, exist_ok=True)
 
     torch.set_num_threads(args.threads)
     cv2.setNumThreads(args.threads)
@@ -450,96 +575,154 @@ def main() -> None:
     plan_tr, plan_te = plan_tr_all[:n_max], plan_te_all[:n_max]
     train_meta, test_meta = train_meta_all[:n_max], test_meta_all[:n_max]
 
-    model = build_backbone(device)
-    g = torch.Generator().manual_seed(SEED)
-    proj = torch.randn(PATCH_DIM, PROJ_DIM, generator=g).to(device)
+    chash = run_config_hash(ds, device, plan_tr, train_meta)
+    (ckpt / "DONE").unlink(missing_ok=True)   # stale until this run finishes
+    print(f"[{ds}] checkpoint dir {ckpt} (config {chash[:12]})", flush=True)
     bs = args.batch_size
 
-    # Pass A: candidate patches of every 4th training frame, projected to 128-d.
-    t0 = time.time()
-    cand_proj, cand_src = [], []
-    n_cand_frames = 0
-    for j, p in enumerate(plan_tr):
-        seen = [0]
-        natives = strided_natives(video_source(ds, raw, "train", p["name"], None, p["indices"]),
-                                  TRAIN_STRIDE, seen)
-        for feats in feature_batches(model, natives, device, bs):
-            flat = feats.reshape(-1, PATCH_DIM)
-            cand_proj.append(flat @ proj)
-            cand_src.append(torch.full((flat.shape[0],), j, dtype=torch.int32, device=device))
-            n_cand_frames += feats.shape[0]
-        _check_count(ds, "train", p["name"], seen[0], train_meta[j]["n_frames"])
-    P_all = torch.cat(cand_proj)
-    src_all = torch.cat(cand_src)
-    del cand_proj, cand_src
-    n_cand = int(P_all.shape[0])
-    timing["candidates_s"] = round(time.time() - t0, 1)
+    # Passes A and B (memory bank) are skipped when bank.pt matches this config.
+    bank_ck = load_bank(ckpt / "bank.pt", chash)
+    model = None
+    if bank_ck is not None and tuple(bank_ck["bank"].shape) == (int(bank_ck["bank_size"]), PATCH_DIM):
+        bank = bank_ck["bank"].to(device)
+        bank_src = bank_ck["bank_src"].to(device)
+        m = int(bank_ck["bank_size"])
+        n_cand = int(bank_ck["n_candidates"])
+        n_cand_frames = int(bank_ck["n_candidate_frames"])
+        bank_from_ckpt = True
+        timing["candidates_s"] = timing["coreset_s"] = timing["bank_gather_s"] = 0.0
+        print(f"[{ds}] bank loaded from checkpoint: bank={m} candidates={n_cand} "
+              f"(passes A and B skipped)", flush=True)
+    else:
+        bank_from_ckpt = False
+        # Scores saved for an earlier bank are stale; the bank is about to change.
+        for stale in list(ckpt.glob("train_*.npy")) + list(ckpt.glob("test_*.npy")):
+            stale.unlink()
+        model = build_backbone(device)
+        g = torch.Generator().manual_seed(SEED)
+        proj = torch.randn(PATCH_DIM, PROJ_DIM, generator=g).to(device)
 
-    # Coreset of 1% of the candidate patches.
-    t0 = time.time()
-    m = max(1, int(round(CORESET_FRAC * n_cand)))
-    sel = np.sort(approx_greedy_coreset(P_all, m))
-    sel_t = torch.from_numpy(sel).to(device)
-    bank_src = src_all[sel_t].clone()
-    del P_all, src_all
-    timing["coreset_s"] = round(time.time() - t0, 1)
+        # Pass A: candidate patches of every 4th training frame, projected to 128-d.
+        t0 = time.time()
+        cand_proj, cand_src = [], []
+        n_cand_frames = 0
+        for j, p in enumerate(plan_tr):
+            seen = [0]
+            natives = strided_natives(video_source(ds, raw, "train", p["name"], None, p["indices"]),
+                                      TRAIN_STRIDE, seen)
+            for feats in feature_batches(model, natives, device, bs):
+                flat = feats.reshape(-1, PATCH_DIM)
+                cand_proj.append(flat @ proj)
+                cand_src.append(torch.full((flat.shape[0],), j, dtype=torch.int32, device=device))
+                n_cand_frames += feats.shape[0]
+            _check_count(ds, "train", p["name"], seen[0], train_meta[j]["n_frames"])
+        P_all = torch.cat(cand_proj)
+        src_all = torch.cat(cand_src)
+        del cand_proj, cand_src
+        n_cand = int(P_all.shape[0])
+        timing["candidates_s"] = round(time.time() - t0, 1)
 
-    # Pass B: re-featurise the same training frames and keep the selected patches (full 1024-d).
-    t0 = time.time()
-    bank = torch.empty(m, PATCH_DIM, device=device)
-    frames_done = 0
-    for p in plan_tr:
-        natives = strided_natives(video_source(ds, raw, "train", p["name"], None, p["indices"]),
-                                  TRAIN_STRIDE, [0])
-        for feats in feature_batches(model, natives, device, bs):
-            nfr = feats.shape[0]
-            lo, hi = frames_done * N_PATCH, (frames_done + nfr) * N_PATCH
-            a, b = int(np.searchsorted(sel, lo)), int(np.searchsorted(sel, hi))
-            if b > a:
-                local = torch.from_numpy(sel[a:b] - lo).to(device)
-                bank[a:b] = feats.reshape(-1, PATCH_DIM)[local]
-            frames_done += nfr
-    if frames_done != n_cand_frames:
-        raise AssertionError("pass B did not revisit the same frames as pass A")
-    timing["bank_gather_s"] = round(time.time() - t0, 1)
-    print(f"[{ds}] candidates={n_cand} bank={m} ({timing['candidates_s']}s, coreset "
-          f"{timing['coreset_s']}s)", flush=True)
+        # Coreset of 1% of the candidate patches.
+        t0 = time.time()
+        m = max(1, int(round(CORESET_FRAC * n_cand)))
+        sel = np.sort(approx_greedy_coreset(P_all, m))
+        sel_t = torch.from_numpy(sel).to(device)
+        bank_src = src_all[sel_t].clone()
+        del P_all, src_all
+        timing["coreset_s"] = round(time.time() - t0, 1)
 
-    # Pass C: ALL training frames, leave-one-video-out.
+        # Pass B: re-featurise the same training frames and keep the selected patches (full 1024-d).
+        t0 = time.time()
+        bank = torch.empty(m, PATCH_DIM, device=device)
+        frames_done = 0
+        for p in plan_tr:
+            natives = strided_natives(video_source(ds, raw, "train", p["name"], None, p["indices"]),
+                                      TRAIN_STRIDE, [0])
+            for feats in feature_batches(model, natives, device, bs):
+                nfr = feats.shape[0]
+                lo, hi = frames_done * N_PATCH, (frames_done + nfr) * N_PATCH
+                a, b = int(np.searchsorted(sel, lo)), int(np.searchsorted(sel, hi))
+                if b > a:
+                    local = torch.from_numpy(sel[a:b] - lo).to(device)
+                    bank[a:b] = feats.reshape(-1, PATCH_DIM)[local]
+                frames_done += nfr
+        if frames_done != n_cand_frames:
+            raise AssertionError("pass B did not revisit the same frames as pass A")
+        timing["bank_gather_s"] = round(time.time() - t0, 1)
+        print(f"[{ds}] candidates={n_cand} bank={m} ({timing['candidates_s']}s, coreset "
+              f"{timing['coreset_s']}s)", flush=True)
+
+        _atomic_write(ckpt / "bank.pt", lambda f: torch.save({
+            "config_hash": chash,
+            "bank": bank.detach().cpu(),
+            "bank_src": bank_src.detach().cpu().to(torch.int32),   # source-video index per bank row
+            "bank_size": m,
+            "n_candidates": n_cand,
+            "n_candidate_frames": n_cand_frames,
+            "projection": {"seed": SEED, "dim_in": PATCH_DIM, "dim_out": PROJ_DIM,
+                           "init": "torch.randn with torch.Generator().manual_seed(seed)"},
+            "coreset": {"seed": SEED, "fraction": CORESET_FRAC},
+        }, f))
+
+    # Pass C: ALL training frames, leave-one-video-out. Each video is saved as soon as it is scored.
     t0 = time.time()
-    train_parts = []
+    train_parts, n_ck_tr = [], 0
     for j, p in enumerate(plan_tr):
         excl = bank_src == j
         if bool(excl.all()):
             raise AssertionError("leave-one-video-out would exclude the whole bank")
-        seen = [0]
-        parts = []
-        for feats in feature_batches(model, only_natives(video_source(ds, raw, "train", p["name"],
-                                                                      None, p["indices"]), seen),
-                                     device, bs):
-            parts.append(frame_scores(feats, bank, excl))
-        _check_count(ds, "train", p["name"], seen[0], train_meta[j]["n_frames"])
-        s = np.concatenate(parts)
+        path = score_file(ckpt, "train", j, p["name"])
+        s = load_scores(path, train_meta[j]["n_frames"])
+        if s is not None:
+            n_ck_tr += 1
+            src = "checkpoint"
+        else:
+            if model is None:
+                model = build_backbone(device)
+            seen = [0]
+            parts = []
+            for feats in feature_batches(model, only_natives(video_source(ds, raw, "train", p["name"],
+                                                                          None, p["indices"]), seen),
+                                         device, bs):
+                parts.append(frame_scores(feats, bank, excl))
+            _check_count(ds, "train", p["name"], seen[0], train_meta[j]["n_frames"])
+            s = np.concatenate(parts)
+            src = "computed"
         if not np.all(s > 0):
             raise AssertionError(f"{p['name']}: non-positive leave-one-video-out score")
-        train_parts.append(s)
+        if src == "computed":
+            _atomic_write(path, lambda f, s=s: np.save(f, s))
         print(f"  [C] train {j + 1}/{len(plan_tr)} {p['name']}: n={s.size} "
-              f"mean={s.mean():.4f} n_excluded={int(excl.sum())}", flush=True)
+              f"mean={s.mean():.4f} n_excluded={int(excl.sum())} source={src} "
+              f"loaded_from_ckpt={n_ck_tr}/{j + 1}", flush=True)
+        train_parts.append(s)
     timing["train_scores_s"] = round(time.time() - t0, 1)
 
     # Pass D: test frames, full bank.
     t0 = time.time()
-    test_parts = []
+    test_parts, n_ck_te = [], 0
     for j, p in enumerate(plan_te):
-        seen = [0]
-        parts = []
-        for feats in feature_batches(model, only_natives(video_source(ds, raw, "test", p["name"],
-                                                                      p["limit"], p["indices"]), seen),
-                                     device, bs):
-            parts.append(frame_scores(feats, bank, None))
-        _check_count(ds, "test", p["name"], seen[0], test_meta[j]["n_frames"])
-        test_parts.append(np.concatenate(parts))
-        print(f"  [D] test {j + 1}/{len(plan_te)} {p['name']}: n={seen[0]}", flush=True)
+        path = score_file(ckpt, "test", j, p["name"])
+        s = load_scores(path, test_meta[j]["n_frames"])
+        if s is not None:
+            n_ck_te += 1
+            src = "checkpoint"
+        else:
+            if model is None:
+                model = build_backbone(device)
+            seen = [0]
+            parts = []
+            for feats in feature_batches(model, only_natives(video_source(ds, raw, "test", p["name"],
+                                                                          p["limit"], p["indices"]), seen),
+                                         device, bs):
+                parts.append(frame_scores(feats, bank, None))
+            _check_count(ds, "test", p["name"], seen[0], test_meta[j]["n_frames"])
+            s = np.concatenate(parts)
+            _atomic_write(path, lambda f, s=s: np.save(f, s))
+            src = "computed"
+        test_parts.append(s)
+        print(f"  [D] test {j + 1}/{len(plan_te)} {p['name']}: n={s.size} source={src} "
+              f"loaded_from_ckpt={n_ck_te}/{j + 1}", flush=True)
     timing["test_scores_s"] = round(time.time() - t0, 1)
 
     train_scores = np.concatenate(train_parts).astype(np.float64)
@@ -578,8 +761,25 @@ def main() -> None:
         "test_n_frames": [int(s.size) for s in test_parts],
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    np.savez(args.out, train_scores=train_scores, test_scores=test_scores,
-             config=np.array(json.dumps(config)), timing=np.array(json.dumps(timing)))
+    _atomic_write(args.out, lambda f: np.savez(f, train_scores=train_scores, test_scores=test_scores,
+                                               config=np.array(json.dumps(config)),
+                                               timing=np.array(json.dumps(timing))))
+    done = {
+        "dataset": ds,
+        "config_hash": chash,
+        "out": str(args.out),
+        "bank_size": m,
+        "candidate_patches": n_cand,
+        "bank_from_checkpoint": bank_from_ckpt,
+        "train_videos": len(plan_tr),
+        "test_videos": len(plan_te),
+        "train_from_checkpoint": n_ck_tr,
+        "test_from_checkpoint": n_ck_te,
+        "train_frames": int(train_scores.size),
+        "test_frames": int(test_scores.size),
+        "timing": timing,
+    }
+    _atomic_write(ckpt / "DONE", lambda f: f.write(json.dumps(done, indent=2).encode()))
     print(f"[{ds}] train_scores {train_scores.shape} test_scores {test_scores.shape} "
           f"-> {args.out} ({timing})", flush=True)
 
