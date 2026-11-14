@@ -22,7 +22,15 @@ from pathlib import Path
 
 import numpy as np
 from scipy.signal import medfilt
-from sklearn.metrics import roc_auc_score
+from scipy.stats import rankdata
+
+
+def roc_auc_score(labels, scores):
+    """Frame-level ROC-AUC via the Mann-Whitney rank statistic (ties averaged)."""
+    labels = np.asarray(labels).astype(bool)
+    r = rankdata(np.asarray(scores, dtype=float))
+    n1, n0 = int(labels.sum()), int((~labels).sum())
+    return (r[labels].sum() - n1 * (n1 + 1) / 2.0) / (n1 * n0)
 
 OUT_ROOT = Path(__file__).resolve().parents[2] / "data" / "real_vad"
 #: Flow dataset directory supplying labels and metadata for each dataset.
