@@ -153,8 +153,11 @@ def make_table(payload: Dict) -> None:
     reps = payload["reps"]
     body = []
     for r in payload["rows"]:
-        r["verdict"] = _verdict(r["delay_diff_s"], r["delay_diff_ci95_s"])
         c, e = r["cp24"], r["epi"]
+        if c["miss_rate"] >= 1.0 and e["miss_rate"] >= 1.0:
+            r["verdict"] = "both miss every episode"
+        else:
+            r["verdict"] = _verdict(r["delay_diff_s"], r["delay_diff_ci95_s"])
         lo, hi = r["delay_diff_ci95_s"]
         body.append([
             r["name"],
