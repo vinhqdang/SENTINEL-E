@@ -5,10 +5,9 @@
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{lrrrrr}
 \toprule
-dataset & a: length / b: grid & a: lag 1 / b: lag-1 corr. & a: lag 5 / b: sup dev. & a: lag 10 / b: cond. mean & a: lag 25 / b: count \\
+dataset & pooled ACF length & ACF lag 1 & ACF lag 5 & ACF lag 10 & ACF lag 25 \\
 \midrule
 \multicolumn{6}{l}{\textit{(a) Score dependence on the raw training scores}} \\
-dataset & pooled ACF length & ACF lag 1 & ACF lag 5 & ACF lag 10 & ACF lag 25 \\
 UCSD Ped2 (flow) & >200 & 0.82 & 0.37 & 0.28 & 0.16 \\
 UCSD Ped2 (PatchCore) & >200 & 0.87 & 0.36 & 0.15 & -0.00 \\
 CUHK Avenue (flow) & >200 & 0.94 & 0.75 & 0.66 & 0.47 \\

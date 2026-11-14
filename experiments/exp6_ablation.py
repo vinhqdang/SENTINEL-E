@@ -156,11 +156,10 @@ def make_table(rows):
             "nominal, a cross only where its lower end exceeds nominal, and a "
             f"question mark where neither holds: {n_valid} rows resolve as "
             f"valid, {n_invalid} resolve as invalid, and {n_unresolved} of "
-            f"{len(rows)} are unresolved at {REPS} replicates --- most rows "
+            f"{len(rows)} are unresolved at {REPS} replicates. Most rows "
             "reporting PFA $0.000$ fall in this last class, since their Wilson "
-            "upper bound already exceeds $\\alpha$; see "
-            "Sect.~5 of the main text for what this design can and cannot "
-            "certify."
+            "upper bound already exceeds $\\alpha$. The load-bearing rows are "
+            "re-run at 1,500 streams in Sect.~4.11 of the main text."
         ),
         label="tab:ablation",
         name="tab8_ablation",

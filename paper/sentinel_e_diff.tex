@@ -1,7 +1,7 @@
 % SENTINEL-E: Anytime-Valid Sequential Detection for Streaming Illegal Dumping
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL /tmp/sentinel_e_scratch/old/paper/sentinel_e.tex   Thu Sep 10 02:23:51 2026
-%DIF ADD sentinel_e.tex                                                                                                 Sat Nov 14 21:00:47 2026
+%DIF ADD sentinel_e.tex                                                                                                 Sat Nov 14 21:12:55 2026
 % Surveillance.  Prepared for the Neural Computing and Applications topical
 % collection "Emerging Trends in Smart Waste Monitoring and Environmental
 % Surveillance".  For submission, replace the preamble with Springer's
@@ -767,12 +767,12 @@
 
 \begin{abstract}
 \noindent
-Streaming visual-anomaly \DIFdelbegin \DIFdel{systems --- illegal dumpingamong them --- are trained and evaluated as fixed-sample-size classifiers: given a short clip ,
+Streaming visual-anomaly \DIFdelbegin \DIFdel{systems --- illegal dumping among them --- are trained and evaluated as fixed-sample-size classifiers: given a short clip ,
 emit one decision and report clip-level precision and recall. Deployment does
 not look like that: a municipal camera runs for weeks, and what an operator
 manages is the number of false alarms accumulated over the whole monitoring
 period, because each one costs a dispatch. Alerting the first time a
-per-frame threshold is crossed on a continuous stream }\DIFdelend \DIFaddbegin \DIFadd{detectors, including those for illegal dumping, are evaluated per clip but deployed on continuous streams, where alerting at the first threshold crossing }\DIFaddend is optional stopping\DIFdelbegin \DIFdel{,
+per-frame threshold is crossed on a continuous stream }\DIFdelend \DIFaddbegin \DIFadd{detectors, including illegal-dumping detectors, are evaluated per clip but deployed on continuous streams, where alerting at the first threshold crossing }\DIFaddend is optional stopping\DIFdelbegin \DIFdel{,
 and it inflates the true false-alarm rate by an amount clip-level evaluation
 cannot show: }\DIFdelend \DIFaddbegin \DIFadd{. Fed valid 1\% p-values, }\DIFaddend a per-frame rule \DIFdelbegin \DIFdel{fed p-values individually valid at the $1\%$
 level raises at least one }\DIFdelend \DIFaddbegin \DIFadd{raises a }\DIFaddend false alarm on \ValidityPfaPvaluePct\% of \DIFdelbegin \DIFdel{$40$-minute }\DIFdelend \DIFaddbegin \DIFadd{40-minute }\DIFaddend null streams. %DIF < 
@@ -2793,8 +2793,7 @@ to the first false alarm is \ValidityPvalueArl{} frames, or
 \ValidityPvalueArlMin{}\,min of video. Across }\DIFaddend a hundred cameras\DIFdelbegin \DIFdel{would field }\DIFdelend \DIFaddbegin \DIFadd{, that is }\DIFaddend a false
 dispatch every few seconds.
 \DIFdelbegin \DIFdel{Extending the horizon from
-\HorizonMinHours{} to \HorizonMaxHours{} hours drives the
-}\DIFdelend \DIFaddbegin 
+\HorizonMinHours{} to \HorizonMaxHours{} hours drives the }\DIFdelend \DIFaddbegin 
 
 \DIFadd{\mbox{%DIFAUXCMD
 \Cref{tab:horizon_week} }\hskip0pt%DIFAUXCMD
@@ -3216,7 +3215,7 @@ rate at \ShiftBreakWeightedPfa{} }\DIFdelend \DIFaddbegin \DIFadd{The held-out c
 \DIFadd{A stricter support region addresses the boundary failure. The residual calibrator abstains on a frame whose context falls outside a per-coordinate box, or whose Mahalanobis distance exceeds a slack multiple of the calibration 0.999 quantile. The default multiplier is 1.5. We set it to 0.5, so boundary frames abstain. An abstained frame receives a neutral bet, so the supermartingale argument is unchanged. The stricter region holds the level }\DIFaddend at every shift \DIFdelbegin \DIFdel{level tested}\DIFdelend \DIFaddbegin \DIFadd{tested. At $\times 3.0$ the false-alarm probability falls from 0.0620 to 0.0007 (interval }[\DIFadd{0.0001, 0.0038}]\DIFadd{), and the abstention rate on null betting instants rises to 0.500. At $\times 1.0$ the miss rate equals the default, 0.025, and abstention is 0.010. Likelihood-ratio weighting is also valid, but its miss rate is 0.540 to 1.000 at $\times 1.5$ to $\times 3.0$, against 0.070 to 0.450 for the stricter region.
 }
 
-\DIFadd{The slack value 0.5 was chosen in a 300-stream pilot whose seeds overlap the main run. The pilot tried seven candidate variants: cool-down after an alarm at $k=10$}\DIFaddend , \DIFdelbegin \DIFdel{including the ones
+\DIFadd{The slack value 0.5 was chosen in a 300-stream pilot whose seeds overlap the main run. The pilot tried seven candidate variants: a neutral-bet cool-down of $k=10$}\DIFaddend , \DIFdelbegin \DIFdel{including the ones
 where the plain residual construction fails --- but it does so by becoming
 drastically conservative, with the miss rate rising from
 \ShiftBreakResidualMiss{} to \ShiftBreakWeightedMiss{} at $\times\ShiftResidualBreaks$. It buys validity with power, which is the correct
@@ -3225,13 +3224,13 @@ trade for a guarantee and a poor one for a detector. }%DIFDELCMD <
 %DIFDELCMD < %%%
 \DIFdel{The practical recommendation follows directly and is implemented in the library:
 run the classifier two-sample test continuously, use the plain residual
-construction while it reports no detectable shift }\DIFdelend \DIFaddbegin \DIFadd{$25$ and $50$ frames, a box margin halved, slack 1.0, box margin with slack 1.0, and slack 0.5. Of these, only slack 0.5 and cool-down at $k=50$ met the pre-set criterion. We therefore confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000, 0.0007}\DIFaddend , \DIFaddbegin \DIFadd{0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ }\DIFaddend and \DIFdelbegin \DIFdel{enable weighting once it
+construction while it reports no detectable shift }\DIFdelend \DIFaddbegin \DIFadd{$25$ and $50$ active bets after any abstained bet, a box margin halved, slack 1.0, box margin with slack 1.0, and slack 0.5. Of these, only slack 0.5 and cool-down at $k=50$ met the pre-set criterion. We therefore confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000, 0.0007}\DIFaddend , \DIFaddbegin \DIFadd{0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ }\DIFaddend and \DIFdelbegin \DIFdel{enable weighting once it
 does --- accepting that the camera has become a conservative detector and that
 the operator should be told the calibration set no longer covers the conditions. An abstention or miss rate that jumps is a signal to recalibrate, not a defect
 to hide}\DIFdelend \DIFaddbegin \DIFadd{$\times 3.0$, and all are valid. The miss rates are 0.010, 0.040, 0.140 and 0.470.
 }
 
-\DIFadd{The abstention rate is the operator-visible shift monitor. With slack 0.5 it is 0.010 at $\times 1.0$, 0.068 at $\times 1.5$ and 0.500 at $\times 3.0$. As a suggestion, not a validated rule, recalibrate when the abstention fraction over the monitoring window exceeds 0.05. That threshold separates the unshifted and $\times 1.5$ cases in this sweep, but no other rule or shift was tested. The library default stays at 1.5 because the other experiments were run with it, and changing it would change their results. Where activity shift is expected, slack 0.5 is the suggested setting}\DIFaddend .
+\DIFadd{The abstention rate is the operator-visible shift monitor. With slack 0.5 it is 0.010 at $\times 1.0$, 0.068 at $\times 1.5$ and 0.500 at $\times 3.0$. As a suggestion, not a validated rule, recalibrate when the abstention fraction over the monitoring window exceeds 0.05. That threshold separates the unshifted and $\times 1.5$ cases in this sweep, but no other rule or shift was tested. We recommend slack 0.5 for deployment. Without shift it matched the default's miss rate, and it was valid at every shift tested, whereas the default 1.5 is invalid at $\times 3.0$. Every other experiment in this paper used 1.5, and the released code keeps 1.5 as its default only so that those results reproduce exactly}\DIFaddend .
 
 \Cref{tab:coverage} varies coverage instead. \DIFdelbegin \DIFdel{Validity survives all three
 regimes, but power does not, and it should not: with calibration from a single
@@ -3659,7 +3658,7 @@ roughly $60\times$ longer, and a month roughly $260\times$ longer. Nothing in
 \cref{thm:episodic} }\hskip0pt%DIFAUXCMD
 or \mbox{%DIFAUXCMD
 \cref{thm:beta} }\hskip0pt%DIFAUXCMD
-depends on the horizon --- the time-uniform guarantee holds at $10^6$ frames exactly as it does at $10^4$, and that is }\DIFdelend \DIFaddbegin \DIFadd{data do not say why. Three candidates fit the design. Pooled calibration across cameras is }\DIFaddend the \DIFdelbegin \DIFdel{entire content of the word ``time-uniform'' --- so the theoretical
+depends on the horizon --- }\DIFdelend \DIFaddbegin \DIFadd{data do not say why. Three candidates fit the design. Pooled calibration across cameras is }\DIFaddend the \DIFdelbegin \DIFdel{time-uniform guarantee holds at $10^6$ frames exactly as it does at $10^4$, and that is }\DIFdelend \DIFaddbegin \DIFadd{first. The guarantee is per camera, and every test camera is unseen, so the per-camera premise is not tested. Serial dependence of the p-values is the second (next paragraph). Boundary selection of the lag is the third. $L^\ast=7$ is }\DIFaddend the \DIFdelbegin \DIFdel{entire content of the word ``time-uniform'' --- so the theoretical
 claim is unaffected. What is untested is whether the }\emph{\DIFdel{simulator}}%DIFAUXCMD
 \DIFdel{'s
 non-stationarity assumptions, and in particular the diurnal and weather
@@ -3673,7 +3672,7 @@ compound over a week in ways this experiment cannot show either way. Extending
 \cref{tab:horizon}}\hskip0pt%DIFAUXCMD
 's sweep by two orders of magnitude is mechanical (the
 simulator scales to any $T$) and is one of the two directions we would
-prioritise in revision}\DIFdelend \DIFaddbegin \DIFadd{first. The guarantee is per camera, and every test camera is unseen, so the per-camera premise is not tested. Serial dependence of the p-values is the second (next paragraph). Boundary selection of the lag is the third. $L^\ast=7$ is the smallest lag whose leave-one-video-out proportion is at most $\alpha$, and it sits exactly on the boundary at 20 of 200 $=0.100$. Fifty null videos cannot separate these effects, and this paper names none of them as the cause.
+prioritise in revision}\DIFdelend \DIFaddbegin \DIFadd{smallest lag whose leave-one-video-out proportion is at most $\alpha$, and it sits exactly on the boundary at 20 of 200 $=0.100$. Fifty null videos cannot separate these effects, and this paper names none of them as the cause.
 }
 
 \paragraph{\DIFadd{Real-video baselines show no demonstrated advantage.}}

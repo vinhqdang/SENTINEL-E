@@ -712,8 +712,8 @@ def write_outputs(payload: Dict) -> None:
             rows, ["dataset", "method", "knob", "event type", "n", "detection [95\\% CI] (k/n)",
                    "median delay (s)", "normal-video FA [95\\% CI] (k/n)"],
             caption=("Mivia-IWDD test results at $\\alpha=0.1$ split by event type (static versus dynamic dumping), "
-                     "and per-video false alarms on the negative test videos. "
-                     f"Test videos: {video_note}."),
+                     "and per-video false alarms on the negative test videos "
+                     "(100 test videos: 50 negative, 25 static, 25 dynamic), for both backbones."),
             label="tab:r3_mivia_types", name="tabr3_mivia_types", align="llrlrrrr",
             notes=("Detection by event type counts each positive video's episode separately. Normal-video false "
                    "alarms are the primary null trials of the headline table."),
@@ -758,16 +758,14 @@ def write_outputs(payload: Dict) -> None:
             rows_b.append([LABELS[n], grid, fmt(e["lag1_corr"], 3), fmt(e["sup_dev_pos"], 3),
                            fmt(e["cond_mean_pt_given_prev_le_0p1"], 3),
                            f"{e['cond_count']} / {e['n_p_values']}"])
-    rows_all = [[r"\multicolumn{6}{l}{\textit{(a) Score dependence on the raw training scores}}"],
-                ["dataset", "pooled ACF length", "ACF lag 1", "ACF lag 5", "ACF lag 10", "ACF lag 25"]]
+    rows_all = [[r"\multicolumn{6}{l}{\textit{(a) Score dependence on the raw training scores}}"]]
     rows_all += rows
     rows_all += [[r"\multicolumn{6}{l}{\textit{(b) Conformal p-values on the LOVO / fold null streams}}"],
                  ["dataset", "grid", "lag-1 corr.", r"$\sup_u(F_n(u)-u)$", r"$E[p_t\mid p_{t-1}\le 0.1]$",
                   r"pairs with $p_{t-1}\le0.1$ / p-values"]]
     rows_all += rows_b
     write_latex_table(
-        rows_all, ["dataset", "a: length / b: grid", "a: lag 1 / b: lag-1 corr.", "a: lag 5 / b: sup dev.",
-                   "a: lag 10 / b: cond. mean", "a: lag 25 / b: count"],
+        rows_all, ["dataset", "pooled ACF length", "ACF lag 1", "ACF lag 5", "ACF lag 10", "ACF lag 25"],
         caption=("Temporal dependence of the scores and the conformal p-values on real normal footage. "
                  "(a) pooled autocorrelation length of the concatenated training scores (first lag with "
                  "$|\\mathrm{ACF}|<0.05$), and within-video autocorrelation averaged over training videos. "
