@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering
-\caption{Lag sensitivity of SENTINEL-E at $\alpha=0.1$ on the test videos, each monitored alone. Test videos: UCSD Ped2 (flow): 12 test videos; UCSD Ped2 (PatchCore): 12 test videos; CUHK Avenue (flow): 21 test videos; CUHK Avenue (PatchCore): 21 test videos; Mivia-IWDD (flow): 100 test videos. This table is a sensitivity analysis: the headline lag is the one selected on training videos.}
+\caption{Lag sensitivity of SENTINEL-E at $\alpha=0.1$ on the test videos, each monitored alone. Test videos: UCSD Ped2 (flow): 12 test videos; UCSD Ped2 (PatchCore): 12 test videos; CUHK Avenue (flow): 21 test videos; CUHK Avenue (PatchCore): 21 test videos; Mivia-IWDD (flow): 100 test videos; Mivia-IWDD (PatchCore): 100 test videos. This table is a sensitivity analysis: the headline lag is the one selected on training videos.}
 \label{tab:r3_lags}
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{llcrrrr}
@@ -57,6 +57,16 @@ Mivia-IWDD (flow) & 15 &  & 0.060 [0.013, 0.165] (3/50) & 8.94 [2.43, 22.88] & 0
 Mivia-IWDD (flow) & 20 &  & 0.020 [0.001, 0.106] (1/50) & 2.23 [0.06, 12.45] & 0.00 [0.00, 0.07] (0/50) & -- \\
 Mivia-IWDD (flow) & 30 &  & 0.020 [0.001, 0.106] (1/50) & 2.23 [0.06, 12.45] & 0.00 [0.00, 0.07] (0/50) & -- \\
 Mivia-IWDD (flow) & 50 &  & 0.000 [0.000, 0.071] (0/50) & 0.00 [0.00, 8.24] & 0.00 [0.00, 0.07] (0/50) & -- \\
+Mivia-IWDD (PatchCore) & 1 &  & 0.400 [0.264, 0.548] (20/50) & 1036.61 [944.43, 1135.37] & 0.48 [0.34, 0.63] (24/50) & 0.6 \\
+Mivia-IWDD (PatchCore) & 2 &  & 0.360 [0.229, 0.508] (18/50) & 471.39 [409.93, 539.47] & 0.38 [0.25, 0.53] (19/50) & 0.8 \\
+Mivia-IWDD (PatchCore) & 3 &  & 0.260 [0.146, 0.403] (13/50) & 283.73 [236.53, 337.58] & 0.32 [0.20, 0.47] (16/50) & 2.2 \\
+Mivia-IWDD (PatchCore) & 5 &  & 0.240 [0.131, 0.382] (12/50) & 154.15 [119.94, 195.09] & 0.24 [0.13, 0.38] (12/50) & 2.5 \\
+Mivia-IWDD (PatchCore) & 7 & $\ast$ & 0.180 [0.086, 0.314] (9/50) & 100.53 [73.33, 134.52] & 0.20 [0.10, 0.34] (10/50) & 2.8 \\
+Mivia-IWDD (PatchCore) & 10 &  & 0.160 [0.072, 0.291] (8/50) & 60.32 [39.75, 87.76] & 0.16 [0.07, 0.29] (8/50) & 2.5 \\
+Mivia-IWDD (PatchCore) & 15 &  & 0.120 [0.045, 0.243] (6/50) & 29.04 [15.46, 49.66] & 0.14 [0.06, 0.27] (7/50) & 3.0 \\
+Mivia-IWDD (PatchCore) & 20 &  & 0.080 [0.022, 0.192] (4/50) & 20.11 [9.19, 38.17] & 0.06 [0.01, 0.17] (3/50) & 4.0 \\
+Mivia-IWDD (PatchCore) & 30 &  & 0.040 [0.005, 0.137] (2/50) & 6.70 [1.38, 19.59] & 0.08 [0.02, 0.19] (4/50) & 8.0 \\
+Mivia-IWDD (PatchCore) & 50 &  & 0.020 [0.001, 0.106] (1/50) & 2.23 [0.06, 12.45] & 0.04 [0.00, 0.14] (2/50) & 21.0 \\
 \bottomrule
 \end{tabular}}
 \begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Calibration on all training videos at each lag. The starred row is $L^\ast(0.1)$.\end{minipage}

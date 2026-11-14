@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering
-\caption{SENTINEL-E betting lag $L^\ast(\alpha)$ selected on training videos only: the smallest grid lag whose leave-one-video-out per-video false-alarm proportion is at most $\alpha$. Denominators are training videos (UCSD Ped2 (flow): 16 training videos; UCSD Ped2 (PatchCore): 16 training videos; CUHK Avenue (flow): 16 training videos; CUHK Avenue (PatchCore): 16 training videos; Mivia-IWDD (flow): 200 training videos).}
+\caption{SENTINEL-E betting lag $L^\ast(\alpha)$ selected on training videos only: the smallest grid lag whose leave-one-video-out per-video false-alarm proportion is at most $\alpha$. Denominators are training videos (UCSD Ped2 (flow): 16 training videos; UCSD Ped2 (PatchCore): 16 training videos; CUHK Avenue (flow): 16 training videos; CUHK Avenue (PatchCore): 16 training videos; Mivia-IWDD (flow): 200 training videos; Mivia-IWDD (PatchCore): 200 training videos).}
 \label{tab:r3_selection}
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{llrrc}
@@ -22,6 +22,9 @@ CUHK Avenue (PatchCore) & 0.2 & 20 & 3/16 & no \\
 Mivia-IWDD (flow) & 0.05 & 20 & 3/200 & no \\
 Mivia-IWDD (flow) & 0.1 & 10 & 15/200 & no \\
 Mivia-IWDD (flow) & 0.2 & 3 & 40/200 & no \\
+Mivia-IWDD (PatchCore) & 0.05 & 20 & 6/200 & no \\
+Mivia-IWDD (PatchCore) & 0.1 & 7 & 20/200 & no \\
+Mivia-IWDD (PatchCore) & 0.2 & 5 & 31/200 & no \\
 \bottomrule
 \end{tabular}}
 \begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Grid $\{1,2,3,5,7,10,15,20,30,50\}$. A video is a false alarm if it raises at least one alarm when monitored alone. Mivia-IWDD uses 10 folds by video index, so its denominator is the 200 training videos, each held out once.\end{minipage}

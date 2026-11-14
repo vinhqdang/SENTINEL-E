@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering
-\caption{Test results at nominal $\alpha=0.1$, each test video monitored alone, calibration on all training videos, and each method at $L^\ast(0.1)$ from Table~\ref{tab:r3_selection}. Test videos: UCSD Ped2 (flow): 12 test videos; UCSD Ped2 (PatchCore): 12 test videos; CUHK Avenue (flow): 21 test videos; CUHK Avenue (PatchCore): 21 test videos; Mivia-IWDD (flow): 100 test videos.}
+\caption{Test results at nominal $\alpha=0.1$, each test video monitored alone, calibration on all training videos, and each method at $L^\ast(0.1)$ from Table~\ref{tab:r3_selection}. Test videos: UCSD Ped2 (flow): 12 test videos; UCSD Ped2 (PatchCore): 12 test videos; CUHK Avenue (flow): 21 test videos; CUHK Avenue (PatchCore): 21 test videos; Mivia-IWDD (flow): 100 test videos; Mivia-IWDD (PatchCore): 100 test videos.}
 \label{tab:r3_test}
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{llrrrrr}
@@ -42,6 +42,13 @@ Mivia-IWDD (flow) & CUSUM & 16 & 0.100 [0.033, 0.218] (5/50) & 33.51 [18.76, 55.
 Mivia-IWDD (flow) & Shiryaev--Roberts & $10^{8}$ & 0.100 [0.033, 0.218] (5/50) & 24.57 [12.27, 43.97] & 0.00 [0.00, 0.07] (0/50) & -- \\
 Mivia-IWDD (flow) & Parametric e-detector & 0.002 & 0.120 [0.045, 0.243] (6/50) & 44.68 [27.29, 69.01] & 0.00 [0.00, 0.07] (0/50) & -- \\
 Mivia-IWDD (flow) & E-SHIFT & 0.05 & 0.100 [0.033, 0.218] (5/50) & 31.28 [17.10, 52.48] & 0.00 [0.00, 0.07] (0/50) & -- \\
+Mivia-IWDD (PatchCore) & SENTINEL-E & 0.1 & 0.180 [0.086, 0.314] (9/50) & 100.53 [73.33, 134.52] & 0.20 [0.10, 0.34] (10/50) & 2.8 \\
+Mivia-IWDD (PatchCore) & Fixed threshold & 0.03 & 0.260 [0.146, 0.403] (13/50) & 625.54 [554.41, 703.27] & 0.14 [0.06, 0.27] (7/50) & 0.5 \\
+Mivia-IWDD (PatchCore) & p-value threshold & 0.03 & 0.200 [0.100, 0.337] (10/50) & 531.71 [466.30, 603.73] & 0.14 [0.06, 0.27] (7/50) & 0.5 \\
+Mivia-IWDD (PatchCore) & CUSUM & 20 & 0.180 [0.086, 0.314] (9/50) & 53.62 [34.35, 79.78] & 0.22 [0.12, 0.36] (11/50) & 2.3 \\
+Mivia-IWDD (PatchCore) & Shiryaev--Roberts & $10^{8}$ & 0.220 [0.115, 0.360] (11/50) & 71.49 [48.90, 100.92] & 0.22 [0.12, 0.36] (11/50) & 7.1 \\
+Mivia-IWDD (PatchCore) & Parametric e-detector & 0.002 & 0.240 [0.131, 0.382] (12/50) & 102.77 [75.24, 137.08] & 0.34 [0.21, 0.49] (17/50) & 3.4 \\
+Mivia-IWDD (PatchCore) & E-SHIFT & 0.002 & 0.360 [0.229, 0.508] (18/50) & 290.43 [242.65, 344.86] & 0.52 [0.37, 0.66] (26/50) & 1.9 \\
 \bottomrule
 \end{tabular}}
 \begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Per-video FA is over no-anomaly test videos and the pre-onset segments (at least 2\,s) of anomalous test videos for UCSD Ped2 and CUHK Avenue, and over the negative test videos for Mivia-IWDD (pre-onset segments of positive Mivia videos are reported in the supporting data). Episodes are the labelled runs; for Mivia-IWDD, one per positive video. Median delay is over detected episodes. Baseline knobs are chosen on training videos (first admissible knob in sweep order).\end{minipage}

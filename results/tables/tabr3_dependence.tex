@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering
-\caption{Temporal dependence of the scores and the conformal p-values on real normal footage. (a) pooled autocorrelation length of the concatenated training scores (first lag with $|\mathrm{ACF}|<0.05$), and within-video autocorrelation averaged over training videos. (b) per-video lag-1 correlation of consecutive p-values on the thinned grid, the maximum positive deviation of the pooled empirical p-value CDF, and the mean of $p_t$ given $p_{t-1}\le0.1$. Training videos: UCSD Ped2 (flow): 16 training videos; UCSD Ped2 (PatchCore): 16 training videos; CUHK Avenue (flow): 16 training videos; CUHK Avenue (PatchCore): 16 training videos; Mivia-IWDD (flow): 200 training videos.}
+\caption{Temporal dependence of the scores and the conformal p-values on real normal footage. (a) pooled autocorrelation length of the concatenated training scores (first lag with $|\mathrm{ACF}|<0.05$), and within-video autocorrelation averaged over training videos. (b) per-video lag-1 correlation of consecutive p-values on the thinned grid, the maximum positive deviation of the pooled empirical p-value CDF, and the mean of $p_t$ given $p_{t-1}\le0.1$. Training videos: UCSD Ped2 (flow): 16 training videos; UCSD Ped2 (PatchCore): 16 training videos; CUHK Avenue (flow): 16 training videos; CUHK Avenue (PatchCore): 16 training videos; Mivia-IWDD (flow): 200 training videos; Mivia-IWDD (PatchCore): 200 training videos.}
 \label{tab:r3_dependence}
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{lrrrrr}
@@ -14,6 +14,7 @@ UCSD Ped2 (PatchCore) & >200 & 0.87 & 0.36 & 0.15 & -0.00 \\
 CUHK Avenue (flow) & >200 & 0.94 & 0.75 & 0.66 & 0.47 \\
 CUHK Avenue (PatchCore) & >200 & 0.97 & 0.83 & 0.75 & 0.55 \\
 Mivia-IWDD (flow) & >200 & 0.88 & 0.58 & 0.36 & 0.05 \\
+Mivia-IWDD (PatchCore) & >200 & 0.92 & 0.59 & 0.39 & 0.12 \\
 \multicolumn{6}{l}{\textit{(b) Conformal p-values on the LOVO / fold null streams}} \\
 dataset & grid & lag-1 corr. & $\sup_u(F_n(u)-u)$ & $E[p_t\mid p_{t-1}\le 0.1]$ & pairs with $p_{t-1}\le0.1$ / p-values \\
 UCSD Ped2 (flow) & $L^\ast(0.1)=5$ & 0.818 & 0.000 & 0.091 & 32 / 510 \\
@@ -26,6 +27,8 @@ CUHK Avenue (PatchCore) & $L^\ast(0.1)=30$ & 0.758 & 0.000 & 0.083 & 20 / 519 \\
 CUHK Avenue (PatchCore) & $L=1$ & 0.987 & 0.003 & 0.049 & 1370 / 15328 \\
 Mivia-IWDD (flow) & $L^\ast(0.1)=10$ & 0.873 & 0.000 & 0.104 & 431 / 5472 \\
 Mivia-IWDD (flow) & $L=1$ & 0.972 & 0.000 & 0.057 & 5054 / 53884 \\
+Mivia-IWDD (PatchCore) & $L^\ast(0.1)=7$ & 0.985 & 0.000 & 0.058 & 585 / 7780 \\
+Mivia-IWDD (PatchCore) & $L=1$ & 0.998 & 0.002 & 0.051 & 5050 / 53884 \\
 \bottomrule
 \end{tabular}}
 \begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Under valid, independent p-values the conditional mean is 0.5 and the CDF deviation is 0.\end{minipage}
