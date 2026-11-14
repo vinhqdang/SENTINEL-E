@@ -179,6 +179,18 @@ def _collect_real_v3(m: Dict[str, str]) -> None:
             wacf1.append(w["1"]["mean"]); wacf25.append(w["25"]["mean"])
         except (KeyError, TypeError, ValueError):
             continue
+    # Baseline configurations (6 baselines x datasets) with no admissible knob on training videos.
+    n_base = n_noknob = 0
+    for ds in _RTHREE_TAGS:
+        try:
+            base = r3["baselines"][ds][head]
+        except KeyError:
+            continue
+        for method, v in base.items():
+            n_base += 1
+            n_noknob += int(bool(v.get("no_admissible_knob")))
+    m["RThreeBaselineConfigs"] = str(n_base)
+    m["RThreeBaselineNoKnob"] = str(n_noknob)
     if dep_corr:
         m["RThreeDepCorrMin"] = _fmt(min(dep_corr), 3)
         m["RThreeDepCorrMax"] = _fmt(max(dep_corr), 3)
