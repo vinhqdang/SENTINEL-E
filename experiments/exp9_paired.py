@@ -193,9 +193,8 @@ def make_table(payload: Dict) -> None:
             r"delay, and the discordant miss counts (episodic-detects-only / "
             r"changepoint-detects-only) with an exact two-sided McNemar test. "
             r"A positive mean difference favours the episodic mixture. Unlike "
-            r"\cref{tab:episodes}, which compares unpaired point estimates on "
-            r"different grids, every row here isolates the episode-end axis "
-            r"alone."
+            r"the unpaired comparison in Online Resource~1, Sect.~S2, which uses "
+            r"different grids, every row here isolates the episode-end axis alone."
         ),
         label="tab:paired_episodes", name="tab13_paired_episodes", align="rrrrrr",
     )
