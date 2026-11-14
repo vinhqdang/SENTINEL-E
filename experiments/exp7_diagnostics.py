@@ -106,8 +106,10 @@ def make_table(d: Dict):
             "to certify it. What survives is the empirical false-alarm "
             "control of \\cref{sec:validity}, not the literal hypothesis of "
             "\\cref{thm:episodic}; see \\cref{sec:limitations}. These are "
-            "computed from betting instants on labelled null streams, which an "
-            "operator does not have; the calibration-set analogue is weaker."
+            "computed from the detrended calibration residuals of each simulated "
+            "camera, the same data an operator holds. They test the premise on the "
+            "calibration set; the deployment p-values are checked separately in "
+            "\\cref{tab:pcoverage}."
         ),
         label="tab:diagnostics", name="tab9_diagnostics", align="lrr",
     )
@@ -118,12 +120,12 @@ def make_table(d: Dict):
     write_latex_table(
         rows, ["nominal level $u$", "realised $P(p \\le u)$", "super-uniform?"],
         caption=(
-            "Marginal calibration of the deployment p-values on null streams "
+            "Marginal calibration of the deployment p-values on labelled null streams "
             f"({d['coverage'][str(LEVELS[0])]['n']:,} betting instants pooled over "
             f"{d['n_streams']} cameras). This checks Layer 1 in isolation: the "
             "p-values must be super-uniform before any betting takes place. The "
-            f"smallest attainable p-value is {d['p_min']:.4f}, which is the tail "
-            "resolution the exact Beta levels of \\cref{thm:beta} provide."
+            f"smallest observed p-value is {d['p_min']:.4f}, from calibration sets "
+            "of 150{,}000 raw frames thinned at the estimated lag."
         ),
         label="tab:pcoverage", name="tab10_pcoverage", align="rrc",
     )

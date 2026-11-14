@@ -156,6 +156,11 @@ def _fmt_knob(v: float) -> str:
     return f"{a:g}"
 
 
+#: The two exact e-processes, and the nominal level at which both are shown.
+EXACT_E_PROCESSES = {"SENTINEL-E", "Changepoint mixture"}
+COMMON_E_ALPHA = 0.01
+
+
 def make_table(results, cap: float = 0.05):
     """One row per method at the tightest false-alarm rate it can still detect at.
 
@@ -174,7 +179,17 @@ def make_table(results, cap: float = 0.05):
         usable = [r for r in rs
                   if r["add_censored"] is not None
                   and np.isfinite(r["add_censored"]) and r["miss_rate"] < 0.9]
-        if usable:
+        if method in EXACT_E_PROCESSES:
+            # Both exact e-processes are shown at one common nominal level, so
+            # their rows are compared at equal nominal alpha. Picking the
+            # tightest realised rate would select alpha = 0.5 for SENTINEL-E,
+            # because its realised rate is 0.000 at every level.
+            best = next(r for r in rs
+                        if abs(r["knob"] - COMMON_E_ALPHA) < 1e-12)
+            detects = (best["add_censored"] is not None
+                       and bool(np.isfinite(best["add_censored"]))
+                       and best["miss_rate"] < 0.9)
+        elif usable:
             best = min(usable, key=lambda r: (r["pfa"], r["add_censored"]))
             detects = True
         else:
@@ -194,18 +209,21 @@ def make_table(results, cap: float = 0.05):
             (f"{fmt(best['add_censored'] / FPS, 1)} $\\pm$ "
              f"{fmt(1.96 * (best['add_censored_se'] or 0) / FPS, 1)}")
             if detects else "--",
-            fmt(best["miss_rate"], 2),
+            fmt(best["miss_rate"], 3),
         ])
     passing = [r[0] for r in rows if not r[3].startswith("\\ding")]
-    exact_e_processes = {"SENTINEL-E", "Changepoint mixture"}
+    exact_e_processes = EXACT_E_PROCESSES
     passing_classical = [m for m in passing if m not in exact_e_processes]
     write_latex_table(
         rows,
-        ["method", "knob", "realised PFA", f"$\\le {cap}$?", "ARL$_0$",
+        ["method", "nominal $\\alpha$ / knob", "realised PFA", f"$\\le {cap}$?", "ARL$_0$",
          "cond. delay (s)", "censored delay (s)", "miss rate"],
         caption=(
-            "Each method at the tightest realised false-alarm probability it "
-            "achieves while still detecting most events, over a 60-minute stream "
+            "Baselines are shown at the tightest realised false-alarm probability "
+            "they achieve while still detecting most events. The two exact "
+            "e-processes are shown at a common nominal level "
+            f"$\\alpha={COMMON_E_ALPHA:g}$, so they are compared at equal nominal "
+            "level. Streams are 60 minutes long "
             f"({REPS} null and {REPS} post-change streams per operating point). "
             "This is the operator's question: insisting on few false alarms, what "
             "does the method cost in delay? "
@@ -231,7 +249,9 @@ def make_table(results, cap: float = 0.05):
         name="tab3_delay_far",
         align="llrcrrrr",
         notes=(
-            r"Delays are in seconds at 25\,fps. The conditional delay averages "
+            r"Delays are in seconds at 25\,fps. For SENTINEL-E and the changepoint "
+            r"mixture the knob is the nominal level $\alpha$; for the baselines it "
+            r"is their own threshold, per-frame rate or betting level. The conditional delay averages "
             r"only over runs that detect, so it is computed on a different "
             r"subset for each method and flatters those that miss the hard "
             r"events; the censored delay charges a miss the whole remaining "
