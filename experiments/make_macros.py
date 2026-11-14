@@ -8,6 +8,7 @@ impossible.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Dict, List
 
@@ -101,6 +102,97 @@ _OBSOLETE_REAL = [
     "RealDelayAvenueSec", "RealDelayAvenuePfa", "RealDelayAvenueMiss",
     "RealDelayAvenueNBaselinesPass", "RealDelayAvenueNBaselines",
 ]
+
+# Real-data protocol v3 (experiments/real_data/exp_r3_per_video.py). One tag per
+# dataset-backbone pair; macros are \RThree<tag><Quantity>.
+_RTHREE_TAGS = {
+    "ped2": "PedTwoFlow", "ped2_patchcore": "PedTwoPC",
+    "avenue": "AvenueFlow", "avenue_patchcore": "AvenuePC",
+    "mivia_flow": "MiviaFlow", "mivia_patchcore": "MiviaPC",
+}
+
+
+def _collect_real_v3(m: Dict[str, str]) -> None:
+    """Macros for the per-video protocol at the headline alpha, plus dependence diagnostics."""
+    try:
+        r3 = load_json("exp_r3_per_video")
+    except FileNotFoundError:
+        return
+    head = str(r3["protocol"]["headline_alpha"])
+    repo = Path(TABLES).parents[1]
+    for ds, tag in _RTHREE_TAGS.items():
+        try:
+            auc = json.loads((repo / "data" / "real_vad" / ds / "backbone_auc.json").read_text())["auc"]
+            m[f"RThree{tag}Auc"] = _fmt(auc, 3)
+        except (OSError, KeyError, ValueError):
+            pass
+    dep_corr, dep_sup, dep_cond, dep_cnt, dep_corr1, dep_sup1 = [], [], [], [], [], []
+    wacf1, wacf25 = [], []
+    for ds, tag in _RTHREE_TAGS.items():
+        try:
+            sel = r3["selection"][ds][head]
+            t = r3["test"][ds][head]["SENTINEL-E"]
+            m[f"RThree{tag}Lag"] = str(sel["lag"])
+            m[f"RThree{tag}LovoK"] = str(sel["lovo_k"])
+            m[f"RThree{tag}LovoN"] = str(sel["lovo_n"])
+            m[f"RThree{tag}NVideos"] = str(t["n_videos"])
+            nl = t["null_primary"]
+            m[f"RThree{tag}FAk"] = str(nl["k"])
+            m[f"RThree{tag}FAn"] = str(nl["n"])
+            m[f"RThree{tag}FAp"] = _fmt(nl["pfa"], 3)
+            m[f"RThree{tag}FALo"] = _fmt(nl["ci"][0], 3)
+            m[f"RThree{tag}FAHi"] = _fmt(nl["ci"][1], 3)
+            m[f"RThree{tag}FAhrP"] = _fmt(t["fa_per_hour"], 2)
+            m[f"RThree{tag}FAhrLo"] = _fmt(t["fa_per_hour_ci"][0], 2)
+            m[f"RThree{tag}FAhrHi"] = _fmt(t["fa_per_hour_ci"][1], 2)
+            ep = t["episodes"]
+            m[f"RThree{tag}Detk"] = str(ep["k"])
+            m[f"RThree{tag}Detn"] = str(ep["n"])
+            m[f"RThree{tag}DetP"] = _fmt(ep["pfa"], 2)
+            m[f"RThree{tag}DetLo"] = _fmt(ep["ci"][0], 2)
+            m[f"RThree{tag}DetHi"] = _fmt(ep["ci"][1], 2)
+            m[f"RThree{tag}DelayMed"] = _fmt(t["delay"]["median_s"], 1)
+            for key, prefix in (("static dumping", "Static"), ("dynamic dumping", "Dyn")):
+                bt = t["by_event_type"].get(key)
+                if bt is None:
+                    continue
+                d = bt["detection"]
+                m[f"RThree{tag}{prefix}Detk"] = str(d["k"])
+                m[f"RThree{tag}{prefix}Detn"] = str(d["n"])
+                m[f"RThree{tag}{prefix}DetLo"] = _fmt(d["ci"][0], 2)
+                m[f"RThree{tag}{prefix}DetHi"] = _fmt(d["ci"][1], 2)
+            diag = r3["diagnostics"][ds]
+            L = diag["5b"]["L_star"]
+            one = diag["5b"]["lag_1"]
+            m[f"RThree{tag}DepCorr"] = _fmt(L["lag1_corr"], 3)
+            m[f"RThree{tag}DepSup"] = _fmt(L["sup_dev_pos"], 3)
+            m[f"RThree{tag}DepCond"] = _fmt(L["cond_mean_pt_given_prev_le_0p1"], 3)
+            m[f"RThree{tag}DepCondCount"] = str(L["cond_count"])
+            m[f"RThree{tag}DepCorrOne"] = _fmt(one["lag1_corr"], 3)
+            m[f"RThree{tag}DepSupOne"] = _fmt(one["sup_dev_pos"], 3)
+            w = diag["5a"]["within_video_acf"]
+            m[f"RThree{tag}WithinLagOne"] = _fmt(w["1"]["mean"], 2)
+            m[f"RThree{tag}WithinLagTwentyFive"] = _fmt(w["25"]["mean"], 2)
+            dep_corr.append(L["lag1_corr"]); dep_sup.append(L["sup_dev_pos"])
+            dep_cond.append(L["cond_mean_pt_given_prev_le_0p1"]); dep_cnt.append(L["cond_count"])
+            dep_corr1.append(one["lag1_corr"]); dep_sup1.append(one["sup_dev_pos"])
+            wacf1.append(w["1"]["mean"]); wacf25.append(w["25"]["mean"])
+        except (KeyError, TypeError, ValueError):
+            continue
+    if dep_corr:
+        m["RThreeDepCorrMin"] = _fmt(min(dep_corr), 3)
+        m["RThreeDepCorrMax"] = _fmt(max(dep_corr), 3)
+        m["RThreeDepSupMax"] = _fmt(max(dep_sup), 3)
+        m["RThreeDepCondMin"] = _fmt(min(dep_cond), 3)
+        m["RThreeDepCondMax"] = _fmt(max(dep_cond), 3)
+        m["RThreeDepCountMin"] = str(min(dep_cnt))
+        m["RThreeDepCountMax"] = str(max(dep_cnt))
+        m["RThreeDepCorrOneMax"] = _fmt(max(dep_corr1), 3)
+        m["RThreeDepSupOneMax"] = _fmt(max(dep_sup1), 3)
+        m["RThreeWithinLagOneMin"] = _fmt(min(wacf1), 2)
+        m["RThreeWithinLagOneMax"] = _fmt(max(wacf1), 2)
+        m["RThreeWithinLagTwentyFiveMin"] = _fmt(min(wacf25), 2)
+        m["RThreeWithinLagTwentyFiveMax"] = _fmt(max(wacf25), 2)
 
 
 def collect() -> Dict[str, str]:
@@ -688,6 +780,8 @@ def collect() -> Dict[str, str]:
         m["DiagLjungFrac"] = _fmt(e7["ljung_box_thinned_frac_above_005"], 3)
     except (FileNotFoundError, KeyError):
         pass
+
+    _collect_real_v3(m)
 
     for name in _OBSOLETE_REAL:
         m.setdefault(name, "\\todo{obsolete}")
