@@ -26,7 +26,7 @@ The Mivia flow score is below chance. PatchCore is a strong training-free appear
 backbone, but it is not the state of the art on these benchmarks. Its frame AUC is
 0.828 on Ped2, 0.737 on Avenue (below flow's 0.783) and 0.588 on Mivia. The power
 results below therefore bound what such frozen backbones deliver, not what the best
-published video anomaly detectors would deliver.
+published video anomaly detectors would deliver. We did not add a state-of-the-art video anomaly detector. Such models are trained per dataset, and evaluating them without leakage would need its own training-only selection protocol.
 
 \paragraph{Protocol.} The unit of replication is the video. Each test video is
 monitored alone by a freshly started detector, and no frame is reused between

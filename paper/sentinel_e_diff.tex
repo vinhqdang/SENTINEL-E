@@ -2240,13 +2240,16 @@ unsupervised backbonechosen for transparency over benchmark
 leaderboard position; \mbox{%DIFAUXCMD
 \cref{sec:related} }\hskip0pt%DIFAUXCMD
 situates it against 2025--2026
-methods that reach substantially higher AUC on the same pair. Streams are
-built by }\texttt{\DIFdel{build\_stream\_from\_clips}} %DIFAUXCMD
+methods that reach substantially higher AUC }\DIFdelend \DIFaddbegin \DIFadd{flow), \RThreePedTwoPCAuc{} (Ped2 PatchCore),
+\RThreeAvenueFlowAuc{} (Avenue flow), \RThreeAvenuePCAuc{} (Avenue PatchCore),
+\RThreeMiviaFlowAuc{} (Mivia flow) and \RThreeMiviaPCAuc{} (Mivia PatchCore).
+The Mivia flow score is below chance. PatchCore is a strong training-free appearance
+backbone, but it is not the state of the art on these benchmarks. Its frame AUC is
+0.828 }\DIFaddend on \DIFdelbegin \DIFdel{the same pair. Streams are built by }\texttt{\DIFdel{build\_stream\_from\_clips}} %DIFAUXCMD
 \DIFdel{exactly as \mbox{%DIFAUXCMD
 \cref{sec:problem}
 }\hskip0pt%DIFAUXCMD
-describes: calibration is
-the official training split, and the deployment
+describes: calibration is the official training split, and the deployment
 stream is spliced from real labelled runs inside the test split, with no frame ever eligible for both roles. }%DIFDELCMD < 
 
 %DIFDELCMD < \begin{figure}[t]
@@ -2282,16 +2285,11 @@ motivates
 \addtocounter{paragraph}{-1}%DIFAUXCMD
 \DIFdel{Before any
 sequential machinery runs, a direct quantile check on the raw scores shows
-that \RealPedTwoShiftFrac{}\% of }\DIFdelend \DIFaddbegin \DIFadd{flow), \RThreePedTwoPCAuc{} (}\DIFaddend Ped2 \DIFdelbegin \DIFdel{'s confirmed-normal test frames, and \RealAvenueShiftFrac{}\% of Avenue 's, exceed the 95th percentile of the }\emph{\DIFdel{official training}} %DIFAUXCMD
+that \RealPedTwoShiftFrac{}\% of }\DIFdelend Ped2\DIFdelbegin \DIFdel{'s confirmed-normal test frames, and \RealAvenueShiftFrac{}\% of Avenue 's, exceed the 95th percentile of the }\emph{\DIFdel{official training}} %DIFAUXCMD
 \DIFdel{split's score distribution --- both far above the
-5\% a well-calibrated split would show. Real footage across a train/test boundary is not, in this backbone's scores, }\DIFdelend \DIFaddbegin \DIFadd{PatchCore),
-\RThreeAvenueFlowAuc{} (Avenue flow), \RThreeAvenuePCAuc{} (Avenue PatchCore),
-\RThreeMiviaFlowAuc{} (Mivia flow) and \RThreeMiviaPCAuc{} (Mivia PatchCore).
-The Mivia flow score is below chance. PatchCore is a strong training-free appearance
-backbone, but it is not the state of the art on these benchmarks. Its frame AUC is
-0.828 on Ped2, 0.737 on Avenue (below flow's 0.783) and 0.588 on Mivia. The power
+5\% a well-calibrated split would show. Real footage across a train/test boundary is not, in this backbone's scores, }\DIFdelend \DIFaddbegin \DIFadd{, 0.737 on Avenue (below flow's 0.783) and 0.588 on Mivia. The power
 results below therefore bound what such frozen backbones deliver, not what the best
-published video anomaly detectors would deliver.
+published video anomaly detectors would deliver. We did not add a state-of-the-art video anomaly detector. Such models are trained per dataset, and evaluating them without leakage would need its own training-only selection protocol.
 }
 
 \paragraph{\DIFadd{Protocol.}} \DIFadd{The unit of replication is }\DIFaddend the \DIFdelbegin \DIFdel{same distribution twice; this
@@ -2324,7 +2322,7 @@ does not fall below 0.05 until lag \RealPedTwoFullLag{} on Ped2 and lag
 \RealPedTwoEpiMedian{} frames on }\DIFdelend Ped2 \DIFdelbegin \DIFdel{(\RealPedTwoEpiMin{}--\RealPedTwoEpiMax{}) and
 just \RealAvenueEpiMedian{} on Avenue (\RealAvenueEpiMin{}--\RealAvenueEpiMax{}).
 Thinning to the fully rigorous lag leaves at most one or two betting
-opportunities inside a typical real event --- too few for any sequential test, at any $\alpha$, to detect reliably. }\DIFdelend \DIFaddbegin \DIFadd{and Avenue use
+opportunities inside a typical real event --- too few for any sequential test, at any $\alpha$, to detect reliably}\DIFdelend \DIFaddbegin \DIFadd{and Avenue use
 LOVO over their 16 training videos. Mivia uses 10 folds by video index, each
 holding out 20 training videos. Each classical baseline is thinned at the same
 $L^\ast(\alpha)$. Its knob is the first admissible knob in sweep order, from the
@@ -2359,15 +2357,13 @@ gives the selected lags, and
 the test results at $\alpha=0.1$. \mbox{%DIFAUXCMD
 \Cref{fig:r3_per_video}
 }\hskip0pt%DIFAUXCMD
-plots each method's test false alarms per hour against its detection rate.
-}
+plots each method's test false alarms per hour against its detection rate}\DIFaddend .
 
-\inputtable{tabr3_selection}
+\DIFaddbegin \inputtable{tabr3_selection}
 
 \inputtable{tabr3_test}
-\DIFaddend 
 
-\begin{figure}[t]
+\DIFaddend \begin{figure}[t]
   \centering
   \DIFdelbeginFL %DIFDELCMD < \resultfig{fig_r1_validity}{}
 %DIFDELCMD <   %%%
@@ -3224,7 +3220,7 @@ trade for a guarantee and a poor one for a detector. }%DIFDELCMD <
 %DIFDELCMD < %%%
 \DIFdel{The practical recommendation follows directly and is implemented in the library:
 run the classifier two-sample test continuously, use the plain residual
-construction while it reports no detectable shift }\DIFdelend \DIFaddbegin \DIFadd{$25$ and $50$ active bets after any abstained bet, a box margin halved, slack 1.0, box margin with slack 1.0, and slack 0.5. Of these, only slack 0.5 and cool-down at $k=50$ met the pre-set criterion. We therefore confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000, 0.0007}\DIFaddend , \DIFaddbegin \DIFadd{0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ }\DIFaddend and \DIFdelbegin \DIFdel{enable weighting once it
+construction while it reports no detectable shift }\DIFdelend \DIFaddbegin \DIFadd{$25$ and $50$ active bets after any abstained bet, a box margin halved, slack 1.0, box margin with slack 1.0, and slack 0.5. Of these, only slack 0.5 and cool-down at $k=50$ met the pre-set criterion. We therefore confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000}\DIFaddend , \DIFaddbegin \DIFadd{0.0007, 0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ }\DIFaddend and \DIFdelbegin \DIFdel{enable weighting once it
 does --- accepting that the camera has become a conservative detector and that
 the operator should be told the calibration set no longer covers the conditions. An abstention or miss rate that jumps is a signal to recalibrate, not a defect
 to hide}\DIFdelend \DIFaddbegin \DIFadd{$\times 3.0$, and all are valid. The miss rates are 0.010, 0.040, 0.140 and 0.470.

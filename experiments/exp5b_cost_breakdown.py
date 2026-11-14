@@ -201,6 +201,9 @@ def make_table(res: Dict, bb_us: float) -> None:
         ["predicted amortised: $(p + \\text{step})/L$ (batch)",
          fmt(pred, 3), "per frame",
          fmt(100 * pred / bb_us, 4)],
+        ["predicted amortised: $(p + \\text{step})/L$ (streaming)",
+         fmt((p_us + ss_us) / lag, 3), "per frame",
+         fmt(100 * (p_us + ss_us) / lag / bb_us, 4)],
         ["O(T) expansion onto frame grid (measured)", fmt(exp_us, 3), "per frame", "--"],
         ["measured end-to-end monitor ({:,} frames)".format(res["frames"]),
          fmt(e2e["median"], 3), "per frame",
@@ -209,7 +212,7 @@ def make_table(res: Dict, bb_us: float) -> None:
     ]
     write_latex_table(
         rows,
-        ["component", "cost ($\\mu$s)", "unit", "\\% of backbone"],
+        ["component", "cost (\\textmu s)", "unit", "\\% of backbone"],
         caption=(
             r"Cost breakdown of the default SENTINEL-E pipeline, single-thread, measured "
             r"on one machine. Per-bet components are timed on the pipeline's own code "
