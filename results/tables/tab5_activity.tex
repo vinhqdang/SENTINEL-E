@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering
-\caption{Shift in an \emph{unbinned} covariate (scene activity) at $\alpha=0.01$. Each calibration method has three columns: the realised false-alarm probability (PFA), the miss rate and the abstention rate. \emph{pooled} calibrates one set of scores for all streams; \emph{Mondrian} calibrates within bins of the taxonomy; \emph{residual} conformalises the context-normalised residual; \emph{residual + LR wts} adds likelihood-ratio weights to the residual calibration. Binning cannot help with a variable that is not in the taxonomy, so Mondrian calibration fails with the pooled baseline; conformalising the context-normalised residual handles it. Delay and ARL$_0$ are in the JSON output.}
+\caption{Shift in an \emph{unbinned} covariate (scene activity) at $\alpha=0.01$. Each calibration method has three columns: the realised false-alarm probability (PFA), the miss rate and the abstention rate. \emph{pooled} calibrates one set of scores for all streams; \emph{Mondrian} calibrates within bins of the taxonomy; \emph{residual} conformalises the context-normalised residual; \emph{residual + LR wts} adds likelihood-ratio weights to the residual calibration. Binning cannot help with a variable that is not in the taxonomy, so Mondrian calibration loses control together with the pooled baseline; conformalising the context-normalised residual handles it. Delay and ARL$_0$ are in the JSON output.}
 \label{tab:activity}
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{lrrrrrrrrrrrr}

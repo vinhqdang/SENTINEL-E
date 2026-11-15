@@ -636,7 +636,7 @@ def write_outputs(payload: Dict) -> None:
             rows.append([LABELS[n], f"{a:g}", s["lag"], f"{s['lovo_k']}/{s['lovo_n']}",
                          "yes" if s["selection_failed"] else "no"])
     write_latex_table(
-        rows, ["dataset", r"$\alpha$", r"$L^\ast$", "LOVO FA (k/n)", "selection failed"],
+        rows, ["dataset", r"$\alpha$", r"$L^\ast$", "LOVO FA (k/n)", "no admissible lag"],
         caption=("SENTINEL-E betting lag $L^\\ast(\\alpha)$ selected on training videos only: the smallest grid lag "
                  "whose leave-one-video-out per-video false-alarm proportion is at most $\\alpha$. "
                  f"Denominators are training videos ({train_note})."),

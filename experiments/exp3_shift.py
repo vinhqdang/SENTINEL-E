@@ -174,7 +174,7 @@ ACTIVITY_CAPTION = (
     r"within bins of the taxonomy; \emph{residual} conformalises the "
     r"context-normalised residual; \emph{residual + LR wts} adds likelihood-ratio "
     r"weights to the residual calibration. Binning cannot help with a variable "
-    r"that is not in the taxonomy, so Mondrian calibration fails with the pooled "
+    r"that is not in the taxonomy, so Mondrian calibration loses control together with the pooled "
     r"baseline; conformalising the context-normalised residual handles it. Delay "
     r"and ARL$_0$ are in the JSON output."
 )

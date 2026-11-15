@@ -38,7 +38,7 @@ a PatchCore backbone, and each test video is monitored alone. The Mivia labels g
 onset times only, and the real streams are short. The long-horizon claims therefore
 rest on simulation (\cref{sec:limitations}).
 
-\subsection{Why the existing sequential machinery is the wrong shape}
+\subsection{Why the existing sequential machinery needs an episode axis}
 
 The tools for optional stopping are mature. Ville's inequality \citep{ville1939}
 bounds the probability that a non-negative supermartingale ever exceeds a level.
@@ -89,18 +89,19 @@ evaluation method.
       Direct evaluation over active starts costs $O(t)$. The guarantee layer adds
       under two microseconds per frame (\cref{sec:compute}).
 
-\item \textbf{A learned prior and a posterior, with a negative result.} A learned
+\item \textbf{A learned prior and a posterior.} A learned
       spatial prior enters only as a predictable modulation, so the guarantee holds
       whatever it outputs (\cref{thm:predictable}). The posterior probability of
-      being inside an episode is bounded in $[0,1]$. The spatial-prior architecture
-      built on it did not shorten delay (\cref{sec:network}).
+      being inside an episode is bounded in $[0,1]$ and is available to future fleet
+      controllers. In the tested fleets, detection power comes from the e-BH
+      combination, and the learned prior lengthens delay (\cref{sec:network}).
 
 \item \textbf{An evaluation of guarantees.} We report realised false-alarm rates
       over up to \ExpOneReps{} streams per operating point, against six baselines,
       including E-SHIFT \citep{khan2026eshift}. Delay is reported censored as well as
       conditionally (\cref{sec:problem}). Real video is monitored per video, with
       operating points chosen on training videos only (\cref{sec:real-data}).
-      Dilated betting did not help (\cref{sec:dilation}).
+      Dilated betting is evaluated as a design option (\cref{sec:dilation}).
 \end{itemize}
 
 \paragraph{What we do not claim.}

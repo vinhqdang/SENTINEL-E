@@ -216,10 +216,10 @@ def make_table(cells: Dict, gates: Dict, decision: Dict, reps_null: int, reps_si
         "least one shift block whose held-out AUC reaches the threshold / mean "
         f"fraction of triggered blocks ({GATE_STREAMS} streams per shift). "
         f"Decision rule: {DECISION_RULE} "
-        f"Outcome: condition (a) {'holds' if d['condition_a_no_invalid_verdict_weighted'] else 'fails'}; "
+        f"Outcome: condition (a) {'holds' if d['condition_a_no_invalid_verdict_weighted'] else 'is not met'}; "
         f"condition (b) miss-rate delta at x1.0 = "
         f"{'n/a' if d['condition_b_miss_delta_at_1.0'] is None else format(d['condition_b_miss_delta_at_1.0'], '.3f')}, "
-        f"{'holds' if d['condition_b_holds'] else 'fails'}. "
+        f"{'holds' if d['condition_b_holds'] else 'is not met'}. "
         f"Recommendation: {'make residual + LR wts the default' if d['recommend_weighted_default'] else 'keep the unweighted residual default'}."
     )
     write_latex_table(

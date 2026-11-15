@@ -255,11 +255,10 @@ $\alpha=0.5$ is not a usable operating point. Its bound allows a false alarm on
 half of all streams, so the low delay it reports (\EqSEHalfDelaySec\,s) says
 little about a usable threshold.
 
-The baselines are different. \DelayNumInadmissible{} of them never reach a
+The baselines behave differently. \DelayNumInadmissible{} of them never reach a
 realised false-alarm probability of $0.05$ at any knob setting while still
 detecting events (\DelayInadmissibleList). On streams with drift, heavy tails and
-autocorrelation, their thresholds rest on assumptions that do not hold, so they
-cannot be tuned into the operating region.
+autocorrelation, their thresholds rest on assumptions that these streams violate, so they cannot be tuned into the operating region.
 
 \subsection{Robustness to calibration/deployment mismatch}
 \label{sec:shift}
@@ -267,8 +266,7 @@ cannot be tuned into the operating region.
 \begin{figure}[t]
   \centering
   \resultfig{fig3_shift}{}
-  \caption{Shift in an \emph{unbinned} covariate (scene activity). Mondrian
-  calibration fails alongside the pooled baseline, because binning cannot help
+  \caption{Shift in an \emph{unbinned} covariate (scene activity). Mondrian calibration tracks the pooled baseline, because binning cannot help
   with a variable outside the taxonomy. Conformalising the context-normalised
   residual holds throughout.}
   \label{fig:shift}
@@ -290,11 +288,11 @@ row several shift levels cannot be resolved (\ShiftResidualUnresolvedRatios{}).
 
 Likelihood-ratio weighting holds the level at every shift tested, but its power falls. Its miss rate is 0.095 at $\times 1.0$, against 0.025 unweighted, and rises to 0.540, 0.930 and 1.000 at $\times 1.5$, $\times 2.0$ and $\times 3.0$. The Kish effective-sample-size substitution has no calibration-conditional proof, so the weighted path is a heuristic. The pre-specified rule, reported in Online Resource~1, Table~S8, recommends weighting only if its extra miss rate at $\times 1.0$ is at most 0.05. The extra rate is 0.070, so the unweighted residual stays the default.
 
-The held-out context gate, which would switch weighting on, is a classifier two-sample test with AUC at least 0.60. It fired on every null stream at every level, including the unshifted $\times 1.0$. A deployment block covers a narrow slice of the diurnal cycle, while calibration spans a day, so a context gate is confounded with benign drift that the residual normalisation already absorbs. Context gating therefore does not separate shifted from unshifted streams.
+The held-out context gate, which would switch weighting on, is a classifier two-sample test with AUC at least 0.60. It fired on every null stream at every level, including the unshifted $\times 1.0$. Context tests respond to benign diurnal variation, so we use a stricter support region instead.
 
-A stricter support region addresses the boundary failure. The residual calibrator abstains on a frame whose context falls outside a per-coordinate box, or whose Mahalanobis distance exceeds a slack multiple of the calibration 0.999 quantile. The default multiplier is 1.5. We set it to 0.5, so boundary frames abstain. An abstained frame receives a neutral bet, so the supermartingale argument is unchanged. The stricter region holds the level at every shift tested. At $\times 3.0$ the false-alarm probability falls from 0.0620 to 0.0007 (interval [0.0001, 0.0038]), and the abstention rate on null betting instants rises to 0.500. At $\times 1.0$ the miss rate equals the default, 0.025, and abstention is 0.010. Likelihood-ratio weighting is also valid, but its miss rate is 0.540 to 1.000 at $\times 1.5$ to $\times 3.0$, against 0.070 to 0.450 for the stricter region.
+A stricter support region addresses the boundary effect. The residual calibrator abstains on a frame whose context falls outside a per-coordinate box, or whose Mahalanobis distance exceeds a slack multiple of the calibration 0.999 quantile. The default multiplier is 1.5. We set it to 0.5, so boundary frames abstain. An abstained frame receives a neutral bet, so the supermartingale argument is unchanged. The stricter region holds the level at every shift tested. At $\times 3.0$ the false-alarm probability falls from 0.0620 to 0.0007 (interval [0.0001, 0.0038]), and the abstention rate on null betting instants rises to 0.500. At $\times 1.0$ the miss rate equals the default, 0.025, and abstention is 0.010. Likelihood-ratio weighting is also valid, but its miss rate is 0.540 to 1.000 at $\times 1.5$ to $\times 3.0$, against 0.070 to 0.450 for the stricter region.
 
-The slack value 0.5 was chosen in a 300-stream pilot whose seeds overlap the main run. The pilot tried seven candidate variants: a neutral-bet cool-down of $k=10$, $25$ and $50$ active bets after any abstained bet, a box margin halved, slack 1.0, box margin with slack 1.0, and slack 0.5. Of these, only slack 0.5 and cool-down at $k=50$ met the pre-set criterion. We therefore confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000, 0.0007, 0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ and $\times 3.0$, and all are valid. The miss rates are 0.010, 0.040, 0.140 and 0.470.
+The slack value 0.5 was selected in a 300-stream pilot of seven variants (cool-down, box-margin and slack settings) whose seeds overlap the main run; only slack 0.5 and a cool-down at $k=50$ met the pre-set criterion. We confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both the pilot and the main run. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000, 0.0007, 0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ and $\times 3.0$, and all are valid. The miss rates are 0.010, 0.040, 0.140 and 0.470.
 
 The abstention rate is the operator-visible shift monitor. With slack 0.5 it is 0.010 at $\times 1.0$, 0.068 at $\times 1.5$ and 0.500 at $\times 3.0$. As a suggestion, not a validated rule, recalibrate when the abstention fraction over the monitoring window exceeds 0.05. That threshold separates the unshifted and $\times 1.5$ cases in this sweep, but no other rule or shift was tested. We recommend slack 0.5 for deployment. Without shift it matched the default's miss rate, and it was valid at every shift tested, whereas the default 1.5 is invalid at $\times 3.0$. Every other experiment in this paper used 1.5, and the released code keeps 1.5 as its default only so that those results reproduce exactly.
 
@@ -341,19 +339,15 @@ a target of \NetFdrLevel{}. The learned controller reduces power, and it still
 leaves the false-alarm guarantee intact, because it can act only through a
 predictable modulation.
 
-\paragraph{The learned spatial prior does not help.}
-The graph does not shorten delay. Conditional delay is \NetHeuristicDelaySec\,s for
-the hand-designed prior and \NetGnnDelaySec\,s for the learned one, against
-\NetNoGraphDelaySec\,s with no graph. Censored delay is \NetHeuristicCensDelaySec\,s
+\paragraph{The learned spatial prior lengthens delay.}
+The hand-designed prior changes delay only slightly, and the learned prior lengthens it. Conditional delay is \NetHeuristicDelaySec\,s for the hand-designed prior and \NetGnnDelaySec\,s for the learned one, against \NetNoGraphDelaySec\,s with no graph. Censored delay is \NetHeuristicCensDelaySec\,s
 and \NetGnnCensDelaySec\,s, against \NetNoGraphCensDelaySec\,s. Power is
 \NetHeuristicPower{} for the hand-designed prior, \NetNoGraphPower{} with no graph,
-and \NetGnnPower{} for the learned controller. The learned controller is worse
-than no graph on every axis.
+and \NetGnnPower{} for the learned controller. Relative to no graph, the learned controller has lower power and longer delay.
 
-Two changes to the controller did not help. Initialising the heads to reproduce
+Two controller variants were compared. Initialising the heads to reproduce
 the ungoverned detector is now the default, and it is what \cref{tab:network}
-reports. Replacing terminal log-wealth with log-wealth credited over a window of
-\NetCreditWindowSec\,s from each camera's onset made power fall from
+reports. Crediting log-wealth over a window of \NetCreditWindowSec\,s from each camera's onset, in place of terminal log-wealth, lowered power from
 \NetGnnPower{} to \NetGnnWindowedPower{}. Both configurations are reported, and
 the windowed objective stays in the library behind a flag. The controller has
 little signal to learn from. A denser fleet, stronger propagation or a shared
@@ -363,7 +357,7 @@ access road might change this, but these were not tested.
 e-BH recovers the affected cameras at power \NetNoGraphPower{}, with a realised
 false-discovery rate of \NetNoGraphFdr{} against a target of \NetFdrLevel{}. The
 dependence comes from shared weather, shared lighting and correlated episodes.
-This part of the fleet layer is the part worth keeping.
+In these fleets the power comes from the e-BH combination, and the hand-designed prior changes it by half a percentage point. This part of the fleet layer is the part worth keeping.
 
 \subsection{Computational cost}
 \label{sec:compute}
@@ -401,8 +395,7 @@ Fitting a camera's calibration takes \CostFitSec{}\,s, once.
 
 The guarantee rests on two premises. The first is conditional super-uniformity of
 the betting increments. The second is marginal calibration of the p-values, which is checked in simulation
-below. The first is testable, and the conditional-mean test on real video
-contradicts it (\cref{sec:real-data}). The operational consequence of both is the
+below. The first is testable, and the conditional-mean test on real video departs from it (\cref{sec:real-data}). The operational consequence of both is the
 per-video false-alarm rate measured on real video in \cref{sec:real-data}.
 
 \Cref{tab:diagnostics} shows the conditional-independence diagnostics on the
@@ -411,8 +404,7 @@ lag-one autocorrelation of \DiagAcfRaw{} and a median Ljung--Box $p$ of
 \DiagLjungRaw. Betting once per estimated lag, at a mean lag of \DiagLagMean{}
 frames, gives \DiagAcfThin{} and a median $p$ of \DiagLjungThin{}. Thinning reduces
 the violation but does not remove it. Only \DiagLjungFrac{} of cameras pass the
-Ljung--Box test at 5\%. The diagnostic therefore rejects conditional independence after
-thinning. What the experiments support is the empirical false-alarm control of
+Ljung--Box test at 5\%. The diagnostic therefore detects residual dependence after thinning. What the experiments support is the empirical false-alarm control of
 \cref{sec:validity} and \cref{sec:real-data}, not the literal hypothesis of
 \cref{thm:episodic}.
 
@@ -451,8 +443,7 @@ The invalid rows are as follows. Betting on every frame gives PFA $1.0000$
 [0.9974, 1.0000], so every null stream alarms, with a mean time to false alarm
 of 337 frames. Pooled conformal calibration gives PFA $0.9887$ [0.9819, 0.9929].
 Omitting the calibration-conditional correction ($\delta=0$) gives PFA
-$0.0387$ [0.0300, 0.0497], nearly four times nominal. Without the correction the
-guarantee fails, and pooled calibration is not a valid substitute.
+$0.0387$ [0.0300, 0.0497], nearly four times nominal. The correction is therefore required, and pooled calibration is not a substitute for it.
 
 The other twelve variants of the 200-stream table are descriptive. They are
 listed in Online Resource~1, Table~S7. At 200 streams, 14 of the 19 variants are
@@ -461,4 +452,4 @@ resolve as invalid at that count: bet once per five frames (PFA 0.935) and
 Mondrian conformal (0.025 [0.011, 0.057]). The fixed-start variant, which has no
 changepoint prior, misses 1.00 of events. A wealth process started at frame one
 has spent too much when a late change arrives. The mixture over onsets in
-\cref{eq:episodic} prevents that failure.
+\cref{eq:episodic} avoids that outcome.
