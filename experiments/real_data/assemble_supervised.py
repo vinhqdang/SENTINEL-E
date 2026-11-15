@@ -114,6 +114,21 @@ def main() -> None:
     for m, v in zip(tr_meta, [v for v in tr if not v["pos"]]):
         if m["n_frames"] != v["X"].shape[0]:
             raise AssertionError(f"{v['name']}: {v['X'].shape[0]} frames vs metadata {m['n_frames']}")
+    # Positive training videos: frame counts and onset indices must match the flow pipeline's metadata.
+    pos_meta = {m["name"]: m for m in json.loads((FLOW_DIR / "train_positive_meta.json").read_text())}
+    mismatches = []
+    for v in tr:
+        if not v["pos"]:
+            continue
+        m = pos_meta[v["name"]]
+        onset_idx = int(np.argmax(v["y"] == 1)) if v["y"].any() else -1
+        if m["n_frames"] != v["X"].shape[0] or onset_idx != m["onset_frame"]:
+            mismatches.append({"name": v["name"], "n_frames": [m["n_frames"], int(v["X"].shape[0])],
+                               "onset_frame": [m["onset_frame"], onset_idx]})
+    if mismatches:
+        raise AssertionError(f"positive training videos disagree with train_positive_meta.json: {mismatches[:5]}")
+    print(f"positive training videos: frame counts and onset frames match train_positive_meta.json "
+          f"({len(pos_meta)} videos)", flush=True)
 
     # ---- folds (stratified by class, video_id order)
     fold = {}
