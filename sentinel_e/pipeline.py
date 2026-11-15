@@ -22,6 +22,7 @@ from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 
+from sentinel_e.block_betting import block_pvalues
 from sentinel_e.conformal import (
     ConformalCalibrator,
     MondrianConformalCalibrator,
@@ -84,6 +85,20 @@ class SentinelE:
     lag : int or None
         Bets are placed once every ``lag`` frames.  ``None`` estimates it from
         the calibration autocorrelation, which is the recommended setting.
+    block_size : int or None
+        ``None`` (default) keeps the thinned betting path above.  An integer
+        ``B`` switches to block betting: the per-frame p-values of every frame
+        are formed, and one bet is placed per block of ``B`` consecutive frames.
+        Each block is merged into one p-value by ``block_combiner``.  The
+        calibration is still thinned by ``lag`` in this mode; ``lag`` no longer
+        sets the betting grid.  See :mod:`sentinel_e.block_betting` for the
+        validity argument: each block p-value is marginally super-uniform under
+        arbitrary within-block dependence, and conditional super-uniformity
+        across blocks is an assumption that is checked empirically.
+    block_combiner : {'bonferroni', 'mean2'}
+        ``'bonferroni'``: ``min(1, B * min p)``.  ``'mean2'``: ``min(1, 2 * mean p)``.
+    block_gap : int
+        Frames skipped between consecutive blocks (``0`` means contiguous blocks).
     """
 
     def __init__(
@@ -115,7 +130,19 @@ class SentinelE:
         gate_level: float = 0.05,
         gate_reference_windows: int = 50,
         support_slack: float = 1.5,
+        block_size: Optional[int] = None,
+        block_combiner: str = "bonferroni",
+        block_gap: int = 0,
     ) -> None:
+        if block_size is not None and int(block_size) < 1:
+            raise ValueError("block_size must be None or a positive integer")
+        if block_combiner not in {"bonferroni", "mean2"}:
+            raise ValueError("block_combiner must be 'bonferroni' or 'mean2'")
+        if int(block_gap) < 0:
+            raise ValueError("block_gap must be non-negative")
+        self.block_size = None if block_size is None else int(block_size)
+        self.block_combiner = str(block_combiner)
+        self.block_gap = int(block_gap)
         if calibration not in {"residual", "mondrian", "pooled", "weighted"}:
             raise ValueError(
                 "calibration must be 'residual', 'mondrian', 'pooled' or 'weighted'"
@@ -314,6 +341,8 @@ class SentinelE:
         s = np.asarray(scores, dtype=float).ravel()
         ctx = None if context is None else np.atleast_2d(np.asarray(context, float))
         T = s.size
+        if self.block_size is not None:
+            return self._run_blocks(s, ctx)
         idx = thin_indices(T, self._lag_used)
 
         p_thin, active_thin = self.p_values(
@@ -341,6 +370,39 @@ class SentinelE:
             log_wealth=lw_full,
             alarms=al_full,
             bet_index=idx,
+            lag=self._lag_used,
+            abstention_rate=float(rate),
+        )
+
+    def _run_blocks(self, s: np.ndarray, ctx: Optional[np.ndarray]) -> CameraResult:
+        """Block betting: one bet per block of ``block_size`` frames (see :mod:`block_betting`)."""
+        T = s.size
+        p_all, active_all = self.p_values(s, ctx)
+        pb, ends, act_b = block_pvalues(
+            p_all, self.block_size, self.block_gap, self.block_combiner, active=active_all
+        )
+        self.detector.reset()
+        if ends.size:
+            lw_b, al_b = self.detector.run(pb, active=act_b)
+        else:
+            lw_b, al_b = np.zeros(0), np.zeros(0, dtype=bool)
+        p_full = np.ones(T)
+        act_full = np.zeros(T, dtype=bool)
+        lw_full = np.zeros(T)
+        al_full = np.zeros(T, dtype=bool)
+        p_full[ends] = pb
+        act_full[ends] = act_b
+        al_full[ends] = al_b
+        if ends.size:
+            pos = np.searchsorted(ends, np.arange(T), side="right") - 1
+            lw_full[pos >= 0] = lw_b[pos[pos >= 0]]
+        rate = getattr(self.calibrator, "abstention_rate", 0.0)
+        return CameraResult(
+            p_values=p_full,
+            active=act_full,
+            log_wealth=lw_full,
+            alarms=al_full,
+            bet_index=ends,
             lag=self._lag_used,
             abstention_rate=float(rate),
         )

@@ -49,11 +49,13 @@ from sentinel_e.pipeline import SentinelE
 from sentinel_e.streams import Stream
 from sentinel_e.temporal import acf, thin_indices
 
-DATASETS = ("ped2", "ped2_patchcore", "avenue", "avenue_patchcore", "mivia_flow", "mivia_patchcore")
+DATASETS = ("ped2", "ped2_patchcore", "avenue", "avenue_patchcore", "mivia_flow", "mivia_patchcore",
+            "mivia_supervised")
 LABELS = {
     "ped2": "UCSD Ped2 (flow)", "ped2_patchcore": "UCSD Ped2 (PatchCore)",
     "avenue": "CUHK Avenue (flow)", "avenue_patchcore": "CUHK Avenue (PatchCore)",
     "mivia_flow": "Mivia-IWDD (flow)", "mivia_patchcore": "Mivia-IWDD (PatchCore)",
+    "mivia_supervised": "Mivia-IWDD (supervised)",
 }
 ALPHAS = [0.05, 0.1, 0.2]
 HEADLINE = 0.1
