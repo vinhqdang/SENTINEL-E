@@ -83,21 +83,18 @@ plots each method's test false alarms per hour against its detection rate.
 The first finding concerns validity. On Ped2 and Avenue the false-alarm counts at
 $\alpha=0.1$ are small. The null footage is short: 12.6\,s for Ped2 (three pre-onset
 segments), 6.9\,min for Avenue (16 videos) and 26.9\,min for Mivia (50 negative
-videos). At this length any outcome is consistent with the nominal level. Ped2 flow has \RThreePedTwoFlowFAk{}/\RThreePedTwoFlowFAn{} false
+videos). At this length the counts are too small to resolve the nominal level. Ped2 flow has \RThreePedTwoFlowFAk{}/\RThreePedTwoFlowFAn{} false
 alarms, Ped2 PatchCore has \RThreePedTwoPCFAk{}/\RThreePedTwoPCFAn{}, Avenue
 flow has \RThreeAvenueFlowFAk{}/\RThreeAvenueFlowFAn{} and Avenue PatchCore has
 \RThreeAvenuePCFAk{}/\RThreeAvenuePCFAn{}. The intervals are wide. Ped2 flow at
 $\alpha=0.2$ has 3 of 3 false alarms, with selected lag 1 (Online Resource~1, Table~S1),
-so the Ped2 result depends on the level chosen. Mivia flow has
+so the Ped2 count is sensitive to the level chosen. Mivia flow has
 \RThreeMiviaFlowFAk{}/\RThreeMiviaFlowFAn{} false alarms, inside the level.
 Mivia PatchCore has \RThreeMiviaPCFAk{}/\RThreeMiviaPCFAn{}, a proportion of
 \RThreeMiviaPCFAp{} with interval $[\RThreeMiviaPCFALo{},\RThreeMiviaPCFAHi{}]$.
-This exceeds $0.1$ at the point estimate, and the interval contains $0.1$. The
-one-sided exact binomial probability of at least nine false alarms in 50 videos at
-$p=0.1$ is $0.058$, so the excess is not significant at the 5\% level. The count also
+The interval contains $0.1$. The one-sided exact binomial probability of at least nine false alarms in 50 videos at $p=0.1$ is $0.058$. The count also
 moves with $\alpha$: it is 3 of 50 at $\alpha=0.05$ and 12 of 50 at $\alpha=0.2$
-(full sweep in Online Resource~1, Sect.~S1). The excess has several candidate causes,
-and 50 null videos cannot separate them. First, Mivia calibrates across cameras, but
+(full sweep in Online Resource~1, Sect.~S1). Several candidate explanations fit the design, and 50 null videos cannot separate them. First, Mivia calibrates across cameras, but
 the guarantee is per camera, and every test camera is unseen, so the per-camera
 premise is not tested here. Second, the p-values are serially dependent (the
 paragraph below). Third, the lag and the alarm boundary are chosen on training videos.
@@ -119,12 +116,9 @@ and Ped2 PatchCore detects \RThreePedTwoPCDetk{} of \RThreePedTwoPCDetn{}.
 Avenue detects only \RThreeAvenueFlowDetk{} of \RThreeAvenueFlowDetn{} with
 flow and \RThreeAvenuePCDetk{} of \RThreeAvenuePCDetn{} with PatchCore. Mivia
 flow detects none of its \RThreeMiviaFlowDetn{} positive videos. Mivia
-PatchCore detects \RThreeMiviaPCDetk{} of \RThreeMiviaPCDetn{}. Its median
-delay is \RThreeMiviaPCDelayMed{}\,s after onset.
+PatchCore detects \RThreeMiviaPCDetk{} of \RThreeMiviaPCDetn{}. Its median delay is \RThreeMiviaPCDelayMed{}\,s after onset. PatchCore detects more episodes than flow on Avenue and Mivia-IWDD, and flow detects more on Ped2.
 
-The third finding concerns the baselines, and it does not favour SENTINEL-E. On
-Mivia PatchCore every baseline also exceeds $0.1$ on test, with 9 to 18 of 50
-negative videos raising an alarm. On Avenue PatchCore, three of the six baselines
+The third finding concerns the baselines. On Mivia PatchCore every baseline also has a per-video false-alarm proportion above $0.1$ on test, ranging from 9 to 18 of 50 negative videos. On Avenue PatchCore, three of the six baselines
 (CUSUM, Shiryaev--Roberts and the parametric e-detector) had no admissible knob at
 $\alpha=0.1$ and used the most conservative setting. Across all 36 baseline
 configurations at this level, 15 had none. The fixed threshold and E-SHIFT detect
@@ -134,9 +128,7 @@ alarms in 50 videos, detects more episodes (11 of 50 against 10) and has a lower
 per hour (53.6 against 100.5). Its knob is the most conservative in its sweep, so
 this is not a tuned baseline. On Ped2 PatchCore the fixed threshold detects 8 of 12
 episodes against 7 of 12, with no false alarm in three null videos, which is too
-little evidence to rule out an excess. SENTINEL-E therefore shows no demonstrated
-advantage over these baselines on real video. Its claimed advantage is the
-horizon-free guarantee, which the short real videos cannot exercise.
+little evidence to rule out an excess. On these short videos the baselines at their selected knobs typically detect more episodes than SENTINEL-E, generally with more false alarms; only CUSUM and Shiryaev--Roberts are close to it on both counts. Its claimed advantage is the horizon-free guarantee, which the short real videos cannot exercise and the simulations in \cref{sec:validity} test.
 
 \paragraph{Dependence.} The guarantee rests on the thinned p-values, so
 \cref{tab:r3_dependence} measures their dependence. Two quantities are
@@ -152,15 +144,13 @@ The thinned p-values remain positively correlated. At the selected lags the
 lag-one correlation ranges from \RThreeDepCorrMin{} to \RThreeDepCorrMax{}. The
 empirical CDF shows no excess of small values. The largest positive deviation
 is \RThreeDepSupMax{} at the selected lags, and \RThreeDepSupOneMax{} at lag one.
-The conditional-mean diagnostic contradicts conditional super-uniformity. If $p_t$
+The conditional-mean diagnostic departs from conditional super-uniformity. If $p_t$
 is conditionally super-uniform given the past, its mean given $p_{t-1}\le0.1$ is at
 least $0.5$. The observed means lie between \RThreeDepCondMin{} and
 \RThreeDepCondMax{}, on \RThreeDepCountMin{} to \RThreeDepCountMax{} pairs. A small
-p-value is followed by another small one. The hypothesis of \cref{thm:episodic}
-therefore fails on these thinned streams, and real-video validity can only be
-established empirically. The observable consequence is the per-video false-alarm
+p-value is followed by another small one. The hypothesis of \cref{thm:episodic} is therefore not met by these thinned streams, and real-video validity is established empirically. The observable consequence is the per-video false-alarm
 rate. On Ped2 and Avenue it is consistent with $0.1$, but the null footage is short.
-On Mivia PatchCore it exceeds $0.1$.
+On Mivia PatchCore the point estimate is $\RThreeMiviaPCFAp{}$, and its interval contains $0.1$.
 
 \inputtable{tabr3_dependence}
 

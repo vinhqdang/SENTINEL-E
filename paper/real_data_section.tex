@@ -128,7 +128,7 @@ alarms in 50 videos, detects more episodes (11 of 50 against 10) and has a lower
 per hour (53.6 against 100.5). Its knob is the most conservative in its sweep, so
 this is not a tuned baseline. On Ped2 PatchCore the fixed threshold detects 8 of 12
 episodes against 7 of 12, with no false alarm in three null videos, which is too
-little evidence to rule out an excess. On these short videos the detection counts favour different methods on different corpora, and the real-video comparison does not establish an advantage for SENTINEL-E. Its claimed advantage is the horizon-free guarantee, which the short real videos cannot exercise and the simulations in \cref{sec:validity} test.
+little evidence to rule out an excess. On these short videos the baselines at their selected knobs typically detect more episodes than SENTINEL-E, generally with more false alarms; only CUSUM and Shiryaev--Roberts are close to it on both counts. Its claimed advantage is the horizon-free guarantee, which the short real videos cannot exercise and the simulations in \cref{sec:validity} test.
 
 \paragraph{Dependence.} The guarantee rests on the thinned p-values, so
 \cref{tab:r3_dependence} measures their dependence. Two quantities are

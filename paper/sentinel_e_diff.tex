@@ -1,7 +1,7 @@
 % SENTINEL-E: Anytime-Valid Sequential Detection for Streaming Illegal Dumping
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/sentinel_e_scratch/old/paper/sentinel_e.tex   Thu Sep 10 02:23:51 2026
-%DIF ADD sentinel_e.tex                                                                                                 Sat Nov 14 21:12:55 2026
+%DIF DEL /tmp/claude-0/-home-user-SENTINEL-E/11c4e690-66a8-5971-aa35-0c968d71c4a8/scratchpad/old/paper/sentinel_e.tex   Thu Sep 10 02:23:51 2026
+%DIF ADD sentinel_e.tex                                                                                                 Sun Nov 15 00:23:48 2026
 % Surveillance.  Prepared for the Neural Computing and Applications topical
 % collection "Emerging Trends in Smart Waste Monitoring and Environmental
 % Surveillance".  For submission, replace the preamble with Springer's
@@ -767,12 +767,12 @@
 
 \begin{abstract}
 \noindent
-Streaming visual-anomaly \DIFdelbegin \DIFdel{systems --- illegal dumping among them --- are trained and evaluated as fixed-sample-size classifiers: given a short clip ,
+\DIFdelbegin \DIFdel{Streaming visual-anomaly systems --- illegal dumping among them --- are trained and evaluated as fixed-sample-size classifiers: given a short clip ,
 emit one decision and report clip-level precision and recall. Deployment does
 not look like that: a municipal camera runs for weeks, and what an operator
 manages is the number of false alarms accumulated over the whole monitoring
 period, because each one costs a dispatch. Alerting the first time a
-per-frame threshold is crossed on a continuous stream }\DIFdelend \DIFaddbegin \DIFadd{detectors, including illegal-dumping detectors, are evaluated per clip but deployed on continuous streams, where alerting at the first threshold crossing }\DIFaddend is optional stopping\DIFdelbegin \DIFdel{,
+per-frame threshold is crossed on a continuous stream }\DIFdelend \DIFaddbegin \DIFadd{Visual-anomaly detectors, including illegal-dumping detectors, are evaluated per clip but deployed on continuous streams, where alerting at the first threshold crossing }\DIFaddend is optional stopping\DIFdelbegin \DIFdel{,
 and it inflates the true false-alarm rate by an amount clip-level evaluation
 cannot show: }\DIFdelend \DIFaddbegin \DIFadd{. Fed valid 1\% p-values, }\DIFaddend a per-frame rule \DIFdelbegin \DIFdel{fed p-values individually valid at the $1\%$
 level raises at least one }\DIFdelend \DIFaddbegin \DIFadd{raises a }\DIFaddend false alarm on \ValidityPfaPvaluePct\% of \DIFdelbegin \DIFdel{$40$-minute }\DIFdelend \DIFaddbegin \DIFadd{40-minute }\DIFaddend null streams. %DIF < 
@@ -785,37 +785,37 @@ occlusion, ends, and recurs weeks later at the same site. We replace the mixture
 a two-state Markov chain whose forward recursion collapses a sum over $2^t$
 trajectories into two numbers. The resulting }\emph{\DIFdel{episodic e-process}} %DIFAUXCMD
 \DIFdel{is an
-exact }\DIFdelend \DIFaddbegin \DIFadd{that start, flicker, end and recur. We prove that it is a }\DIFaddend non-negative supermartingale \DIFdelbegin \DIFdel{--- }\DIFdelend \DIFaddbegin \DIFadd{when the p-values are conditionally super-uniform, }\DIFaddend so Ville's inequality gives time-uniform false-alarm control\DIFdelbegin \DIFdel{with no new machinery --- costs $O(1)$ per
-frame against $O(t)$ for a general mixture over active starts, and }\DIFdelend \DIFaddbegin \DIFadd{, and that it }\DIFaddend contains the changepoint mixture \DIFdelbegin \DIFdel{exactly as the boundary case in which }\DIFdelend \DIFaddbegin \DIFadd{as the case where }\DIFaddend episodes never end\DIFdelbegin \DIFdel{, a strict generalisation along an axis the anytime-valid e-process
+exact }\DIFdelend \DIFaddbegin \DIFadd{that start, flicker, end and recur. It is a }\DIFaddend non-negative supermartingale \DIFdelbegin \DIFdel{--- }\DIFdelend \DIFaddbegin \DIFadd{when the p-values are conditionally super-uniform, }\DIFaddend so Ville's inequality gives time-uniform false-alarm control\DIFdelbegin \DIFdel{with no new machinery --- costs $O(1)$ per
+frame against $O(t)$ for a general mixture over active starts, and }\DIFdelend \DIFaddbegin \DIFadd{; it }\DIFaddend contains the changepoint mixture \DIFdelbegin \DIFdel{exactly as the boundary case in which }\DIFdelend \DIFaddbegin \DIFadd{as the case where }\DIFaddend episodes never end\DIFdelbegin \DIFdel{, a strict generalisation along an axis the anytime-valid e-process
 family has left fixed at infinity. Around this core sits a per-camera
 conformal layer calibrated conditionally on observable context and corrected
-by exact Beta order-statistic }\DIFdelend \DIFaddbegin \DIFadd{. A two-state forward recursion evaluates it in constant time per frame on conformal p-values with exact calibration-conditional Beta }\DIFaddend levels, and \DIFdelbegin \DIFdel{a fleet layer in which a graph
+by exact Beta order-statistic levels, and a fleet layer in which a graph
 network steers each camera's episode hazard through a }\emph{\DIFdel{predictable}}
 %DIFAUXCMD
 \DIFdel{modulation --- provably unable to damage the guarantee --- combined across
-cameras by }\DIFdelend e-BH \DIFdelbegin \DIFdel{under arbitrary dependence.
+cameras by e-BH under arbitrary dependence.
 %DIF < 
-Two evidence sources back these claims. Large-horizon simulated streams
-($10^5$--$10^6$ frames) show every classical and parametric baseline we test
---- fixed threshold, }\DIFdelend \DIFaddbegin \DIFadd{combines cameras. In simulation it raised no false alarm on 200 week-long streams, on which }\DIFaddend per-frame \DIFdelbegin \DIFdel{p-value threshold, CUSUM, Shiryaev--Roberts, a
+Two evidence sources back these claims. Large-horizon simulated streams($10^5$--$10^6$ frames) show every classical and parametric baseline we test
+--- fixed threshold, }\DIFdelend \DIFaddbegin \DIFadd{. A two-state recursion evaluates it in constant time per frame. In simulation it raised no false alarm on 200 week-long streams, where }\DIFaddend per-frame \DIFdelbegin \DIFdel{p-value threshold, CUSUM, Shiryaev--Roberts, a
 parametric e-detector, E-SHIFT --- failing to hold its nominal false-alarm
 level, while SENTINEL-E and the changepoint mixture it strictly contains both
-hold it ; a paired comparison on a shared betting grid resolves a real
+hold it; a paired comparison on a shared betting grid resolves a real
 advantage for the episodic mixture at two and four recurring episodes and a
 real, smaller cost at one. We also report where the guarantee stops holding:
 an unmodelled covariate shift beyond $\times\ShiftResidualBreaks$ inflates the
 rate unless a shift-weighting safeguard is engaged, at a steep cost in power. %DIF < 
-New in this revision: the pipeline is also run, unmodified, on real surveillance video (CUHK Avenue and }\DIFdelend \DIFaddbegin \DIFadd{thresholds fail within an hour. Paired comparisons show episodes shorten detection delay for long, intermittent, recurring events but not for single or permanent changes. On real video (}\DIFaddend UCSD Ped2\DIFdelbegin \DIFdel{) with a real }\DIFdelend \DIFaddbegin \DIFadd{, CUHK Avenue, Mivia-IWDD; }\DIFaddend optical-flow \DIFdelbegin \DIFdel{backbone rather than a simulator. This surfaces a limitation the simulated
+New in this revision: the pipeline is also run, unmodified, on real surveillance video (CUHK Avenue and UCSD }\DIFdelend \DIFaddbegin \DIFadd{thresholds reach 0.980 within an hour. Paired comparisons show episodes shorten delay for long, intermittent, recurring events; the changepoint mixture detects a single episode faster, and a permanent change with equivalent delay. On real video (}\DIFaddend Ped2\DIFdelbegin \DIFdel{) with a real optical-flow
+backbone rather than a simulator. This surfaces a limitation the simulated
 streams could not: real per-frame scores are autocorrelated across
 hundreds of frames (\RealAvenueFullLag{} on Avenue, \RealPedTwoFullLag{} on
 Ped2), close to or beyond a real episode's own duration, leaving only a
 narrow lag window in which validity and power coexist at all. Inside that window the guarantee holds on both real
-corpora --- realised false-alarm rate \RealPedTwoPfaHeadline{} on Ped2 and
-\RealAvenuePfaHeadline{} on Avenue }\DIFdelend \DIFaddbegin \DIFadd{and PatchCore backbones), operating points are chosen on training videos only and each test video is monitored alone. The thinned p-values remain serially dependent there, so validity is empirical rather than guaranteed. False-alarm proportions are consistent with the nominal level on the short single-camera corpora but exceed it in point estimate on Mivia-IWDD (9 of 50 normal videos }\DIFaddend at $\alpha=0.1$\DIFdelbegin \DIFdel{--- while every classical
-baseline tested fails to hold it on the same real streams; detection power is real but modest on Ped2 and weak on Avenue, whose real episodes are shorter.
-This gap, not the simulated results, is the paper's central open problem. SENTINEL-E costs \CostSentinelUs\,}%DIFDELCMD < \textmu %%%
+corpora --- realised }\DIFdelend \DIFaddbegin \DIFadd{, Avenue, Mivia-IWDD), operating points come from training videos, and each test video is monitored alone. Thinned p-values remain serially dependent, so real-video validity is verified empirically. Per-video }\DIFaddend false-alarm \DIFdelbegin \DIFdel{rate \RealPedTwoPfaHeadline{} on Ped2 and
+\RealAvenuePfaHeadline{} on Avenue }\DIFdelend \DIFaddbegin \DIFadd{proportions are consistent with the nominal level }\DIFaddend at $\alpha=0.1$ \DIFdelbegin \DIFdel{--- while every classical
+baseline tested fails to hold it on the same real streams; detection power is
+real but modest on Ped2 and weak on Avenue, whose real episodes are shorter. This gap, not the simulated results, is the paper's central open problem}\DIFdelend \DIFaddbegin \DIFadd{on all three corpora (3, 16 and 50 null videos). On Mivia-IWDD, PatchCore raises alarms on 9 of 50 normal videos (95\% interval }[\DIFadd{0.086, 0.314}]\DIFadd{) and detects 10 of 50 dumping events. Detection power depends on the backbone. On these short videos, which do not exercise the horizon-free guarantee, several baselines detect more events with more false alarms}\DIFaddend . SENTINEL-E costs \DIFdelbegin \DIFdel{\CostSentinelUs\,}%DIFDELCMD < \textmu %%%
 \DIFdel{s per frame, \CostSentinelPct\% of
-the detector it wraps}\DIFdelend \DIFaddbegin \DIFadd{). Detection power is limited and backbone-dependent, and classical baselines selected by the same rule perform comparably. The guarantee layer costs under two microseconds per frame}\DIFaddend .
+the detector it wraps}\DIFdelend \DIFaddbegin \DIFadd{under two microseconds per frame}\DIFaddend .
 \end{abstract}
 
 \vspace{0.5em}
@@ -922,7 +922,7 @@ a PatchCore backbone, and each test video is monitored alone. The Mivia labels g
 onset times only, and the real streams are short. The long-horizon claims therefore
 rest on simulation }\DIFaddend (\cref{sec:limitations})\DIFdelbegin \DIFdel{rather than hides}\DIFdelend .
 
-\subsection{Why the existing sequential machinery is the wrong shape}
+\subsection{Why the existing sequential machinery \DIFdelbegin \DIFdel{is the wrong shape}\DIFdelend \DIFaddbegin \DIFadd{needs an episode axis}\DIFaddend }
 
 The tools for optional stopping are mature. Ville's inequality \citep{ville1939}
 bounds the probability that a non-negative supermartingale \DIFdelbegin \emph{\DIFdel{ever}} %DIFAUXCMD
@@ -1067,24 +1067,23 @@ reports, as a negative result, that the one
 ).
 }
 
-\item \textbf{\DIFadd{A learned prior and a posterior, with a negative result.}} \DIFadd{A learned
+\item \textbf{\DIFadd{A learned prior and a posterior.}} \DIFadd{A learned
       spatial prior }\DIFaddend enters only as a predictable modulation\DIFdelbegin \DIFdel{of the episode hazard and the betting stake, the wealth remains
       a supermartingale }\DIFdelend \DIFaddbegin \DIFadd{, so the guarantee holds
       }\DIFaddend whatever it outputs \DIFdelbegin \DIFdel{. Our experiments confirm the theorem
       and refute the motivation: the learned controller leaves the false-alarm
       guarantee exactly intact while }\emph{\DIFdel{reducing}} %DIFAUXCMD
 \DIFdel{power
-      (\mbox{%DIFAUXCMD
-\cref{sec:network}}\hskip0pt%DIFAUXCMD
-). We report the construction because the invariance is
-      worth having --- it is what lets a learned component sit on top of a formal
-      guarantee at all --- and the result because it is what we found}\DIFdelend \DIFaddbegin \DIFadd{(\mbox{%DIFAUXCMD
+      }\DIFdelend \DIFaddbegin \DIFadd{(\mbox{%DIFAUXCMD
 \cref{thm:predictable}}\hskip0pt%DIFAUXCMD
 ). The posterior probability of
-      being inside an episode is bounded in $[0,1]$. The spatial-prior architecture
-      built on it did not shorten delay (\mbox{%DIFAUXCMD
-\cref{sec:network}}\hskip0pt%DIFAUXCMD
-)}\DIFaddend .
+      being inside an episode is bounded in $[0,1]$ and is available to future fleet
+      controllers. In the tested fleets, detection power comes from the e-BH
+      combination, and the learned prior lengthens delay }\DIFaddend (\cref{sec:network}).
+\DIFdelbegin \DIFdel{We report the construction because the invariance is
+      worth having --- it is what lets a learned component sit on top of a formal
+      guarantee at all --- and the result because it is what we found.
+}\DIFdelend 
 
 \item \textbf{An evaluation \DIFdelbegin \DIFdel{that measures }\DIFdelend \DIFaddbegin \DIFadd{of }\DIFaddend guarantees\DIFdelbegin \DIFdel{rather than asserting
       them}\DIFdelend \DIFaddbegin \DIFadd{.}\DIFaddend } \DIFdelbegin \DIFdel{, }\DIFdelend \DIFaddbegin \DIFadd{We report realised false-alarm rates
@@ -1117,7 +1116,7 @@ reports, as a negative result, that the one
       operating points chosen on training videos only (\mbox{%DIFAUXCMD
 \cref{sec:real-data}}\hskip0pt%DIFAUXCMD
 ).
-      Dilated betting did not help (\mbox{%DIFAUXCMD
+      Dilated betting is evaluated as a design option (\mbox{%DIFAUXCMD
 \cref{sec:dilation}}\hskip0pt%DIFAUXCMD
 )}\DIFaddend .
 \end{itemize}
@@ -1526,8 +1525,9 @@ are in hand}\DIFdelend \DIFaddbegin \DIFadd{for constructing long synthetic stre
 \label{sec:layer1}
 
 \paragraph{Betting rate.}
-The e-process of \cref{sec:episodic} \DIFdelbegin \DIFdel{requires }\DIFdelend \DIFaddbegin \DIFadd{needs }\DIFaddend increments that are conditionally super-uniform given the past. Video violates this badly\DIFdelbegin \DIFdel{: at $25$\,fps the lag-one autocorrelation of backbone scores exceeds $0.85$ in our streams. We
-estimate a decorrelation lag $\ell$ }\DIFdelend \DIFaddbegin \DIFadd{. Four lags are in play, and they are distinct:
+The e-process of \cref{sec:episodic} \DIFdelbegin \DIFdel{requires }\DIFdelend \DIFaddbegin \DIFadd{needs }\DIFaddend increments that are conditionally super-uniform given the past. Video \DIFdelbegin \DIFdel{violates this badly:
+at $25$\,fps the lag-one autocorrelation of backbone scores exceeds $0.85$ in our streams. We
+estimate a decorrelation lag $\ell$ }\DIFdelend \DIFaddbegin \DIFadd{departs from this assumption markedly. Four lags are in play, and they are distinct:
 }\begin{itemize}
 \item \emph{\DIFadd{Pooled autocorrelation length.}} \DIFadd{On concatenated training videos the autocorrelation stays above $0.05$ beyond 200 lags. This reflects differences between video means, so we do not use it.
 }\item \emph{\DIFadd{Within-video autocorrelation.}} \DIFadd{At lag one it is $0.82$--$0.97$ on the real backbones (\mbox{%DIFAUXCMD
@@ -1620,7 +1620,7 @@ and $q_j$ is non-decreasing in $j$, super-uniformity at the atoms extends to all
 $u$.
 \end{proof}
 
-We spend the budget as $\delta_j \propto (j+1)^{-2}$, concentrating confidence where the betting functions look\DIFdelbegin \DIFdel{; under }\DIFdelend \DIFaddbegin \DIFadd{. Under }\DIFaddend this allocation $\{q_j\}$ is verified non-decreasing in $j$, which \DIFdelbegin \DIFdel{is what }\DIFdelend identifies $\{\tilde p \le q_j\} = \{J \le j\}$ in the proof above\DIFdelbegin \DIFdel{(the }\DIFdelend \DIFaddbegin \DIFadd{. The }\DIFaddend implementation takes a running maximum as a safeguard \DIFdelbegin \DIFdel{against an allocation for which this fails)}\DIFdelend \DIFaddbegin \DIFadd{for any allocation where this fails}\DIFaddend . At $n=\CalN{}$, $\delta=\CalDelta{}$ this gives $q_0 = \BetaPmin{}$\DIFaddbegin \DIFadd{, }\DIFaddend against DKW's $\DkwPmin{}$. \Cref{thm:beta} assumes i.i.d.\ calibration draws, which is why the calibration set is thinned\DIFdelbegin \DIFdel{; \mbox{%DIFAUXCMD
+We spend the budget as $\delta_j \propto (j+1)^{-2}$, concentrating confidence where the betting functions look\DIFdelbegin \DIFdel{; under }\DIFdelend \DIFaddbegin \DIFadd{. Under }\DIFaddend this allocation $\{q_j\}$ is verified non-decreasing in $j$, which \DIFdelbegin \DIFdel{is what }\DIFdelend identifies $\{\tilde p \le q_j\} = \{J \le j\}$ in the proof above\DIFdelbegin \DIFdel{(the }\DIFdelend \DIFaddbegin \DIFadd{. The }\DIFaddend implementation takes a running maximum as a safeguard \DIFdelbegin \DIFdel{against an allocation for which thisfails)}\DIFdelend \DIFaddbegin \DIFadd{for any allocation that violates this}\DIFaddend . At $n=\CalN{}$, $\delta=\CalDelta{}$ this gives $q_0 = \BetaPmin{}$\DIFaddbegin \DIFadd{, }\DIFaddend against DKW's $\DkwPmin{}$. \Cref{thm:beta} assumes i.i.d.\ calibration draws, which is why the calibration set is thinned\DIFdelbegin \DIFdel{; \mbox{%DIFAUXCMD
 \cref{sec:ablation} }\hskip0pt%DIFAUXCMD
 does not resolve whether skipping the
 thinning costs validity at the replication count run there (\mbox{%DIFAUXCMD
@@ -1780,8 +1780,7 @@ $A_t = \sum_{j \le t} w_j \prod_{s=j}^{t} f(p_s)$, whence
 $W_t = \sum_{j\le t} w_j \prod_{s=j}^t f(p_s) + \sum_{j>t} w_j$, Shiryaev's
 Bayesian statistic under the geometric prior with hazard $\rho$
 \citep{shiryaev1963}. Dropping $Q_t$ leaves $\sum_{j\le t} w_j \prod_{s=j}^t
-f(p_s)$ alone\DIFdelbegin \DIFdel{, which }\DIFdelend \DIFaddbegin \DIFadd{. This }\DIFaddend is not a supermartingale\DIFdelbegin \DIFdel{--- }\DIFdelend \DIFaddbegin \DIFadd{: }\DIFaddend the telescoping in
-\cref{thm:episodic} fails by exactly $w_t$ per step\DIFdelbegin \DIFdel{--- and, taking }\DIFdelend \DIFaddbegin \DIFadd{. Taking }\DIFaddend the
+f(p_s)$ alone\DIFdelbegin \DIFdel{, which }\DIFdelend \DIFaddbegin \DIFadd{. This }\DIFaddend is not a supermartingale\DIFdelbegin \DIFdel{--- }\DIFdelend \DIFaddbegin \DIFadd{: }\DIFaddend the telescoping in \cref{thm:episodic} \DIFdelbegin \DIFdel{fails }\DIFdelend \DIFaddbegin \DIFadd{is short }\DIFaddend by exactly $w_t$ per step\DIFdelbegin \DIFdel{--- and, taking }\DIFdelend \DIFaddbegin \DIFadd{. Taking }\DIFaddend the
 $\rho \to 0$ limit under the appropriate rescaling \DIFdelbegin \DIFdel{, }\DIFdelend recovers the classical
 Shiryaev--Roberts sum with unit start weights \citep{roberts1966}\DIFdelbegin \DIFdel{; at fixed
 $\rho > 0$ the two named statistics remain distinct objects , and only the
@@ -1802,7 +1801,7 @@ right, the two coincide within the noise of a paired comparison; where events
 recur, a gap opens whose size that same section resolves with uncertainty
 rather than by a single point estimate}\DIFdelend \DIFaddbegin \DIFadd{contains exactly at $\eta=0$, and Shiryaev--Roberts, which differs from it at any fixed $\rho>0$}\DIFaddend .
 
-\subsubsection{Intermittency \DIFdelbegin \DIFdel{, }\DIFdelend by dilation \DIFdelbegin \DIFdel{--- }\DIFdelend \DIFaddbegin \DIFadd{(}\DIFaddend a negative result\DIFaddbegin \DIFadd{)}\DIFaddend }
+\subsubsection{Intermittency \DIFdelbegin \DIFdel{, }\DIFdelend by dilation \DIFdelbegin \DIFdel{--- }\DIFdelend \DIFaddbegin \DIFadd{(}\DIFaddend a \DIFdelbegin \DIFdel{negative result}\DIFdelend \DIFaddbegin \DIFadd{design option)}\DIFaddend }
 \label{sec:dilation}
 
 Within an episode only a fraction $\pi$ of frames show the act, which suggests \emph{dilating} the emission:
@@ -1811,23 +1810,23 @@ Within an episode only a fraction $\pi$ of frames show the act, which suggests \
   f_\pi(p) \;=\; (1-\pi) + \pi\, f(p).
 \end{equation}
 This is \DIFdelbegin \DIFdel{legal, and cheaply so: $f_\pi$ }\DIFdelend \DIFaddbegin \DIFadd{a legal betting function. It }\DIFaddend is a convex combination of the neutral bet and $f$, hence non-increasing with $\int_0^1 f_\pi \le 1$, so \DIFdelbegin \DIFdel{it is a betting
-function and }\DIFdelend \cref{thm:episodic} applies verbatim. It \DIFdelbegin \DIFdel{also says the right thing
+function and }\DIFdelend \cref{thm:episodic} applies verbatim. \DIFdelbegin \DIFdel{It also says the right thing
 --- }\emph{\DIFdel{this frame belongs to an episode, but it may or may not show the act}}%DIFAUXCMD
 \DIFdel{.
 }%DIFDELCMD < 
 
 %DIFDELCMD < %%%
-\DIFdel{We expected this to be the answer to intermittency. It is not , and we report
-that rather than quietly shipping it}\DIFdelend \DIFaddbegin \DIFadd{does not help}\DIFaddend . Mixing over $\kappa$ already \DIFdelbegin \DIFdel{handles
+\DIFdel{We expected this to be the answer to intermittency. It is not, and we report
+that rather than quietly shipping it . Mixing }\DIFdelend \DIFaddbegin \DIFadd{We evaluated it as a design option. The mixture }\DIFaddend over $\kappa$ already \DIFdelbegin \DIFdel{handles
 intermittency: a stream in which a third of the episode frames are anomalous is
-best played with }\DIFdelend \DIFaddbegin \DIFadd{covers intermittency, because }\DIFaddend a milder bet \DIFdelbegin \DIFdel{, and the $\kappa$ grid contains one. A $\pi$ axis
+best played with }\DIFdelend \DIFaddbegin \DIFadd{absorbs within-episode intermittency, because }\DIFaddend a milder bet \DIFdelbegin \DIFdel{, and the $\kappa$ grid contains one. A $\pi$ axis
 therefore buys no behaviour the grid did not already have, while spending prior
 mass to do it}\DIFdelend \DIFaddbegin \DIFadd{suits an episode with fewer anomalous frames}\DIFaddend . In the ablation, \DIFdelbegin \DIFdel{enabling it }\DIFdelend \DIFaddbegin \DIFadd{dilation }\DIFaddend lengthens censored detection delay from \AblFullDelay\,s to \AblDilationDelay\,s (\DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
 \cref{tab:ablation}}\hskip0pt%DIFAUXCMD
-}\DIFdelend \DIFaddbegin \DIFadd{Online Resource~1, Table~S7}\DIFaddend ), and \DIFdelbegin \DIFdel{we
-found }\DIFdelend no intermittency level \DIFdelbegin \DIFdel{at which it repaid that cost--- below
+), and we
+found no intermittency level at which it repaid that cost --- below
 $\pi \approx 0.2$ both variants fail together, and above it the plain $\kappa$
-mixture is ahead}\DIFdelend \DIFaddbegin \DIFadd{repays that cost}\DIFaddend . The default grid therefore sets $\pi = 1$. \DIFdelbegin %DIFDELCMD < 
+mixture is ahead}\DIFdelend \DIFaddbegin \DIFadd{Online Resource~1, Table~S7)}\DIFaddend . The default grid therefore \DIFaddbegin \DIFadd{omits the dilation axis and }\DIFaddend sets $\pi = 1$. \DIFdelbegin %DIFDELCMD < 
 
 %DIFDELCMD < %%%
 \DIFdel{We keep \mbox{%DIFAUXCMD
@@ -2399,7 +2398,7 @@ $\alpha=0.1$ are small. The null footage is short: 12.6\,s for Ped2 (three pre-o
 segments), 6.9\,min for Avenue (16 videos) }\DIFaddend and \DIFdelbegin \DIFdel{power hold simultaneously, the way the simulated AR(1) streams did throughout \mbox{%DIFAUXCMD
 \cref{sec:validity,sec:episodes}}\hskip0pt%DIFAUXCMD
 . The lag this sweep selects (\RealPedTwoLag{} on }\DIFdelend \DIFaddbegin \DIFadd{26.9\,min for Mivia (50 negative
-videos). At this length any outcome is consistent with the nominal level. }\DIFaddend Ped2 \DIFdelbegin \DIFdel{, \RealAvenueLag{} on Avenue )
+videos). At this length the counts are too small to resolve the nominal level. }\DIFaddend Ped2 \DIFdelbegin \DIFdel{, \RealAvenueLag{} on Avenue )
 is fixed once, from this diagnostic alone, and reused unchanged for every
 other real-data result in this subsection --- including the classical
 baselines in \mbox{%DIFAUXCMD
@@ -2419,32 +2418,28 @@ flow has \RThreeAvenueFlowFAk{}/\RThreeAvenueFlowFAn{} and Avenue PatchCore has
 \RThreeAvenuePCFAk{}/\RThreeAvenuePCFAn{}. The intervals are wide}\DIFaddend . Ped2 \DIFdelbegin \DIFdel{controls its false-alarm rate at \RealPedTwoPfaHeadline{}
 (95\% CI upper end \RealPedTwoCiHiHeadline{}) at
 $\alpha=0.1$, with roughly two
-thirds of real spliced events detected (miss rate \RealPedTwoMissHeadline{}) --- a
-real, modest,
-but genuine detection window. Avenue is harder: its shorter, sparser real episodes leave a realised PFA of \RealAvenuePfaHeadline{} at the same
-$\alpha$, but a miss rate of
-\RealAvenueMissHeadline{}.
-At the loosest level swept, $\alpha=\RealAvenueWorstAlpha$, Avenue's realised rate (\RealAvenueWorstPfa{})
+thirds of real spliced events detected (miss rate \RealPedTwoMissHeadline{})--- a
+real,
+modest, but genuine detection window.
+Avenue is harder: its shorter, sparser real episodes leave a realised PFA of \RealAvenuePfaHeadline{} at the same
+}\DIFdelend \DIFaddbegin \DIFadd{flow at
+$\alpha=0.2$ has 3 of 3 false alarms, with selected lag 1 (Online Resource~1, Table~S1),
+so the Ped2 count is sensitive to the level chosen. Mivia flow has
+\RThreeMiviaFlowFAk{}/\RThreeMiviaFlowFAn{} false alarms, inside the level.
+Mivia PatchCore has \RThreeMiviaPCFAk{}/\RThreeMiviaPCFAn{}, a proportion of
+\RThreeMiviaPCFAp{} with interval $[\RThreeMiviaPCFALo{},\RThreeMiviaPCFAHi{}]$.
+The interval contains $0.1$. The one-sided exact binomial probability of at least nine false alarms in 50 videos at $p=0.1$ is $0.058$. The count also
+moves with }\DIFaddend $\alpha$\DIFdelbegin \DIFdel{, but a miss rate of \RealAvenueMissHeadline{}.At the loosest level swept, $\alpha=\RealAvenueWorstAlpha$, Avenue's realised rate (\RealAvenueWorstPfa{})
 still does not exceed the nominal level, so the guarantee itself is not
 violated anywhere on this grid; what real footage costs Avenue is power, not
 validity. This is not the failure the
 simulated experiments were built to
-surface, }\DIFdelend \DIFaddbegin \DIFadd{flow at
-$\alpha=0.2$ has 3 of 3 false alarms, with selected lag 1 (Online Resource~1, Table~S1),
-so the Ped2 result depends on the level chosen. Mivia flow has
-\RThreeMiviaFlowFAk{}/\RThreeMiviaFlowFAn{} false alarms, inside the level.
-Mivia PatchCore has \RThreeMiviaPCFAk{}/\RThreeMiviaPCFAn{}, a proportion of
-\RThreeMiviaPCFAp{} with interval $[\RThreeMiviaPCFALo{},\RThreeMiviaPCFAHi{}]$.
-This exceeds $0.1$ at the point estimate, and the interval contains $0.1$. The
-one-sided exact binomial probability of at least nine false alarms in 50 videos at
-$p=0.1$ is $0.058$, so the excess is not significant at the 5\% level. The count also
-moves with $\alpha$: it is 3 of 50 at $\alpha=0.05$ }\DIFaddend and \DIFdelbegin \DIFdel{it could not have been --- it is specific to what real
+surface, }\DIFdelend \DIFaddbegin \DIFadd{: it is 3 of 50 at $\alpha=0.05$ }\DIFaddend and \DIFdelbegin \DIFdel{it could not have been --- it is specific to what real
 optical-flow scores from real short-duration events actually look like, and \mbox{%DIFAUXCMD
 \cref{sec:limitations} }\hskip0pt%DIFAUXCMD
 returns to it as the paper's central open problem
 rather than a number to look past}\DIFdelend \DIFaddbegin \DIFadd{12 of 50 at $\alpha=0.2$
-(full sweep in Online Resource~1, Sect.~S1). The excess has several candidate causes,
-and 50 null videos cannot separate them. First, Mivia calibrates across cameras, but
+(full sweep in Online Resource~1, Sect.~S1). Several candidate explanations fit the design, and 50 null videos cannot separate them. First, Mivia calibrates across cameras, but
 the guarantee is per camera, and every test camera is unseen, so the per-camera
 premise is not tested here. Second, the p-values are serially dependent (the
 paragraph below). Third, the lag and the alarm boundary are chosen on training videos.
@@ -2463,19 +2458,10 @@ a boundary can pick a lag whose true rate lies above $\alpha$}\DIFaddend .
 \Cref{tab:real_delay_far} }\hskip0pt%DIFAUXCMD
 repeats the delay-vs-false-alarm-rate comparison of \mbox{%DIFAUXCMD
 \cref{sec:delay} }\hskip0pt%DIFAUXCMD
-on real video, with every method --- SENTINEL-E, a fixed
-threshold, the per-frame p-value threshold, CUSUM, Shiryaev--Roberts, a
-parametric e-detector, and E-SHIFT --- thinned to the identical fixed lag
-\mbox{%DIFAUXCMD
-\cref{tab:real_lag_sweep} }\hskip0pt%DIFAUXCMD
-selects for that dataset.
-}\DIFdelend \DIFaddbegin \DIFadd{Per-video rates understate what an operator sees, because the detector restarts after
-each alarm. Per hour of null footage, }\DIFaddend SENTINEL-E \DIFdelbegin \DIFdel{is the only
-method that reaches the target false-alarm probability while still detecting
-most events on either dataset (\RealDelayPedTwoNBaselinesPass{} of \RealDelayPedTwoNBaselines{} classical baselines pass on }\DIFdelend \DIFaddbegin \DIFadd{raises 284.8 false alarms on }\DIFaddend Ped2
-\DIFdelbegin \DIFdel{,
-\RealDelayAvenueNBaselinesPass{} of \RealDelayAvenueNBaselines{} on Avenue ). The per-frame p-value threshold --- consuming the identical conformal
-p-values }\DIFdelend \DIFaddbegin \DIFadd{flow, from one alarm in 12.6\,s. On Avenue PatchCore it raises 86.6 per hour, and all
+on real video, with every method --- }\DIFdelend \DIFaddbegin \DIFadd{Per-video rates understate what an operator sees, because the detector restarts after
+each alarm. Per hour of null footage, }\DIFaddend SENTINEL-E \DIFdelbegin \DIFdel{, a fixed
+threshold, the per-frame p-value threshold, }\DIFdelend \DIFaddbegin \DIFadd{raises 284.8 false alarms on Ped2
+flow, from one alarm in 12.6\,s. On Avenue PatchCore it raises 86.6 per hour, and all
 ten of its alarms come from one null video in 6.9\,min. On Mivia PatchCore it raises
 100.5 per hour, with 45 alarms across nine videos in 26.9\,min. A per-video
 proportion counts a video once, however many alarms it carries. The hourly figures
@@ -2488,33 +2474,101 @@ and Ped2 PatchCore detects \RThreePedTwoPCDetk{} of \RThreePedTwoPCDetn{}.
 Avenue detects only \RThreeAvenueFlowDetk{} of \RThreeAvenueFlowDetn{} with
 flow and \RThreeAvenuePCDetk{} of \RThreeAvenuePCDetn{} with PatchCore. Mivia
 flow detects none of its \RThreeMiviaFlowDetn{} positive videos. Mivia
-PatchCore detects \RThreeMiviaPCDetk{} of \RThreeMiviaPCDetn{}. Its median
-delay is \RThreeMiviaPCDelayMed{}\,s after onset.
+PatchCore detects \RThreeMiviaPCDetk{} of \RThreeMiviaPCDetn{}. Its median delay is \RThreeMiviaPCDelayMed{}\,s after onset. PatchCore detects more episodes than flow on Avenue and Mivia-IWDD, and flow detects more on Ped2.
 }
 
-\DIFadd{The third finding concerns the baselines, and it does not favour }\DIFaddend SENTINEL-E\DIFdelbegin \DIFdel{does, differing only in the stopping rule --- never fires
+\DIFadd{The third finding concerns the baselines. On Mivia PatchCore every baseline also has a per-video false-alarm proportion above $0.1$ on test, ranging from 9 to 18 of 50 negative videos. On Avenue PatchCore, three of the six baselines
+(}\DIFaddend CUSUM, Shiryaev--Roberts \DIFdelbegin \DIFdel{, a
+}\DIFdelend \DIFaddbegin \DIFadd{and the }\DIFaddend parametric e-detector\DIFdelbegin \DIFdel{, and }\DIFdelend \DIFaddbegin \DIFadd{) had no admissible knob at
+$\alpha=0.1$ and used the most conservative setting. Across all 36 baseline
+configurations at this level, 15 had none. The fixed threshold and }\DIFaddend E-SHIFT \DIFdelbegin \DIFdel{--- thinned to the identical fixed lag
+\mbox{%DIFAUXCMD
+\cref{tab:real_lag_sweep} }\hskip0pt%DIFAUXCMD
+selects for that dataset. SENTINEL-E is the only
+method that reaches the target false-alarm probability while still detecting
+most events on either dataset (\RealDelayPedTwoNBaselinesPass{} of \RealDelayPedTwoNBaselines{} classical baselines pass on Ped2, \RealDelayAvenueNBaselinesPass{} of \RealDelayAvenueNBaselines{} on Avenue).
+The per-frame p-value threshold --- consuming the identical conformal
+p-values }\DIFdelend \DIFaddbegin \DIFadd{detect
+more episodes than }\DIFaddend SENTINEL-E \DIFdelbegin \DIFdel{does, differing only in the stopping rule --- never fires
 at any swept threshold on either dataset: no single real frame's score is
 extreme enough on its own to cross even a lenient per-frame significance
-level, which is exactly the argument \mbox{%DIFAUXCMD
+level}\DIFdelend \DIFaddbegin \DIFadd{on Avenue PatchCore (15 and 29 of 74, against 9), with
+2 and 4 false alarms in 16 videos. On Mivia PatchCore, CUSUM matches the 9 false
+alarms in 50 videos, detects more episodes (11 of 50 against 10) and has a lower rate
+per hour (53.6 against 100.5). Its knob is the most conservative in its sweep, so
+this is not a tuned baseline. On Ped2 PatchCore the fixed threshold detects 8 of 12
+episodes against 7 of 12, with no false alarm in three null videos}\DIFaddend , which is \DIFdelbegin \DIFdel{exactly the argument \mbox{%DIFAUXCMD
 \cref{sec:episodic} }\hskip0pt%DIFAUXCMD
 makes for accumulating
 evidence sequentially rather than thresholding one frame at a time, now
-confirmed on real scores rather than simulated ones. The classical
-parametric procedures }\DIFdelend \DIFaddbegin \DIFadd{. On
-Mivia PatchCore every baseline also exceeds $0.1$ on test, with 9 to 18 of 50
-negative videos raising an alarm. On Avenue PatchCore, three of the six baselines
-}\DIFaddend (CUSUM, Shiryaev--Roberts \DIFdelbegin \DIFdel{, }\DIFdelend \DIFaddbegin \DIFadd{and }\DIFaddend the parametric e-detector) \DIFdelbegin \DIFdel{reach a false-alarm probability near one at
-essentially every settingof
-their own tuning knob on real footage, consistent with
+confirmed on real scores rather than simulated ones.
+The classical
+parametric procedures (CUSUM, Shiryaev--Roberts, the parametric e-detector)
+reach a }\DIFdelend \DIFaddbegin \DIFadd{too
+little evidence to rule out an excess. On these short videos the baselines at their selected knobs typically detect more episodes than SENTINEL-E, generally with more false alarms; only CUSUM and Shiryaev--Roberts are close to it on both counts. Its claimed advantage is the horizon-free guarantee, which the short real videos cannot exercise and the simulations in \mbox{%DIFAUXCMD
+\cref{sec:validity} }\hskip0pt%DIFAUXCMD
+test.
+}
+
+\paragraph{\DIFadd{Dependence.}} \DIFadd{The guarantee rests on the thinned p-values, so
 \mbox{%DIFAUXCMD
+\cref{tab:r3_dependence} }\hskip0pt%DIFAUXCMD
+measures their dependence. Two quantities are
+reported. The pooled autocorrelation of the concatenated training scores
+exceeds $0.05$ at every lag up to 200. That length reflects differences
+between the mean scores of videos, not the time scale of the process, and
+it is not used. The within-video autocorrelation is the relevant quantity. At
+lag one it averages \RThreeWithinLagOneMin{} to \RThreeWithinLagOneMax{}. At
+lag 25 it averages between essentially zero and \RThreeWithinLagTwentyFiveMax{}.
+Lag 25 is 1\,s at 25\,fps and 2.5\,s at 10\,fps.
+}
+
+\DIFadd{The thinned p-values remain positively correlated. At the selected lags the
+lag-one correlation ranges from \RThreeDepCorrMin{} to \RThreeDepCorrMax{}. The
+empirical CDF shows no excess of small values. The largest positive deviation
+is \RThreeDepSupMax{} at the selected lags, and \RThreeDepSupOneMax{} at lag one.
+The conditional-mean diagnostic departs from conditional super-uniformity. If $p_t$
+is conditionally super-uniform given the past, its mean given $p_{t-1}\le0.1$ is at
+least $0.5$. The observed means lie between \RThreeDepCondMin{} and
+\RThreeDepCondMax{}, on \RThreeDepCountMin{} to \RThreeDepCountMax{} pairs. A small
+p-value is followed by another small one. The hypothesis of \mbox{%DIFAUXCMD
+\cref{thm:episodic} }\hskip0pt%DIFAUXCMD
+is therefore not met by these thinned streams, and real-video validity is established empirically. The observable consequence is the per-video }\DIFaddend false-alarm
+\DIFdelbegin \DIFdel{probability near one at essentially every setting of their own tuning knob on real footage, consistent with \mbox{%DIFAUXCMD
 \cref{sec:delay}}\hskip0pt%DIFAUXCMD
 's
 simulated finding and for the same underlying reason: their pre-change model
-is a poor fit to real, heavy-tailed, strongly autocorrelated detector output. }%DIFDELCMD < 
+is a poor fit to real, heavy-tailed, strongly autocorrelated detector output}\DIFdelend \DIFaddbegin \DIFadd{rate. On Ped2 and Avenue it is consistent with $0.1$, but the null footage is short.
+On Mivia PatchCore the point estimate is $\RThreeMiviaPCFAp{}$, and its interval contains $0.1$}\DIFaddend .
 
-%DIFDELCMD < \begin{figure}[t]
-%DIFDELCMD <   \centering
-%DIFDELCMD <   \resultfig{fig_r2_delay_far}{}
+\DIFaddbegin \inputtable{tabr3_dependence}
+
+\paragraph{\DIFadd{Action or residue.}} \DIFadd{The Mivia labels mark only the onset. They do
+not say whether the detector responds to the dumping action or to the waste
+left behind. Flow measures motion. Flow scores are higher on negative videos
+than before onset in positive videos, so flow can at best respond to the
+action, and the motion of other activity in the scene confuses it. Appearance
+can in principle see deposited waste. Under PatchCore, static dumping is
+detected in \RThreeMiviaPCStaticDetk{} of \RThreeMiviaPCStaticDetn{} videos and
+dynamic dumping in \RThreeMiviaPCDynDetk{} of \RThreeMiviaPCDynDetn{}. These
+counts do not differ at this sample size. The per-type split for all methods
+is in Online Resource 1, Sect.~S1. A residue that persists after the action is
+the permanent-change case, in which the episode never ends, $\eta=0$. The
+episodic mixture contains that case. A dedicated residue model would change
+the background model itself, and we leave it to future work.
+}
+
+\paragraph{\DIFadd{Scope.}} \DIFadd{The real test videos last seconds to about a minute. The real data therefore bear only weakly on per-video false-alarm control, because
+the null footage is short. The long-horizon
+claim rests on the simulated streams in \mbox{%DIFAUXCMD
+\cref{sec:validity}}\hskip0pt%DIFAUXCMD
+, which run for up
+to a week of simulated time.
+}
+
+\DIFaddend \begin{figure}[t]
+  \centering
+  \DIFdelbeginFL %DIFDELCMD < \resultfig{fig_r2_delay_far}{}
 %DIFDELCMD <   %%%
 %DIFDELCMD < \caption{%
 {%DIFAUXCMD
@@ -2537,160 +2591,96 @@ is a poor fit to real, heavy-tailed, strongly autocorrelated detector output. }%
   swept knob achieves.}}
   %DIFAUXCMD
 %DIFDELCMD < \label{fig:real-delayfar}
-%DIFDELCMD < \end{figure}
-%DIFDELCMD < 
+%DIFDELCMD < %%%
+\DIFdelendFL \DIFaddbeginFL \resultfig{fig_r0_qualitative}{}
+  \caption{\DIFaddFL{Real frames, real scores. Ped2 and Avenue rows: one normal and one
+  anomalous frame, with the Farneback flow-magnitude field and its score, at
+  the $64\times64$ resolution the pipeline uses. Mivia rows: the static and
+  dynamic test videos, each with one pre-onset frame, one post-onset frame and
+  the PatchCore score over time. Each video is the first positive test video of
+  its type, in video-id order, with at least 3\,s before onset. It was not
+  chosen on its score. The dashed line marks onset, and the coloured points mark
+  the two frames. The frame panels are shown at display resolution, from the
+  original releases. The Mivia release is not redistributed, so only downscaled
+  stills are stored. The flow and score panels are computed from the pipeline
+  inputs.}}
+  \label{fig:qualitative}
+\DIFaddendFL \end{figure}
 
-%DIFDELCMD < \inputtable{tabr2_delay_far}
+\DIFdelbegin %DIFDELCMD < \inputtable{tabr2_delay_far}
 %DIFDELCMD < 
 
 %DIFDELCMD < %%%
 \paragraph{\DIFdel{What this subsection does and does not establish.}} %DIFAUXCMD
 \addtocounter{paragraph}{-1}%DIFAUXCMD
 \DIFdel{It establishes
-that the pipeline runs end to end on real , unmodified video--- real
+that the pipeline runs end to end on real, unmodified video --- real
 backbone, real train/test split, real spliced events, real classical
-baselines --- and that }\DIFdelend \DIFaddbegin \DIFadd{had no admissible knob at
-$\alpha=0.1$ and used the most conservative setting. Across all 36 baseline
-configurations at this level, 15 had none. The fixed threshold and E-SHIFT detect
-more episodes than SENTINEL-E on Avenue PatchCore (15 and 29 of 74, against 9), with
-2 and 4 false alarms in 16 videos. On Mivia PatchCore, CUSUM matches the 9 false
-alarms in 50 videos, detects more episodes (11 of 50 against 10) and has a lower rate
-per hour (53.6 against 100.5). Its knob is the most conservative in its sweep, so
-this is not a tuned baseline. On Ped2 PatchCore the fixed threshold detects 8 of 12
-episodes against 7 of 12, with no false alarm in three null videos, which is too
-little evidence to rule out an excess. }\DIFaddend SENTINEL-E \DIFdelbegin \DIFdel{'s time-uniform guarantee holds on both
+baselines --- and that SENTINEL-E's time-uniform guarantee holds on both
 corpora at the lag each one's own diagnostic selects, which the naive
 classical alternatives do not manage on either. It does not establish that
-this backbone, at this frame rate, is adequate for deployment: Avenue's
+this backbone, at this frame rate, is adequate for deployment: Avenue 's
 power is weak, the horizon tested is minutes rather than weeks, and the two
 datasets are pedestrian-walkway anomaly corpora, not illegal-dumping
 footage, because no continuously-labelled real dumping corpus of the
-required length is publicly available (\mbox{%DIFAUXCMD
+required length is
+publicly available (\mbox{%DIFAUXCMD
 \cref{sec:limitations}}\hskip0pt%DIFAUXCMD
 ). What
-transfers is }\DIFdelend \DIFaddbegin \DIFadd{therefore shows no demonstrated
-advantage over these baselines on real video. Its claimed advantage is the
-horizon-free guarantee, which the short real videos cannot exercise.
-}
-
-\paragraph{\DIFadd{Dependence.}} \DIFadd{The guarantee rests on }\DIFaddend the \DIFdelbegin \DIFdel{pipeline and the diagnostic , not the specific power number:
+transfers is the pipeline and the diagnostic, not the specific power number:
 a stronger backbone with genuinely independent frame-to-frame errors, run
-through the identical calibration and
-episodic layers, is }\DIFdelend \DIFaddbegin \DIFadd{thinned p-values, so
-\mbox{%DIFAUXCMD
-\cref{tab:r3_dependence} }\hskip0pt%DIFAUXCMD
-measures their dependence. Two quantities are
-reported. The pooled autocorrelation of the concatenated training scores
-exceeds $0.05$ at every lag up to 200. That length reflects differences
-between the mean scores of videos, not the time scale of the process, and
-it is not used. The within-video autocorrelation is }\DIFaddend the \DIFdelbegin \DIFdel{direction most
+through the identical calibration and episodic layers, is the direction most
 likely to close the gap \mbox{%DIFAUXCMD
 \cref{tab:real_lag_sweep} }\hskip0pt%DIFAUXCMD
-exposes}\DIFdelend \DIFaddbegin \DIFadd{relevant quantity. At
-lag one it averages \RThreeWithinLagOneMin{} to \RThreeWithinLagOneMax{}. At
-lag 25 it averages between essentially zero and \RThreeWithinLagTwentyFiveMax{}.
-Lag 25 is 1\,s at 25\,fps and 2.5\,s at 10\,fps.
-}
+exposes}\DIFdelend \DIFaddbegin \DIFadd{The qualitative panels show how small the per-frame signal is. Ped2 moves from
+\QualExamplePedTwoNormal{} to \QualExamplePedTwoAnomalous{}, and Avenue moves
+from \QualExampleAvenueNormal{} to \QualExampleAvenueAnomalous{}. These are
+the values the pipeline consumes, and they explain why the method accumulates
+evidence over time}\DIFaddend .
 
-\DIFadd{The thinned p-values remain positively correlated. At the selected lags the
-lag-one correlation ranges from \RThreeDepCorrMin{} to \RThreeDepCorrMax{}. The
-empirical CDF shows no excess of small values. The largest positive deviation
-is \RThreeDepSupMax{} at the selected lags, and \RThreeDepSupOneMax{} at lag one.
-The conditional-mean diagnostic contradicts conditional super-uniformity. If $p_t$
-is conditionally super-uniform given the past, its mean given $p_{t-1}\le0.1$ is at
-least $0.5$. The observed means lie between \RThreeDepCondMin{} and
-\RThreeDepCondMax{}, on \RThreeDepCountMin{} to \RThreeDepCountMax{} pairs. A small
-p-value is followed by another small one. The hypothesis of \mbox{%DIFAUXCMD
-\cref{thm:episodic}
-}\hskip0pt%DIFAUXCMD
-therefore fails on these thinned streams, and real-video validity can only be
-established empirically. The observable consequence is the per-video false-alarm
-rate. On Ped2 and Avenue it is consistent with $0.1$, but the null footage is short.
-On Mivia PatchCore it exceeds $0.1$}\DIFaddend .
 
-\DIFdelbegin \subsection{\DIFdel{A single stream, worked through}}
-%DIFAUXCMD
-\addtocounter{subsection}{-1}%DIFAUXCMD
-%DIFDELCMD < \label{sec:worked-example}
-%DIFDELCMD < %%%
-\DIFdelend \DIFaddbegin \inputtable{tabr3_dependence}
-\DIFaddend 
+\subsection{A single stream, worked through}
+\label{sec:worked-example}
 
-\DIFdelbegin \DIFdel{Every quantity in the sections that follow is an aggregate over hundreds of simulated streams. Before reporting any of them, it is
-worth looking at one
+\DIFdelbegin \DIFdel{Every quantity in the sections that follow is an aggregate }\DIFdelend \DIFaddbegin \DIFadd{Aggregates }\DIFaddend over hundreds of \DIFdelbegin \DIFdel{simulated streams . Before reporting any of them, it is worth looking at one
 stream in full, because the abstract objects in \mbox{%DIFAUXCMD
 \cref{sec:method} }\hskip0pt%DIFAUXCMD
 --- a
 p-value, a betting factor, accumulated wealth, an alarm --- are otherwise easy
-to read only as symbols}\DIFdelend \DIFaddbegin \paragraph{\DIFadd{Action or residue.}} \DIFadd{The Mivia labels mark only the onset. They do
-not say whether the detector responds to the dumping action or to the waste
-left behind. Flow measures motion. Flow scores are higher on negative videos
-than before onset in positive videos, so flow can at best respond to the
-action, and the motion of other activity in the scene confuses it. Appearance
-can in principle see deposited waste. Under PatchCore, static dumping is
-detected in \RThreeMiviaPCStaticDetk{} of \RThreeMiviaPCStaticDetn{} videos and
-dynamic dumping in \RThreeMiviaPCDynDetk{} of \RThreeMiviaPCDynDetn{}. These
-counts do not differ at this sample size. The per-type split for all methods
-is in Online Resource 1, Sect.~S1. A residue that persists after the action is
-the permanent-change case, in which the episode never ends, $\eta=0$. The
-episodic mixture contains that case. A dedicated residue model would change
-the background model itself, and we leave it to future work.
-}
+to read only as symbols.
+}%DIFDELCMD < 
 
-\paragraph{\DIFadd{Scope.}} \DIFadd{The real test videos last seconds to about a minute. The real data therefore bear only weakly on per-video false-alarm control, because
-the null footage is short. The long-horizon
-claim rests on the simulated streams in \mbox{%DIFAUXCMD
-\cref{sec:validity}}\hskip0pt%DIFAUXCMD
-, which run for up
-to a week of simulated time}\DIFaddend .
-
-\begin{figure}[t]
-  \centering
-  \DIFdelbeginFL %DIFDELCMD < \resultfig{fig6_worked_example}{}
+%DIFDELCMD < \begin{figure}[t]
+%DIFDELCMD <   \centering
+%DIFDELCMD <   \resultfig{fig6_worked_example}{}
 %DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \resultfig{fig_r0_qualitative}{}
-  \DIFaddendFL \caption{\DIFdelbeginFL \DIFdelFL{One simulated \WorkedT{}-second stream with \WorkedNEpisodes{}
-  episodes (shaded)}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{Real frames}\DIFaddendFL , \DIFdelbeginFL \DIFdelFL{chosen for its episode count rather than for how
-  favourably it behaves}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{real scores}\DIFaddendFL . \DIFdelbeginFL \textbf{\DIFdelFL{(a)}} %DIFAUXCMD
-\DIFdelendFL \DIFaddbeginFL \DIFaddFL{Ped2 and Avenue rows: one normal and one
-  anomalous frame, with }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{raw backbone }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{Farneback flow-magnitude field and its }\DIFaddendFL score, \DIFdelbeginFL \DIFdelFL{spiking during
+%DIFDELCMD < \caption{%
+{%DIFAUXCMD
+\DIFdelFL{One simulated \WorkedT{}-second stream with \WorkedNEpisodes{}
+  episodes (shaded), chosen for its episode count rather than for how
+  favourably it behaves. }\textbf{\DIFdelFL{(a)}} %DIFAUXCMD
+\DIFdelFL{the raw backbone score, spiking during
   each episode but also, by construction, during ordinary null activity.
   }\textbf{\DIFdelFL{(b)}} %DIFAUXCMD
-\DIFdelFL{the conformal p-value }\DIFdelendFL at
-  \DIFdelbeginFL \DIFdelFL{each betting instant (log scale);
-  gaps are frames }\DIFdelendFL the \DIFdelbeginFL \DIFdelFL{decorrelation lag skips or }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{$64\times64$ resolution }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{calibration abstains on}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{pipeline uses}\DIFaddendFL . \DIFdelbeginFL \DIFdelFL{Notice that the score spikes in (a) do not translate into uniformly small
+\DIFdelFL{the conformal p-value at each betting instant (log scale);
+  gaps are frames the decorrelation lag skips or the calibration abstains on.
+  Notice that the score spikes in (a) do not translate into uniformly small
   p-values in (b) --- the score distribution the conformal layer calibrates
-  against already absorbs much of }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{Mivia rows: }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{diurnal }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{static }\DIFaddendFL and
-  \DIFdelbeginFL \DIFdelFL{weather-driven variation}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{dynamic test videos}\DIFaddendFL , \DIFdelbeginFL \DIFdelFL{so
-  only }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{each with one pre-onset frame, one post-onset frame and
-  }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{residual that context cannot explain shows up as evidence}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{PatchCore score over time}\DIFaddendFL . \DIFdelbeginFL \textbf{\DIFdelFL{(c)}} %DIFAUXCMD
-\DIFdelendFL \DIFaddbeginFL \DIFaddFL{Each video is }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{episodic e-process'}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{first positive test video of
-  its type, in video-id order, with at least 3\,}\DIFaddendFL s \DIFdelbeginFL \DIFdelFL{accumulated log-wealth}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{before onset. It was not
-  chosen on its score}\DIFaddendFL . The \DIFdelbeginFL \DIFdelFL{dash-dot
-  }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{dashed }\DIFaddendFL line \DIFdelbeginFL \DIFdelFL{is the labelled }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{marks }\DIFaddendFL onset\DIFdelbeginFL \DIFdelFL{; the process is already drifting down slightly
-  beforehand (an ordinary null fluctuation}\DIFdelendFL , \DIFdelbeginFL \DIFdelFL{licensed by }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{and }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{supermartingale
-  property)}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{coloured points mark
-  the two frames. The frame panels are shown at display resolution}\DIFaddendFL , \DIFdelbeginFL \DIFdelFL{climbs sharply once }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{from }\DIFaddendFL the
-  \DIFdelbeginFL \DIFdelFL{first episode's evidence accumulates}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{original releases. The Mivia release is not redistributed}\DIFaddendFL , \DIFaddbeginFL \DIFaddFL{so only downscaled
-  stills are stored. The flow }\DIFaddendFL and \DIFdelbeginFL \DIFdelFL{crosses $\log(1/\alpha)$ \WorkedDelaySec{}\,s after onset --- }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{score panels are computed from }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{red point}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{pipeline
-  inputs}\DIFaddendFL .}
-  \DIFdelbeginFL %DIFDELCMD < \label{fig:worked-example}
+  against already absorbs much of the diurnal and weather-driven variation, so
+  only the residual that context cannot explain shows up as evidence.
+  }\textbf{\DIFdelFL{(c)}} %DIFAUXCMD
+\DIFdelFL{the episodic e-process's accumulated log-wealth. The dash-dot
+  line is the labelled onset; the process is already drifting down slightly
+  beforehand (an ordinary null fluctuation, licensed by the supermartingale
+  property), climbs sharply once the first episode's evidence accumulates, and
+  crosses $\log(1/\alpha)$ \WorkedDelaySec{}\,s after onset --- the red point.}}
+  %DIFAUXCMD
+%DIFDELCMD < \label{fig:worked-example}
+%DIFDELCMD < \end{figure}
+%DIFDELCMD < 
+
 %DIFDELCMD < %%%
-\DIFdelendFL \DIFaddbeginFL \label{fig:qualitative}
-\DIFaddendFL \end{figure}
-
-\DIFdelbegin \DIFdel{This particular stream isnot cherry-picked for a fast detection: it }\DIFdelend \DIFaddbegin \DIFadd{The qualitative panels show how small the per-frame signal is. Ped2 moves from
-\QualExamplePedTwoNormal{} to \QualExamplePedTwoAnomalous{}, and Avenue moves
-from \QualExampleAvenueNormal{} to \QualExampleAvenueAnomalous{}. These are
-the values the pipeline consumes, and they explain why the method accumulates
-evidence over time.
-}
-
-
-\subsection{\DIFadd{A single stream, worked through}}
-\label{sec:worked-example}
-
-\DIFadd{Aggregates over hundreds of streams are hard to read without one stream in mind.
+\DIFdel{This particular stream is not cherry-picked for a fast detection: it }\DIFdelend \DIFaddbegin \DIFadd{streams are hard to read without one stream in mind.
 \mbox{%DIFAUXCMD
 \Cref{fig:worked-example} }\hskip0pt%DIFAUXCMD
 shows a \WorkedT{}-second stream with
@@ -3122,14 +3112,13 @@ half of all streams, so the low delay it reports (\EqSEHalfDelaySec}\DIFaddend \
 little about a usable threshold.
 }
 
-\DIFadd{The baselines are different}\DIFaddend . \DelayNumInadmissible{} of \DIFdelbegin \DIFdel{the baselines }\DIFdelend \DIFaddbegin \DIFadd{them }\DIFaddend never reach a
+\DIFadd{The baselines behave differently}\DIFaddend . \DelayNumInadmissible{} of \DIFdelbegin \DIFdel{the baselines }\DIFdelend \DIFaddbegin \DIFadd{them }\DIFaddend never reach a
 realised false-alarm probability of $0.05$ at any knob setting while still
 detecting events (\DelayInadmissibleList)\DIFdelbegin \DIFdel{, which is the substantive
 finding: on }\DIFdelend \DIFaddbegin \DIFadd{. On }\DIFaddend streams with drift, heavy tails and
 autocorrelation, \DIFdelbegin \DIFdel{the classical
-procedures cannot be tuned into the operating region at all, because the
-assumptions }\DIFdelend their thresholds rest on \DIFaddbegin \DIFadd{assumptions that }\DIFaddend do not hold\DIFaddbegin \DIFadd{, so they
-cannot be tuned into the operating region}\DIFaddend .
+procedures }\DIFdelend \DIFaddbegin \DIFadd{their thresholds rest on assumptions that these streams violate, so they }\DIFaddend cannot be tuned into the operating region\DIFdelbegin \DIFdel{at all, because the
+assumptions their thresholds rest on do not hold}\DIFdelend .
 
 \subsection{Robustness to calibration/deployment mismatch}
 \label{sec:shift}
@@ -3137,8 +3126,7 @@ cannot be tuned into the operating region}\DIFaddend .
 \begin{figure}[t]
   \centering
   \resultfig{fig3_shift}{}
-  \caption{Shift in an \emph{unbinned} covariate (scene activity). \DIFdelbeginFL \DIFdelFL{Binning }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{Mondrian
-  calibration fails alongside }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{context }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{pooled baseline, because binning }\DIFaddendFL cannot help
+  \caption{Shift in an \emph{unbinned} covariate (scene activity). \DIFdelbeginFL \DIFdelFL{Binning }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{Mondrian calibration tracks }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{context }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{pooled baseline, because binning }\DIFaddendFL cannot help
   with a variable outside the taxonomy\DIFdelbeginFL \DIFdelFL{, so Mondrian
   calibration fails alongside the pooled baseline; conformalising }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{. Conformalising }\DIFaddendFL the context-normalised
   residual holds throughout.}
@@ -3192,9 +3180,7 @@ row several shift levels cannot be resolved (\ShiftResidualUnresolvedRatios{}).
 \DIFadd{\mbox{%DIFAUXCMD
 \Cref{tab:shift_remedy} }\hskip0pt%DIFAUXCMD
 gives the sweep at 1,500 null streams and 200 post-change streams per level. The unweighted residual default is valid at $\times 1.0$ and $\times 1.5$, with a false-alarm probability of 0.0020 }\DIFaddend at \DIFdelbegin \DIFdel{a realised rate of
-\ShiftBreakResidualPfa{} $\in[\ShiftBreakResidualPfaLo,\ShiftBreakResidualPfaHi]$. That is the one shift level this design can certify as broken, not the smallest shift at which it might be.
-We report this plainly because it is the
-honest boundary of the method: normalising by a fitted $\hat g$ }\DIFdelend \DIFaddbegin \DIFadd{$\times 1.5$. It is unresolved at $\times 2.0$ (0.0140, interval }[\DIFadd{0.0092, 0.0213}]\DIFadd{) and invalid at $\times 3.0$ (0.0620, interval }[\DIFadd{0.0509, 0.0754}]\DIFadd{). False alarms cluster immediately after the detector re-enters the calibrated context region, at frames near the support edge where the residual model extrapolates.
+\ShiftBreakResidualPfa{} $\in[\ShiftBreakResidualPfaLo,\ShiftBreakResidualPfaHi]$. That is the one shift levelthis design can certify as broken, not the smallest shift at which it might be. We report this plainly because it is the honest boundary of the method: normalising by a fitted $\hat g$ }\DIFdelend \DIFaddbegin \DIFadd{$\times 1.5$. It is unresolved at $\times 2.0$ (0.0140, interval }[\DIFadd{0.0092, 0.0213}]\DIFadd{) and invalid at $\times 3.0$ (0.0620, interval }[\DIFadd{0.0509, 0.0754}]\DIFadd{). False alarms cluster immediately after the detector re-enters the calibrated context region, at frames near the support edge where the residual model extrapolates.
 }
 
 \DIFadd{Likelihood-ratio weighting holds the level at every shift tested, but its power falls. Its miss rate is 0.095 at $\times 1.0$, against 0.025 unweighted, and rises to 0.540, 0.930 }\DIFaddend and \DIFdelbegin \DIFdel{$\hat\sigma$ absorbs a shift in $P(c)$ only while the model stays adequate, and a large enough move in an unmodelled direction breaks it }\DIFdelend \DIFaddbegin \DIFadd{1.000 at $\times 1.5$}\DIFaddend , \DIFdelbegin \DIFdel{but pinning down
@@ -3205,22 +3191,18 @@ exactly how large would need many more replicates than run here. }\DIFdelend \DI
 \cref{sec:layer1} }\hskip0pt%DIFAUXCMD
 earns its
 place, and where our own expectation was wrong. Weighting holds the realised
-rate at \ShiftBreakWeightedPfa{} }\DIFdelend \DIFaddbegin \DIFadd{The held-out context gate, which would switch weighting on, is a classifier two-sample test with AUC at least 0.60. It fired on every null stream at every level, including the unshifted $\times 1.0$. A deployment block covers a narrow slice of the diurnal cycle, while calibration spans a day, so a context gate is confounded with benign drift that the residual normalisation already absorbs. Context gating therefore does not separate shifted from unshifted streams.
+rate at \ShiftBreakWeightedPfa{} }\DIFdelend \DIFaddbegin \DIFadd{The held-out context gate, which would switch weighting on, is a classifier two-sample test with AUC at least 0.60. It fired on every null stream at every level, including the unshifted $\times 1.0$. Context tests respond to benign diurnal variation, so we use a stricter support region instead.
 }
 
-\DIFadd{A stricter support region addresses the boundary failure. The residual calibrator abstains on a frame whose context falls outside a per-coordinate box, or whose Mahalanobis distance exceeds a slack multiple of the calibration 0.999 quantile. The default multiplier is 1.5. We set it to 0.5, so boundary frames abstain. An abstained frame receives a neutral bet, so the supermartingale argument is unchanged. The stricter region holds the level }\DIFaddend at every shift \DIFdelbegin \DIFdel{level tested}\DIFdelend \DIFaddbegin \DIFadd{tested. At $\times 3.0$ the false-alarm probability falls from 0.0620 to 0.0007 (interval }[\DIFadd{0.0001, 0.0038}]\DIFadd{), and the abstention rate on null betting instants rises to 0.500. At $\times 1.0$ the miss rate equals the default, 0.025, and abstention is 0.010. Likelihood-ratio weighting is also valid, but its miss rate is 0.540 to 1.000 at $\times 1.5$ to $\times 3.0$, against 0.070 to 0.450 for the stricter region.
-}
-
-\DIFadd{The slack value 0.5 was chosen in a 300-stream pilot whose seeds overlap the main run. The pilot tried seven candidate variants: a neutral-bet cool-down of $k=10$}\DIFaddend , \DIFdelbegin \DIFdel{including the ones
+\DIFadd{A stricter support region addresses the boundary effect. The residual calibrator abstains on a frame whose context falls outside a per-coordinate box, or whose Mahalanobis distance exceeds a slack multiple of the calibration 0.999 quantile. The default multiplier is 1.5. We set it to 0.5, so boundary frames abstain. An abstained frame receives a neutral bet, so the supermartingale argument is unchanged. The stricter region holds the level }\DIFaddend at every shift \DIFdelbegin \DIFdel{level tested, including the ones
 where the plain residual construction fails --- but it does so by becoming
 drastically conservative, with the miss rate rising from
 \ShiftBreakResidualMiss{} to \ShiftBreakWeightedMiss{} at $\times\ShiftResidualBreaks$. It buys validity with power, which is the correct
-trade for a guarantee and a poor one for a detector. }%DIFDELCMD < 
+trade for a guarantee and a poor one for a detector}\DIFdelend \DIFaddbegin \DIFadd{tested. At $\times 3.0$ the false-alarm probability falls from 0.0620 to 0.0007 (interval }[\DIFadd{0.0001, 0.0038}]\DIFadd{), and the abstention rate on null betting instants rises to 0.500. At $\times 1.0$ the miss rate equals the default, 0.025, and abstention is 0.010. Likelihood-ratio weighting is also valid, but its miss rate is 0.540 to 1.000 at $\times 1.5$ to $\times 3.0$, against 0.070 to 0.450 for the stricter region}\DIFaddend .
 
-%DIFDELCMD < %%%
-\DIFdel{The practical recommendation follows directly and is implemented in the library:
-run the classifier two-sample test continuously, use the plain residual
-construction while it reports no detectable shift }\DIFdelend \DIFaddbegin \DIFadd{$25$ and $50$ active bets after any abstained bet, a box margin halved, slack 1.0, box margin with slack 1.0, and slack 0.5. Of these, only slack 0.5 and cool-down at $k=50$ met the pre-set criterion. We therefore confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000}\DIFaddend , \DIFaddbegin \DIFadd{0.0007, 0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ }\DIFaddend and \DIFdelbegin \DIFdel{enable weighting once it
+The \DIFdelbegin \DIFdel{practical recommendation follows directly and is implemented in the library:
+run}\DIFdelend \DIFaddbegin \DIFadd{slack value 0.5 was selected in a 300-stream pilot of seven variants (cool-down, box-margin and slack settings) whose seeds overlap the main run; only slack 0.5 and a cool-down at $k=50$ met the pre-set criterion. We confirmed slack 0.5 on 1,500 null streams and 200 post-change streams per level, with seeds disjoint from both the pilot and }\DIFaddend the \DIFdelbegin \DIFdel{classifier two-sample test continuously,use the plain residual
+construction while it reports no detectable shift, }\DIFdelend \DIFaddbegin \DIFadd{main run. The evidence covers one shift family, a multiplier on scene activity, in one direction. The false-alarm probabilities are 0.0000, 0.0007, 0.0007 and 0.0013 at $\times 1.0$, $\times 1.5$, $\times 2.0$ }\DIFaddend and \DIFdelbegin \DIFdel{enable weighting once it
 does --- accepting that the camera has become a conservative detector and that
 the operator should be told the calibration set no longer covers the conditions. An abstention or miss rate that jumps is a signal to recalibrate, not a defect
 to hide}\DIFdelend \DIFaddbegin \DIFadd{$\times 3.0$, and all are valid. The miss rates are 0.010, 0.040, 0.140 and 0.470.
@@ -3298,10 +3280,9 @@ component degrades detection and }\DIFdelend \DIFaddbegin \DIFadd{reduces power,
 }\DIFaddend leaves the false-alarm guarantee \DIFdelbegin \DIFdel{untouched}\DIFdelend \DIFaddbegin \DIFadd{intact}\DIFaddend , because it can \DIFdelbegin \DIFdel{only enter }\DIFdelend \DIFaddbegin \DIFadd{act only }\DIFaddend through a
 predictable modulation.
 
-\paragraph{The learned spatial prior does not \DIFdelbegin \DIFdel{earn its place}\DIFdelend \DIFaddbegin \DIFadd{help}\DIFaddend .}
-\DIFdelbegin \DIFdel{We expected the graph to shorten delay and it does not , on either delaystatistic: conditional }\DIFdelend \DIFaddbegin \DIFadd{The graph does not shorten delay. Conditional }\DIFaddend delay is \NetHeuristicDelaySec\,s \DIFdelbegin \DIFdel{(heuristic) }\DIFdelend \DIFaddbegin \DIFadd{for
-the hand-designed prior }\DIFaddend and \NetGnnDelaySec\,s \DIFdelbegin \DIFdel{(learned ) }\DIFdelend \DIFaddbegin \DIFadd{for the learned one, }\DIFaddend against
-\NetNoGraphDelaySec\,s with no graph\DIFdelbegin \DIFdel{, and
+\paragraph{The learned spatial prior \DIFdelbegin \DIFdel{does not earn its place}\DIFdelend \DIFaddbegin \DIFadd{lengthens delay}\DIFaddend .}
+\DIFdelbegin \DIFdel{We expected the graph to shorten delay and it does not, on either delay
+statistic: conditional }\DIFdelend \DIFaddbegin \DIFadd{The hand-designed prior changes delay only slightly, and the learned prior lengthens it. Conditional }\DIFaddend delay is \NetHeuristicDelaySec\,s \DIFdelbegin \DIFdel{(heuristic) }\DIFdelend \DIFaddbegin \DIFadd{for the hand-designed prior }\DIFaddend and \NetGnnDelaySec\,s \DIFdelbegin \DIFdel{(learned ) }\DIFdelend \DIFaddbegin \DIFadd{for the learned one, }\DIFaddend against \NetNoGraphDelaySec\,s with no graph\DIFdelbegin \DIFdel{, and
 censored delay --- the comparable statistic per \mbox{%DIFAUXCMD
 \cref{sec:problem}}\hskip0pt%DIFAUXCMD
 , since the
@@ -3309,34 +3290,36 @@ three controllers' miss rates differ --- }\DIFdelend \DIFaddbegin \DIFadd{. Cens
 and \NetGnnCensDelaySec\,s\DIFaddbegin \DIFadd{, }\DIFaddend against \NetNoGraphCensDelaySec\,s. \DIFdelbegin \DIFdel{The }\DIFdelend \DIFaddbegin \DIFadd{Power is
 \NetHeuristicPower{} for the }\DIFaddend hand-designed prior\DIFdelbegin \DIFdel{is indistinguishable from no graphat all on either statistic,
 with power
-\NetHeuristicPower{} against \NetNoGraphPower}\DIFdelend \DIFaddbegin \DIFadd{, \NetNoGraphPower{} with no graph,
-and \NetGnnPower{} for the learned controller}\DIFaddend . The learned controller is worse
-than \DIFdelbegin \DIFdel{both }\DIFdelend \DIFaddbegin \DIFadd{no graph }\DIFaddend on every axis\DIFdelbegin \DIFdel{: delay, censored delay, and power \NetGnnPower}\DIFdelend .
+\NetHeuristicPower{} against \NetNoGraphPower. The learned controlleris worse
+than both on every axis: delay, censored delay, and power \NetGnnPower. }\DIFdelend \DIFaddbegin \DIFadd{, \NetNoGraphPower{} with no graph,
+and \NetGnnPower{} for the learned controller. Relative to no graph, the learned controller has lower power and longer delay.
+}\DIFaddend 
 
 \DIFdelbegin \DIFdel{We made two attempts to fix this before concluding it, and the second is worth
-recording because it failed in an informative direction. The first was
-initialisation: the controller's heads are set so that an untrained network
-reproduces }\DIFdelend \DIFaddbegin \DIFadd{Two changes to the controller did not help. Initialising the heads to reproduce
+recording because it failed in an informative direction.
+The first was
+initialisation: the controller 's heads are set so that an untrained network
+reproduces }\DIFdelend \DIFaddbegin \DIFadd{Two controller variants were compared. Initialising the heads to reproduce
 }\DIFaddend the ungoverned detector \DIFdelbegin \DIFdel{exactly, rather than starting at half stake
 and a twenty-five-fold hazard, so training begins from the baseline and can only
 improve on it in-sample. That }\DIFdelend is now the default\DIFaddbegin \DIFadd{, }\DIFaddend and it is what \DIFdelbegin \DIFdel{the table
-reports. The second was the objective. Maximising }\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
-\cref{tab:network}
-}\hskip0pt%DIFAUXCMD
-reports. Replacing }\DIFaddend terminal log-wealth \DIFdelbegin \DIFdel{is
+reports. The second was the objective. Maximising terminal log-wealth is
 plainly the wrong target --- detection delay is the time the wealth takes to
 reach $1/\alpha$, so a camera that ends the stream rich but climbed slowly is no
-use --- and we replaced it }\DIFdelend with log-wealth credited over a \DIFaddbegin \DIFadd{window of
-}\DIFaddend \NetCreditWindowSec\,s \DIFdelbegin \DIFdel{window opening at }\DIFdelend \DIFaddbegin \DIFadd{from }\DIFaddend each camera's \DIFdelbegin \DIFdel{own onset , trained and
+use --- and we replaced it with }\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\cref{tab:network}
+}\hskip0pt%DIFAUXCMD
+reports. Crediting }\DIFaddend log-wealth \DIFdelbegin \DIFdel{credited over a }\DIFdelend \DIFaddbegin \DIFadd{over a window of }\DIFaddend \NetCreditWindowSec\,s \DIFdelbegin \DIFdel{window opening at }\DIFdelend \DIFaddbegin \DIFadd{from }\DIFaddend each camera's \DIFdelbegin \DIFdel{own onset, trained and
 evaluated exactly as the terminal-objective controller was. The
 better-motivated objective performed }\emph{\DIFdel{worse}}%DIFAUXCMD
-\DIFdel{: power fell }\DIFdelend \DIFaddbegin \DIFadd{onset made power fall }\DIFaddend from
+\DIFdel{: power fell }\DIFdelend \DIFaddbegin \DIFadd{onset, in place of terminal log-wealth, lowered power }\DIFaddend from
 \NetGnnPower{} to \DIFdelbegin \DIFdel{\NetGnnWindowedPower. We report the stronger of the two
 configurations in \mbox{%DIFAUXCMD
 \cref{tab:network} }\hskip0pt%DIFAUXCMD
 and include both there, and
 keep }\DIFdelend \DIFaddbegin \DIFadd{\NetGnnWindowedPower{}. Both configurations are reported, and
-}\DIFaddend the windowed objective \DIFaddbegin \DIFadd{stays }\DIFaddend in the library behind a flag\DIFdelbegin \DIFdel{so the comparison reproduces. }%DIFDELCMD < 
+}\DIFaddend the windowed objective \DIFaddbegin \DIFadd{stays }\DIFaddend in the library behind a flag\DIFdelbegin \DIFdel{so the comparison reproduces.
+}%DIFDELCMD < 
 
 %DIFDELCMD < %%%
 \DIFdel{That a better-motivated objective makes things worse, and that the training gain
@@ -3360,7 +3343,7 @@ e-BH recovers the affected cameras at power \NetNoGraphPower{}\DIFaddbegin \DIFa
 false-discovery rate of \NetNoGraphFdr{} against a target of \DIFdelbegin \DIFdel{\NetFdrLevel,
 under dependence induced by }\DIFdelend \DIFaddbegin \DIFadd{\NetFdrLevel{}. The
 dependence comes from }\DIFaddend shared weather, shared lighting and correlated episodes.
-\DIFdelbegin \DIFdel{That }\DIFdelend \DIFaddbegin \DIFadd{This part of the fleet layer }\DIFaddend is the part \DIFdelbegin \DIFdel{of Layer 3 we would keep}\DIFdelend \DIFaddbegin \DIFadd{worth keeping}\DIFaddend .
+\DIFdelbegin \DIFdel{That is the part of Layer 3 we would keep}\DIFdelend \DIFaddbegin \DIFadd{In these fleets the power comes from the e-BH combination, and the hand-designed prior changes it by half a percentage point. This part of the fleet layer is the part worth keeping}\DIFaddend .
 
 \subsection{Computational cost}
 \label{sec:compute}
@@ -3432,8 +3415,7 @@ field-deployable one. \mbox{%DIFAUXCMD
 reports conditional independence:
 betting }\DIFdelend \DIFaddbegin \DIFadd{is conditional super-uniformity of
 the betting increments. The second is marginal calibration of the p-values, which is checked in simulation
-below. The first is testable, and the conditional-mean test on real video
-contradicts it (\mbox{%DIFAUXCMD
+below. The first is testable, and the conditional-mean test on real video departs from it (\mbox{%DIFAUXCMD
 \cref{sec:real-data}}\hskip0pt%DIFAUXCMD
 ). The operational consequence of both is the
 per-video false-alarm rate measured on real video in \mbox{%DIFAUXCMD
@@ -3460,8 +3442,7 @@ the violation \DIFdelbegin \DIFdel{rather than removing it: see
 \Cref{tab:pcoverage} }\hskip0pt%DIFAUXCMD
 checks Layer 1 in isolation on
 $191{,}890$ }\DIFdelend \DIFaddbegin \DIFadd{but does not remove it. Only \DiagLjungFrac{} of cameras pass the
-Ljung--Box test at 5\%. The diagnostic therefore rejects conditional independence after
-thinning. What the experiments support is the empirical false-alarm control of
+Ljung--Box test at 5\%. The diagnostic therefore detects residual dependence after thinning. What the experiments support is the empirical false-alarm control of
 \mbox{%DIFAUXCMD
 \cref{sec:validity} }\hskip0pt%DIFAUXCMD
 and \mbox{%DIFAUXCMD
@@ -3557,7 +3538,7 @@ at the same level, not a trade-off against validity.
 censored delay is 68.4}\DIFaddend \,s\DIFdelbegin \DIFdel{against \AblFullDelay}\DIFdelend \DIFaddbegin \DIFadd{, against 244.5}\DIFaddend \,s for the \DIFdelbegin \DIFdel{exact Beta
 levels --- a factor of \AblDkwSpeedup{} --- which quantifies what \mbox{%DIFAUXCMD
 \cref{thm:beta} }\hskip0pt%DIFAUXCMD
-buys conditional on both being valid . And the }\DIFdelend \DIFaddbegin \DIFadd{thinned calibration set.
+buys conditional on both being valid. And the }\DIFdelend \DIFaddbegin \DIFadd{thinned calibration set.
 \mbox{%DIFAUXCMD
 \Cref{thm:beta} }\hskip0pt%DIFAUXCMD
 assumes i.i.d.\ calibration draws, and thinning by the
@@ -3569,8 +3550,7 @@ that thinning is necessary for validity.
 }[\DIFadd{0.9974, 1.0000}]\DIFadd{, so every null stream alarms, with a mean time to false alarm
 of 337 frames. Pooled conformal calibration gives PFA $0.9887$ }[\DIFadd{0.9819, 0.9929}]\DIFadd{.
 Omitting the calibration-conditional correction ($\delta=0$) gives PFA
-$0.0387$ }[\DIFadd{0.0300, 0.0497}]\DIFadd{, nearly four times nominal. Without the correction the
-guarantee fails, and pooled calibration is not a valid substitute.
+$0.0387$ }[\DIFadd{0.0300, 0.0497}]\DIFadd{, nearly four times nominal. The correction is therefore required, and pooled calibration is not a substitute for it.
 }
 
 \DIFadd{The other twelve variants of the 200-stream table are descriptive. They are
@@ -3583,68 +3563,54 @@ has \DIFdelbegin \DIFdel{burned too much to recover, which is precisely the
 failure mode the }\DIFdelend \DIFaddbegin \DIFadd{spent too much when a late change arrives. The }\DIFaddend mixture over onsets in
 \cref{eq:episodic} \DIFdelbegin \DIFdel{exists to prevent,
 and the structural reason SENTINEL-E outperforms E-SHIFT here: E-SHIFT's
-wealth also starts at frame one}\DIFdelend \DIFaddbegin \DIFadd{prevents that failure}\DIFaddend .
+wealth also starts at frame one}\DIFdelend \DIFaddbegin \DIFadd{avoids that outcome}\DIFaddend .
 
-\section{\DIFdelbegin \DIFdel{Limitations}\DIFdelend \DIFaddbegin \DIFadd{Discussion and limitations}\DIFaddend }
+\section{Limitations \DIFaddbegin \DIFadd{and future work}\DIFaddend }
 \label{sec:limitations}
 
-\paragraph{\DIFdelbegin \DIFdel{Real video exposes a }\DIFdelend \DIFaddbegin \DIFadd{Power on }\DIFaddend real \DIFdelbegin \DIFdel{power gap this paper does not close, and
-it is not illegal-dumping footage}\DIFdelend \DIFaddbegin \DIFadd{video depends on the backbone}\DIFaddend .}
+\paragraph{\DIFdelbegin \DIFdel{Real video exposes a real power gap this paper does not close, and
+it is not illegal-dumping footage}\DIFdelend \DIFaddbegin \DIFadd{Public benchmarks are short}\DIFaddend .}
 \DIFdelbegin \DIFdel{This is the main limitation and we do not
 want it buried. \mbox{%DIFAUXCMD
 \Cref{sec:real-data} }\hskip0pt%DIFAUXCMD
-runs the full pipeline on real, continuous surveillance video with a real backbone, and it is }\DIFdelend \DIFaddbegin \DIFadd{Optical flow detects 11 of 12 Ped2 episodes, but 3 of 74 Avenue episodes and none of the 50 Mivia-IWDD dumping videos. PatchCore detects 7, 9 and 10 respectively (\mbox{%DIFAUXCMD
-\cref{tab:r3_test}}\hskip0pt%DIFAUXCMD
-). PatchCore is a strong training-free appearance backbone, but it is not the state of the art on these benchmarks (\mbox{%DIFAUXCMD
-\cref{sec:real-data}}\hskip0pt%DIFAUXCMD
-). The power figures therefore bound what such frozen backbones deliver, not what the best published detectors would deliver. On Mivia-IWDD, PatchCore detects 5 of 25 static and 5 of 25 dynamic dumping events, and flow detects none (Online Resource~1, Table~S3). The labels give onset only, so this split cannot show whether the detector responds to the action or to the waste left behind. A persistent residue is }\DIFaddend the \DIFdelbegin \DIFdel{paper's most
-important negative-adjacent result: on CUHK Avenue, real autocorrelation and
-real episode brevity leave a valid but weak detection window
-(\RealAvenuePfaHeadline{} realised }\DIFdelend \DIFaddbegin \DIFadd{permanent-change special case of the episodic mixture, but no run here tests an appearance backbone on residue.
-}
-
-\paragraph{\DIFadd{False alarms on real video are consistent with the nominal level, but the evidence is thin.}}
-\DIFadd{On the single-camera corpora the }\DIFaddend false-alarm \DIFdelbegin \DIFdel{rate at $\alpha=0.1$, but a
+runs the full pipeline on real,
+continuous surveillance video with a real backbone, and it is the paper's most
+important negative-adjacent result: on CUHK Avenue, real autocorrelation and real episode brevity leave a valid but weak detection window
+(\RealAvenuePfaHeadline{} realised false-alarm rate at $\alpha=0.1$, but a
 \RealAvenueMissHeadline{} miss rate); Ped2 fares better but is still far from a
 comfortable margin. That gap did not exist in the simulated streams, and no
 simulator we could have built would have exposed it, because it comes from a
 specific, measured property of real optical-flow scores --- a decorrelation
 lag (\RealAvenueFullLag{} frames on Avenue, \RealPedTwoFullLag{} on Ped2)
-close to or exceeding a real episode's own duration --- that an AR(}\DIFdelend \DIFaddbegin \DIFadd{counts are }\DIFaddend 1 \DIFdelbegin \DIFdel{)
+close to or exceeding a real episode's own duration --- that an AR(1)
 process with a short memory
 cannot reproduce by construction. What \mbox{%DIFAUXCMD
-\cref{sec:real-data} }\hskip0pt%DIFAUXCMD
-establishes is that the guarantee holds on real video at the lag its own diagnostic selects, on two different real camera scenes, and that every classical baseline tested
+\cref{sec:real-data}}\hskip0pt%DIFAUXCMD
+establishes is
+that the guarantee holds on real video at the lag its own diagnostic selects,
+on two different real camera scenes, and that every classical baseline tested
 fails to hold it on the same real streams. What it does not establish is that
 this backbone, at this frame rate, is adequate for deployment, or that the
-result transfers to illegal dumping specifically: Avenue and }\DIFdelend \DIFaddbegin \DIFadd{of 3 and 0 of 3 for Ped2, and 0 of 16 and 1 of 16 for Avenue. The null footage is 12.6\,s of }\DIFaddend Ped2 \DIFdelbegin \DIFdel{are
-classical pedestrian-walkway anomaly corpora, not dumping footage, because no
-released corpus --- }\DIFdelend \DIFaddbegin \DIFadd{and 6.9\,min of Avenue, too little to resolve per-video rates. Ped2 flow at $\alpha=0.2$ has 3 of 3 false alarms (Online Resource~1, Table~S1). On }\DIFaddend Mivia-IWDD \DIFdelbegin \DIFdel{included --- provides months of continuously-labelled per-frame dumping-detector output, and the two are not
-the same task (dumping is committed once and its evidence often persists in
-the scene; a pedestrian or vehicle anomaly is transient by construction, which
-is part of why Avenue's episodes are so short).
-The library ships the
-splicing protocol and dataset adapters needed to run the identical evaluation
-on any other corpus with real per-frame scores}\DIFdelend \DIFaddbegin \DIFadd{at $\alpha=0.1$, PatchCore raises alarms on 9 of 50 normal videos, with a 95\% interval of }[\DIFadd{0.086, 0.314}] \DIFadd{that contains the nominal level, and flow raises them on 4 of 50. Per hour of null footage the rates are far higher than the per-video figures suggest, because the detector restarts after each alarm and alarms cluster within a video (\mbox{%DIFAUXCMD
+result transfers to illegal dumping specifically: Avenue and }\DIFdelend \DIFaddbegin \DIFadd{The real test videos last seconds to minutes. The null footage is 12.6\,s for Ped2, 6.9\,min for Avenue and 26.9\,min for the Mivia-IWDD negative videos. Mivia-IWDD provides no per-camera calibration footage, so every test camera is unseen and calibration pools cameras. Pooling is one of three candidate explanations for the Mivia-IWDD PatchCore proportion of 9 of 50 normal videos (\mbox{%DIFAUXCMD
 \cref{sec:real-data}}\hskip0pt%DIFAUXCMD
-).
-}
-
-\paragraph{\DIFadd{Candidate causes of the Mivia-IWDD excess.}}
-\DIFadd{The point estimate exceeds the nominal level}\DIFaddend , and the \DIFdelbegin \DIFdel{adapters raise an
+), and per-camera calibration footage would test it directly. }\DIFaddend Ped2 \DIFdelbegin \DIFdel{are
+classical }\DIFdelend \DIFaddbegin \DIFadd{and Avenue are }\DIFaddend pedestrian-walkway \DIFdelbegin \DIFdel{anomaly corpora , not }\DIFdelend \DIFaddbegin \DIFadd{corpora rather than }\DIFaddend dumping footage, \DIFdelbegin \DIFdel{because no
+released corpus --- }\DIFdelend \DIFaddbegin \DIFadd{which is why }\DIFaddend Mivia-IWDD \DIFdelbegin \DIFdel{included --- provides months of
+continuously-labelled per-frame dumping-detector output, and the two are not
+the same task (dumping is committed once and its evidence often persists in
+the scene; a pedestrian or vehicle anomaly is transient by construction, which is part of why Avenue's episodes are so short). The library ships the
+splicing protocol and dataset adapters needed to run the identical evaluation
+on any other corpus with real per-frame scores, and the adapters raise an
 error rather than substituting synthetic data when those scores are absent;
 what would close the gap \mbox{%DIFAUXCMD
 \cref{sec:real-data} }\hskip0pt%DIFAUXCMD
 exposes is not a different
 evaluation but a backbone whose frame-to-frame errors are more nearly
-independent than optical-flow magnitude's, which is future work. }%DIFDELCMD < 
+independent than optical-flow magnitude's, which is future work}\DIFdelend \DIFaddbegin \DIFadd{was added. Long-horizon and per-camera validation therefore await operational multi-week data. The week-long simulation rests on diurnal and weather assumptions that such data would test}\DIFaddend .
 
-%DIFDELCMD < %%%
-\paragraph{\DIFdel{The tested horizon is two orders of magnitude short of the
-motivating claim.}}
-%DIFAUXCMD
-\addtocounter{paragraph}{-1}%DIFAUXCMD
-\DIFdel{The abstract and introduction motivate the problem with a camera running
+\paragraph{\DIFdelbegin \DIFdel{The tested horizon is two orders of magnitude short of the
+motivating claim}\DIFdelend \DIFaddbegin \DIFadd{Backbones are frozen and training-free}\DIFaddend .}
+The \DIFdelbegin \DIFdel{abstract and introduction motivate the problem with a camera running
 ``continuously for weeks'' between recalibrations. The longest horizon actually
 swept in \mbox{%DIFAUXCMD
 \cref{tab:horizon} }\hskip0pt%DIFAUXCMD
@@ -3654,7 +3620,8 @@ roughly $60\times$ longer, and a month roughly $260\times$ longer. Nothing in
 \cref{thm:episodic} }\hskip0pt%DIFAUXCMD
 or \mbox{%DIFAUXCMD
 \cref{thm:beta} }\hskip0pt%DIFAUXCMD
-depends on the horizon --- }\DIFdelend \DIFaddbegin \DIFadd{data do not say why. Three candidates fit the design. Pooled calibration across cameras is }\DIFaddend the \DIFdelbegin \DIFdel{time-uniform guarantee holds at $10^6$ frames exactly as it does at $10^4$, and that is }\DIFdelend \DIFaddbegin \DIFadd{first. The guarantee is per camera, and every test camera is unseen, so the per-camera premise is not tested. Serial dependence of the p-values is the second (next paragraph). Boundary selection of the lag is the third. $L^\ast=7$ is }\DIFaddend the \DIFdelbegin \DIFdel{entire content of the word ``time-uniform'' --- so the theoretical
+}\DIFdelend \DIFaddbegin \DIFadd{backbone study uses frozen, training-free backbones. The available compute (a single cloud GPU) and the need for a training-only selection protocol for per-dataset trained detectors both favoured this choice. Detection power }\DIFaddend depends on the \DIFdelbegin \DIFdel{horizon --- }\DIFdelend \DIFaddbegin \DIFadd{backbone. Optical flow detects 11 of 12 Ped2 episodes, while PatchCore detects 9 of 74 Avenue episodes and 10 of 50 Mivia-IWDD dumping videos, where flow detects 3 and none. Training state-of-the-art, per-dataset video anomaly detectors under the same leak-free, training-only protocol is future work and }\DIFaddend the \DIFdelbegin \DIFdel{time-uniform guarantee holds at $10^6$ frames exactly as it does at $10^4$, and
+that is the entire content of the word ``time-uniform'' --- so the theoretical
 claim is unaffected. What is untested is whether the }\emph{\DIFdel{simulator}}%DIFAUXCMD
 \DIFdel{'s
 non-stationarity assumptions, and in particular the diurnal and weather
@@ -3666,31 +3633,21 @@ slow drifts that do not appear inside \HorizonMaxHours{} hours could plausibly
 compound over a week in ways this experiment cannot show either way. Extending
 \mbox{%DIFAUXCMD
 \cref{tab:horizon}}\hskip0pt%DIFAUXCMD
-'s sweep by two orders of magnitude is mechanical (the
-simulator scales to any $T$) and is one of the two directions we would
-prioritise in revision}\DIFdelend \DIFaddbegin \DIFadd{smallest lag whose leave-one-video-out proportion is at most $\alpha$, and it sits exactly on the boundary at 20 of 200 $=0.100$. Fifty null videos cannot separate these effects, and this paper names none of them as the cause.
-}
+'s sweep by two orders of magnitude is mechanical (the simulator scales to any $T$) and is one of the two directions we would
+prioritise in revision}\DIFdelend \DIFaddbegin \DIFadd{natural next step for power. The Mivia-IWDD labels mark only the onset, so the detections cannot yet separate the dumping action from the waste left behind. A residue-specific model is also future work}\DIFaddend .
 
-\paragraph{\DIFadd{Real-video baselines show no demonstrated advantage.}}
-\DIFadd{On the real-video comparisons in \mbox{%DIFAUXCMD
-\cref{sec:real-data}}\hskip0pt%DIFAUXCMD
-, SENTINEL-E shows no advantage over the baselines. On Mivia-IWDD, PatchCore CUSUM has the same per-video false-alarm count (9 of 50), detects more episodes (11 against 10) and has a lower rate per hour (53.6 against 100.5). Fifteen of the 36 baseline configurations at $\alpha=0.1$ had no admissible knob and used the most conservative setting, so those baselines are not tuned. The advantage claimed for SENTINEL-E is the horizon-free guarantee, and the short real videos cannot exercise it}\DIFaddend .
-
-\paragraph{Conditional super-uniformity \DIFdelbegin \DIFdel{is an assumption, }\DIFdelend \DIFaddbegin \DIFadd{does }\DIFaddend not \DIFdelbegin \DIFdel{a theorem}\DIFdelend \DIFaddbegin \DIFadd{hold on real video}\DIFaddend .}
-\Cref{thm:episodic} \DIFdelbegin \DIFdel{needs the }\DIFdelend \DIFaddbegin \DIFadd{requires the betting }\DIFaddend p-values to be super-uniform given the past. Thinning \DIFdelbegin \DIFdel{by the decorrelation lag makes the residual dependence small ---
+\paragraph{\DIFdelbegin \DIFdel{Conditional super-uniformity is an assumption, not a theorem}\DIFdelend \DIFaddbegin \DIFadd{The theory assumes conditionally super-uniform p-values}\DIFaddend .}
+\Cref{thm:episodic} \DIFdelbegin \DIFdel{needs the }\DIFdelend \DIFaddbegin \DIFadd{requires the betting }\DIFaddend p-values to be \DIFaddbegin \DIFadd{conditionally }\DIFaddend super-uniform given the past. \DIFdelbegin \DIFdel{Thinning
+by the decorrelation lag makes the residual dependencesmall ---
 \mbox{%DIFAUXCMD
 \cref{tab:diagnostics} }\hskip0pt%DIFAUXCMD
-reports the }\DIFdelend \DIFaddbegin \DIFadd{does not deliver this on real footage, so the hypothesis fails there. The thinned p-values remain positively correlated (lag-one correlation between \RThreeDepCorrMin{} and \RThreeDepCorrMax{} at the selected lags), and after a p-value below $0.1$ the next has mean \RThreeDepCondMin{} to \RThreeDepCondMax{}, far below the $0.5$ that conditional super-uniformity implies (\mbox{%DIFAUXCMD
-\cref{tab:r3_dependence}}\hskip0pt%DIFAUXCMD
-). The }\DIFaddend Ljung--Box \DIFdelbegin \DIFdel{check \mbox{%DIFAUXCMD
+reports the Ljung--Box check \mbox{%DIFAUXCMD
 \citep{ljung1978} }\hskip0pt%DIFAUXCMD
 --- but it
 does not eliminate it, and no finite-sample test can certify its absence.
 \mbox{%DIFAUXCMD
 \Cref{thm:beta} }\hskip0pt%DIFAUXCMD
-additionally assumes i.i.d.\ calibration draws, which is why the
-calibration set is thinned too.
-}%DIFDELCMD < 
+additionally assumes i.i.d.\ calibration draws, which is why the calibration set is thinned too. }%DIFDELCMD < 
 
 %DIFDELCMD < %%%
 \paragraph{\DIFdel{The residual model can be wrong.}}
@@ -3698,29 +3655,27 @@ calibration set is thinned too.
 \addtocounter{paragraph}{-1}%DIFAUXCMD
 \DIFdel{\mbox{%DIFAUXCMD
 \Cref{eq:residual} }\hskip0pt%DIFAUXCMD
-assumes the normalised residual is context-free. Where it is
-not, calibration is approximate; the exactly group-conditional Mondrian variant
-is available for the cases where a single context variable dominates, and the
-support check bounds the damage from extrapolation but does not detect
-misspecification inside the support.
-}\DIFdelend \DIFaddbegin \DIFadd{test also rejects independence for most simulated cameras \mbox{%DIFAUXCMD
+assumes the normalised residual is context-free. Where it is not, calibration is approximate; the exactly group-conditional Mondrian variant
+is available for the cases where a single context variable dominates, and the support check bounds the damage from extrapolation }\DIFdelend \DIFaddbegin \DIFadd{On real video the thinned p-values retain serial dependence. The lag-one correlation lies between 0.758 and 0.985 at the selected lags, and after a p-value below 0.1 the next p-value has mean 0.015 to 0.203, against 0.5 under the premise (\mbox{%DIFAUXCMD
+\cref{tab:r3_dependence}}\hskip0pt%DIFAUXCMD
+). On real video the time-uniform bound is therefore used as an operating rule, and its realised per-video false-alarm rates are verified empirically. Extending the theory to dependent p-values, for example through block betting, is future work. In simulation, thinning by the decorrelation lag reduces the dependence }\DIFaddend but does not \DIFdelbegin \DIFdel{detect
+misspecification inside the support}\DIFdelend \DIFaddbegin \DIFadd{remove it, and the Ljung--Box test rejects independence for most cameras \mbox{%DIFAUXCMD
 \citep{ljung1978}}\hskip0pt%DIFAUXCMD
-. The marginal distribution shows no excess of small values, and the per-video false-alarm rate is consistent with $0.1$ on Ped2 and Avenue, where the null footage is short. Neither repairs the formal argument. On real video the time-uniform bound is therefore an empirical property of the selected operating point, not a theorem. Betting on blocks rather than frames, or e-processes built for dependent data, would be needed to restore it formally.
-}\DIFaddend 
+}\DIFaddend .
 
-\DIFdelbegin \paragraph{\DIFdel{Calibration robustness has one measured breaking point, and several
-unresolved shift levels below it.}} %DIFAUXCMD
-\addtocounter{paragraph}{-1}%DIFAUXCMD
-\DIFdel{The residual construction is clearly
+\paragraph{\DIFdelbegin \DIFdel{Calibration robustness has one measured breaking point, and several
+unresolved }\DIFdelend \DIFaddbegin \DIFadd{The }\DIFaddend shift \DIFdelbegin \DIFdel{levels below it}\DIFdelend \DIFaddbegin \DIFadd{study covers one family}\DIFaddend .}
+The \DIFdelbegin \DIFdel{residual construction is clearly
 invalid at $\times\ShiftResidualBreaks$ shift in an unmodelled covariate
 (\mbox{%DIFAUXCMD
 \cref{tab:activity}}\hskip0pt%DIFAUXCMD
-): the Wilson interval's lower end clears nominal there. At \ShiftResidualUnresolvedRatios{} shift the realised rate is not
+): the Wilson interval's lower end clears nominal there.
+At \ShiftResidualUnresolvedRatios{} shift the realised rate is not
 distinguishable from nominal at the replication count run here, which is not
 the same claim as validity --- only \mbox{%DIFAUXCMD
 \cref{sec:validity}}\hskip0pt%DIFAUXCMD
 's much larger
-replicate count resolves that question, and it was not re-run at every shift
+replicate count resolves that question}\DIFdelend \DIFaddbegin \DIFadd{stricter support region, with slack 0.5, holds its level at every shift tested}\DIFaddend , and it was \DIFdelbegin \DIFdel{not re-run at every shift
 level. Likelihood-ratio weighting holds a realised rate of \ShiftBreakWeightedPfa{}
 at the one level we can certify as broken for the unweighted construction, but
 costs most of the power there (miss rate \ShiftBreakWeightedMiss{} against
@@ -3730,58 +3685,61 @@ levels below that, and \mbox{%DIFAUXCMD
 discloses that its calibration
 substitutes an approximation (the Kish effective sample size) for the exact
 order-statistic argument, which is not itself derived to be valid under
-likelihood-ratio weights.
-So the honest summary is that }\DIFdelend \DIFaddbegin \paragraph{\DIFadd{Long-horizon evidence is simulated.}}
-\DIFadd{The real videos last seconds to minutes, so the week-long result rests on simulation. \mbox{%DIFAUXCMD
-\Cref{tab:horizon_week} }\hskip0pt%DIFAUXCMD
-runs 200 streams per horizon from 1\,h to 168\,h, with a simulated 24\,h diurnal cycle at 25\,fps. }\DIFaddend SENTINEL-E \DIFdelbegin \DIFdel{'s
-false-alarm guarantee is robust to }\DIFdelend \DIFaddbegin \DIFadd{raised no false alarm at any horizon. Its 95\% upper limit is 0.019, which does not by itself resolve $\alpha=0.01$. The fixed threshold reaches 0.980 within an hour. The simulator's assumptions, namely the diurnal and weather processes and Student-$t$ AR(1) noise, are untested against weeks of real footage. A slow drift invisible within a day could compound over a week, and no experiment here shows either way. The time-uniform guarantee does not depend on the horizon, so this is a question about the simulator, not }\DIFaddend the \DIFdelbegin \DIFdel{shift a well-specified residual model
+}\DIFdelend \DIFaddbegin \DIFadd{confirmed on fresh seeds. The evidence covers one activity-shift family, in one direction. For other shifts the abstention rate is the monitor we propose. The }\DIFaddend likelihood-ratio \DIFdelbegin \DIFdel{weights. So the honest summary is that SENTINEL-E's
+false-alarm guarantee is robust to the shift a well-specified residual model
 can absorb and to anything the two-sample test catches, and is }\emph{\DIFdel{not}}
 %DIFAUXCMD
-\DIFdel{unconditionally robust: a large shift in a direction the model does not
-capture, arriving faster than the shift test can react, will inflate the rate,
+\DIFdel{unconditionally robust: a large shift in a direction the model does not capture, arriving faster than the shift test can react, will inflate the rate,
 and exactly how large is not established by this experiment beyond the one
 level that clearly breaks. We know of no distribution-free method for which
-robustness is unconditional, but that does not make it a non-issue, and an operator should treat a rising abstention or miss rate as a prompt to
-recalibrate. }%DIFDELCMD < 
+robustness is unconditional, but that does not make it a non-issue, and an
+operator should treat a rising abstention or miss rate as a prompt to
+recalibrate}\DIFdelend \DIFaddbegin \DIFadd{weighted path has no calibration-conditional proof, because its Kish effective-sample-size substitution is a heuristic that \mbox{%DIFAUXCMD
+\cref{thm:beta} }\hskip0pt%DIFAUXCMD
+does not cover. The recalibration threshold of 0.05 on the abstention rate is a suggestion, not a validated rule}\DIFaddend .
 
-%DIFDELCMD < %%%
-\paragraph{\DIFdel{The episode model is a model.}}
-%DIFAUXCMD
-\addtocounter{paragraph}{-1}%DIFAUXCMD
-\DIFdel{The two-state chain of \mbox{%DIFAUXCMD
+\paragraph{The \DIFdelbegin \DIFdel{episode model }\DIFdelend \DIFaddbegin \DIFadd{episodic advantage }\DIFaddend is \DIFdelbegin \DIFdel{a model}\DIFdelend \DIFaddbegin \DIFadd{configuration-specific}\DIFaddend .}
+\DIFdelbegin \DIFdel{The two-state chain of \mbox{%DIFAUXCMD
 \cref{eq:episodic} }\hskip0pt%DIFAUXCMD
 assumes episodes with geometric
-durations and geometric gaps, and a constant within-episode anomalous fraction.
-Real dumping episodes are none of those exactly. The prior grid spans a wide
+durations and geometric gaps, and a constant within-episode anomalous fraction. Real dumping episodesare none of those exactly. The prior grid spans a wide
 range of each, and \mbox{%DIFAUXCMD
 \cref{thm:episodic} }\hskip0pt%DIFAUXCMD
 holds whatever the truth is --- the
-guarantee never depends on the episode model being correct, only the power does .
+guarantee never depends on the episode model being correct,only the power does.
 But we have not characterised how power degrades when the true duration
 distribution is far from anything on the grid, and a heavy-tailed duration
 distribution is the case we would expect to be worst. The generalisation also
-costs a little where it is not needed: with a single persistent change the episodic mixture is marginally behind the changepoint mixture
+costs a little where it is not needed: with a single persistent change }\DIFdelend \DIFaddbegin \DIFadd{Episodes help when they are long, intermittent and recurring (\mbox{%DIFAUXCMD
+\cref{tab:corner_sweep}}\hskip0pt%DIFAUXCMD
+). With 1600-frame episodes, $\pi=0.2$ and a 12}{\DIFadd{,}}\DIFadd{000-frame gap, }\DIFaddend the episodic mixture is \DIFdelbegin \DIFdel{marginally behind the changepoint mixture
 (\mbox{%DIFAUXCMD
 \cref{tab:episodes}}\hskip0pt%DIFAUXCMD
 ), because the prior spends mass on episode-end hypotheses
-that never fire}\DIFdelend \DIFaddbegin \DIFadd{theorem. The shorter sweep, up to \HorizonMaxHours\,h, is in Online Resource~1, Table~S6}\DIFaddend .
+that never fire. }%DIFDELCMD < 
 
-\paragraph{\DIFdelbegin \DIFdel{Every headline comparison runs at one simulator configuration}\DIFdelend \DIFaddbegin \DIFadd{Covariate shift is the main threat to calibration}\DIFaddend .}
-\DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+%DIFDELCMD < %%%
+\paragraph{\DIFdel{Every headline comparison runs at one simulator configuration.}}
+%DIFAUXCMD
+\addtocounter{paragraph}{-1}%DIFAUXCMD
+\DIFdel{\mbox{%DIFAUXCMD
 \Cref{tab:delay_far,tab:ablation,tab:episodes} }\hskip0pt%DIFAUXCMD
-all use $800$-frame episodes at $35\%$ intermittency with a $6{,}000$-frame mean gap; \mbox{%DIFAUXCMD
+all use $800$-frame }\DIFdelend \DIFaddbegin \DIFadd{ahead by 141.1\,s (95\% CI +79.6 to +210.2\,s). A single 800-frame episode favours the changepoint mixture by 55.7\,s (95\% CI $-111.2$ to $-14.0$\,s), dense and permanent changes are equivalent under the 1\,s margin of \mbox{%DIFAUXCMD
+\cref{sec:episodes}}\hskip0pt%DIFAUXCMD
+, and both mixtures miss 200-frame }\DIFaddend episodes at \DIFdelbegin \DIFdel{$35\%$ intermittency with a $6{,}000$-frame mean gap; \mbox{%DIFAUXCMD
 \cref{sec:episodes}}\hskip0pt%DIFAUXCMD
 's own
 sweep over episode count and intermittency (\mbox{%DIFAUXCMD
 \cref{tab:episodes,tab:intermittency}}\hskip0pt%DIFAUXCMD
-)shows the episodic mixture's advantage is not uniform across that grid --- it
+)
+shows the episodic mixture 's advantage is not uniform across that grid --- it
 is absent or reversed at one episode and at low intermittency
 (\mbox{%DIFAUXCMD
 \cref{sec:dilation}}\hskip0pt%DIFAUXCMD
 ) --- so a reader should not extrapolate the headline
 numbers to a configuration outside the swept range. We have not run the full
-baseline comparison or the ablation at multiple points in $(\text{episode length}, \text{gap}, \pi)$-space, only at the two axes
+baseline comparison or the ablation at multiple points in
+$(\text{episode length}, \text{gap}, \pi)$-space, only at the two axes
 \mbox{%DIFAUXCMD
 \cref{sec:episodes} }\hskip0pt%DIFAUXCMD
 varies one at a time; a joint sweep is mechanical but was
@@ -3797,7 +3755,8 @@ are computationally trivial (\mbox{%DIFAUXCMD
 \cref{tab:compute}}\hskip0pt%DIFAUXCMD
 ), but we have not tested whether
 the learned prior transfers across topologies, and a municipality whose camera
-positions are poorly recorded would need to infer the graph. }%DIFDELCMD < 
+positions are poorly recorded would need to infer the graph.
+}%DIFDELCMD < 
 
 %DIFDELCMD < %%%
 \paragraph{\DIFdel{An operator cannot, from the alarm stream alone, tell a working
@@ -3808,14 +3767,9 @@ camera from a silently conservative one.}}
 neutrally (\mbox{%DIFAUXCMD
 \cref{sec:layer1}}\hskip0pt%DIFAUXCMD
 ); one whose realised miss rate has risen because
-of }\DIFdelend \DIFaddbegin \DIFadd{The unweighted residual default holds its level at $\times 1.0$ and $\times 1.5$, but at $\times 3.0$ its false-alarm probability is 0.0620 (\mbox{%DIFAUXCMD
-\cref{tab:shift_remedy}}\hskip0pt%DIFAUXCMD
-). A stricter support region, with slack 0.5, holds the level at every shift tested, at the cost of abstention. Its selection is disclosed in \mbox{%DIFAUXCMD
-\cref{sec:shift}}\hskip0pt%DIFAUXCMD
-. Seven pilot variants were tried, only two met the pre-set criterion, and the evidence covers one activity-shift family in one direction. Likelihood-ratio weighting also holds the level, but its miss rate reaches 1.000 at $\times 3.0$, and its effective-sample-size substitution has no proof. The context gate fired on every null stream, so it is not a usable monitor. Operators should watch the abstention rate. As a suggestion, not a validated rule, recalibrate when the abstention fraction exceeds 0.05. A miss rate that rises under }\DIFaddend an unmodelled shift produces \DIFdelbegin \emph{\DIFdel{fewer}} %DIFAUXCMD
-\DIFdelend \DIFaddbegin \DIFadd{fewer }\DIFaddend alarms, not more, \DIFdelbegin \DIFdel{and looks
-identical from outside to a camera at a genuinely quiet site.
-The miss rate
+of an unmodelled shift produces }\emph{\DIFdel{fewer}} %DIFAUXCMD
+\DIFdel{alarms, not more, and looks
+identical from outside to a camera at a genuinely quiet site. The miss rate
 itself is unobservable in the field, by definition --- it is a count over
 events that were never flagged --- and the one instrument that could catch a
 silent failure, the two-sample shift test of \mbox{%DIFAUXCMD
@@ -3825,9 +3779,12 @@ likelihood-ratio weighting is explicitly enabled, which is not the default
 path reported in \mbox{%DIFAUXCMD
 \cref{tab:validity,tab:delay_far}}\hskip0pt%DIFAUXCMD
 . We do not have a fix for
-this in the present work; a deployed system should expose the abstention rate,the shift-test statistic, and the calibration set's age as first-class
+this in the present work; a deployed system should expose the abstention rate,
+the shift-test statistic, and the calibration set's age as first-class
 operator-facing signals rather than internal diagnostics, and should not
-default the shift test off. }\DIFdelend \DIFaddbegin \DIFadd{so the alarm stream alone does not reveal it.
+default the shift test off. }\DIFdelend \DIFaddbegin \DIFadd{$\alpha=0.01$. The delay comparison and the ablation use one configuration, four episodes in 60 minutes (\mbox{%DIFAUXCMD
+\cref{sec:delay}}\hskip0pt%DIFAUXCMD
+). The guarantee does not depend on the episode model, but power does. Heavy-tailed episode durations, which dumping may produce, are untested.
 }\DIFaddend 
 
 \DIFdelbegin \paragraph{\DIFdel{Deployment guidance this paper does not give.}}
@@ -3835,40 +3792,17 @@ default the shift test off. }\DIFdelend \DIFaddbegin \DIFadd{so the alarm stream
 \addtocounter{paragraph}{-1}%DIFAUXCMD
 \DIFdel{Nothing here tells an operator how to choose $\alpha$, how large a calibration
 set to collect before trusting the alarm rate, or when a rising abstention or
-miss rate should trigger recalibration rather than a shrug. \mbox{%DIFAUXCMD
+miss rate should trigger recalibration rather than a shrug.
+\mbox{%DIFAUXCMD
 \Cref{sec:validity}
 }\hskip0pt%DIFAUXCMD
-fixes $\alpha$ andstudies its consequences; it does not study how a
-municipality should set it against the cost of a false dispatch and }\DIFdelend \DIFaddbegin \paragraph{\DIFadd{The learned spatial prior does not improve delay.}}
-\DIFadd{The learned prior keeps the false-alarm guarantee, as \mbox{%DIFAUXCMD
-\cref{thm:predictable} }\hskip0pt%DIFAUXCMD
-requires, but it does not shorten delay (\mbox{%DIFAUXCMD
-\cref{sec:network}}\hskip0pt%DIFAUXCMD
-). Its transfer to other camera topologies is untested.
-}
-
-\paragraph{\DIFadd{The episodic advantage is configuration-specific.}}
-\DIFadd{In the corner sweep (\mbox{%DIFAUXCMD
-\cref{tab:corner_sweep}}\hskip0pt%DIFAUXCMD
-), episodes help when they are long, intermittent and recurring. With 1600-frame episodes, $\pi=0.2$ and a 12}{\DIFadd{,}}\DIFadd{000-frame gap, the episodic mixture is ahead by 141.1\,s (95\% CI +79.6 to +210.2\,s). A single 800-frame episode favours the changepoint mixture by 55.7\,s (95\% CI $-111.2$ to $-14.0$). Dense and permanent changes are equivalent under the 1\,s margin of \mbox{%DIFAUXCMD
-\cref{sec:episodes}}\hskip0pt%DIFAUXCMD
-, and 200-frame episodes are missed by both mixtures. The delay comparison and the ablation use one configuration, four episodes in 60 minutes (\mbox{%DIFAUXCMD
-\cref{sec:delay}}\hskip0pt%DIFAUXCMD
-). Unpaired comparisons on different grids are descriptive (Online Resource~1, Tables~S4 and~S5). The guarantee does not depend on the episode model, but power does, and heavy-tailed episode durations, which dumping may produce, are untested.
-}
-
-\paragraph{\DIFadd{Deployment needs more than a false-alarm rate.}}
-\DIFadd{The time-uniform guarantee is the horizon-free analogue of }\DIFaddend the \DIFdelbegin \DIFdel{cost
+fixes $\alpha$ and studies its consequences; it does not study how a
+municipality should set it against the cost of a false dispatch and the cost
 of a missed event, which is a decision-theoretic question this paper leaves
-open. Relevant literatures we have not engaged include alarm management and
-human factors (how many alerts per shift a human operator can act on before
+open. Relevant literatures we have not engaged include alarm management and human factors (how many alerts per shift a human operator can act on before
 alarm fatigue sets in), classical signal detection theory (the ROC-operating-point
-framing a control-room already uses }\DIFdelend \DIFaddbegin \DIFadd{in-control run length $\ARL$. Control charts also need a recalibration cadence, which statistical process control treats as a design choice \mbox{%DIFAUXCMD
-\citep{montgomery2020introduction}}\hskip0pt%DIFAUXCMD
-, and this paper does not set one. A ROC operating point \mbox{%DIFAUXCMD
-\citep{fawcett2006introduction} }\hskip0pt%DIFAUXCMD
-describes a per-decision trade-off that control rooms already use }\DIFaddend for other sensors\DIFdelbegin \DIFdel{), statistical process
-control practice (where a control chart's recalibration cadence is itself a studied design choice), and public-sector algorithmic accountability (what
+framing a control-room already uses for other sensors), }\DIFdelend \DIFaddbegin \paragraph{\DIFadd{Deployment considerations.}}
+\DIFadd{The time-uniform guarantee is the horizon-free counterpart of the in-control average run length, and an alarm budget per monitoring period is its operational counterpart. Control charts also need a recalibration cadence, which }\DIFaddend statistical process control \DIFdelbegin \DIFdel{practice (where a control chart's recalibration cadence is itself a studied design choice ), and public-sector algorithmic accountability (what
 disclosure a municipality owes residents about an automated flagging system
 run against public spaces). Each bears directly on how this method would
 actually be operated, and none of it is in \mbox{%DIFAUXCMD
@@ -3880,30 +3814,35 @@ actually be operated, and none of it is in \mbox{%DIFAUXCMD
 \paragraph{\DIFdel{Governance and human oversight.}}
 %DIFAUXCMD
 \addtocounter{paragraph}{-1}%DIFAUXCMD
-\DIFdel{This is a detector, not a decision-maker, and the gap between those two is where the harder questions live. An alarm is a prompt for a human to look at
+\DIFdel{This is a detector, not a decision-maker, and the gap between those two is
+where the harder questions live. An alarm is a prompt for a human to look at
 footage and decide whether dumping occurred and who is responsible; the false-alarm
 guarantee in this paper says nothing about what happens after that prompt ---
 whether the human reviewing it is adequately resourced, whether the review is
 itself audited, or whether the system is used to justify automated
-enforcement actionwithout one. Camera placement, retention policy, and who
+enforcement action without one. Camera placement, retention policy, and who
 may query the alarm history are governance decisions this paper does not make
-and should not be read as endorsing any particular answerto. A municipality
+and should not be read as endorsing any particular answer to. A municipality
 deploying this or a similar system should treat the statistical guarantee as
-one input to a decision that also needs an explicit data-retention }\DIFdelend \DIFaddbegin \DIFadd{. By contrast, $\alpha$ bounds false alarms over a whole monitoring period, so an alarm budget per period is the operational counterpart. Hourly alarm rates on real video are large (\mbox{%DIFAUXCMD
-\cref{sec:real-data}}\hskip0pt%DIFAUXCMD
-), and a deployment should budget them as well as per-video rates. Choosing $\alpha$ against the costs of a false dispatch and a missed event is left open. Every alarm should go to a named human reviewer before any action. Public-space surveillance also raises accountability questions that the guarantee does not answer. A deployment needs a retention }\DIFaddend policy, a named \DIFdelbegin \DIFdel{human reviewer in the loop }\DIFdelend \DIFaddbegin \DIFadd{reviewer }\DIFaddend before any enforcement \DIFdelbegin \DIFdel{action}\DIFdelend \DIFaddbegin \DIFadd{step}\DIFaddend , and a \DIFdelbegin \DIFdel{mechanism by which a resident }\DIFdelend \DIFaddbegin \DIFadd{route by which residents }\DIFaddend can contest a flagged event\DIFdelbegin \DIFdel{--- none of which
-follows from, or is addressed by, the anytime-valid construction itself}\DIFdelend .
+one input to a decision that also needs an explicit data-retention policy, a
+}\DIFdelend \DIFaddbegin \DIFadd{treats as a design choice \mbox{%DIFAUXCMD
+\citep{montgomery2020introduction}}\hskip0pt%DIFAUXCMD
+, and an ROC operating point \mbox{%DIFAUXCMD
+\citep{fawcett2006introduction} }\hskip0pt%DIFAUXCMD
+describes the trade-off that control rooms already use. Hourly alarm rates on real video are large, at 100.5 per hour of null footage for PatchCore on Mivia-IWDD, so an alarm budget should be set against them as well as against per-video rates. The choice of $\alpha$, against the costs of a false dispatch and of a missed event, is left to each operator. Every alarm should go to a }\DIFaddend named human reviewer \DIFdelbegin \DIFdel{in the loop before any enforcement action, and a mechanism by which a resident }\DIFdelend \DIFaddbegin \DIFadd{before any action. A deployment also needs a retention policy and a route by which residents }\DIFaddend can contest a flagged event\DIFdelbegin \DIFdel{--- none of which
+follows from, or is addressed by, the anytime-valid construction itself}\DIFdelend \DIFaddbegin \DIFadd{, because public-space surveillance raises accountability questions that the guarantee does not answer}\DIFaddend .
 
 \section{Conclusion}
 \label{sec:conclusion}
 
 \DIFdelbegin \DIFdel{Waste-surveillance systems are evaluated per clip and deployed per month, and
 the statistical consequence of that mismatch is larger than the field's
-reporting practice reveals: valid }\DIFdelend \DIFaddbegin \DIFadd{Clip-level evaluation hides a statistical problem. A }\DIFaddend per-frame \DIFaddbegin \DIFadd{rule fed valid }\DIFaddend p-values \DIFdelbegin \DIFdel{, applied with the obvious
+reporting practice reveals: valid }\DIFdelend \DIFaddbegin \DIFadd{Continuous monitoring needs its own evaluation. A }\DIFaddend per-frame \DIFaddbegin \DIFadd{rule fed valid }\DIFaddend p-values \DIFdelbegin \DIFdel{, applied with the obvious
 stopping rule , produce }\DIFdelend \DIFaddbegin \DIFadd{raises }\DIFaddend a false alarm on \DIFdelbegin \DIFdel{essentially every multi-hour null stream
 we simulated. The 2026 IWDD contest, drawing ten teams, reports per-clip $F_1$
 plus a notification-delay measure and, in its own overview, a per-clip ROC
-analysis; none of that reports a rate over a continuous monitoring horizon}\DIFdelend \DIFaddbegin \DIFadd{\ValidityPfaPvaluePct\% of 40-minute null streams. This paper makes three contributions}\DIFaddend .
+analysis; none of that reports a rate over a continuous monitoring horizon. }\DIFdelend \DIFaddbegin \DIFadd{\ValidityPfaPvaluePct\% of 40-minute null streams, so a clip-level level does not carry over to a stream. This paper makes three contributions.
+}\DIFaddend 
 
 \DIFdelbegin \DIFdel{Closing }\emph{\DIFdel{that}} %DIFAUXCMD
 \DIFdel{gap does not need the episodic construction: any
@@ -3917,56 +3856,57 @@ is a faithful instance of prior work
 --- composed with the same conformal front end
 already holds the nominal level in our own experiments (\mbox{%DIFAUXCMD
 \cref{sec:ablation}}\hskip0pt%DIFAUXCMD
-). What required the new construction is a narrower, and still real, claim: a
-dumping event is an episode that ends and recurs, and mixing over episodes rather than changepoint locations buys back detection power in that regime
-without touching the guarantee. The episodic }\DIFdelend \DIFaddbegin \DIFadd{The theory is an episodic }\DIFaddend e-process\DIFdelbegin \DIFdel{mixes over when an
+).
+What required the new construction is a narrower, and still real, claim: a
+dumping event is an episode that ends and recurs, and mixing over episodes
+rather than changepoint locations buys back detection power in that regime
+without touching the guarantee. The }\DIFdelend \DIFaddbegin \DIFadd{The theory is an }\DIFaddend episodic e-process\DIFdelbegin \DIFdel{mixes over when an
 episode starts }\emph{\DIFdel{and stops}}%DIFAUXCMD
-\DIFdel{, remains an exact supermartingale }\DIFdelend \DIFaddbegin \DIFadd{. It mixes over episodes that start, end and recur. It is a non-negative supermartingale when the p-values are conditionally super-uniform, }\DIFaddend so Ville's inequality \DIFdelbegin \DIFdel{applies unchanged, costs $O(1)$ per frame, and }\DIFdelend \DIFaddbegin \DIFadd{gives time-uniform false-alarm control. It }\DIFaddend contains the changepoint mixture \DIFdelbegin \DIFdel{exactly as the boundary case $\eta = 0$. Around it,
+\DIFdel{, remains an exact supermartingale }\DIFdelend \DIFaddbegin \DIFadd{. It mixes over episodes that start, end and recur. It is a non-negative supermartingale when the p-values are conditionally super-uniform, }\DIFaddend so Ville's inequality \DIFdelbegin \DIFdel{applies unchanged, costs $O(1)$ per frame, and }\DIFdelend \DIFaddbegin \DIFadd{gives time-uniform false-alarm control, and it }\DIFaddend contains the changepoint mixture \DIFdelbegin \DIFdel{exactly as the boundary case $\eta = 0$. Around it,
 conformal calibration conditional on observable context makes the p-values
 honest, and e-BH turns per-camera evidence into fleet-wide decisions under
-arbitrary dependence. Three components did not survive contact with measurement and are reported rather than removed: the dilated emission for
+arbitrary dependence.
+Three components did not survive contact with measurement and are reported rather than removed: the dilated emission for
 within-episode intermittency, which the betting mixture already handles; the
 learned spatial prior, which leaves the guarantee exactly intact --- as its
 theorem promises --- while failing to improve detection; and the size, and
-even the sign, of }\DIFdelend \DIFaddbegin \DIFadd{as }\DIFaddend the \DIFdelbegin \DIFdel{episodic mixture's power advantage over the changepoint
+even the sign, of the episodic mixture 's power advantage over }\DIFdelend \DIFaddbegin \DIFadd{as }\DIFaddend the \DIFdelbegin \DIFdel{changepoint
 mixture, which \mbox{%DIFAUXCMD
 \cref{sec:episodes} }\hskip0pt%DIFAUXCMD
 resolves with a paired analysis on matched
 seeds and a shared betting grid rather than the unpaired comparison an
 earlier, confounded version of that experiment reported.
 Both mixtures are , in our comparison, among the methods that hold their
-nominal false-alarm level; SENTINEL-E is }\DIFdelend \DIFaddbegin \DIFadd{case in which episodes never end. Real video does not meet the conditional premise (\mbox{%DIFAUXCMD
+nominal }\DIFdelend \DIFaddbegin \DIFadd{case in which episodes never end. On real video the conditional premise is not met after thinning, so validity there is verified empirically (\mbox{%DIFAUXCMD
 \cref{sec:limitations}}\hskip0pt%DIFAUXCMD
-), so the guarantee there is an empirical property, not a theorem.
+).
 }
 
-\DIFadd{The algorithm is a two-state forward recursion. It runs in constant time per frame, with }\DIFaddend the \DIFdelbegin \DIFdel{only one of the two that keeps
+\DIFadd{The algorithm is a two-state forward recursion. It runs in constant time per frame, with the p-value and the e-detector step computed once per betting lag. The guarantee layer costs \CostSentinelUs\,}\textmu \DIFadd{s per frame in batch and about 2\,}\textmu \DIFadd{s per frame when streaming (1.98\,}\textmu \DIFadd{s predicted).
+}
+
+\DIFadd{The evaluation reports realised rather than nominal }\DIFaddend false-alarm \DIFdelbegin \DIFdel{level; SENTINEL-E is the only one of the two that keeps
 the episode-recurrence axis available at the same $O(1)$ cost, at
 \CostSentinelPct\% of the cost of the backbone it wraps --- with a measured
 boundary, reported rather than elided, beyond which a shift in an unmodelled
-covariate breaks it unless the conservative safeguard is engaged. }\DIFdelend \DIFaddbegin \DIFadd{p-value and the e-detector step computed once per betting lag. The guarantee layer costs \CostSentinelUs\,}\textmu \DIFadd{s per frame in batch and about 2\,}\textmu \DIFadd{s per frame when streaming (1.98\,}\textmu \DIFadd{s predicted).
+covariate breaks it unless the conservative safeguard is engaged. }\DIFdelend \DIFaddbegin \DIFadd{rates, censored delays and paired comparisons on grids of equal size.
 }\DIFaddend 
 
 \DIFdelbegin \DIFdel{This revision closes part of the first empirical direction the earlier version
 of this paper deferred: \mbox{%DIFAUXCMD
 \cref{sec:real-data} }\hskip0pt%DIFAUXCMD
 runs the identical pipeline,
-unmodified, on real }\DIFdelend \DIFaddbegin \DIFadd{The evaluation reports realised rather than nominal false-alarm rates, censored delays and paired comparisons on grids of equal size.
-}
-
-\DIFadd{The simulated results are the strongest. No false alarm occurred in 200 week-long null streams (95\% upper limit 0.019, which does not by itself resolve $\alpha=0.01$), while }\DIFaddend per-frame \DIFdelbegin \DIFdel{scores from two real surveillance corpora,
-CUHK Avenue and UCSD }\DIFdelend \DIFaddbegin \DIFadd{thresholds fail within an hour. The episodic mixture shortens delay for long, intermittent and recurring events. For a single change it is behind, and for a permanent change the two are equivalent.
-}
-
-\DIFadd{The real-video results are more limited. On UCSD Ped2, CUHK Avenue and Mivia-IWDD, the per-video false-alarm rate is consistent with the nominal level on the two single-camera corpora, but their null footage is short (12.6\,s and 6.9\,min). On Mivia-IWDD, PatchCore raises alarms on 9 of 50 normal videos at $\alpha=0.1$, a point estimate above the nominal level whose interval contains it. The cause is not isolated: pooled calibration, serial dependence and boundary selection of the lag are all candidates. Alarm rates per hour of null footage are large, at 100.5 per hour for PatchCore on Mivia-IWDD. Power depends on the backbone and remains limited. Optical flow detects 11 of 12 }\DIFaddend Ped2 \DIFdelbegin \DIFdel{, rather than on simulated streams alone. What it
+unmodified, on real }\DIFdelend \DIFaddbegin \DIFadd{The simulated results cover horizons of up to one week. No false alarm occurred in 200 week-long null streams (95\% upper limit 0.019, which does not by itself resolve $\alpha=0.01$), and }\DIFaddend per-frame \DIFdelbegin \DIFdel{scores from two real surveillance corpora,
+CUHK Avenue }\DIFdelend \DIFaddbegin \DIFadd{thresholds reach 0.980 within an hour. The episodic mixture shortens delay for long, intermittent and recurring events. For a single change the changepoint mixture is faster, }\DIFaddend and \DIFdelbegin \DIFdel{UCSD Ped2, rather than on simulated streams alone. What it
 finds is not unqualified success. The guarantee holds on both real corpora at
 the lag each dataset's own diagnostic selects, and every classical baseline
 tested fails to hold it on the same real streams --- but the window in which
 validity and power coexist at all is narrow, narrower than any simulated
-configuration in this paper, because real optical-flow scores are far more
-autocorrelated than an AR(1) process and real anomalous episodes are
-correspondingly brief.
-Two directions followfrom that finding specifically. The nearer one }\DIFdelend \DIFaddbegin \DIFadd{episodes but 3 of 74 Avenue episodes, and PatchCore detects 10 of 50 Mivia-IWDD dumping videos. Neither backbone is state of the art. On real video SENTINEL-E shows no demonstrated advantage over the baselines. Its claimed advantage, the horizon-free guarantee, is one that the short real videos cannot test.
+configuration in this paper, because real optical-flow scores are far more autocorrelated than an AR(1) process and real anomalous episodesare
+correspondingly brief. Two directions followfrom that finding specifically. The nearer one }\DIFdelend \DIFaddbegin \DIFadd{for a permanent change the two are equivalent.
+}
+
+\DIFadd{The real-video results are more limited in scale. On UCSD Ped2, CUHK Avenue and Mivia-IWDD, the per-video false-alarm proportions are consistent with the nominal level at $\alpha=0.1$ on all three corpora. The null footage is short (12.6\,s and 6.9\,min for Ped2 and Avenue). On Mivia-IWDD, PatchCore raises alarms on 9 of 50 normal videos, with a 95\% interval of }[\DIFadd{0.086, 0.314}]\DIFadd{. Alarm rates per hour of null footage are large, at 100.5 per hour for PatchCore on Mivia-IWDD. Power depends on the backbone. Optical flow detects 11 of 12 Ped2 episodes and 3 of 74 Avenue episodes, PatchCore detects 7 of 12 and 9 of 74, and PatchCore detects 10 of 50 Mivia-IWDD dumping videos. Neither backbone is state of the art. On these short videos, several classical baselines selected by the same training-only rule detect more episodes, generally with more false alarms. Its advantage is the horizon-free guarantee, which the short videos cannot test.
 }
 
 \DIFadd{Three directions follow. The first }\DIFaddend is a stronger\DIFdelbegin \DIFdel{backbone: what \mbox{%DIFAUXCMD
@@ -3977,10 +3917,10 @@ frame-to-frame errors are more nearly independent than optical-flow
 magnitude's would widen the window without touching }\DIFdelend \DIFaddbegin \DIFadd{, dumping-specific backbone, which would raise power without changing }\DIFaddend the theory. The \DIFdelbegin \DIFdel{further
 one is the corpus itself: this paper's real-data validation runs on pedestrian-walkway anomaly footage because no continuously-labelled real
 illegal-dumping stream of the required length is publicly available, and
-closing that gap needs a released corpus, from Mivia-IWDD or an operational
+closing that gap needs a released corpus, from }\DIFdelend \DIFaddbegin \DIFadd{second is per-camera calibration on Mivia-IWDD, which would test the guarantee under the condition it needs and show whether pooling accounts for the }\DIFaddend Mivia-IWDD \DIFdelbegin \DIFdel{or an operational
 municipal deployment, rather than a change to the method. Neither the argument nor the algorithm is specific to dumpingin the first place.
 Episodic, intermittent, recurring events observed through a
-continuously-monitored sensor describe }\DIFdelend \DIFaddbegin \DIFadd{second is per-camera calibration on Mivia-IWDD, which would test the guarantee under the condition it needs and show whether pooling explains the excess. The third is longer real streams, which would test the week-long simulation directly. Residue-specific change models would also separate the dumping action from the waste left behind. The argument and the algorithm do not depend on dumping, so the same optional-stopping problem applies to }\DIFaddend wildlife poaching, illegal fishing \DIFdelbegin \DIFdel{,
+continuously-monitored sensor describe }\DIFdelend \DIFaddbegin \DIFadd{proportion. The third is longer real streams, which would test the week-long simulation directly. Residue-specific change models would also separate the dumping action from the waste left behind. The argument and the algorithm do not depend on dumping, so the same optional-stopping problem applies to }\DIFaddend wildlife poaching, illegal fishing \DIFdelbegin \DIFdel{,
 gas leaks }\DIFdelend and infrastructure faults\DIFdelbegin \DIFdel{as well as the loitering, wrong-direction
 motion and abandoned-object anomalies the real corpora above already
 represent; wherever a field evaluates on clips and deploys on streams, the
