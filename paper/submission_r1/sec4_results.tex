@@ -286,7 +286,7 @@ row several shift levels cannot be resolved (\ShiftResidualUnresolvedRatios{}).
 
 \Cref{tab:shift_remedy} gives the sweep at 1,500 null streams and 200 post-change streams per level. The unweighted residual default is valid at $\times 1.0$ and $\times 1.5$, with a false-alarm probability of 0.0020 at $\times 1.5$. It is unresolved at $\times 2.0$ (0.0140, interval [0.0092, 0.0213]) and invalid at $\times 3.0$ (0.0620, interval [0.0509, 0.0754]). False alarms cluster immediately after the detector re-enters the calibrated context region, at frames near the support edge where the residual model extrapolates.
 
-Likelihood-ratio weighting holds the level at every shift tested, but its power falls. Its miss rate is 0.095 at $\times 1.0$, against 0.025 unweighted, and rises to 0.540, 0.930 and 1.000 at $\times 1.5$, $\times 2.0$ and $\times 3.0$. The Kish effective-sample-size substitution has no calibration-conditional proof, so the weighted path is a heuristic. The pre-specified rule, reported in Online Resource~1, Table~S8, recommends weighting only if its extra miss rate at $\times 1.0$ is at most 0.05. The extra rate is 0.070, so the unweighted residual stays the default.
+Likelihood-ratio weighting holds the level at every shift tested, but its power falls. Its miss rate is 0.095 at $\times 1.0$, against 0.025 unweighted, and rises to 0.540, 0.930 and 1.000 at $\times 1.5$, $\times 2.0$ and $\times 3.0$. The Kish effective-sample-size substitution has no calibration-conditional proof, so the weighted path is a heuristic. The pre-specified rule, reported in Online Resource~1, Table~S9, recommends weighting only if its extra miss rate at $\times 1.0$ is at most 0.05. The extra rate is 0.070, so the unweighted residual stays the default.
 
 The held-out context gate, which would switch weighting on, is a classifier two-sample test with AUC at least 0.60. It fired on every null stream at every level, including the unshifted $\times 1.0$. Context tests respond to benign diurnal variation, so we use a stricter support region instead.
 
@@ -446,7 +446,7 @@ Omitting the calibration-conditional correction ($\delta=0$) gives PFA
 $0.0387$ [0.0300, 0.0497], nearly four times nominal. The correction is therefore required, and pooled calibration is not a substitute for it.
 
 The other twelve variants of the 200-stream table are descriptive. They are
-listed in Online Resource~1, Table~S7. At 200 streams, 14 of the 19 variants are
+listed in Online Resource~1, Table~S8. At 200 streams, 14 of the 19 variants are
 unresolved, so that table gives point estimates, not verdicts. Two of the twelve
 resolve as invalid at that count: bet once per five frames (PFA 0.935) and
 Mondrian conformal (0.025 [0.011, 0.057]). The fixed-start variant, which has no

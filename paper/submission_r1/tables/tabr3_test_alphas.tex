@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering
-\caption{SENTINEL-E alone at each nominal $\alpha$, at $L^\ast(\alpha)$, on the test videos (each monitored alone; calibration on all training videos). Test videos: UCSD Ped2 (flow): 12 test videos; UCSD Ped2 (PatchCore): 12 test videos; CUHK Avenue (flow): 21 test videos; CUHK Avenue (PatchCore): 21 test videos; Mivia-IWDD (flow): 100 test videos; Mivia-IWDD (PatchCore): 100 test videos.}
+\caption{SENTINEL-E alone at each nominal $\alpha$, at $L^\ast(\alpha)$, on the test videos (each monitored alone; calibration on all normal training videos). Test videos: UCSD Ped2 (flow): 12 test videos; UCSD Ped2 (PatchCore): 12 test videos; CUHK Avenue (flow): 21 test videos; CUHK Avenue (PatchCore): 21 test videos; Mivia-IWDD (flow): 100 test videos; Mivia-IWDD (PatchCore): 100 test videos; Mivia-IWDD (supervised): 100 test videos.}
 \label{tab:r3_test_alphas}
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
 \begin{tabular}{llrrrrrr}
@@ -25,6 +25,9 @@ Mivia-IWDD (flow) & 0.2 & 3 & 0.220 [0.115, 0.360] (11/50) & 116.17 [86.76, 152.
 Mivia-IWDD (PatchCore) & 0.05 & 20 & 0.060 [0.013, 0.165] (3/50) & 11.17 [3.63, 26.07] & 0.08 [0.02, 0.19] (4/50) & 3.5 \\
 Mivia-IWDD (PatchCore) & 0.1 & 7 & 0.180 [0.086, 0.314] (9/50) & 100.53 [73.33, 134.52] & 0.20 [0.10, 0.34] (10/50) & 2.8 \\
 Mivia-IWDD (PatchCore) & 0.2 & 5 & 0.240 [0.131, 0.382] (12/50) & 165.32 [129.81, 207.55] & 0.26 [0.15, 0.40] (13/50) & 2.0 \\
+Mivia-IWDD (supervised) & 0.05 & 15 & 0.000 [0.000, 0.071] (0/50) & 6.70 [1.38, 19.59] & 0.20 [0.10, 0.34] (10/50) & 4.5 \\
+Mivia-IWDD (supervised) & 0.1 & 7 & 0.080 [0.022, 0.192] (4/50) & 60.32 [39.75, 87.76] & 0.62 [0.47, 0.75] (31/50) & 2.9 \\
+Mivia-IWDD (supervised) & 0.2 & 5 & 0.140 [0.058, 0.267] (7/50) & 111.70 [82.91, 147.27] & 0.72 [0.58, 0.84] (36/50) & 2.0 \\
 \bottomrule
 \end{tabular}}
 \begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Null-trial definitions as in the main-text test table.\end{minipage}

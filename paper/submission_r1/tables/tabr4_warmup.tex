@@ -1,0 +1,40 @@
+\begin{table}[t]
+\centering
+\caption{SENTINEL-E on Mivia-IWDD, pooled calibration (protocol v3, full videos, from \texttt{exp\_r3\_per\_video}) against the same method after a per-camera warm-up (\,$W$ selected on training videos by the rule fixed before the test evaluation\,) and against the post-warm-up raw scores (control). Each test video is monitored alone with a fresh detector; calibration on all usable training normal videos. Warm-up arms: negative test videos with less than 2\,s after warm-up and positives with onset before $W+2$\,s are excluded.}
+\label{tab:r4_warmup}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llllrrrrrrrr}
+\toprule
+dataset & $\alpha$ & source & $W$ (s) & $L^\ast$ & test per-video FA [95\% CI] (k/n) & FA / hour [95\% CI] & episode detection [95\% CI] (k/n) & static detection [95\% CI] (k/n) & dynamic detection [95\% CI] (k/n) & median delay (s) & null videos / episodes \\
+\midrule
+Mivia-IWDD (flow) & 0.05 & pooled, full video (exp\_r3) & -- & 20 & 0.020 [0.001, 0.106] (1/50) & 2.23 [0.06, 12.45] & 0.00 [0.00, 0.07] (0/50) & 0.00 [0.00, 0.14] (0/25) & 0.00 [0.00, 0.14] (0/25) & -- & 50 / 50 \\
+Mivia-IWDD (flow) & 0.05 & warm-up normalised & 20 & 7 & 0.040 [0.001, 0.204] (1/25) & 8.77 [0.22, 48.84] & 0.00 [0.00, 0.60] (0/4) & 0.00 [0.00, 0.84] (0/2) & 0.00 [0.00, 0.84] (0/2) & -- & 25 / 4 \\
+Mivia-IWDD (flow) & 0.05 & post-warm-up raw (control) & 20 & 10 & 0.120 [0.025, 0.312] (3/25) & 35.06 [9.55, 89.77] & 0.00 [0.00, 0.60] (0/4) & 0.00 [0.00, 0.84] (0/2) & 0.00 [0.00, 0.84] (0/2) & -- & 25 / 4 \\
+Mivia-IWDD (flow) & 0.1 & pooled, full video (exp\_r3) & -- & 10 & 0.080 [0.022, 0.192] (4/50) & 15.64 [6.29, 32.22] & 0.00 [0.00, 0.07] (0/50) & 0.00 [0.00, 0.14] (0/25) & 0.00 [0.00, 0.14] (0/25) & -- & 50 / 50 \\
+Mivia-IWDD (flow) & 0.1 & warm-up normalised & 20 & 5 & 0.040 [0.001, 0.204] (1/25) & 8.77 [0.22, 48.84] & 0.00 [0.00, 0.60] (0/4) & 0.00 [0.00, 0.84] (0/2) & 0.00 [0.00, 0.84] (0/2) & -- & 25 / 4 \\
+Mivia-IWDD (flow) & 0.1 & post-warm-up raw (control) & 20 & 7 & 0.120 [0.025, 0.312] (3/25) & 43.83 [14.23, 102.28] & 0.00 [0.00, 0.60] (0/4) & 0.00 [0.00, 0.84] (0/2) & 0.00 [0.00, 0.84] (0/2) & -- & 25 / 4 \\
+Mivia-IWDD (flow) & 0.2 & pooled, full video (exp\_r3) & -- & 3 & 0.220 [0.115, 0.360] (11/50) & 116.17 [86.76, 152.34] & 0.04 [0.00, 0.14] (2/50) & 0.00 [0.00, 0.14] (0/25) & 0.08 [0.01, 0.26] (2/25) & 3.0 & 50 / 50 \\
+Mivia-IWDD (flow) & 0.2 & warm-up normalised & 20 & 3 & 0.280 [0.121, 0.494] (7/25) & 70.12 [30.27, 138.17] & 0.25 [0.01, 0.81] (1/4) & 0.50 [0.01, 0.99] (1/2) & 0.00 [0.00, 0.84] (0/2) & 36.4 & 25 / 4 \\
+Mivia-IWDD (flow) & 0.2 & post-warm-up raw (control) & 20 & 2 & 0.320 [0.149, 0.535] (8/25) & 333.09 [235.71, 457.19] & 0.00 [0.00, 0.60] (0/4) & 0.00 [0.00, 0.84] (0/2) & 0.00 [0.00, 0.84] (0/2) & -- & 25 / 4 \\
+Mivia-IWDD (PatchCore) & 0.05 & pooled, full video (exp\_r3) & -- & 20 & 0.060 [0.013, 0.165] (3/50) & 11.17 [3.63, 26.07] & 0.08 [0.02, 0.19] (4/50) & 0.12 [0.03, 0.31] (3/25) & 0.04 [0.00, 0.20] (1/25) & 3.5 & 50 / 50 \\
+Mivia-IWDD (PatchCore) & 0.05 & warm-up normalised & 5 & 15 & 0.022 [0.001, 0.118] (1/45) & 6.31 [0.76, 22.80] & 0.00 [0.00, 0.15] (0/23) & 0.00 [0.00, 0.23] (0/14) & 0.00 [0.00, 0.34] (0/9) & -- & 45 / 23 \\
+Mivia-IWDD (PatchCore) & 0.05 & post-warm-up raw (control) & 5 & 15 & 0.089 [0.025, 0.212] (4/45) & 28.40 [12.99, 53.91] & 0.04 [0.00, 0.22] (1/23) & 0.07 [0.00, 0.34] (1/14) & 0.00 [0.00, 0.34] (0/9) & 22.0 & 45 / 23 \\
+Mivia-IWDD (PatchCore) & 0.1 & pooled, full video (exp\_r3) & -- & 7 & 0.180 [0.086, 0.314] (9/50) & 100.53 [73.33, 134.52] & 0.20 [0.10, 0.34] (10/50) & 0.20 [0.07, 0.41] (5/25) & 0.20 [0.07, 0.41] (5/25) & 2.8 & 50 / 50 \\
+Mivia-IWDD (PatchCore) & 0.1 & warm-up normalised & 5 & 5 & 0.044 [0.005, 0.151] (2/45) & 34.71 [17.33, 62.11] & 0.04 [0.00, 0.22] (1/23) & 0.00 [0.00, 0.23] (0/14) & 0.11 [0.00, 0.48] (1/9) & 1.0 & 45 / 23 \\
+Mivia-IWDD (PatchCore) & 0.1 & post-warm-up raw (control) & 5 & 7 & 0.178 [0.080, 0.321] (8/45) & 94.67 [63.87, 135.15] & 0.17 [0.05, 0.39] (4/23) & 0.21 [0.05, 0.51] (3/14) & 0.11 [0.00, 0.48] (1/9) & 3.5 & 45 / 23 \\
+Mivia-IWDD (PatchCore) & 0.2 & pooled, full video (exp\_r3) & -- & 5 & 0.240 [0.131, 0.382] (12/50) & 165.32 [129.81, 207.55] & 0.26 [0.15, 0.40] (13/50) & 0.32 [0.15, 0.54] (8/25) & 0.20 [0.07, 0.41] (5/25) & 2.0 & 50 / 50 \\
+Mivia-IWDD (PatchCore) & 0.2 & warm-up normalised & 5 & 3 & 0.067 [0.014, 0.183] (3/45) & 72.58 [46.01, 108.91] & 0.09 [0.01, 0.28] (2/23) & 0.07 [0.00, 0.34] (1/14) & 0.11 [0.00, 0.48] (1/9) & 1.6 & 45 / 23 \\
+Mivia-IWDD (PatchCore) & 0.2 & post-warm-up raw (control) & 5 & 3 & 0.222 [0.112, 0.371] (10/45) & 290.32 [234.04, 356.05] & 0.26 [0.10, 0.48] (6/23) & 0.36 [0.13, 0.65] (5/14) & 0.11 [0.00, 0.48] (1/9) & 1.2 & 45 / 23 \\
+Mivia-IWDD (supervised) & 0.05 & pooled, full video (exp\_r3) & -- & 15 & 0.000 [0.000, 0.071] (0/50) & 6.70 [1.38, 19.59] & 0.20 [0.10, 0.34] (10/50) & 0.16 [0.05, 0.36] (4/25) & 0.24 [0.09, 0.45] (6/25) & 4.5 & 50 / 50 \\
+Mivia-IWDD (supervised) & 0.05 & warm-up normalised & 5 & 10 & 0.000 [0.000, 0.079] (0/45) & 0.00 [0.00, 11.64] & 0.09 [0.01, 0.28] (2/23) & 0.14 [0.02, 0.43] (2/14) & 0.00 [0.00, 0.34] (0/9) & 7.0 & 45 / 23 \\
+Mivia-IWDD (supervised) & 0.05 & post-warm-up raw (control) & 5 & 15 & 0.000 [0.000, 0.079] (0/45) & 3.16 [0.08, 17.58] & 0.35 [0.16, 0.57] (8/23) & 0.21 [0.05, 0.51] (3/14) & 0.56 [0.21, 0.86] (5/9) & 5.5 & 45 / 23 \\
+Mivia-IWDD (supervised) & 0.1 & pooled, full video (exp\_r3) & -- & 7 & 0.080 [0.022, 0.192] (4/50) & 60.32 [39.75, 87.76] & 0.62 [0.47, 0.75] (31/50) & 0.60 [0.39, 0.79] (15/25) & 0.64 [0.43, 0.82] (16/25) & 2.9 & 50 / 50 \\
+Mivia-IWDD (supervised) & 0.1 & warm-up normalised & 5 & 7 & 0.067 [0.014, 0.183] (3/45) & 12.62 [3.44, 32.32] & 0.13 [0.03, 0.34] (3/23) & 0.14 [0.02, 0.43] (2/14) & 0.11 [0.00, 0.48] (1/9) & 8.3 & 45 / 23 \\
+Mivia-IWDD (supervised) & 0.1 & post-warm-up raw (control) & 5 & 5 & 0.133 [0.051, 0.268] (6/45) & 100.98 [69.07, 142.56] & 0.78 [0.56, 0.93] (18/23) & 0.79 [0.49, 0.95] (11/14) & 0.78 [0.40, 0.97] (7/9) & 2.5 & 45 / 23 \\
+Mivia-IWDD (supervised) & 0.2 & pooled, full video (exp\_r3) & -- & 5 & 0.140 [0.058, 0.267] (7/50) & 111.70 [82.91, 147.27] & 0.72 [0.58, 0.84] (36/50) & 0.72 [0.51, 0.88] (18/25) & 0.72 [0.51, 0.88] (18/25) & 2.0 & 50 / 50 \\
+Mivia-IWDD (supervised) & 0.2 & warm-up normalised & 5 & 3 & 0.111 [0.037, 0.241] (5/45) & 63.11 [38.55, 97.47] & 0.30 [0.13, 0.53] (7/23) & 0.29 [0.08, 0.58] (4/14) & 0.33 [0.07, 0.70] (3/9) & 3.3 & 45 / 23 \\
+Mivia-IWDD (supervised) & 0.2 & post-warm-up raw (control) & 5 & 3 & 0.156 [0.065, 0.295] (7/45) & 201.96 [155.54, 257.90] & 0.83 [0.61, 0.95] (19/23) & 0.86 [0.57, 0.98] (12/14) & 0.78 [0.40, 0.97] (7/9) & 0.9 & 45 / 23 \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Pooled rows use every test video (50 negative, 50 positive, per Mivia backbone). Warm-up rows use the post-warm-up population of the same $W$. Per-video FA is over negative test videos; episode detection over positive test videos (one episode each). Deployment assumption: the first $W$ s of each video are normal installation footage. $L^\ast$ and baseline knobs were selected on training videos only.\end{minipage}
+\end{table}

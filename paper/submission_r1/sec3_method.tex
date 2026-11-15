@@ -197,7 +197,7 @@ Within an episode only a fraction $\pi$ of frames show the act, which suggests \
 \label{eq:dilated}
   f_\pi(p) \;=\; (1-\pi) + \pi\, f(p).
 \end{equation}
-This is a legal betting function. It is a convex combination of the neutral bet and $f$, hence non-increasing with $\int_0^1 f_\pi \le 1$, so \cref{thm:episodic} applies verbatim. We evaluated it as a design option. The mixture over $\kappa$ already absorbs within-episode intermittency, because a milder bet suits an episode with fewer anomalous frames. In the ablation, dilation lengthens censored detection delay from \AblFullDelay\,s to \AblDilationDelay\,s (Online Resource~1, Table~S7). The default grid therefore omits the dilation axis and sets $\pi = 1$. The construction stays in the implementation for backbones whose anomalous frames are much stronger relative to quiet ones than ours.
+This is a legal betting function. It is a convex combination of the neutral bet and $f$, hence non-increasing with $\int_0^1 f_\pi \le 1$, so \cref{thm:episodic} applies verbatim. We evaluated it as a design option. The mixture over $\kappa$ already absorbs within-episode intermittency, because a milder bet suits an episode with fewer anomalous frames. In the ablation, dilation lengthens censored detection delay from \AblFullDelay\,s to \AblDilationDelay\,s (Online Resource~1, Table~S8). The default grid therefore omits the dilation axis and sets $\pi = 1$. The construction stays in the implementation for backbones whose anomalous frames are much stronger relative to quiet ones than ours.
 
 \subsubsection{Staying parameter-free}
 \label{sec:parameterfree}

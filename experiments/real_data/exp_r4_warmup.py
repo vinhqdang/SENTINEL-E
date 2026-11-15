@@ -652,7 +652,7 @@ def write_outputs(payload: Dict, pooled_test: Dict) -> None:
          "dynamic detection [95\\% CI] (k/n)", "median delay (s)", "null videos / episodes"],
         caption=("SENTINEL-E on Mivia-IWDD, pooled calibration (protocol v3, full videos, from "
                  "\\texttt{exp\\_r3\\_per\\_video}) against the same method after a per-camera warm-up "
-                 "(\\,$W$ selected on training videos by the pre-registered rule\\,) and against the "
+                 "(\\,$W$ selected on training videos by the rule fixed before the test evaluation\\,) and against the "
                  "post-warm-up raw scores (control). Each test video is monitored alone with a fresh "
                  "detector; calibration on all usable training normal videos. Warm-up arms: negative test "
                  "videos with less than 2\\,s after warm-up and positives with onset before $W+2$\\,s are excluded."),

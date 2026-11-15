@@ -80,6 +80,25 @@ where no training knob was admissible.
 
 \inputtable{tabr3_mivia_types}
 
+\Cref{tab:r4_warmup} evaluates per-camera warm-up normalisation on Mivia-IWDD. The
+warm-up length $W$ is chosen on training videos by a rule fixed before the test
+evaluation, and each warm-up arm is compared with a control: the same detector on the
+same post-warm-up footage without normalisation. Both arms use the reduced test
+population, because the first $W$\,s of each video serve as the reference. For PatchCore
+at $\alpha=0.1$ with $W=\RFourWarmPCW{}$\,s, normalisation lowers the false alarms from
+\RFourWarmPCRawFAk{} of \RFourWarmPCRawFAn{} to \RFourWarmPCNormFAk{} of \RFourWarmPCNormFAn{}, and the
+detected episodes fall from \RFourWarmPCRawDetk{} of \RFourWarmPCRawDetn{} to
+\RFourWarmPCNormDetk{} of \RFourWarmPCNormDetn{}. With the supervised backbone the control
+raises \RFourWarmSupRawFAk{} of \RFourWarmSupRawFAn{} false alarms and normalisation lowers
+them to \RFourWarmSupNormFAk{} of \RFourWarmSupNormFAn{}, but detection falls from
+\RFourWarmSupRawDetk{} of \RFourWarmSupRawDetn{} to \RFourWarmSupNormDetk{} of \RFourWarmSupNormDetn{}.
+The
+pooled full-video rows of the headline comparison in Section~4.2 are the main result, and the
+warm-up rows are a separate, smaller population.
+
+\inputtable{tabr4_warmup}
+
+
 \section{Unpaired episode comparisons (descriptive)}
 \label{sec:esm-episodes}
 

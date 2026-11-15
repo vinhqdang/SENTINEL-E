@@ -1,0 +1,115 @@
+\begin{table}[t]
+\centering
+\caption{Conditional super-uniformity diagnostic of block p-values on the leave-one-video-out (Ped2, Avenue) and 10-fold (Mivia-IWDD) null streams of the training videos, at $\alpha=0.1$, calibration thinned at $L^\ast(0.1)$ as in exp_r3. Each row is one betting grid: the thinned path, or block p-values for block size $B$, gap $G$ and combiner. Under valid conditionally super-uniform p-values the conditional mean is 0.5. Training videos: UCSD Ped2 (flow): 16; UCSD Ped2 (PatchCore): 16; CUHK Avenue (flow): 16; CUHK Avenue (PatchCore): 16; Mivia-IWDD (flow): 200; Mivia-IWDD (PatchCore): 200.}
+\label{tab:r5_block_diag}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llrrrr}
+\toprule
+dataset & betting grid & lag-1 corr. & $\sup_u(F_n(u)-u)$ & $E[p_b\mid p_{b-1}\le 0.1]$ & pairs with $p_{b-1}\le0.1$ / p-values \\
+\midrule
+UCSD Ped2 (flow) & thinned (exp_r3 path) & 0.818 & 0.000 & 0.091 & 32 / 510 \\
+UCSD Ped2 (flow) & block $B$=5, $G$=0, bonferroni & 0.851 & 0.000 & 0.301 & 2 / 510 \\
+UCSD Ped2 (flow) & block $B$=5, $G$=0, mean2 & 0.931 & 0.000 & 0.109 & 8 / 510 \\
+UCSD Ped2 (flow) & block $B$=5, $G$=5, bonferroni & 0.778 & 0.000 & 0.346 & 1 / 255 \\
+UCSD Ped2 (flow) & block $B$=5, $G$=5, mean2 & 0.914 & 0.000 & 0.140 & 2 / 255 \\
+UCSD Ped2 (flow) & block $B$=10, $G$=0, bonferroni & 0.835 & 0.000 & -- & 0 / 255 \\
+UCSD Ped2 (flow) & block $B$=10, $G$=0, mean2 & 0.954 & 0.000 & 0.127 & 2 / 255 \\
+UCSD Ped2 (flow) & block $B$=10, $G$=10, bonferroni & 0.795 & 0.000 & -- & 0 / 131 \\
+UCSD Ped2 (flow) & block $B$=10, $G$=10, mean2 & 0.929 & 0.000 & 0.100 & 1 / 131 \\
+UCSD Ped2 (flow) & block $B$=20, $G$=0, bonferroni & 0.579 & 0.000 & -- & 0 / 124 \\
+UCSD Ped2 (flow) & block $B$=20, $G$=0, mean2 & 0.949 & 0.000 & 0.124 & 1 / 124 \\
+UCSD Ped2 (flow) & block $B$=20, $G$=20, bonferroni & 0.374 & 0.000 & -- & 0 / 69 \\
+UCSD Ped2 (flow) & block $B$=20, $G$=20, mean2 & 0.909 & 0.000 & -- & 0 / 69 \\
+UCSD Ped2 (flow) & block $B$=30, $G$=0, bonferroni & 0.460 & 0.000 & -- & 0 / 85 \\
+UCSD Ped2 (flow) & block $B$=30, $G$=0, mean2 & 0.952 & 0.000 & -- & 0 / 85 \\
+UCSD Ped2 (flow) & block $B$=30, $G$=30, bonferroni & -0.057 & 0.000 & -- & 0 / 46 \\
+UCSD Ped2 (flow) & block $B$=30, $G$=30, mean2 & 0.924 & 0.000 & -- & 0 / 46 \\
+UCSD Ped2 (PatchCore) & thinned (exp_r3 path) & 0.839 & 0.032 & 0.015 & 23 / 510 \\
+UCSD Ped2 (PatchCore) & block $B$=5, $G$=0, bonferroni & 0.928 & 0.000 & 0.076 & 23 / 510 \\
+UCSD Ped2 (PatchCore) & block $B$=5, $G$=0, mean2 & 0.911 & 0.017 & 0.030 & 23 / 510 \\
+UCSD Ped2 (PatchCore) & block $B$=5, $G$=5, bonferroni & 0.890 & 0.000 & 0.076 & 11 / 255 \\
+UCSD Ped2 (PatchCore) & block $B$=5, $G$=5, mean2 & 0.857 & 0.017 & 0.030 & 11 / 255 \\
+UCSD Ped2 (PatchCore) & block $B$=10, $G$=0, bonferroni & 1.000 & 0.000 & -- & 0 / 255 \\
+UCSD Ped2 (PatchCore) & block $B$=10, $G$=0, mean2 & 0.900 & 0.017 & 0.030 & 11 / 255 \\
+UCSD Ped2 (PatchCore) & block $B$=10, $G$=10, bonferroni & 1.000 & 0.000 & -- & 0 / 131 \\
+UCSD Ped2 (PatchCore) & block $B$=10, $G$=10, mean2 & 0.818 & 0.016 & 0.030 & 5 / 131 \\
+UCSD Ped2 (PatchCore) & block $B$=20, $G$=0, bonferroni & 1.000 & 0.000 & -- & 0 / 124 \\
+UCSD Ped2 (PatchCore) & block $B$=20, $G$=0, mean2 & 0.884 & 0.018 & 0.030 & 5 / 124 \\
+UCSD Ped2 (PatchCore) & block $B$=20, $G$=20, bonferroni & 1.000 & 0.000 & -- & 0 / 69 \\
+UCSD Ped2 (PatchCore) & block $B$=20, $G$=20, mean2 & 0.876 & 0.013 & 0.030 & 2 / 69 \\
+UCSD Ped2 (PatchCore) & block $B$=30, $G$=0, bonferroni & 1.000 & 0.000 & -- & 0 / 85 \\
+UCSD Ped2 (PatchCore) & block $B$=30, $G$=0, mean2 & 0.879 & 0.017 & 0.030 & 3 / 85 \\
+UCSD Ped2 (PatchCore) & block $B$=30, $G$=30, bonferroni & 1.000 & 0.000 & -- & 0 / 46 \\
+UCSD Ped2 (PatchCore) & block $B$=30, $G$=30, mean2 & 0.728 & 0.013 & 0.030 & 1 / 46 \\
+CUHK Avenue (flow) & thinned (exp_r3 path) & 0.761 & 0.000 & 0.203 & 39 / 775 \\
+CUHK Avenue (flow) & block $B$=5, $G$=0, bonferroni & 0.823 & 0.000 & 0.081 & 13 / 3060 \\
+CUHK Avenue (flow) & block $B$=5, $G$=0, mean2 & 0.879 & 0.000 & 0.078 & 47 / 3060 \\
+CUHK Avenue (flow) & block $B$=5, $G$=5, bonferroni & 0.715 & 0.000 & 0.093 & 6 / 1533 \\
+CUHK Avenue (flow) & block $B$=5, $G$=5, mean2 & 0.810 & 0.000 & 0.155 & 24 / 1533 \\
+CUHK Avenue (flow) & block $B$=10, $G$=0, bonferroni & 0.734 & 0.000 & -- & 0 / 1527 \\
+CUHK Avenue (flow) & block $B$=10, $G$=0, mean2 & 0.849 & 0.000 & 0.085 & 21 / 1527 \\
+CUHK Avenue (flow) & block $B$=10, $G$=10, bonferroni & 0.612 & 0.000 & -- & 0 / 768 \\
+CUHK Avenue (flow) & block $B$=10, $G$=10, mean2 & 0.736 & 0.000 & 0.143 & 12 / 768 \\
+CUHK Avenue (flow) & block $B$=20, $G$=0, bonferroni & 0.725 & 0.000 & -- & 0 / 759 \\
+CUHK Avenue (flow) & block $B$=20, $G$=0, mean2 & 0.798 & 0.000 & 0.102 & 10 / 759 \\
+CUHK Avenue (flow) & block $B$=20, $G$=20, bonferroni & 0.447 & 0.000 & -- & 0 / 384 \\
+CUHK Avenue (flow) & block $B$=20, $G$=20, mean2 & 0.625 & 0.000 & 0.251 & 5 / 384 \\
+CUHK Avenue (flow) & block $B$=30, $G$=0, bonferroni & 0.674 & 0.000 & -- & 0 / 504 \\
+CUHK Avenue (flow) & block $B$=30, $G$=0, mean2 & 0.757 & 0.000 & 0.205 & 7 / 504 \\
+CUHK Avenue (flow) & block $B$=30, $G$=30, bonferroni & 0.468 & 0.000 & -- & 0 / 255 \\
+CUHK Avenue (flow) & block $B$=30, $G$=30, mean2 & 0.588 & 0.000 & 0.400 & 3 / 255 \\
+CUHK Avenue (PatchCore) & thinned (exp_r3 path) & 0.758 & 0.000 & 0.083 & 20 / 519 \\
+CUHK Avenue (PatchCore) & block $B$=5, $G$=0, bonferroni & 0.967 & 0.000 & 0.103 & 14 / 3060 \\
+CUHK Avenue (PatchCore) & block $B$=5, $G$=0, mean2 & 0.974 & 0.000 & 0.062 & 46 / 3060 \\
+CUHK Avenue (PatchCore) & block $B$=5, $G$=5, bonferroni & 0.936 & 0.000 & 0.132 & 7 / 1533 \\
+CUHK Avenue (PatchCore) & block $B$=5, $G$=5, mean2 & 0.952 & 0.000 & 0.067 & 22 / 1533 \\
+CUHK Avenue (PatchCore) & block $B$=10, $G$=0, bonferroni & 0.913 & 0.000 & -- & 0 / 1527 \\
+CUHK Avenue (PatchCore) & block $B$=10, $G$=0, mean2 & 0.961 & 0.000 & 0.068 & 23 / 1527 \\
+CUHK Avenue (PatchCore) & block $B$=10, $G$=10, bonferroni & 0.810 & 0.000 & -- & 0 / 768 \\
+CUHK Avenue (PatchCore) & block $B$=10, $G$=10, mean2 & 0.918 & 0.000 & 0.075 & 11 / 768 \\
+CUHK Avenue (PatchCore) & block $B$=20, $G$=0, bonferroni & 0.873 & 0.000 & -- & 0 / 759 \\
+CUHK Avenue (PatchCore) & block $B$=20, $G$=0, mean2 & 0.932 & 0.000 & 0.078 & 11 / 759 \\
+CUHK Avenue (PatchCore) & block $B$=20, $G$=20, bonferroni & 0.644 & 0.000 & -- & 0 / 384 \\
+CUHK Avenue (PatchCore) & block $B$=20, $G$=20, mean2 & 0.854 & 0.000 & 0.096 & 6 / 384 \\
+CUHK Avenue (PatchCore) & block $B$=30, $G$=0, bonferroni & 0.722 & 0.000 & -- & 0 / 504 \\
+CUHK Avenue (PatchCore) & block $B$=30, $G$=0, mean2 & 0.914 & 0.000 & 0.086 & 7 / 504 \\
+CUHK Avenue (PatchCore) & block $B$=30, $G$=30, bonferroni & 0.459 & 0.000 & -- & 0 / 255 \\
+CUHK Avenue (PatchCore) & block $B$=30, $G$=30, mean2 & 0.818 & 0.000 & 0.152 & 3 / 255 \\
+Mivia-IWDD (flow) & thinned (exp_r3 path) & 0.873 & 0.000 & 0.104 & 431 / 5472 \\
+Mivia-IWDD (flow) & block $B$=5, $G$=0, bonferroni & 0.917 & 0.000 & 0.144 & 236 / 10704 \\
+Mivia-IWDD (flow) & block $B$=5, $G$=0, mean2 & 0.942 & 0.000 & 0.094 & 352 / 10704 \\
+Mivia-IWDD (flow) & block $B$=5, $G$=5, bonferroni & 0.829 & 0.000 & 0.256 & 122 / 5393 \\
+Mivia-IWDD (flow) & block $B$=5, $G$=5, mean2 & 0.881 & 0.000 & 0.145 & 178 / 5393 \\
+Mivia-IWDD (flow) & block $B$=10, $G$=0, bonferroni & 0.810 & 0.000 & 0.289 & 60 / 5311 \\
+Mivia-IWDD (flow) & block $B$=10, $G$=0, mean2 & 0.902 & 0.000 & 0.107 & 160 / 5311 \\
+Mivia-IWDD (flow) & block $B$=10, $G$=10, bonferroni & 0.694 & 0.000 & 0.446 & 31 / 2706 \\
+Mivia-IWDD (flow) & block $B$=10, $G$=10, mean2 & 0.808 & 0.000 & 0.137 & 80 / 2706 \\
+Mivia-IWDD (flow) & block $B$=20, $G$=0, bonferroni & 0.714 & 0.000 & 0.509 & 14 / 2605 \\
+Mivia-IWDD (flow) & block $B$=20, $G$=0, mean2 & 0.848 & 0.000 & 0.121 & 61 / 2605 \\
+Mivia-IWDD (flow) & block $B$=20, $G$=20, bonferroni & 0.658 & 0.000 & 0.575 & 8 / 1351 \\
+Mivia-IWDD (flow) & block $B$=20, $G$=20, mean2 & 0.753 & 0.000 & 0.131 & 32 / 1351 \\
+Mivia-IWDD (flow) & block $B$=30, $G$=0, bonferroni & 0.655 & 0.000 & 0.599 & 6 / 1707 \\
+Mivia-IWDD (flow) & block $B$=30, $G$=0, mean2 & 0.834 & 0.000 & 0.148 & 42 / 1707 \\
+Mivia-IWDD (flow) & block $B$=30, $G$=30, bonferroni & 0.635 & 0.000 & 0.560 & 3 / 907 \\
+Mivia-IWDD (flow) & block $B$=30, $G$=30, mean2 & 0.750 & 0.000 & 0.149 & 18 / 907 \\
+Mivia-IWDD (PatchCore) & thinned (exp_r3 path) & 0.985 & 0.000 & 0.058 & 585 / 7780 \\
+Mivia-IWDD (PatchCore) & block $B$=5, $G$=0, bonferroni & 0.964 & 0.000 & 0.063 & 169 / 10704 \\
+Mivia-IWDD (PatchCore) & block $B$=5, $G$=0, mean2 & 0.988 & 0.000 & 0.063 & 430 / 10704 \\
+Mivia-IWDD (PatchCore) & block $B$=5, $G$=5, bonferroni & 0.930 & 0.000 & 0.082 & 85 / 5393 \\
+Mivia-IWDD (PatchCore) & block $B$=5, $G$=5, mean2 & 0.976 & 0.000 & 0.077 & 214 / 5393 \\
+Mivia-IWDD (PatchCore) & block $B$=10, $G$=0, bonferroni & 0.931 & 0.000 & 0.063 & 31 / 5311 \\
+Mivia-IWDD (PatchCore) & block $B$=10, $G$=0, mean2 & 0.984 & 0.000 & 0.063 & 198 / 5311 \\
+Mivia-IWDD (PatchCore) & block $B$=10, $G$=10, bonferroni & 0.876 & 0.000 & 0.180 & 16 / 2706 \\
+Mivia-IWDD (PatchCore) & block $B$=10, $G$=10, mean2 & 0.967 & 0.000 & 0.081 & 96 / 2706 \\
+Mivia-IWDD (PatchCore) & block $B$=20, $G$=0, bonferroni & 0.872 & 0.000 & 0.149 & 15 / 2605 \\
+Mivia-IWDD (PatchCore) & block $B$=20, $G$=0, mean2 & 0.976 & 0.000 & 0.075 & 87 / 2605 \\
+Mivia-IWDD (PatchCore) & block $B$=20, $G$=20, bonferroni & 0.778 & 0.000 & 0.214 & 7 / 1351 \\
+Mivia-IWDD (PatchCore) & block $B$=20, $G$=20, mean2 & 0.961 & 0.000 & 0.073 & 38 / 1351 \\
+Mivia-IWDD (PatchCore) & block $B$=30, $G$=0, bonferroni & 0.810 & 0.000 & 0.269 & 12 / 1707 \\
+Mivia-IWDD (PatchCore) & block $B$=30, $G$=0, mean2 & 0.971 & 0.000 & 0.065 & 50 / 1707 \\
+Mivia-IWDD (PatchCore) & block $B$=30, $G$=30, bonferroni & 0.557 & 0.000 & 0.603 & 7 / 907 \\
+Mivia-IWDD (PatchCore) & block $B$=30, $G$=30, mean2 & 0.965 & 0.000 & 0.091 & 22 / 907 \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Bonferroni: $\min(1,B\min_i p_i)$; mean2: $\min(1,2\bar p)$. Both are marginally super-uniform under arbitrary within-block dependence. The pooled CDF deviation is the maximum positive excess of the empirical CDF over the identity. Counts are the pairs whose earlier p-value is at most 0.1, over all p-values.\end{minipage}
+\end{table}

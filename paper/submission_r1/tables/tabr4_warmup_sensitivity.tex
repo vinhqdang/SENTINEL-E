@@ -1,0 +1,67 @@
+\begin{table}[t]
+\centering
+\caption{Sensitivity of SENTINEL-E to the warm-up length $W$ on the test videos, for both arms. Every $W$ is shown and none is chosen from these numbers: the headline $W$ was fixed on training data (Table~\ref{tab:r4_warmup_select}).}
+\label{tab:r4_warmup_sensitivity}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llllrrrr}
+\toprule
+dataset & $\alpha$ & source & $W$ (s) & $L^\ast_W$ & test neg. / pos. included & test per-video FA [95\% CI] (k/n) & episode detection [95\% CI] (k/n) \\
+\midrule
+Mivia-IWDD (flow) & 0.05 & warm-up normalised & 5 & 10 & 45 / 23 & 0.022 [0.001, 0.118] (1/45) & 0.04 [0.00, 0.22] (1/23) \\
+Mivia-IWDD (flow) & 0.05 & warm-up normalised & 10 & 10 & 35 / 13 & 0.029 [0.001, 0.149] (1/35) & 0.00 [0.00, 0.25] (0/13) \\
+Mivia-IWDD (flow) & 0.05 & warm-up normalised & 20 & 7 & 25 / 4 & 0.040 [0.001, 0.204] (1/25) & 0.00 [0.00, 0.60] (0/4) \\
+Mivia-IWDD (flow) & 0.05 & post-warm-up raw (control) & 5 & 15 & 45 / 23 & 0.067 [0.014, 0.183] (3/45) & 0.00 [0.00, 0.15] (0/23) \\
+Mivia-IWDD (flow) & 0.05 & post-warm-up raw (control) & 10 & 15 & 35 / 13 & 0.029 [0.001, 0.149] (1/35) & 0.00 [0.00, 0.25] (0/13) \\
+Mivia-IWDD (flow) & 0.05 & post-warm-up raw (control) & 20 & 10 & 25 / 4 & 0.120 [0.025, 0.312] (3/25) & 0.00 [0.00, 0.60] (0/4) \\
+Mivia-IWDD (flow) & 0.1 & warm-up normalised & 5 & 7 & 45 / 23 & 0.067 [0.014, 0.183] (3/45) & 0.04 [0.00, 0.22] (1/23) \\
+Mivia-IWDD (flow) & 0.1 & warm-up normalised & 10 & 7 & 35 / 13 & 0.029 [0.001, 0.149] (1/35) & 0.08 [0.00, 0.36] (1/13) \\
+Mivia-IWDD (flow) & 0.1 & warm-up normalised & 20 & 5 & 25 / 4 & 0.040 [0.001, 0.204] (1/25) & 0.00 [0.00, 0.60] (0/4) \\
+Mivia-IWDD (flow) & 0.1 & post-warm-up raw (control) & 5 & 7 & 45 / 23 & 0.067 [0.014, 0.183] (3/45) & 0.00 [0.00, 0.15] (0/23) \\
+Mivia-IWDD (flow) & 0.1 & post-warm-up raw (control) & 10 & 7 & 35 / 13 & 0.086 [0.018, 0.231] (3/35) & 0.00 [0.00, 0.25] (0/13) \\
+Mivia-IWDD (flow) & 0.1 & post-warm-up raw (control) & 20 & 7 & 25 / 4 & 0.120 [0.025, 0.312] (3/25) & 0.00 [0.00, 0.60] (0/4) \\
+Mivia-IWDD (flow) & 0.2 & warm-up normalised & 5 & 5 & 45 / 23 & 0.067 [0.014, 0.183] (3/45) & 0.17 [0.05, 0.39] (4/23) \\
+Mivia-IWDD (flow) & 0.2 & warm-up normalised & 10 & 5 & 35 / 13 & 0.114 [0.032, 0.267] (4/35) & 0.23 [0.05, 0.54] (3/13) \\
+Mivia-IWDD (flow) & 0.2 & warm-up normalised & 20 & 3 & 25 / 4 & 0.280 [0.121, 0.494] (7/25) & 0.25 [0.01, 0.81] (1/4) \\
+Mivia-IWDD (flow) & 0.2 & post-warm-up raw (control) & 5 & 3 & 45 / 23 & 0.156 [0.065, 0.295] (7/45) & 0.04 [0.00, 0.22] (1/23) \\
+Mivia-IWDD (flow) & 0.2 & post-warm-up raw (control) & 10 & 3 & 35 / 13 & 0.171 [0.066, 0.336] (6/35) & 0.00 [0.00, 0.25] (0/13) \\
+Mivia-IWDD (flow) & 0.2 & post-warm-up raw (control) & 20 & 2 & 25 / 4 & 0.320 [0.149, 0.535] (8/25) & 0.00 [0.00, 0.60] (0/4) \\
+Mivia-IWDD (PatchCore) & 0.05 & warm-up normalised & 5 & 15 & 45 / 23 & 0.022 [0.001, 0.118] (1/45) & 0.00 [0.00, 0.15] (0/23) \\
+Mivia-IWDD (PatchCore) & 0.05 & warm-up normalised & 10 & 10 & 35 / 13 & 0.029 [0.001, 0.149] (1/35) & 0.00 [0.00, 0.25] (0/13) \\
+Mivia-IWDD (PatchCore) & 0.05 & warm-up normalised & 20 & 10 & 25 / 4 & 0.000 [0.000, 0.137] (0/25) & 0.00 [0.00, 0.60] (0/4) \\
+Mivia-IWDD (PatchCore) & 0.05 & post-warm-up raw (control) & 5 & 15 & 45 / 23 & 0.089 [0.025, 0.212] (4/45) & 0.04 [0.00, 0.22] (1/23) \\
+Mivia-IWDD (PatchCore) & 0.05 & post-warm-up raw (control) & 10 & 15 & 35 / 13 & 0.086 [0.018, 0.231] (3/35) & 0.08 [0.00, 0.36] (1/13) \\
+Mivia-IWDD (PatchCore) & 0.05 & post-warm-up raw (control) & 20 & 15 & 25 / 4 & 0.000 [0.000, 0.137] (0/25) & 0.00 [0.00, 0.60] (0/4) \\
+Mivia-IWDD (PatchCore) & 0.1 & warm-up normalised & 5 & 5 & 45 / 23 & 0.044 [0.005, 0.151] (2/45) & 0.04 [0.00, 0.22] (1/23) \\
+Mivia-IWDD (PatchCore) & 0.1 & warm-up normalised & 10 & 5 & 35 / 13 & 0.029 [0.001, 0.149] (1/35) & 0.00 [0.00, 0.25] (0/13) \\
+Mivia-IWDD (PatchCore) & 0.1 & warm-up normalised & 20 & 7 & 25 / 4 & 0.040 [0.001, 0.204] (1/25) & 0.00 [0.00, 0.60] (0/4) \\
+Mivia-IWDD (PatchCore) & 0.1 & post-warm-up raw (control) & 5 & 7 & 45 / 23 & 0.178 [0.080, 0.321] (8/45) & 0.17 [0.05, 0.39] (4/23) \\
+Mivia-IWDD (PatchCore) & 0.1 & post-warm-up raw (control) & 10 & 5 & 35 / 13 & 0.171 [0.066, 0.336] (6/35) & 0.23 [0.05, 0.54] (3/13) \\
+Mivia-IWDD (PatchCore) & 0.1 & post-warm-up raw (control) & 20 & 7 & 25 / 4 & 0.120 [0.025, 0.312] (3/25) & 0.00 [0.00, 0.60] (0/4) \\
+Mivia-IWDD (PatchCore) & 0.2 & warm-up normalised & 5 & 3 & 45 / 23 & 0.067 [0.014, 0.183] (3/45) & 0.09 [0.01, 0.28] (2/23) \\
+Mivia-IWDD (PatchCore) & 0.2 & warm-up normalised & 10 & 3 & 35 / 13 & 0.057 [0.007, 0.192] (2/35) & 0.15 [0.02, 0.45] (2/13) \\
+Mivia-IWDD (PatchCore) & 0.2 & warm-up normalised & 20 & 2 & 25 / 4 & 0.200 [0.068, 0.407] (5/25) & 0.00 [0.00, 0.60] (0/4) \\
+Mivia-IWDD (PatchCore) & 0.2 & post-warm-up raw (control) & 5 & 3 & 45 / 23 & 0.222 [0.112, 0.371] (10/45) & 0.26 [0.10, 0.48] (6/23) \\
+Mivia-IWDD (PatchCore) & 0.2 & post-warm-up raw (control) & 10 & 3 & 35 / 13 & 0.257 [0.125, 0.433] (9/35) & 0.23 [0.05, 0.54] (3/13) \\
+Mivia-IWDD (PatchCore) & 0.2 & post-warm-up raw (control) & 20 & 2 & 25 / 4 & 0.280 [0.121, 0.494] (7/25) & 0.25 [0.01, 0.81] (1/4) \\
+Mivia-IWDD (supervised) & 0.05 & warm-up normalised & 5 & 10 & 45 / 23 & 0.000 [0.000, 0.079] (0/45) & 0.09 [0.01, 0.28] (2/23) \\
+Mivia-IWDD (supervised) & 0.05 & warm-up normalised & 10 & 10 & 35 / 13 & 0.000 [0.000, 0.100] (0/35) & 0.00 [0.00, 0.25] (0/13) \\
+Mivia-IWDD (supervised) & 0.05 & warm-up normalised & 20 & 7 & 25 / 4 & 0.040 [0.001, 0.204] (1/25) & 0.25 [0.01, 0.81] (1/4) \\
+Mivia-IWDD (supervised) & 0.05 & post-warm-up raw (control) & 5 & 15 & 45 / 23 & 0.000 [0.000, 0.079] (0/45) & 0.35 [0.16, 0.57] (8/23) \\
+Mivia-IWDD (supervised) & 0.05 & post-warm-up raw (control) & 10 & 10 & 35 / 13 & 0.000 [0.000, 0.100] (0/35) & 0.62 [0.32, 0.86] (8/13) \\
+Mivia-IWDD (supervised) & 0.05 & post-warm-up raw (control) & 20 & 10 & 25 / 4 & 0.000 [0.000, 0.137] (0/25) & 0.50 [0.07, 0.93] (2/4) \\
+Mivia-IWDD (supervised) & 0.1 & warm-up normalised & 5 & 7 & 45 / 23 & 0.067 [0.014, 0.183] (3/45) & 0.13 [0.03, 0.34] (3/23) \\
+Mivia-IWDD (supervised) & 0.1 & warm-up normalised & 10 & 7 & 35 / 13 & 0.000 [0.000, 0.100] (0/35) & 0.00 [0.00, 0.25] (0/13) \\
+Mivia-IWDD (supervised) & 0.1 & warm-up normalised & 20 & 5 & 25 / 4 & 0.040 [0.001, 0.204] (1/25) & 0.25 [0.01, 0.81] (1/4) \\
+Mivia-IWDD (supervised) & 0.1 & post-warm-up raw (control) & 5 & 5 & 45 / 23 & 0.133 [0.051, 0.268] (6/45) & 0.78 [0.56, 0.93] (18/23) \\
+Mivia-IWDD (supervised) & 0.1 & post-warm-up raw (control) & 10 & 5 & 35 / 13 & 0.086 [0.018, 0.231] (3/35) & 0.92 [0.64, 1.00] (12/13) \\
+Mivia-IWDD (supervised) & 0.1 & post-warm-up raw (control) & 20 & 7 & 25 / 4 & 0.040 [0.001, 0.204] (1/25) & 0.75 [0.19, 0.99] (3/4) \\
+Mivia-IWDD (supervised) & 0.2 & warm-up normalised & 5 & 3 & 45 / 23 & 0.111 [0.037, 0.241] (5/45) & 0.30 [0.13, 0.53] (7/23) \\
+Mivia-IWDD (supervised) & 0.2 & warm-up normalised & 10 & 3 & 35 / 13 & 0.143 [0.048, 0.303] (5/35) & 0.54 [0.25, 0.81] (7/13) \\
+Mivia-IWDD (supervised) & 0.2 & warm-up normalised & 20 & 3 & 25 / 4 & 0.200 [0.068, 0.407] (5/25) & 0.75 [0.19, 0.99] (3/4) \\
+Mivia-IWDD (supervised) & 0.2 & post-warm-up raw (control) & 5 & 3 & 45 / 23 & 0.156 [0.065, 0.295] (7/45) & 0.83 [0.61, 0.95] (19/23) \\
+Mivia-IWDD (supervised) & 0.2 & post-warm-up raw (control) & 10 & 3 & 35 / 13 & 0.171 [0.066, 0.336] (6/35) & 0.92 [0.64, 1.00] (12/13) \\
+Mivia-IWDD (supervised) & 0.2 & post-warm-up raw (control) & 20 & 3 & 25 / 4 & 0.080 [0.010, 0.260] (2/25) & 0.75 [0.19, 0.99] (3/4) \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Each row uses its own $L^\ast_W(\alpha)$ selected on training videos for that $W$ and arm.\end{minipage}
+\end{table}

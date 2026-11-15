@@ -1,0 +1,40 @@
+\begin{table}[t]
+\centering
+\caption{Warm-up length selection on training videos only, by the rule fixed before the test evaluation: feasible $W$ meets the per-video false-alarm bound at its own $L^\ast_W(\alpha)$ on training normal videos; among feasible $W$ the one with the highest SENTINEL-E detection on training positive videos is chosen, ties to the smallest $W$.}
+\label{tab:r4_warmup_select}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llrrrlllrl}
+\toprule
+dataset & $\alpha$ & $W$ (s) & $L^\ast_W$ & training-normal LOVO FA (k/n) & FA constraint met & training positives used & training-positive detection (k/n) & normal videos too short & selection \\
+\midrule
+Mivia-IWDD (flow) & 0.05 & 5 & 10 & 7/191 & yes & 106 (92 excl.) & 4/106 & 9 &  \\
+Mivia-IWDD (flow) & 0.05 & 10 & 10 & 5/163 & yes & 50 (148 excl.) & 3/50 & 37 &  \\
+Mivia-IWDD (flow) & 0.05 & 20 & 7 & 3/116 & yes & 14 (184 excl.) & 1/14 & 84 & selected \\
+Mivia-IWDD (flow) & 0.1 & 5 & 7 & 13/191 & yes & 106 (92 excl.) & 8/106 & 9 &  \\
+Mivia-IWDD (flow) & 0.1 & 10 & 7 & 10/163 & yes & 50 (148 excl.) & 5/50 & 37 &  \\
+Mivia-IWDD (flow) & 0.1 & 20 & 5 & 9/116 & yes & 14 (184 excl.) & 5/14 & 84 & selected \\
+Mivia-IWDD (flow) & 0.2 & 5 & 5 & 27/191 & yes & 106 (92 excl.) & 13/106 & 9 &  \\
+Mivia-IWDD (flow) & 0.2 & 10 & 5 & 24/163 & yes & 50 (148 excl.) & 7/50 & 37 &  \\
+Mivia-IWDD (flow) & 0.2 & 20 & 3 & 18/116 & yes & 14 (184 excl.) & 9/14 & 84 & selected \\
+Mivia-IWDD (PatchCore) & 0.05 & 5 & 15 & 6/191 & yes & none scored & not evaluable & 9 & selected \\
+Mivia-IWDD (PatchCore) & 0.05 & 10 & 10 & 7/163 & yes & none scored & not evaluable & 37 &  \\
+Mivia-IWDD (PatchCore) & 0.05 & 20 & 10 & 3/116 & yes & none scored & not evaluable & 84 &  \\
+Mivia-IWDD (PatchCore) & 0.1 & 5 & 5 & 18/191 & yes & none scored & not evaluable & 9 & selected \\
+Mivia-IWDD (PatchCore) & 0.1 & 10 & 5 & 13/163 & yes & none scored & not evaluable & 37 &  \\
+Mivia-IWDD (PatchCore) & 0.1 & 20 & 7 & 7/116 & yes & none scored & not evaluable & 84 &  \\
+Mivia-IWDD (PatchCore) & 0.2 & 5 & 3 & 32/191 & yes & none scored & not evaluable & 9 & selected \\
+Mivia-IWDD (PatchCore) & 0.2 & 10 & 3 & 26/163 & yes & none scored & not evaluable & 37 &  \\
+Mivia-IWDD (PatchCore) & 0.2 & 20 & 2 & 23/116 & yes & none scored & not evaluable & 84 &  \\
+Mivia-IWDD (supervised) & 0.05 & 5 & 10 & 6/191 & yes & none scored & not evaluable & 9 & selected \\
+Mivia-IWDD (supervised) & 0.05 & 10 & 10 & 7/163 & yes & none scored & not evaluable & 37 &  \\
+Mivia-IWDD (supervised) & 0.05 & 20 & 7 & 3/116 & yes & none scored & not evaluable & 84 &  \\
+Mivia-IWDD (supervised) & 0.1 & 5 & 7 & 16/191 & yes & none scored & not evaluable & 9 & selected \\
+Mivia-IWDD (supervised) & 0.1 & 10 & 7 & 11/163 & yes & none scored & not evaluable & 37 &  \\
+Mivia-IWDD (supervised) & 0.1 & 20 & 5 & 8/116 & yes & none scored & not evaluable & 84 &  \\
+Mivia-IWDD (supervised) & 0.2 & 5 & 3 & 37/191 & yes & none scored & not evaluable & 9 & selected \\
+Mivia-IWDD (supervised) & 0.2 & 10 & 3 & 22/163 & yes & none scored & not evaluable & 37 &  \\
+Mivia-IWDD (supervised) & 0.2 & 20 & 3 & 18/116 & yes & none scored & not evaluable & 84 &  \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Training-normal LOVO (Mivia: 10 folds by video index), so denominators are the usable training videos. Detection on training positives is not evaluable for Mivia-IWDD PatchCore (no training-positive PatchCore scores), so the tie-break decides there; see the report.\end{minipage}
+\end{table}

@@ -543,7 +543,7 @@ def run(datasets: Sequence[str], grid: Sequence[int], cache_dir: Path) -> Dict:
                              for kn, (k, nn) in zip(SWEEPS[m], rows)],
                 }
 
-    # Phase C: test evaluation (calibration on all training videos).
+    # Phase C: test evaluation (calibration on all normal training videos).
     specs = []
     for n in names:
         for a in ALPHAS:
@@ -686,7 +686,7 @@ def write_outputs(payload: Dict) -> None:
         rows, ["dataset", r"$\alpha$", "lag $L^\\ast$", "test per-video FA [95\\% CI] (k/n)", "FA / hour [95\\% CI]",
                "episode detection [95\\% CI] (k/n)", "median delay (s)"],
         caption=("SENTINEL-E alone at each nominal $\\alpha$, at $L^\\ast(\\alpha)$, on the test videos "
-                 f"(each monitored alone; calibration on all training videos). Test videos: {video_note}."),
+                 f"(each monitored alone; calibration on all normal training videos). Test videos: {video_note}."),
         label="tab:r3_test_alphas", name="tabr3_test_alphas", align="llrrrrrr",
         notes="Null-trial definitions as in the main-text test table.",
     )
@@ -715,7 +715,7 @@ def write_outputs(payload: Dict) -> None:
                    "median delay (s)", "normal-video FA [95\\% CI] (k/n)"],
             caption=("Mivia-IWDD test results at $\\alpha=0.1$ split by event type (static versus dynamic dumping), "
                      "and per-video false alarms on the negative test videos "
-                     "(100 test videos: 50 negative, 25 static, 25 dynamic), for both backbones."),
+                     "(100 test videos: 50 negative, 25 static, 25 dynamic), for all three backbones."),
             label="tab:r3_mivia_types", name="tabr3_mivia_types", align="llrlrrrr",
             notes=("Detection by event type counts each positive video's episode separately. Normal-video false "
                    "alarms are the primary null trials of the headline table."),
