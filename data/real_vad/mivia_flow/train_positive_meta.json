@@ -1,0 +1,1602 @@
+[
+ {
+  "name": "vid0001.mp4",
+  "n_frames": 58,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0003.mp4",
+  "n_frames": 311,
+  "onset_frame": 180,
+  "onset_s": 18.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0004.mp4",
+  "n_frames": 183,
+  "onset_frame": 150,
+  "onset_s": 15.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0008.mp4",
+  "n_frames": 272,
+  "onset_frame": 160,
+  "onset_s": 16.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0010.mp4",
+  "n_frames": 150,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0014.mp4",
+  "n_frames": 97,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0016.mp4",
+  "n_frames": 218,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "static dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0017.mp4",
+  "n_frames": 174,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0019.mp4",
+  "n_frames": 117,
+  "onset_frame": 100,
+  "onset_s": 10.0,
+  "event_type": "static dumping",
+  "native_fps": 16.67
+ },
+ {
+  "name": "vid0020.mp4",
+  "n_frames": 29,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 10.0
+ },
+ {
+  "name": "vid0022.mp4",
+  "n_frames": 84,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "static dumping",
+  "native_fps": 59.94
+ },
+ {
+  "name": "vid0025.mp4",
+  "n_frames": 48,
+  "onset_frame": 25,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 8.33
+ },
+ {
+  "name": "vid0026.mp4",
+  "n_frames": 131,
+  "onset_frame": 110,
+  "onset_s": 11.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0031.mp4",
+  "n_frames": 123,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 12.54
+ },
+ {
+  "name": "vid0032.mp4",
+  "n_frames": 106,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "static dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0033.mp4",
+  "n_frames": 114,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "static dumping",
+  "native_fps": 12.54
+ },
+ {
+  "name": "vid0034.mp4",
+  "n_frames": 121,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0039.mp4",
+  "n_frames": 109,
+  "onset_frame": 90,
+  "onset_s": 9.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0045.mp4",
+  "n_frames": 222,
+  "onset_frame": 160,
+  "onset_s": 16.0,
+  "event_type": "static dumping",
+  "native_fps": 15.0
+ },
+ {
+  "name": "vid0047.mp4",
+  "n_frames": 329,
+  "onset_frame": 280,
+  "onset_s": 28.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0051.mp4",
+  "n_frames": 44,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0054.mp4",
+  "n_frames": 83,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 24.08
+ },
+ {
+  "name": "vid0056.mp4",
+  "n_frames": 152,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 12.53
+ },
+ {
+  "name": "vid0058.mp4",
+  "n_frames": 180,
+  "onset_frame": 110,
+  "onset_s": 11.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0061.mp4",
+  "n_frames": 203,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0062.mp4",
+  "n_frames": 162,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0066.mp4",
+  "n_frames": 122,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0070.mp4",
+  "n_frames": 55,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0071.mp4",
+  "n_frames": 627,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0076.mp4",
+  "n_frames": 372,
+  "onset_frame": 340,
+  "onset_s": 34.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0078.mp4",
+  "n_frames": 91,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "static dumping",
+  "native_fps": 16.67
+ },
+ {
+  "name": "vid0079.mp4",
+  "n_frames": 200,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0081.mp4",
+  "n_frames": 90,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0082.mp4",
+  "n_frames": 112,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 9.99
+ },
+ {
+  "name": "vid0087.mp4",
+  "n_frames": 48,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0091.mp4",
+  "n_frames": 183,
+  "onset_frame": 160,
+  "onset_s": 16.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0092.mp4",
+  "n_frames": 126,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0093.mp4",
+  "n_frames": 196,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 10.03
+ },
+ {
+  "name": "vid0095.mp4",
+  "n_frames": 121,
+  "onset_frame": 34,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 8.38
+ },
+ {
+  "name": "vid0096.mp4",
+  "n_frames": 75,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "static dumping",
+  "native_fps": 59.94
+ },
+ {
+  "name": "vid0097.mp4",
+  "n_frames": 302,
+  "onset_frame": 120,
+  "onset_s": 12.0,
+  "event_type": "static dumping",
+  "native_fps": 15.0
+ },
+ {
+  "name": "vid0103.mp4",
+  "n_frames": 341,
+  "onset_frame": 100,
+  "onset_s": 10.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0104.mp4",
+  "n_frames": 248,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0107.mp4",
+  "n_frames": 79,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0109.mp4",
+  "n_frames": 160,
+  "onset_frame": 100,
+  "onset_s": 10.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0110.mp4",
+  "n_frames": 230,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0111.mp4",
+  "n_frames": 59,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "static dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0113.mp4",
+  "n_frames": 80,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0125.mp4",
+  "n_frames": 106,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0126.mp4",
+  "n_frames": 200,
+  "onset_frame": 130,
+  "onset_s": 13.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0128.mp4",
+  "n_frames": 574,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0129.mp4",
+  "n_frames": 104,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0132.mp4",
+  "n_frames": 360,
+  "onset_frame": 120,
+  "onset_s": 12.0,
+  "event_type": "static dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0133.mp4",
+  "n_frames": 171,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0136.mp4",
+  "n_frames": 121,
+  "onset_frame": 100,
+  "onset_s": 10.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0139.mp4",
+  "n_frames": 92,
+  "onset_frame": 90,
+  "onset_s": 9.0,
+  "event_type": "static dumping",
+  "native_fps": 12.05
+ },
+ {
+  "name": "vid0140.mp4",
+  "n_frames": 180,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.99
+ },
+ {
+  "name": "vid0142.mp4",
+  "n_frames": 78,
+  "onset_frame": 42,
+  "onset_s": 5.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 8.33
+ },
+ {
+  "name": "vid0144.mp4",
+  "n_frames": 303,
+  "onset_frame": 190,
+  "onset_s": 19.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0146.mp4",
+  "n_frames": 623,
+  "onset_frame": 310,
+  "onset_s": 31.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0147.mp4",
+  "n_frames": 214,
+  "onset_frame": 130,
+  "onset_s": 13.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0148.mp4",
+  "n_frames": 299,
+  "onset_frame": 100,
+  "onset_s": 10.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0150.mp4",
+  "n_frames": 171,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0151.mp4",
+  "n_frames": 315,
+  "onset_frame": 180,
+  "onset_s": 18.0,
+  "event_type": "static dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0152.mp4",
+  "n_frames": 70,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0156.mp4",
+  "n_frames": 48,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0157.mp4",
+  "n_frames": 260,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0161.mp4",
+  "n_frames": 70,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0164.mp4",
+  "n_frames": 302,
+  "onset_frame": 140,
+  "onset_s": 14.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0165.mp4",
+  "n_frames": 62,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0170.mp4",
+  "n_frames": 340,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0175.mp4",
+  "n_frames": 125,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0177.mp4",
+  "n_frames": 105,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0178.mp4",
+  "n_frames": 123,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0179.mp4",
+  "n_frames": 287,
+  "onset_frame": 210,
+  "onset_s": 21.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0181.mp4",
+  "n_frames": 543,
+  "onset_frame": 240,
+  "onset_s": 24.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0183.mp4",
+  "n_frames": 82,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "static dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0185.mp4",
+  "n_frames": 119,
+  "onset_frame": -1,
+  "onset_s": 12.0,
+  "event_type": "static dumping",
+  "native_fps": 25.07
+ },
+ {
+  "name": "vid0187.mp4",
+  "n_frames": 133,
+  "onset_frame": 90,
+  "onset_s": 9.0,
+  "event_type": "static dumping",
+  "native_fps": 15.0
+ },
+ {
+  "name": "vid0195.mp4",
+  "n_frames": 138,
+  "onset_frame": 90,
+  "onset_s": 9.0,
+  "event_type": "static dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0196.mp4",
+  "n_frames": 612,
+  "onset_frame": 140,
+  "onset_s": 14.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0198.mp4",
+  "n_frames": 120,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0200.mp4",
+  "n_frames": 290,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0201.mp4",
+  "n_frames": 62,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0202.mp4",
+  "n_frames": 174,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0207.mp4",
+  "n_frames": 107,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "static dumping",
+  "native_fps": 25.04
+ },
+ {
+  "name": "vid0212.mp4",
+  "n_frames": 73,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0217.mp4",
+  "n_frames": 93,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0220.mp4",
+  "n_frames": 101,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 15.0
+ },
+ {
+  "name": "vid0232.mp4",
+  "n_frames": 671,
+  "onset_frame": 150,
+  "onset_s": 15.0,
+  "event_type": "static dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0233.mp4",
+  "n_frames": 206,
+  "onset_frame": 100,
+  "onset_s": 10.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0234.mp4",
+  "n_frames": 55,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 9.99
+ },
+ {
+  "name": "vid0237.mp4",
+  "n_frames": 72,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0238.mp4",
+  "n_frames": 581,
+  "onset_frame": 280,
+  "onset_s": 28.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0239.mp4",
+  "n_frames": 56,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0240.mp4",
+  "n_frames": 114,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "static dumping",
+  "native_fps": 25.05
+ },
+ {
+  "name": "vid0241.mp4",
+  "n_frames": 550,
+  "onset_frame": 260,
+  "onset_s": 26.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0242.mp4",
+  "n_frames": 442,
+  "onset_frame": 350,
+  "onset_s": 35.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0243.mp4",
+  "n_frames": 89,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0246.mp4",
+  "n_frames": 358,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0248.mp4",
+  "n_frames": 243,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0250.mp4",
+  "n_frames": 122,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0259.mp4",
+  "n_frames": 56,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0262.mp4",
+  "n_frames": 799,
+  "onset_frame": 730,
+  "onset_s": 73.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0263.mp4",
+  "n_frames": 58,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0268.mp4",
+  "n_frames": 59,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0271.mp4",
+  "n_frames": 290,
+  "onset_frame": 120,
+  "onset_s": 12.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0272.mp4",
+  "n_frames": 236,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0273.mp4",
+  "n_frames": 582,
+  "onset_frame": 440,
+  "onset_s": 44.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0274.mp4",
+  "n_frames": 70,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0276.mp4",
+  "n_frames": 88,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0277.mp4",
+  "n_frames": 309,
+  "onset_frame": 290,
+  "onset_s": 29.0,
+  "event_type": "static dumping",
+  "native_fps": 59.94
+ },
+ {
+  "name": "vid0280.mp4",
+  "n_frames": 79,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0286.mp4",
+  "n_frames": 228,
+  "onset_frame": 200,
+  "onset_s": 20.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0287.mp4",
+  "n_frames": 522,
+  "onset_frame": 210,
+  "onset_s": 21.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0288.mp4",
+  "n_frames": 66,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0290.mp4",
+  "n_frames": 86,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "static dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0292.mp4",
+  "n_frames": 179,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0294.mp4",
+  "n_frames": 99,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 10.0
+ },
+ {
+  "name": "vid0299.mp4",
+  "n_frames": 59,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0302.mp4",
+  "n_frames": 164,
+  "onset_frame": 130,
+  "onset_s": 13.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0306.mp4",
+  "n_frames": 87,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0307.mp4",
+  "n_frames": 99,
+  "onset_frame": 9,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 8.33
+ },
+ {
+  "name": "vid0310.mp4",
+  "n_frames": 190,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0311.mp4",
+  "n_frames": 508,
+  "onset_frame": 370,
+  "onset_s": 37.0,
+  "event_type": "static dumping",
+  "native_fps": 12.0
+ },
+ {
+  "name": "vid0312.mp4",
+  "n_frames": 696,
+  "onset_frame": 180,
+  "onset_s": 18.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0313.mp4",
+  "n_frames": 148,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0314.mp4",
+  "n_frames": 310,
+  "onset_frame": 180,
+  "onset_s": 18.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0316.mp4",
+  "n_frames": 78,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0317.mp4",
+  "n_frames": 149,
+  "onset_frame": 90,
+  "onset_s": 9.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0318.mp4",
+  "n_frames": 164,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0319.mp4",
+  "n_frames": 123,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0322.mp4",
+  "n_frames": 177,
+  "onset_frame": 100,
+  "onset_s": 10.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0323.mp4",
+  "n_frames": 93,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0325.mp4",
+  "n_frames": 61,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0326.mp4",
+  "n_frames": 90,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 15.04
+ },
+ {
+  "name": "vid0330.mp4",
+  "n_frames": 89,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 24.0
+ },
+ {
+  "name": "vid0334.mp4",
+  "n_frames": 358,
+  "onset_frame": 210,
+  "onset_s": 21.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0336.mp4",
+  "n_frames": 234,
+  "onset_frame": 200,
+  "onset_s": 20.0,
+  "event_type": "static dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0337.mp4",
+  "n_frames": 48,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0340.mp4",
+  "n_frames": 346,
+  "onset_frame": 140,
+  "onset_s": 14.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0344.mp4",
+  "n_frames": 136,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0347.mp4",
+  "n_frames": 343,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0349.mp4",
+  "n_frames": 121,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0351.mp4",
+  "n_frames": 95,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "static dumping",
+  "native_fps": 16.84
+ },
+ {
+  "name": "vid0353.mp4",
+  "n_frames": 79,
+  "onset_frame": 17,
+  "onset_s": 2.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 8.33
+ },
+ {
+  "name": "vid0354.mp4",
+  "n_frames": 225,
+  "onset_frame": 180,
+  "onset_s": 18.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0355.mp4",
+  "n_frames": 284,
+  "onset_frame": 120,
+  "onset_s": 12.0,
+  "event_type": "static dumping",
+  "native_fps": 15.0
+ },
+ {
+  "name": "vid0356.mp4",
+  "n_frames": 83,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.04
+ },
+ {
+  "name": "vid0358.mp4",
+  "n_frames": 151,
+  "onset_frame": 80,
+  "onset_s": 8.0,
+  "event_type": "static dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0360.mp4",
+  "n_frames": 173,
+  "onset_frame": 109,
+  "onset_s": 13.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 8.37
+ },
+ {
+  "name": "vid0361.mp4",
+  "n_frames": 63,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0362.mp4",
+  "n_frames": 127,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0363.mp4",
+  "n_frames": 173,
+  "onset_frame": 120,
+  "onset_s": 12.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0365.mp4",
+  "n_frames": 70,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0366.mp4",
+  "n_frames": 111,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 12.55
+ },
+ {
+  "name": "vid0368.mp4",
+  "n_frames": 75,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0369.mp4",
+  "n_frames": 195,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 59.94
+ },
+ {
+  "name": "vid0372.mp4",
+  "n_frames": 307,
+  "onset_frame": 170,
+  "onset_s": 17.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0373.mp4",
+  "n_frames": 725,
+  "onset_frame": 320,
+  "onset_s": 32.0,
+  "event_type": "static dumping",
+  "native_fps": 15.0
+ },
+ {
+  "name": "vid0374.mp4",
+  "n_frames": 89,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "static dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0375.mp4",
+  "n_frames": 165,
+  "onset_frame": 120,
+  "onset_s": 12.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.04
+ },
+ {
+  "name": "vid0376.mp4",
+  "n_frames": 44,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0378.mp4",
+  "n_frames": 660,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "static dumping",
+  "native_fps": 10.0
+ },
+ {
+  "name": "vid0381.mp4",
+  "n_frames": 453,
+  "onset_frame": 240,
+  "onset_s": 24.0,
+  "event_type": "static dumping",
+  "native_fps": 12.0
+ },
+ {
+  "name": "vid0382.mp4",
+  "n_frames": 194,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0383.mp4",
+  "n_frames": 86,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0386.mp4",
+  "n_frames": 115,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "static dumping",
+  "native_fps": 15.0
+ },
+ {
+  "name": "vid0392.mp4",
+  "n_frames": 90,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0396.mp4",
+  "n_frames": 59,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0397.mp4",
+  "n_frames": 157,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0400.mp4",
+  "n_frames": 58,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0410.mp4",
+  "n_frames": 156,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0415.mp4",
+  "n_frames": 101,
+  "onset_frame": 90,
+  "onset_s": 9.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 10.0
+ },
+ {
+  "name": "vid0418.mp4",
+  "n_frames": 301,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0421.mp4",
+  "n_frames": 111,
+  "onset_frame": 100,
+  "onset_s": 10.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0429.mp4",
+  "n_frames": 108,
+  "onset_frame": 10,
+  "onset_s": 1.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0430.mp4",
+  "n_frames": 108,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 10.0
+ },
+ {
+  "name": "vid0432.mp4",
+  "n_frames": 74,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0438.mp4",
+  "n_frames": 212,
+  "onset_frame": 0,
+  "onset_s": 0.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0440.mp4",
+  "n_frames": 186,
+  "onset_frame": 170,
+  "onset_s": 17.0,
+  "event_type": "static dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0442.mp4",
+  "n_frames": 93,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0443.mp4",
+  "n_frames": 200,
+  "onset_frame": 70,
+  "onset_s": 7.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 30.0
+ },
+ {
+  "name": "vid0444.mp4",
+  "n_frames": 54,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "static dumping",
+  "native_fps": 24.0
+ },
+ {
+  "name": "vid0447.mp4",
+  "n_frames": 48,
+  "onset_frame": 20,
+  "onset_s": 2.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0452.mp4",
+  "n_frames": 265,
+  "onset_frame": 130,
+  "onset_s": 13.0,
+  "event_type": "static dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0465.mp4",
+  "n_frames": 71,
+  "onset_frame": 40,
+  "onset_s": 4.0,
+  "event_type": "static dumping",
+  "native_fps": 25.06
+ },
+ {
+  "name": "vid0469.mp4",
+  "n_frames": 91,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 10.0
+ },
+ {
+  "name": "vid0473.mp4",
+  "n_frames": 87,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0475.mp4",
+  "n_frames": 167,
+  "onset_frame": 150,
+  "onset_s": 15.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0477.mp4",
+  "n_frames": 202,
+  "onset_frame": 130,
+  "onset_s": 13.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0480.mp4",
+  "n_frames": 507,
+  "onset_frame": 470,
+  "onset_s": 47.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0481.mp4",
+  "n_frames": 141,
+  "onset_frame": -1,
+  "onset_s": 17.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0483.mp4",
+  "n_frames": 347,
+  "onset_frame": 138,
+  "onset_s": 23.0,
+  "event_type": "static dumping",
+  "native_fps": 6.0
+ },
+ {
+  "name": "vid0484.mp4",
+  "n_frames": 159,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0486.mp4",
+  "n_frames": 303,
+  "onset_frame": 130,
+  "onset_s": 13.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 29.97
+ },
+ {
+  "name": "vid0492.mp4",
+  "n_frames": 155,
+  "onset_frame": 30,
+  "onset_s": 3.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 23.98
+ },
+ {
+  "name": "vid0493.mp4",
+  "n_frames": 71,
+  "onset_frame": 50,
+  "onset_s": 5.0,
+  "event_type": "static dumping",
+  "native_fps": 25.0
+ },
+ {
+  "name": "vid0494.mp4",
+  "n_frames": 180,
+  "onset_frame": 150,
+  "onset_s": 15.0,
+  "event_type": "static dumping",
+  "native_fps": 30.05
+ },
+ {
+  "name": "vid0495.mp4",
+  "n_frames": 251,
+  "onset_frame": 60,
+  "onset_s": 6.0,
+  "event_type": "dynamic dumping",
+  "native_fps": 25.0
+ }
+]
