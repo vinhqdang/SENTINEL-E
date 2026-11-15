@@ -782,9 +782,11 @@ def write_outputs(payload: Dict) -> None:
     plt = setup_matplotlib()
     cols = min(3, len(names))
     nrows = int(np.ceil(len(names) / cols))
-    fig, axes = plt.subplots(nrows, cols, figsize=(3.7 * cols, 3.1 * nrows), squeeze=False)
-    for ax in axes.ravel()[len(names):]:
-        ax.set_visible(False)
+    fig, axes = plt.subplots(nrows, cols, figsize=(3.7 * cols, 3.5 * nrows), squeeze=False)
+    from matplotlib.ticker import NullFormatter
+    # Spare grid cells (e.g. the ninth cell with seven datasets) hold the legend, so no
+    # data area is covered and no panel is left blank.
+    spare = list(axes.ravel()[len(names):])
     for ax, n in zip(axes.ravel(), names):
         for m in ["SENTINEL-E"] + BASELINES:
             e = test[n][str(HEADLINE)][m]
@@ -796,12 +798,21 @@ def write_outputs(payload: Dict) -> None:
             ax.errorbar([x], [y], yerr=[[y - lo], [hi - y]], fmt="none", ecolor="#999999", lw=0.8, capsize=2)
             ax.plot([x], [y], label=m, markeredgecolor="white", markeredgewidth=0.4, **style_for(m))
         ax.set_xscale("log")
+        ax.xaxis.set_minor_formatter(NullFormatter())
+        ax.tick_params(axis="x", which="major", labelsize=8)
         ax.set_ylim(-0.02, 1.02)
         ax.set_xlabel(f"test FA per hour (zero drawn at {FA_FLOOR:g})")
         ax.set_ylabel("episode detection rate")
         nt = meta[n]["n_test_videos"]
         ax.set_title(f"{LABELS[n]} ($n$={nt} videos)")
-    axes.ravel()[0].legend(loc="lower right", fontsize=6.0)
+    if spare:
+        handles, labels = axes.ravel()[0].get_legend_handles_labels()
+        spare[0].axis("off")
+        spare[0].legend(handles, labels, loc="center", fontsize=8, frameon=False, title="method")
+        for ax in spare[1:]:
+            ax.set_visible(False)
+    else:
+        axes.ravel()[0].legend(loc="lower right", fontsize=6.0)
     fig.tight_layout()
     for ext in ("pdf", "png"):
         fig.savefig(FIGURES / f"fig_r3_per_video.{ext}")

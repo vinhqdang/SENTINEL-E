@@ -6,7 +6,7 @@ video tree. It needs only numpy, opencv-python-headless and torch / torchvision.
 Example (Colab GPU)::
 
     !python supervised_features_remote.py --raw-root /content/raw/mivia \
-        --arch r2plus1d_18 --out-dir /content/work/sup_feats_r2p1d \
+        --arch mvit_v1_b --out-dir /content/work/out_sup_ckpt \
         --check-indices /content/work/meta/sampled_indices.json --device cuda
 
 ``--raw-root`` holds ``{train,test}/videos/*.mp4`` as the local download lays them out.
@@ -158,7 +158,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--raw-root", required=True, type=Path)
     ap.add_argument("--out-dir", required=True, type=Path)
-    ap.add_argument("--arch", choices=sorted(ARCHS), default="r2plus1d_18")
+    ap.add_argument("--arch", choices=sorted(ARCHS), default="mvit_v1_b")
     ap.add_argument("--check-indices", type=Path, default=None,
                     help="sampled_indices.json (mivia_flow): asserted for every listed video")
     ap.add_argument("--splits", default="train,test")

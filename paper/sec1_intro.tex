@@ -33,8 +33,7 @@ Nothing here is specific to dumping. Loitering, wrong-way motion or an abandoned
 object faces the same gap. The method therefore targets streaming visual anomaly
 surveillance, with dumping as the motivating case. Real-data validation covers UCSD
 Ped2 and CUHK Avenue, which are pedestrian-walkway corpora, and Mivia-IWDD-500,
-which contains illegal-dumping footage. Each corpus is run with an optical-flow and
-a PatchCore backbone, and each test video is monitored alone. The Mivia labels give
+which contains illegal-dumping footage. Each corpus is run with an optical-flow and a PatchCore backbone. Mivia-IWDD is also run with a supervised dumping backbone trained on its training videos only, and each test video is monitored alone. The Mivia labels give
 onset times only, and the real streams are short. The long-horizon claims therefore
 rest on simulation (\cref{sec:limitations}).
 
@@ -99,8 +98,7 @@ evaluation method.
 \item \textbf{An evaluation of guarantees.} We report realised false-alarm rates
       over up to \ExpOneReps{} streams per operating point, against six baselines,
       including E-SHIFT \citep{khan2026eshift}. Delay is reported censored as well as
-      conditionally (\cref{sec:problem}). Real video is monitored per video, with
-      operating points chosen on training videos only (\cref{sec:real-data}).
+      conditionally (\cref{sec:problem}). Real video is monitored per video, with operating points chosen on training videos only (\cref{sec:real-data}). On Mivia-IWDD, a supervised dumping backbone trained on the training videos detects \RThreeSupSEDetk{} of 50 events at \RThreeSupSEFAk{} of 50 false-alarm videos.
       Dilated betting is evaluated as a design option (\cref{sec:dilation}).
 \end{itemize}
 

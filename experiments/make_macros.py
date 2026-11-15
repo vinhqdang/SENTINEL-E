@@ -109,6 +109,7 @@ _RTHREE_TAGS = {
     "ped2": "PedTwoFlow", "ped2_patchcore": "PedTwoPC",
     "avenue": "AvenueFlow", "avenue_patchcore": "AvenuePC",
     "mivia_flow": "MiviaFlow", "mivia_patchcore": "MiviaPC",
+    "mivia_supervised": "MiviaSup",
 }
 
 
@@ -179,6 +180,24 @@ def _collect_real_v3(m: Dict[str, str]) -> None:
             wacf1.append(w["1"]["mean"]); wacf25.append(w["25"]["mean"])
         except (KeyError, TypeError, ValueError):
             continue
+    # Supervised-backbone baselines at the headline alpha (test per-video FA and episode detection).
+    base_tags = {"Fixed threshold": "Fixed", "p-value threshold": "PValue", "CUSUM": "CUSUM",
+                 "Shiryaev--Roberts": "SR", "Parametric e-detector": "Param", "E-SHIFT": "EShift"}
+    try:
+        sup = r3["test"]["mivia_supervised"][head]
+        for name, key in [("SENTINEL-E", "SE")] + list(base_tags.items()):
+            v = sup[name]
+            nl = v["null_primary"]
+            ep = v["episodes"]
+            pre = f"RThreeSup{key}"
+            m[f"{pre}FAk"] = str(nl["k"])
+            m[f"{pre}FAn"] = str(nl["n"])
+            m[f"{pre}FAhrP"] = _fmt(v["fa_per_hour"], 1)
+            m[f"{pre}Detk"] = str(ep["k"])
+            m[f"{pre}Detn"] = str(ep["n"])
+            m[f"{pre}DetP"] = _fmt(ep["pfa"], 2)
+    except (KeyError, TypeError, ValueError):
+        pass
     # Baseline configurations (6 baselines x datasets) with no admissible knob on training videos.
     n_base = n_noknob = 0
     for ds in _RTHREE_TAGS:
@@ -205,6 +224,52 @@ def _collect_real_v3(m: Dict[str, str]) -> None:
         m["RThreeWithinLagOneMax"] = _fmt(max(wacf1), 2)
         m["RThreeWithinLagTwentyFiveMin"] = _fmt(min(wacf25), 2)
         m["RThreeWithinLagTwentyFiveMax"] = _fmt(max(wacf25), 2)
+
+
+_WARM_TAGS = {"mivia_patchcore": "WarmPC", "mivia_supervised": "WarmSup", "mivia_flow": "WarmFlow"}
+
+
+def _collect_warmup(m: Dict[str, str]) -> None:
+    """Warm-up normalisation macros (exp_r4_warmup), headline alpha, selected W per backbone."""
+    try:
+        r4 = load_json("exp_r4_warmup")
+    except FileNotFoundError:
+        return
+    head = str(r4["protocol"]["headline_alpha"])
+    for ds, tag in _WARM_TAGS.items():
+        try:
+            w = r4["selected_W"][ds][head]
+            m[f"RFour{tag}W"] = str(w)
+            arms = r4["test"][ds]["at_selected_W"][head]
+            for arm_key, arm in (("warm", "Norm"), ("raw", "Raw")):
+                a = arms[arm_key]
+                s = a["SENTINEL-E"]
+                nl = s["null_primary"]
+                ep = s["episodes"]
+                pre = f"RFour{tag}{arm}"
+                m[f"{pre}Lag"] = str(a["lag"])
+                m[f"{pre}FAk"] = str(nl["k"])
+                m[f"{pre}FAn"] = str(nl["n"])
+                m[f"{pre}FAp"] = _fmt(nl["pfa"], 3)
+                m[f"{pre}FAhrP"] = _fmt(s["fa_per_hour"], 1)
+                m[f"{pre}FAhrLo"] = _fmt(s["fa_per_hour_ci"][0], 1)
+                m[f"{pre}FAhrHi"] = _fmt(s["fa_per_hour_ci"][1], 1)
+                m[f"{pre}Detk"] = str(ep["k"])
+                m[f"{pre}Detn"] = str(ep["n"])
+                m[f"{pre}DetP"] = _fmt(ep["pfa"], 2)
+                m[f"{pre}DetLo"] = _fmt(ep["ci"][0], 2)
+                m[f"{pre}DetHi"] = _fmt(ep["ci"][1], 2)
+                for key, prefix in (("static dumping", "Static"), ("dynamic dumping", "Dyn")):
+                    bt = s["by_event_type"].get(key)
+                    if bt is None:
+                        continue
+                    d = bt["detection"]
+                    m[f"{pre}{prefix}Detk"] = str(d["k"])
+                    m[f"{pre}{prefix}Detn"] = str(d["n"])
+                m[f"{pre}DelayMed"] = _fmt(s["delay"]["median_s"], 1)
+            m[f"RFour{tag}NullN"] = m[f"RFour{tag}NormFAn"]
+        except (KeyError, TypeError, ValueError):
+            continue
 
 
 def collect() -> Dict[str, str]:
@@ -818,6 +883,7 @@ def collect() -> Dict[str, str]:
         pass
 
     _collect_real_v3(m)
+    _collect_warmup(m)
 
     for name in _OBSOLETE_REAL:
         m.setdefault(name, "\\todo{obsolete}")

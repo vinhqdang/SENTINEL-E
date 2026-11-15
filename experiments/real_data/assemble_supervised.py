@@ -26,7 +26,7 @@ Output ``data/real_vad/mivia_supervised/`` in the layout of ``mivia_patchcore``:
 
 Run from the repository root::
 
-    python3 -m experiments.real_data.assemble_supervised --features-dir /home/user/sup_feats/r2plus1d_18
+    python3 -m experiments.real_data.assemble_supervised --features-dir /home/user/sup_feats/mvit_v1_b
 """
 
 from __future__ import annotations
