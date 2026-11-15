@@ -50,6 +50,13 @@ Mivia-IWDD (PatchCore) & CUSUM & none & -- & -- & 0.022 & -- \\
 Mivia-IWDD (PatchCore) & Shiryaev--Roberts & none & -- & -- & 0.000 & -- \\
 Mivia-IWDD (PatchCore) & Parametric e-detector & none & -- & -- & 0.000 & -- \\
 Mivia-IWDD (PatchCore) & E-SHIFT & none & -- & -- & 0.000 & -- \\
+Mivia-IWDD (supervised) & SENTINEL-E & $0.1$ ($L=7$) & 0.080 (4/50) & 0.62 [0.47, 0.75] (31/50) & 0.482 & yes (1 knob(s), e.g.\ Fixed threshold $0.03$) \\
+Mivia-IWDD (supervised) & Fixed threshold & $0.03$ ($L=7$) & 0.080 (4/50) & 0.70 [0.55, 0.82] (35/50) & 0.572 & -- \\
+Mivia-IWDD (supervised) & p-value threshold & $0.03$ ($L=7$) & 0.080 (4/50) & 0.62 [0.47, 0.75] (31/50) & 0.508 & -- \\
+Mivia-IWDD (supervised) & CUSUM & $20$ ($L=7$) & 0.100 (5/50) & 0.50 [0.36, 0.64] (25/50) & 0.326 & -- \\
+Mivia-IWDD (supervised) & Shiryaev--Roberts & none & -- & -- & 0.258 & -- \\
+Mivia-IWDD (supervised) & Parametric e-detector & none & -- & -- & 0.220 & -- \\
+Mivia-IWDD (supervised) & E-SHIFT & none & -- & -- & 0.152 & -- \\
 \bottomrule
 \end{tabular}}
 \begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Per-video FA is over no-anomaly test videos and the pre-onset segments (at least 2\,s) of anomalous test videos for UCSD Ped2 and CUHK Avenue, and over the negative test videos for Mivia-IWDD, as in Table~\ref{tab:r3_test}. Detection is the proportion of labelled episodes detected (one per positive video for Mivia-IWDD). The highest-detection knob is chosen among knobs with test FA $\le 0.1$; ties go to lower FA. Dominated: some baseline knob at $L^\ast(0.1)$ has test FA no higher and detection strictly higher than SENTINEL-E at $\alpha=0.1$. The Ped2 FA column counts 3 segments, so it is coarse.\end{minipage}
