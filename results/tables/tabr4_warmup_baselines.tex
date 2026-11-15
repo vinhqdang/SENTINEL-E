@@ -1,0 +1,41 @@
+\begin{table}[t]
+\centering
+\caption{Baselines at nominal $\alpha=0.1$ on Mivia-IWDD, pooled (protocol v3) against warm-up normalised scores. Each method is thinned at its own $L^\ast$ for its source and takes its knob from training videos only, by the exp\_r3 rule.}
+\label{tab:r4_warmup_baselines}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llllrr}
+\toprule
+dataset & method & source & knob & test per-video FA [95\% CI] & episode detection [95\% CI] \\
+\midrule
+Mivia-IWDD (flow) & SENTINEL-E & pooled & 0.1 & 0.080 [0.022, 0.192] & 0.00 [0.00, 0.07] \\
+Mivia-IWDD (flow) & SENTINEL-E & warm-up, $W=20$ & 0.1 & 0.040 [0.001, 0.204] & 0.00 [0.00, 0.60] \\
+Mivia-IWDD (flow) & Fixed threshold & pooled & 0.003 & 0.080 [0.022, 0.192] & 0.00 [0.00, 0.07] \\
+Mivia-IWDD (flow) & Fixed threshold & warm-up, $W=20$ & 0.01 & 0.000 [0.000, 0.137] & 0.25 [0.01, 0.81] \\
+Mivia-IWDD (flow) & p-value threshold & pooled & 0.01 & 0.080 [0.022, 0.192] & 0.00 [0.00, 0.07] \\
+Mivia-IWDD (flow) & p-value threshold & warm-up, $W=20$ & 0.01 & 0.000 [0.000, 0.137] & 0.00 [0.00, 0.60] \\
+Mivia-IWDD (flow) & CUSUM & pooled & 16 & 0.100 [0.033, 0.218] & 0.00 [0.00, 0.07] \\
+Mivia-IWDD (flow) & CUSUM & warm-up, $W=20$ & 2 & 0.040 [0.001, 0.204] & 0.25 [0.01, 0.81] \\
+Mivia-IWDD (flow) & Shiryaev--Roberts & pooled & $10^{8}$ & 0.100 [0.033, 0.218] & 0.00 [0.00, 0.07] \\
+Mivia-IWDD (flow) & Shiryaev--Roberts & warm-up, $W=20$ & 100 & 0.040 [0.001, 0.204] & 0.25 [0.01, 0.81] \\
+Mivia-IWDD (flow) & Parametric e-detector & pooled & 0.002 & 0.120 [0.045, 0.243] & 0.00 [0.00, 0.07] \\
+Mivia-IWDD (flow) & Parametric e-detector & warm-up, $W=20$ & 0.5 & 0.040 [0.001, 0.204] & 0.25 [0.01, 0.81] \\
+Mivia-IWDD (flow) & E-SHIFT & pooled & 0.05 & 0.100 [0.033, 0.218] & 0.00 [0.00, 0.07] \\
+Mivia-IWDD (flow) & E-SHIFT & warm-up, $W=20$ & 0.5 & 0.000 [0.000, 0.137] & 0.00 [0.00, 0.60] \\
+Mivia-IWDD (PatchCore) & SENTINEL-E & pooled & 0.1 & 0.180 [0.086, 0.314] & 0.20 [0.10, 0.34] \\
+Mivia-IWDD (PatchCore) & SENTINEL-E & warm-up, $W=5$ & 0.1 & 0.044 [0.005, 0.151] & 0.04 [0.00, 0.22] \\
+Mivia-IWDD (PatchCore) & Fixed threshold & pooled & 0.03 & 0.260 [0.146, 0.403] & 0.14 [0.06, 0.27] \\
+Mivia-IWDD (PatchCore) & Fixed threshold & warm-up, $W=5$ & 0.03 & 0.022 [0.001, 0.118] & 0.09 [0.01, 0.28] \\
+Mivia-IWDD (PatchCore) & p-value threshold & pooled & 0.03 & 0.200 [0.100, 0.337] & 0.14 [0.06, 0.27] \\
+Mivia-IWDD (PatchCore) & p-value threshold & warm-up, $W=5$ & 0.03 & 0.022 [0.001, 0.118] & 0.04 [0.00, 0.22] \\
+Mivia-IWDD (PatchCore) & CUSUM & pooled & 20 & 0.180 [0.086, 0.314] & 0.22 [0.12, 0.36] \\
+Mivia-IWDD (PatchCore) & CUSUM & warm-up, $W=5$ & 6 & 0.022 [0.001, 0.118] & 0.04 [0.00, 0.22] \\
+Mivia-IWDD (PatchCore) & Shiryaev--Roberts & pooled & $10^{8}$ & 0.220 [0.115, 0.360] & 0.22 [0.12, 0.36] \\
+Mivia-IWDD (PatchCore) & Shiryaev--Roberts & warm-up, $W=5$ & 1000 & 0.044 [0.005, 0.151] & 0.04 [0.00, 0.22] \\
+Mivia-IWDD (PatchCore) & Parametric e-detector & pooled & 0.002 & 0.240 [0.131, 0.382] & 0.34 [0.21, 0.49] \\
+Mivia-IWDD (PatchCore) & Parametric e-detector & warm-up, $W=5$ & 0.5 & 0.044 [0.005, 0.151] & 0.04 [0.00, 0.22] \\
+Mivia-IWDD (PatchCore) & E-SHIFT & pooled & 0.002 & 0.360 [0.229, 0.508] & 0.52 [0.37, 0.66] \\
+Mivia-IWDD (PatchCore) & E-SHIFT & warm-up, $W=5$ & 0.5 & 0.022 [0.001, 0.118] & 0.00 [0.00, 0.15] \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Population as in Table~\ref{tab:r4_warmup}.\end{minipage}
+\end{table}
