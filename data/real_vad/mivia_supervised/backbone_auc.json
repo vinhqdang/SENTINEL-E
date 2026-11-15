@@ -1,0 +1,53 @@
+{
+ "auc": 0.8086008421155049,
+ "fps": 10.0,
+ "n_test": 22283,
+ "n_anomalous": 6169,
+ "note": "Supervised per-frame logistic regression on causal 16-frame clip features from a Kinetics-400 pretrained video backbone, trained on the 400 Mivia training videos; 5-fold cross-fitting by video; 3-frame per-video median filter",
+ "config": {
+  "features_dir": "/home/user/sup_feats/mvit_v1_b",
+  "arch_feature_dim": 768,
+  "folds": 5,
+  "fold_rule_train": "class-stratified round-robin in video_id order",
+  "fold_rule_test": "md5(video_id) mod 5",
+  "C_grid": [
+   0.001,
+   0.01,
+   0.1,
+   1.0,
+   10.0
+  ],
+  "C_selected": 0.001,
+  "C_search_oof": {
+   "0.001": {
+    "oof_logloss": 0.48458459973335266,
+    "oof_auc_raw": 0.7637985509260288
+   },
+   "0.01": {
+    "oof_logloss": 0.5880576372146606,
+    "oof_auc_raw": 0.7448198938177304
+   },
+   "0.1": {
+    "oof_logloss": 0.7562777996063232,
+    "oof_auc_raw": 0.7331256434823881
+   },
+   "1.0": {
+    "oof_logloss": 0.907195508480072,
+    "oof_auc_raw": 0.7298959447140978
+   },
+   "10.0": {
+    "oof_logloss": 0.9501317739486694,
+    "oof_auc_raw": 0.7290334934402566
+   }
+  },
+  "score": "logit (decision function), 3-frame per-video median filter",
+  "train_videos": 400,
+  "train_positive_videos": 200,
+  "train_frames": 92062,
+  "train_frames_positive": 19634,
+  "oof_auc_training_smoothed": 0.7657573318069599,
+  "oof_auc_training_raw": 0.7637985509260288,
+  "auc_test_raw": 0.8057709684923836,
+  "calibration": "out-of-fold scores of the 200 normal training videos"
+ }
+}
