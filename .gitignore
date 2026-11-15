@@ -19,3 +19,4 @@ paper/*.fls
 # local checkpoint caches (final results are committed)
 results/cache/
 data/real_vad/*/qualitative_examples.npz
+paper/submission_flat/
