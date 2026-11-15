@@ -1,0 +1,5713 @@
+{
+  "generated_at": "2026-11-15T02:33:37Z",
+  "python": "3.11.18",
+  "numpy": "2.4.6",
+  "payload": {
+    "meta": {
+      "ped2": {
+        "label": "UCSD Ped2 (flow)",
+        "family": "vad",
+        "fps": 25.0,
+        "n_train_videos": 16,
+        "n_folds": 16,
+        "fold_scheme": "lovo",
+        "n_test_videos": 12,
+        "n_test_negative": 0,
+        "n_test_positive": 12,
+        "min_null_frames": 50
+      },
+      "ped2_patchcore": {
+        "label": "UCSD Ped2 (PatchCore)",
+        "family": "vad",
+        "fps": 25.0,
+        "n_train_videos": 16,
+        "n_folds": 16,
+        "fold_scheme": "lovo",
+        "n_test_videos": 12,
+        "n_test_negative": 0,
+        "n_test_positive": 12,
+        "min_null_frames": 50
+      },
+      "avenue": {
+        "label": "CUHK Avenue (flow)",
+        "family": "vad",
+        "fps": 25.0,
+        "n_train_videos": 16,
+        "n_folds": 16,
+        "fold_scheme": "lovo",
+        "n_test_videos": 21,
+        "n_test_negative": 0,
+        "n_test_positive": 21,
+        "min_null_frames": 50
+      },
+      "avenue_patchcore": {
+        "label": "CUHK Avenue (PatchCore)",
+        "family": "vad",
+        "fps": 25.0,
+        "n_train_videos": 16,
+        "n_folds": 16,
+        "fold_scheme": "lovo",
+        "n_test_videos": 21,
+        "n_test_negative": 0,
+        "n_test_positive": 21,
+        "min_null_frames": 50
+      },
+      "mivia_flow": {
+        "label": "Mivia-IWDD (flow)",
+        "family": "mivia",
+        "fps": 10.0,
+        "n_train_videos": 200,
+        "n_folds": 10,
+        "fold_scheme": "mod10",
+        "n_test_videos": 100,
+        "n_test_negative": 50,
+        "n_test_positive": 50,
+        "min_null_frames": 20
+      },
+      "mivia_patchcore": {
+        "label": "Mivia-IWDD (PatchCore)",
+        "family": "mivia",
+        "fps": 10.0,
+        "n_train_videos": 200,
+        "n_folds": 10,
+        "fold_scheme": "mod10",
+        "n_test_videos": 100,
+        "n_test_negative": 50,
+        "n_test_positive": 50,
+        "min_null_frames": 20
+      }
+    },
+    "skipped": [
+      "mivia_supervised"
+    ],
+    "datasets": [
+      "ped2",
+      "ped2_patchcore",
+      "avenue",
+      "avenue_patchcore",
+      "mivia_flow",
+      "mivia_patchcore"
+    ],
+    "block_sizes": [
+      5,
+      10,
+      20,
+      30
+    ],
+    "configurations": {
+      "thin": null,
+      "B5_G0_bonferroni": [
+        5,
+        0,
+        "bonferroni"
+      ],
+      "B5_G0_mean2": [
+        5,
+        0,
+        "mean2"
+      ],
+      "B5_G5_bonferroni": [
+        5,
+        5,
+        "bonferroni"
+      ],
+      "B5_G5_mean2": [
+        5,
+        5,
+        "mean2"
+      ],
+      "B10_G0_bonferroni": [
+        10,
+        0,
+        "bonferroni"
+      ],
+      "B10_G0_mean2": [
+        10,
+        0,
+        "mean2"
+      ],
+      "B10_G10_bonferroni": [
+        10,
+        10,
+        "bonferroni"
+      ],
+      "B10_G10_mean2": [
+        10,
+        10,
+        "mean2"
+      ],
+      "B20_G0_bonferroni": [
+        20,
+        0,
+        "bonferroni"
+      ],
+      "B20_G0_mean2": [
+        20,
+        0,
+        "mean2"
+      ],
+      "B20_G20_bonferroni": [
+        20,
+        20,
+        "bonferroni"
+      ],
+      "B20_G20_mean2": [
+        20,
+        20,
+        "mean2"
+      ],
+      "B30_G0_bonferroni": [
+        30,
+        0,
+        "bonferroni"
+      ],
+      "B30_G0_mean2": [
+        30,
+        0,
+        "mean2"
+      ],
+      "B30_G30_bonferroni": [
+        30,
+        30,
+        "bonferroni"
+      ],
+      "B30_G30_mean2": [
+        30,
+        30,
+        "mean2"
+      ]
+    },
+    "lag_star_exp_r3": {
+      "ped2|0.05": 10,
+      "ped2|0.1": 5,
+      "ped2|0.2": 1,
+      "ped2_patchcore|0.05": 15,
+      "ped2_patchcore|0.1": 5,
+      "ped2_patchcore|0.2": 1,
+      "avenue|0.05": 20,
+      "avenue|0.1": 20,
+      "avenue|0.2": 10,
+      "avenue_patchcore|0.05": 30,
+      "avenue_patchcore|0.1": 30,
+      "avenue_patchcore|0.2": 20,
+      "mivia_flow|0.05": 20,
+      "mivia_flow|0.1": 10,
+      "mivia_flow|0.2": 3,
+      "mivia_patchcore|0.05": 20,
+      "mivia_patchcore|0.1": 7,
+      "mivia_patchcore|0.2": 5
+    },
+    "selection": {
+      "ped2": {
+        "0.05": {
+          "lag_cal": 10,
+          "selected": "B5_G0_mean2",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": null,
+              "cond_mean_train": 0.1561516361740199
+            },
+            "B5_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B5_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.21986683713280844
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B5_G5_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            }
+          },
+          "thin_lovo": {
+            "k": 0,
+            "n": 16
+          }
+        },
+        "0.1": {
+          "lag_cal": 5,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": null,
+              "cond_mean_train": 0.09080138310791792
+            },
+            "B5_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.30147102343772825
+            },
+            "B5_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.10943492299749485
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.3462544035993017
+            },
+            "B5_G5_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.140052137071845
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.12652056293163277
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.10000151229063237
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.12393056905161229
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            }
+          },
+          "thin_lovo": {
+            "k": 1,
+            "n": 16
+          }
+        },
+        "0.2": {
+          "lag_cal": 1,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "admissible": null,
+              "cond_mean_train": 0.0540249100135949
+            },
+            "B5_G0_bonferroni": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.1961018106488945
+            },
+            "B5_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.08807179174504964
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.3237369704353695
+            },
+            "B5_G5_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.11036225619352873
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.2456711126788414
+            },
+            "B10_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08787851755226943
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.33785864093945417
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.10448032708737887
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.41259307557381075
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08794773448230651
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.41259307557381075
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.07481389742404049
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.6188896133607161
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.07907422939989482
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.4001168595106812
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.0792027445427038
+            }
+          },
+          "thin_lovo": {
+            "k": 3,
+            "n": 16
+          }
+        }
+      },
+      "ped2_patchcore": {
+        "0.05": {
+          "lag_cal": 15,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": null,
+              "cond_mean_train": 0.0446615012927571
+            },
+            "B5_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B5_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": false,
+              "cond_mean_train": 0.08932300258551423
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B5_G5_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.0893230025855142
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08932300258551419
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.0893230025855142
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08932300258551423
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08932300258551423
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08932300258551423
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08932300258551423
+            }
+          },
+          "thin_lovo": {
+            "k": 0,
+            "n": 16
+          }
+        },
+        "0.1": {
+          "lag_cal": 5,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": null,
+              "cond_mean_train": 0.015119524791009985
+            },
+            "B5_G0_bonferroni": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.07559762395504994
+            },
+            "B5_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.030239049582019964
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.07559762395504994
+            },
+            "B5_G5_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.030239049582019964
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.030239049582019964
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.03023904958201997
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.03023904958201997
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.03023904958201997
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.030239049582019967
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.030239049582019967
+            }
+          },
+          "thin_lovo": {
+            "k": 1,
+            "n": 16
+          }
+        },
+        "0.2": {
+          "lag_cal": 1,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "admissible": null,
+              "cond_mean_train": 0.03504509889560371
+            },
+            "B5_G0_bonferroni": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.015213855003304338
+            },
+            "B5_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.006085542001321732
+            },
+            "B5_G5_bonferroni": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.015213855003304333
+            },
+            "B5_G5_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.006085542001321733
+            },
+            "B10_G0_bonferroni": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.030427710006608665
+            },
+            "B10_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.006085542001321733
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.030427710006608665
+            },
+            "B10_G10_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.006085542001321733
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.06085542001321733
+            },
+            "B20_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.006085542001321733
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.06085542001321733
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.006085542001321733
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.09128313001982598
+            },
+            "B30_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.00608554200132173
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.09128313001982599
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.00608554200132173
+            }
+          },
+          "thin_lovo": {
+            "k": 3,
+            "n": 16
+          }
+        }
+      },
+      "avenue": {
+        "0.05": {
+          "lag_cal": 20,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": null,
+              "cond_mean_train": 0.20307743571462797
+            },
+            "B5_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08138771091939968
+            },
+            "B5_G0_mean2": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "admissible": false,
+              "cond_mean_train": 0.07787355814406192
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.09264965416882531
+            },
+            "B5_G5_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.1545062719024682
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08549518018628348
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.14278334403388257
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.1017787795644169
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.2506572460603139
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.20544610856462847
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.40002777185376126
+            }
+          },
+          "thin_lovo": {
+            "k": 0,
+            "n": 16
+          }
+        },
+        "0.1": {
+          "lag_cal": 20,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": null,
+              "cond_mean_train": 0.20307743571462797
+            },
+            "B5_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08138771091939968
+            },
+            "B5_G0_mean2": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "admissible": false,
+              "cond_mean_train": 0.07787355814406192
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.09264965416882531
+            },
+            "B5_G5_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.1545062719024682
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.08549518018628348
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.14278334403388257
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.1017787795644169
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.2506572460603139
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.20544610856462847
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.40002777185376126
+            }
+          },
+          "thin_lovo": {
+            "k": 1,
+            "n": 16
+          }
+        },
+        "0.2": {
+          "lag_cal": 10,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "admissible": null,
+              "cond_mean_train": 0.11981794328822636
+            },
+            "B5_G0_bonferroni": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "admissible": true,
+              "cond_mean_train": 0.08162394095640499
+            },
+            "B5_G0_mean2": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "admissible": true,
+              "cond_mean_train": 0.07605995390851192
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.12134796494318557
+            },
+            "B5_G5_mean2": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "admissible": true,
+              "cond_mean_train": 0.1466270761940836
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08679612755690165
+            },
+            "B10_G0_mean2": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "admissible": true,
+              "cond_mean_train": 0.09971414812042206
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.10275838718877517
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.19308095282060542
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08628168095083166
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.19388955841835442
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.16977774729450812
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.34493036918284153
+            }
+          },
+          "thin_lovo": {
+            "k": 3,
+            "n": 16
+          }
+        }
+      },
+      "avenue_patchcore": {
+        "0.05": {
+          "lag_cal": 30,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": null,
+              "cond_mean_train": 0.08258326207070477
+            },
+            "B5_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.10342416184581434
+            },
+            "B5_G0_mean2": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "admissible": false,
+              "cond_mean_train": 0.061562485940327386
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.1319534494765532
+            },
+            "B5_G5_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.06681243047728408
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.06814088891371084
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.07528539441611432
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.07813288100522514
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.09615142964919692
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08565563104499722
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.15178264527515187
+            }
+          },
+          "thin_lovo": {
+            "k": 0,
+            "n": 16
+          }
+        },
+        "0.1": {
+          "lag_cal": 30,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": null,
+              "cond_mean_train": 0.08258326207070477
+            },
+            "B5_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.10342416184581434
+            },
+            "B5_G0_mean2": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "admissible": false,
+              "cond_mean_train": 0.061562485940327386
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.1319534494765532
+            },
+            "B5_G5_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.06681243047728408
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G0_mean2": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "admissible": true,
+              "cond_mean_train": 0.06814088891371084
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.07528539441611432
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.07813288100522514
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.09615142964919692
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08565563104499722
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.15178264527515187
+            }
+          },
+          "thin_lovo": {
+            "k": 0,
+            "n": 16
+          }
+        },
+        "0.2": {
+          "lag_cal": 20,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "admissible": null,
+              "cond_mean_train": 0.07752009149774523
+            },
+            "B5_G0_bonferroni": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "admissible": true,
+              "cond_mean_train": 0.07845822404165044
+            },
+            "B5_G0_mean2": {
+              "k": 3,
+              "n": 16,
+              "pfa": 0.1875,
+              "admissible": true,
+              "cond_mean_train": 0.0583748210147046
+            },
+            "B5_G5_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08318598959482823
+            },
+            "B5_G5_mean2": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "admissible": true,
+              "cond_mean_train": 0.06884774869129938
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G0_mean2": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "admissible": true,
+              "cond_mean_train": 0.06157023343605483
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B10_G10_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.07292217524492493
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.06616881343079553
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.08467956291082561
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.07403023921320552
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": null
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.13620892734438955
+            }
+          },
+          "thin_lovo": {
+            "k": 3,
+            "n": 16
+          }
+        }
+      },
+      "mivia_flow": {
+        "0.05": {
+          "lag_cal": 20,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 3,
+              "n": 200,
+              "pfa": 0.015,
+              "admissible": null,
+              "cond_mean_train": 0.11461767126993531
+            },
+            "B5_G0_bonferroni": {
+              "k": 8,
+              "n": 200,
+              "pfa": 0.04,
+              "admissible": true,
+              "cond_mean_train": 0.16167658198240792
+            },
+            "B5_G0_mean2": {
+              "k": 10,
+              "n": 200,
+              "pfa": 0.05,
+              "admissible": true,
+              "cond_mean_train": 0.09880028627974363
+            },
+            "B5_G5_bonferroni": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.3028414504772863
+            },
+            "B5_G5_mean2": {
+              "k": 6,
+              "n": 200,
+              "pfa": 0.03,
+              "admissible": true,
+              "cond_mean_train": 0.15932780404696614
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.3729602898531577
+            },
+            "B10_G0_mean2": {
+              "k": 5,
+              "n": 200,
+              "pfa": 0.025,
+              "admissible": true,
+              "cond_mean_train": 0.1173647158207913
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.49623724625525145
+            },
+            "B10_G10_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.15085741817023524
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.5721389730783962
+            },
+            "B20_G0_mean2": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.13451709852697347
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.5549124949917292
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.1422061230925259
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.630698136209401
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.15672294026927494
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.6131350578072018
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.1644326802298334
+            }
+          },
+          "thin_lovo": {
+            "k": 3,
+            "n": 200
+          }
+        },
+        "0.1": {
+          "lag_cal": 10,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 15,
+              "n": 200,
+              "pfa": 0.075,
+              "admissible": null,
+              "cond_mean_train": 0.10405595457111597
+            },
+            "B5_G0_bonferroni": {
+              "k": 8,
+              "n": 200,
+              "pfa": 0.04,
+              "admissible": true,
+              "cond_mean_train": 0.144433466964773
+            },
+            "B5_G0_mean2": {
+              "k": 12,
+              "n": 200,
+              "pfa": 0.06,
+              "admissible": true,
+              "cond_mean_train": 0.09364724490642978
+            },
+            "B5_G5_bonferroni": {
+              "k": 2,
+              "n": 200,
+              "pfa": 0.01,
+              "admissible": true,
+              "cond_mean_train": 0.255949871755907
+            },
+            "B5_G5_mean2": {
+              "k": 7,
+              "n": 200,
+              "pfa": 0.035,
+              "admissible": true,
+              "cond_mean_train": 0.14497042091675263
+            },
+            "B10_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.28879732786337886
+            },
+            "B10_G0_mean2": {
+              "k": 7,
+              "n": 200,
+              "pfa": 0.035,
+              "admissible": true,
+              "cond_mean_train": 0.10716711825033276
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.44592197026486213
+            },
+            "B10_G10_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.13742820322148294
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.5086290106329311
+            },
+            "B20_G0_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.12069027263612703
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.5750437937022823
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.13144961597074534
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.5987521039101916
+            },
+            "B30_G0_mean2": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.14801824797325758
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.5604127000630394
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.14883852449869417
+            }
+          },
+          "thin_lovo": {
+            "k": 15,
+            "n": 200
+          }
+        },
+        "0.2": {
+          "lag_cal": 3,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 40,
+              "n": 200,
+              "pfa": 0.2,
+              "admissible": null,
+              "cond_mean_train": 0.0669172639670845
+            },
+            "B5_G0_bonferroni": {
+              "k": 10,
+              "n": 200,
+              "pfa": 0.05,
+              "admissible": true,
+              "cond_mean_train": 0.12148406392352894
+            },
+            "B5_G0_mean2": {
+              "k": 14,
+              "n": 200,
+              "pfa": 0.07,
+              "admissible": true,
+              "cond_mean_train": 0.08499805229170682
+            },
+            "B5_G5_bonferroni": {
+              "k": 7,
+              "n": 200,
+              "pfa": 0.035,
+              "admissible": true,
+              "cond_mean_train": 0.21683740819209388
+            },
+            "B5_G5_mean2": {
+              "k": 9,
+              "n": 200,
+              "pfa": 0.045,
+              "admissible": true,
+              "cond_mean_train": 0.12526681498751852
+            },
+            "B10_G0_bonferroni": {
+              "k": 3,
+              "n": 200,
+              "pfa": 0.015,
+              "admissible": true,
+              "cond_mean_train": 0.2605493533003548
+            },
+            "B10_G0_mean2": {
+              "k": 9,
+              "n": 200,
+              "pfa": 0.045,
+              "admissible": true,
+              "cond_mean_train": 0.1060745575222254
+            },
+            "B10_G10_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.3762696522524063
+            },
+            "B10_G10_mean2": {
+              "k": 2,
+              "n": 200,
+              "pfa": 0.01,
+              "admissible": true,
+              "cond_mean_train": 0.13729197992019618
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.3637748561808239
+            },
+            "B20_G0_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.10704278090352648
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.5128073307212407
+            },
+            "B20_G20_mean2": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.1135704035076536
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.5165536974740246
+            },
+            "B30_G0_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.13065534812814528
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.4883423687203982
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.14450422149242448
+            }
+          },
+          "thin_lovo": {
+            "k": 40,
+            "n": 200
+          }
+        }
+      },
+      "mivia_patchcore": {
+        "0.05": {
+          "lag_cal": 20,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 6,
+              "n": 200,
+              "pfa": 0.03,
+              "admissible": null,
+              "cond_mean_train": 0.07130260840482222
+            },
+            "B5_G0_bonferroni": {
+              "k": 2,
+              "n": 200,
+              "pfa": 0.01,
+              "admissible": true,
+              "cond_mean_train": 0.05737323742655725
+            },
+            "B5_G0_mean2": {
+              "k": 12,
+              "n": 200,
+              "pfa": 0.06,
+              "admissible": false,
+              "cond_mean_train": 0.06303507274987796
+            },
+            "B5_G5_bonferroni": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.06253318212661525
+            },
+            "B5_G5_mean2": {
+              "k": 5,
+              "n": 200,
+              "pfa": 0.025,
+              "admissible": true,
+              "cond_mean_train": 0.07694195358408555
+            },
+            "B10_G0_bonferroni": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.07810384022264015
+            },
+            "B10_G0_mean2": {
+              "k": 4,
+              "n": 200,
+              "pfa": 0.02,
+              "admissible": true,
+              "cond_mean_train": 0.06291137423172222
+            },
+            "B10_G10_bonferroni": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.15663644485952818
+            },
+            "B10_G10_mean2": {
+              "k": 2,
+              "n": 200,
+              "pfa": 0.01,
+              "admissible": true,
+              "cond_mean_train": 0.0885256280473488
+            },
+            "B20_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.20907058059324865
+            },
+            "B20_G0_mean2": {
+              "k": 2,
+              "n": 200,
+              "pfa": 0.01,
+              "admissible": true,
+              "cond_mean_train": 0.06275976511782437
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.275785405079179
+            },
+            "B20_G20_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.06508601126334158
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.25925491152471164
+            },
+            "B30_G0_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.06904579911928253
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.5665971169965507
+            },
+            "B30_G30_mean2": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.11038794661531635
+            }
+          },
+          "thin_lovo": {
+            "k": 6,
+            "n": 200
+          }
+        },
+        "0.1": {
+          "lag_cal": 7,
+          "selected": "B5_G0_mean2",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 20,
+              "n": 200,
+              "pfa": 0.1,
+              "admissible": null,
+              "cond_mean_train": 0.05813234684286555
+            },
+            "B5_G0_bonferroni": {
+              "k": 4,
+              "n": 200,
+              "pfa": 0.02,
+              "admissible": true,
+              "cond_mean_train": 0.06279748164171335
+            },
+            "B5_G0_mean2": {
+              "k": 14,
+              "n": 200,
+              "pfa": 0.07,
+              "admissible": true,
+              "cond_mean_train": 0.06289681095237362
+            },
+            "B5_G5_bonferroni": {
+              "k": 2,
+              "n": 200,
+              "pfa": 0.01,
+              "admissible": true,
+              "cond_mean_train": 0.08228101395873826
+            },
+            "B5_G5_mean2": {
+              "k": 7,
+              "n": 200,
+              "pfa": 0.035,
+              "admissible": true,
+              "cond_mean_train": 0.07663379074820004
+            },
+            "B10_G0_bonferroni": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.063115090594964
+            },
+            "B10_G0_mean2": {
+              "k": 7,
+              "n": 200,
+              "pfa": 0.035,
+              "admissible": true,
+              "cond_mean_train": 0.06255742167091652
+            },
+            "B10_G10_bonferroni": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.1796154022592186
+            },
+            "B10_G10_mean2": {
+              "k": 3,
+              "n": 200,
+              "pfa": 0.015,
+              "admissible": true,
+              "cond_mean_train": 0.08087962524350012
+            },
+            "B20_G0_bonferroni": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.14893046775015203
+            },
+            "B20_G0_mean2": {
+              "k": 3,
+              "n": 200,
+              "pfa": 0.015,
+              "admissible": true,
+              "cond_mean_train": 0.07539495335576783
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.2137328249851342
+            },
+            "B20_G20_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.07303611850320714
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.2686794140370459
+            },
+            "B30_G0_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.06542864241428888
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.6026652361052747
+            },
+            "B30_G30_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.09063892612332934
+            }
+          },
+          "thin_lovo": {
+            "k": 20,
+            "n": 200
+          }
+        },
+        "0.2": {
+          "lag_cal": 5,
+          "selected": "B5_G0_bonferroni",
+          "no_admissible_config": false,
+          "lovo": {
+            "thin": {
+              "k": 31,
+              "n": 200,
+              "pfa": 0.155,
+              "admissible": null,
+              "cond_mean_train": 0.05586328902957059
+            },
+            "B5_G0_bonferroni": {
+              "k": 7,
+              "n": 200,
+              "pfa": 0.035,
+              "admissible": true,
+              "cond_mean_train": 0.06247549264187967
+            },
+            "B5_G0_mean2": {
+              "k": 14,
+              "n": 200,
+              "pfa": 0.07,
+              "admissible": true,
+              "cond_mean_train": 0.061139332862089724
+            },
+            "B5_G5_bonferroni": {
+              "k": 2,
+              "n": 200,
+              "pfa": 0.01,
+              "admissible": true,
+              "cond_mean_train": 0.08516809047107388
+            },
+            "B5_G5_mean2": {
+              "k": 10,
+              "n": 200,
+              "pfa": 0.05,
+              "admissible": true,
+              "cond_mean_train": 0.07460531861977976
+            },
+            "B10_G0_bonferroni": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.06794678045087342
+            },
+            "B10_G0_mean2": {
+              "k": 9,
+              "n": 200,
+              "pfa": 0.045,
+              "admissible": true,
+              "cond_mean_train": 0.061414893200850654
+            },
+            "B10_G10_bonferroni": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.15971005937417332
+            },
+            "B10_G10_mean2": {
+              "k": 3,
+              "n": 200,
+              "pfa": 0.015,
+              "admissible": true,
+              "cond_mean_train": 0.07906124927027458
+            },
+            "B20_G0_bonferroni": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.13803859763413368
+            },
+            "B20_G0_mean2": {
+              "k": 3,
+              "n": 200,
+              "pfa": 0.015,
+              "admissible": true,
+              "cond_mean_train": 0.0726331707010076
+            },
+            "B20_G20_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.20359421663802518
+            },
+            "B20_G20_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.06976498677021743
+            },
+            "B30_G0_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.2407028031706753
+            },
+            "B30_G0_mean2": {
+              "k": 2,
+              "n": 200,
+              "pfa": 0.01,
+              "admissible": true,
+              "cond_mean_train": 0.06369304083410456
+            },
+            "B30_G30_bonferroni": {
+              "k": 0,
+              "n": 200,
+              "pfa": 0.0,
+              "admissible": true,
+              "cond_mean_train": 0.5968049258164659
+            },
+            "B30_G30_mean2": {
+              "k": 1,
+              "n": 200,
+              "pfa": 0.005,
+              "admissible": true,
+              "cond_mean_train": 0.08802320319596024
+            }
+          },
+          "thin_lovo": {
+            "k": 31,
+            "n": 200
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "ped2": {
+        "lag_cal": 5,
+        "per_config": {
+          "thin": {
+            "lag1_corr": 0.8177043216326377,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.09080138310791792,
+            "cond_count": 32,
+            "n_p": 510,
+            "n_pairs": 494
+          },
+          "B5_G0_bonferroni": {
+            "lag1_corr": 0.8505741143935213,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.30147102343772825,
+            "cond_count": 2,
+            "n_p": 510,
+            "n_pairs": 494
+          },
+          "B5_G0_mean2": {
+            "lag1_corr": 0.931301778928991,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.10943492299749485,
+            "cond_count": 8,
+            "n_p": 510,
+            "n_pairs": 494
+          },
+          "B5_G5_bonferroni": {
+            "lag1_corr": 0.7780345363965123,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.3462544035993017,
+            "cond_count": 1,
+            "n_p": 255,
+            "n_pairs": 239
+          },
+          "B5_G5_mean2": {
+            "lag1_corr": 0.9140087990415973,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.140052137071845,
+            "cond_count": 2,
+            "n_p": 255,
+            "n_pairs": 239
+          },
+          "B10_G0_bonferroni": {
+            "lag1_corr": 0.8345533304533623,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 255,
+            "n_pairs": 239
+          },
+          "B10_G0_mean2": {
+            "lag1_corr": 0.9535667885615013,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.12652056293163277,
+            "cond_count": 2,
+            "n_p": 255,
+            "n_pairs": 239
+          },
+          "B10_G10_bonferroni": {
+            "lag1_corr": 0.7945917774697612,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 131,
+            "n_pairs": 115
+          },
+          "B10_G10_mean2": {
+            "lag1_corr": 0.9294475356881988,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.10000151229063237,
+            "cond_count": 1,
+            "n_p": 131,
+            "n_pairs": 115
+          },
+          "B20_G0_bonferroni": {
+            "lag1_corr": 0.5793477280570333,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 124,
+            "n_pairs": 108
+          },
+          "B20_G0_mean2": {
+            "lag1_corr": 0.948981126263629,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.12393056905161229,
+            "cond_count": 1,
+            "n_p": 124,
+            "n_pairs": 108
+          },
+          "B20_G20_bonferroni": {
+            "lag1_corr": 0.3738999699053305,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 69,
+            "n_pairs": 53
+          },
+          "B20_G20_mean2": {
+            "lag1_corr": 0.9093986462702418,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 69,
+            "n_pairs": 53
+          },
+          "B30_G0_bonferroni": {
+            "lag1_corr": 0.45956143689441603,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 85,
+            "n_pairs": 69
+          },
+          "B30_G0_mean2": {
+            "lag1_corr": 0.9524110376276281,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 85,
+            "n_pairs": 69
+          },
+          "B30_G30_bonferroni": {
+            "lag1_corr": -0.05692374619090073,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 46,
+            "n_pairs": 30
+          },
+          "B30_G30_mean2": {
+            "lag1_corr": 0.9242751345849286,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 46,
+            "n_pairs": 30
+          }
+        },
+        "training_labelled_positives": 0
+      },
+      "ped2_patchcore": {
+        "lag_cal": 5,
+        "per_config": {
+          "thin": {
+            "lag1_corr": 0.8391375904865191,
+            "sup_dev_pos": 0.031939298738401775,
+            "cond_mean": 0.015119524791009985,
+            "cond_count": 23,
+            "n_p": 510,
+            "n_pairs": 494
+          },
+          "B5_G0_bonferroni": {
+            "lag1_corr": 0.9277308101976981,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.07559762395504994,
+            "cond_count": 23,
+            "n_p": 510,
+            "n_pairs": 494
+          },
+          "B5_G0_mean2": {
+            "lag1_corr": 0.9111507726967443,
+            "sup_dev_pos": 0.016819773947391793,
+            "cond_mean": 0.030239049582019964,
+            "cond_count": 23,
+            "n_p": 510,
+            "n_pairs": 494
+          },
+          "B5_G5_bonferroni": {
+            "lag1_corr": 0.89044820629008,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.07559762395504994,
+            "cond_count": 11,
+            "n_p": 255,
+            "n_pairs": 239
+          },
+          "B5_G5_mean2": {
+            "lag1_corr": 0.857136682283218,
+            "sup_dev_pos": 0.016819773947391793,
+            "cond_mean": 0.030239049582019964,
+            "cond_count": 11,
+            "n_p": 255,
+            "n_pairs": 239
+          },
+          "B10_G0_bonferroni": {
+            "lag1_corr": 1.0,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 255,
+            "n_pairs": 239
+          },
+          "B10_G0_mean2": {
+            "lag1_corr": 0.9000239012433605,
+            "sup_dev_pos": 0.016819773947391793,
+            "cond_mean": 0.030239049582019964,
+            "cond_count": 11,
+            "n_p": 255,
+            "n_pairs": 239
+          },
+          "B10_G10_bonferroni": {
+            "lag1_corr": 1.0,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 131,
+            "n_pairs": 115
+          },
+          "B10_G10_mean2": {
+            "lag1_corr": 0.8183941331963323,
+            "sup_dev_pos": 0.015562477135537281,
+            "cond_mean": 0.03023904958201997,
+            "cond_count": 5,
+            "n_p": 131,
+            "n_pairs": 115
+          },
+          "B20_G0_bonferroni": {
+            "lag1_corr": 1.0,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 124,
+            "n_pairs": 108
+          },
+          "B20_G0_mean2": {
+            "lag1_corr": 0.8844621479718875,
+            "sup_dev_pos": 0.018148047192173576,
+            "cond_mean": 0.03023904958201997,
+            "cond_count": 5,
+            "n_p": 124,
+            "n_pairs": 108
+          },
+          "B20_G20_bonferroni": {
+            "lag1_corr": 1.0,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 69,
+            "n_pairs": 53
+          },
+          "B20_G20_mean2": {
+            "lag1_corr": 0.8755100099032225,
+            "sup_dev_pos": 0.013239211287545245,
+            "cond_mean": 0.03023904958201997,
+            "cond_count": 2,
+            "n_p": 69,
+            "n_pairs": 53
+          },
+          "B30_G0_bonferroni": {
+            "lag1_corr": 1.0,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 85,
+            "n_pairs": 69
+          },
+          "B30_G0_mean2": {
+            "lag1_corr": 0.8785478116293997,
+            "sup_dev_pos": 0.016819773947391797,
+            "cond_mean": 0.030239049582019967,
+            "cond_count": 3,
+            "n_p": 85,
+            "n_pairs": 69
+          },
+          "B30_G30_bonferroni": {
+            "lag1_corr": 0.9999999999999999,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 46,
+            "n_pairs": 30
+          },
+          "B30_G30_mean2": {
+            "lag1_corr": 0.7277652200518002,
+            "sup_dev_pos": 0.013239211287545249,
+            "cond_mean": 0.030239049582019967,
+            "cond_count": 1,
+            "n_p": 46,
+            "n_pairs": 30
+          }
+        },
+        "training_labelled_positives": 0
+      },
+      "avenue": {
+        "lag_cal": 20,
+        "per_config": {
+          "thin": {
+            "lag1_corr": 0.7614874597105221,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.20307743571462797,
+            "cond_count": 39,
+            "n_p": 775,
+            "n_pairs": 759
+          },
+          "B5_G0_bonferroni": {
+            "lag1_corr": 0.8231866869249553,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.08138771091939968,
+            "cond_count": 13,
+            "n_p": 3060,
+            "n_pairs": 3044
+          },
+          "B5_G0_mean2": {
+            "lag1_corr": 0.8794465215248841,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.07787355814406192,
+            "cond_count": 47,
+            "n_p": 3060,
+            "n_pairs": 3044
+          },
+          "B5_G5_bonferroni": {
+            "lag1_corr": 0.7151169558082955,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.09264965416882531,
+            "cond_count": 6,
+            "n_p": 1533,
+            "n_pairs": 1517
+          },
+          "B5_G5_mean2": {
+            "lag1_corr": 0.8098051069501787,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.1545062719024682,
+            "cond_count": 24,
+            "n_p": 1533,
+            "n_pairs": 1517
+          },
+          "B10_G0_bonferroni": {
+            "lag1_corr": 0.7336355166876539,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 1527,
+            "n_pairs": 1511
+          },
+          "B10_G0_mean2": {
+            "lag1_corr": 0.8493220514259306,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.08549518018628348,
+            "cond_count": 21,
+            "n_p": 1527,
+            "n_pairs": 1511
+          },
+          "B10_G10_bonferroni": {
+            "lag1_corr": 0.612177039344029,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 768,
+            "n_pairs": 752
+          },
+          "B10_G10_mean2": {
+            "lag1_corr": 0.7364980605853767,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.14278334403388257,
+            "cond_count": 12,
+            "n_p": 768,
+            "n_pairs": 752
+          },
+          "B20_G0_bonferroni": {
+            "lag1_corr": 0.7253665509211901,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 759,
+            "n_pairs": 743
+          },
+          "B20_G0_mean2": {
+            "lag1_corr": 0.7977344662548402,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.1017787795644169,
+            "cond_count": 10,
+            "n_p": 759,
+            "n_pairs": 743
+          },
+          "B20_G20_bonferroni": {
+            "lag1_corr": 0.44654301876048186,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 384,
+            "n_pairs": 368
+          },
+          "B20_G20_mean2": {
+            "lag1_corr": 0.6250752789630507,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.2506572460603139,
+            "cond_count": 5,
+            "n_p": 384,
+            "n_pairs": 368
+          },
+          "B30_G0_bonferroni": {
+            "lag1_corr": 0.6735394113865308,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 504,
+            "n_pairs": 488
+          },
+          "B30_G0_mean2": {
+            "lag1_corr": 0.7569405294325487,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.20544610856462847,
+            "cond_count": 7,
+            "n_p": 504,
+            "n_pairs": 488
+          },
+          "B30_G30_bonferroni": {
+            "lag1_corr": 0.4677946528416035,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 255,
+            "n_pairs": 239
+          },
+          "B30_G30_mean2": {
+            "lag1_corr": 0.5879503898142937,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.40002777185376126,
+            "cond_count": 3,
+            "n_p": 255,
+            "n_pairs": 239
+          }
+        },
+        "training_labelled_positives": 0
+      },
+      "avenue_patchcore": {
+        "lag_cal": 30,
+        "per_config": {
+          "thin": {
+            "lag1_corr": 0.7576883567364688,
+            "sup_dev_pos": 1.6472166453063153e-07,
+            "cond_mean": 0.08258326207070477,
+            "cond_count": 20,
+            "n_p": 519,
+            "n_pairs": 503
+          },
+          "B5_G0_bonferroni": {
+            "lag1_corr": 0.967383462899531,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.10342416184581434,
+            "cond_count": 14,
+            "n_p": 3060,
+            "n_pairs": 3044
+          },
+          "B5_G0_mean2": {
+            "lag1_corr": 0.9741840590536861,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.061562485940327386,
+            "cond_count": 46,
+            "n_p": 3060,
+            "n_pairs": 3044
+          },
+          "B5_G5_bonferroni": {
+            "lag1_corr": 0.9358592984707724,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.1319534494765532,
+            "cond_count": 7,
+            "n_p": 1533,
+            "n_pairs": 1517
+          },
+          "B5_G5_mean2": {
+            "lag1_corr": 0.9523195173071756,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.06681243047728408,
+            "cond_count": 22,
+            "n_p": 1533,
+            "n_pairs": 1517
+          },
+          "B10_G0_bonferroni": {
+            "lag1_corr": 0.9134840084623834,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 1527,
+            "n_pairs": 1511
+          },
+          "B10_G0_mean2": {
+            "lag1_corr": 0.9605465723933829,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.06814088891371084,
+            "cond_count": 23,
+            "n_p": 1527,
+            "n_pairs": 1511
+          },
+          "B10_G10_bonferroni": {
+            "lag1_corr": 0.8098813312504911,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 768,
+            "n_pairs": 752
+          },
+          "B10_G10_mean2": {
+            "lag1_corr": 0.91845464879767,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.07528539441611432,
+            "cond_count": 11,
+            "n_p": 768,
+            "n_pairs": 752
+          },
+          "B20_G0_bonferroni": {
+            "lag1_corr": 0.872700992973522,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 759,
+            "n_pairs": 743
+          },
+          "B20_G0_mean2": {
+            "lag1_corr": 0.9317312675664603,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.07813288100522514,
+            "cond_count": 11,
+            "n_p": 759,
+            "n_pairs": 743
+          },
+          "B20_G20_bonferroni": {
+            "lag1_corr": 0.6443687542599041,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 384,
+            "n_pairs": 368
+          },
+          "B20_G20_mean2": {
+            "lag1_corr": 0.8544182172714726,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.09615142964919692,
+            "cond_count": 6,
+            "n_p": 384,
+            "n_pairs": 368
+          },
+          "B30_G0_bonferroni": {
+            "lag1_corr": 0.722325639224833,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 504,
+            "n_pairs": 488
+          },
+          "B30_G0_mean2": {
+            "lag1_corr": 0.9144563340503593,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.08565563104499722,
+            "cond_count": 7,
+            "n_p": 504,
+            "n_pairs": 488
+          },
+          "B30_G30_bonferroni": {
+            "lag1_corr": 0.45948338611518025,
+            "sup_dev_pos": 0.0,
+            "cond_mean": null,
+            "cond_count": 0,
+            "n_p": 255,
+            "n_pairs": 239
+          },
+          "B30_G30_mean2": {
+            "lag1_corr": 0.8184357521465366,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.15178264527515187,
+            "cond_count": 3,
+            "n_p": 255,
+            "n_pairs": 239
+          }
+        },
+        "training_labelled_positives": 0
+      },
+      "mivia_flow": {
+        "lag_cal": 10,
+        "per_config": {
+          "thin": {
+            "lag1_corr": 0.8733075860700436,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.10405595457111597,
+            "cond_count": 431,
+            "n_p": 5472,
+            "n_pairs": 5272
+          },
+          "B5_G0_bonferroni": {
+            "lag1_corr": 0.917000113180985,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.144433466964773,
+            "cond_count": 236,
+            "n_p": 10704,
+            "n_pairs": 10504
+          },
+          "B5_G0_mean2": {
+            "lag1_corr": 0.9420221348331937,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.09364724490642978,
+            "cond_count": 352,
+            "n_p": 10704,
+            "n_pairs": 10504
+          },
+          "B5_G5_bonferroni": {
+            "lag1_corr": 0.8294986036283288,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.255949871755907,
+            "cond_count": 122,
+            "n_p": 5393,
+            "n_pairs": 5193
+          },
+          "B5_G5_mean2": {
+            "lag1_corr": 0.8809901868997181,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.14497042091675263,
+            "cond_count": 178,
+            "n_p": 5393,
+            "n_pairs": 5193
+          },
+          "B10_G0_bonferroni": {
+            "lag1_corr": 0.8099942290427229,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.28879732786337886,
+            "cond_count": 60,
+            "n_p": 5311,
+            "n_pairs": 5111
+          },
+          "B10_G0_mean2": {
+            "lag1_corr": 0.9020159934016462,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.10716711825033276,
+            "cond_count": 160,
+            "n_p": 5311,
+            "n_pairs": 5111
+          },
+          "B10_G10_bonferroni": {
+            "lag1_corr": 0.6939715384865962,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.44592197026486213,
+            "cond_count": 31,
+            "n_p": 2706,
+            "n_pairs": 2506
+          },
+          "B10_G10_mean2": {
+            "lag1_corr": 0.8079727096110371,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.13742820322148294,
+            "cond_count": 80,
+            "n_p": 2706,
+            "n_pairs": 2506
+          },
+          "B20_G0_bonferroni": {
+            "lag1_corr": 0.7137617562618243,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.5086290106329311,
+            "cond_count": 14,
+            "n_p": 2605,
+            "n_pairs": 2405
+          },
+          "B20_G0_mean2": {
+            "lag1_corr": 0.8482898811188689,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.12069027263612703,
+            "cond_count": 61,
+            "n_p": 2605,
+            "n_pairs": 2405
+          },
+          "B20_G20_bonferroni": {
+            "lag1_corr": 0.6583263947351509,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.5750437937022823,
+            "cond_count": 8,
+            "n_p": 1351,
+            "n_pairs": 1151
+          },
+          "B20_G20_mean2": {
+            "lag1_corr": 0.753056752993321,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.13144961597074534,
+            "cond_count": 32,
+            "n_p": 1351,
+            "n_pairs": 1151
+          },
+          "B30_G0_bonferroni": {
+            "lag1_corr": 0.6552813432573609,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.5987521039101916,
+            "cond_count": 6,
+            "n_p": 1707,
+            "n_pairs": 1507
+          },
+          "B30_G0_mean2": {
+            "lag1_corr": 0.8337547159925919,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.14801824797325758,
+            "cond_count": 42,
+            "n_p": 1707,
+            "n_pairs": 1507
+          },
+          "B30_G30_bonferroni": {
+            "lag1_corr": 0.6352623667171924,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.5604127000630394,
+            "cond_count": 3,
+            "n_p": 907,
+            "n_pairs": 707
+          },
+          "B30_G30_mean2": {
+            "lag1_corr": 0.7503077961189621,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.14883852449869417,
+            "cond_count": 18,
+            "n_p": 907,
+            "n_pairs": 707
+          }
+        },
+        "training_labelled_positives": 0
+      },
+      "mivia_patchcore": {
+        "lag_cal": 7,
+        "per_config": {
+          "thin": {
+            "lag1_corr": 0.98474485558945,
+            "sup_dev_pos": 0.000474650726333444,
+            "cond_mean": 0.05813234684286555,
+            "cond_count": 585,
+            "n_p": 7780,
+            "n_pairs": 7580
+          },
+          "B5_G0_bonferroni": {
+            "lag1_corr": 0.9643512556519283,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.06279748164171335,
+            "cond_count": 169,
+            "n_p": 10704,
+            "n_pairs": 10504
+          },
+          "B5_G0_mean2": {
+            "lag1_corr": 0.988484672423677,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.06289681095237362,
+            "cond_count": 430,
+            "n_p": 10704,
+            "n_pairs": 10504
+          },
+          "B5_G5_bonferroni": {
+            "lag1_corr": 0.9299418819787222,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.08228101395873826,
+            "cond_count": 85,
+            "n_p": 5393,
+            "n_pairs": 5193
+          },
+          "B5_G5_mean2": {
+            "lag1_corr": 0.9760723423253743,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.07663379074820004,
+            "cond_count": 214,
+            "n_p": 5393,
+            "n_pairs": 5193
+          },
+          "B10_G0_bonferroni": {
+            "lag1_corr": 0.9307512500128851,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.063115090594964,
+            "cond_count": 31,
+            "n_p": 5311,
+            "n_pairs": 5111
+          },
+          "B10_G0_mean2": {
+            "lag1_corr": 0.9836949659285226,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.06255742167091652,
+            "cond_count": 198,
+            "n_p": 5311,
+            "n_pairs": 5111
+          },
+          "B10_G10_bonferroni": {
+            "lag1_corr": 0.8761587733136658,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.1796154022592186,
+            "cond_count": 16,
+            "n_p": 2706,
+            "n_pairs": 2506
+          },
+          "B10_G10_mean2": {
+            "lag1_corr": 0.9666737967840852,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.08087962524350012,
+            "cond_count": 96,
+            "n_p": 2706,
+            "n_pairs": 2506
+          },
+          "B20_G0_bonferroni": {
+            "lag1_corr": 0.8721595449458647,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.14893046775015203,
+            "cond_count": 15,
+            "n_p": 2605,
+            "n_pairs": 2405
+          },
+          "B20_G0_mean2": {
+            "lag1_corr": 0.9764724893828483,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.07539495335576783,
+            "cond_count": 87,
+            "n_p": 2605,
+            "n_pairs": 2405
+          },
+          "B20_G20_bonferroni": {
+            "lag1_corr": 0.7779239681283104,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.2137328249851342,
+            "cond_count": 7,
+            "n_p": 1351,
+            "n_pairs": 1151
+          },
+          "B20_G20_mean2": {
+            "lag1_corr": 0.9611545781148936,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.07303611850320714,
+            "cond_count": 38,
+            "n_p": 1351,
+            "n_pairs": 1151
+          },
+          "B30_G0_bonferroni": {
+            "lag1_corr": 0.8103306702552122,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.2686794140370459,
+            "cond_count": 12,
+            "n_p": 1707,
+            "n_pairs": 1507
+          },
+          "B30_G0_mean2": {
+            "lag1_corr": 0.971274709573623,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.06542864241428888,
+            "cond_count": 50,
+            "n_p": 1707,
+            "n_pairs": 1507
+          },
+          "B30_G30_bonferroni": {
+            "lag1_corr": 0.5565689220590212,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.6026652361052747,
+            "cond_count": 7,
+            "n_p": 907,
+            "n_pairs": 707
+          },
+          "B30_G30_mean2": {
+            "lag1_corr": 0.9649995016073684,
+            "sup_dev_pos": 0.0,
+            "cond_mean": 0.09063892612332934,
+            "cond_count": 22,
+            "n_p": 907,
+            "n_pairs": 707
+          }
+        },
+        "training_labelled_positives": 0
+      }
+    },
+    "test": {
+      "ped2": {
+        "0.05": {
+          "B5_G0_mean2": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              1050.6302242729562
+            ],
+            "episodes": {
+              "k": 5,
+              "n": 12,
+              "pfa": 0.4166666666666667,
+              "ci": [
+                0.15165222980843013,
+                0.7233303143178942
+              ]
+            },
+            "delay": {
+              "median_s": 4.36,
+              "mean_s": 4.408
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              1050.6302242729562
+            ],
+            "episodes": {
+              "k": 5,
+              "n": 12,
+              "pfa": 0.4166666666666667,
+              "ci": [
+                0.15165222980843013,
+                0.7233303143178942
+              ]
+            },
+            "delay": {
+              "median_s": 4.8,
+              "mean_s": 4.688
+            },
+            "by_event_type": {}
+          }
+        },
+        "0.1": {
+          "B5_G0_bonferroni": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              1050.6302242729562
+            ],
+            "episodes": {
+              "k": 5,
+              "n": 12,
+              "pfa": 0.4166666666666667,
+              "ci": [
+                0.15165222980843013,
+                0.7233303143178942
+              ]
+            },
+            "delay": {
+              "median_s": 4.56,
+              "mean_s": 4.5280000000000005
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 1,
+              "n": 3,
+              "pfa": 0.3333333333333333,
+              "ci": [
+                0.008403758659612636,
+                0.9057006759497539
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 1,
+              "n": 3,
+              "pfa": 0.3333333333333333,
+              "ci": [
+                0.008403758659612636,
+                0.9057006759497539
+              ]
+            },
+            "false_alarms": 1,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 284.81012658227843,
+            "fa_per_hour_ci": [
+              7.21076809679142,
+              1586.8604594446226
+            ],
+            "episodes": {
+              "k": 11,
+              "n": 12,
+              "pfa": 0.9166666666666666,
+              "ci": [
+                0.6152038348490559,
+                0.9978924067681397
+              ]
+            },
+            "delay": {
+              "median_s": 2.72,
+              "mean_s": 2.578181818181818
+            },
+            "by_event_type": {}
+          }
+        },
+        "0.2": {
+          "B5_G0_bonferroni": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              1050.6302242729562
+            ],
+            "episodes": {
+              "k": 10,
+              "n": 12,
+              "pfa": 0.8333333333333334,
+              "ci": [
+                0.5158622513140328,
+                0.9791374745399076
+              ]
+            },
+            "delay": {
+              "median_s": 2.76,
+              "mean_s": 2.7960000000000003
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 3,
+              "n": 3,
+              "pfa": 1.0,
+              "ci": [
+                0.2924017738212866,
+                1.0
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 3,
+              "n": 3,
+              "pfa": 1.0,
+              "ci": [
+                0.2924017738212866,
+                1.0
+              ]
+            },
+            "false_alarms": 14,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 3987.341772151898,
+            "fa_per_hour_ci": [
+              2179.9168508451057,
+              6690.081965079752
+            ],
+            "episodes": {
+              "k": 12,
+              "n": 12,
+              "pfa": 1.0,
+              "ci": [
+                0.7353515306029488,
+                1.0
+              ]
+            },
+            "delay": {
+              "median_s": 0.6,
+              "mean_s": 0.7633333333333333
+            },
+            "by_event_type": {}
+          }
+        }
+      },
+      "ped2_patchcore": {
+        "0.05": {
+          "B5_G0_bonferroni": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              1050.6302242729562
+            ],
+            "episodes": {
+              "k": 0,
+              "n": 12,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2646484693970512
+              ]
+            },
+            "delay": {
+              "median_s": null,
+              "mean_s": null
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              1050.6302242729562
+            ],
+            "episodes": {
+              "k": 0,
+              "n": 12,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2646484693970512
+              ]
+            },
+            "delay": {
+              "median_s": null,
+              "mean_s": null
+            },
+            "by_event_type": {}
+          }
+        },
+        "0.1": {
+          "B5_G0_bonferroni": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              1050.6302242729562
+            ],
+            "episodes": {
+              "k": 5,
+              "n": 12,
+              "pfa": 0.4166666666666667,
+              "ci": [
+                0.15165222980843013,
+                0.7233303143178942
+              ]
+            },
+            "delay": {
+              "median_s": 4.36,
+              "mean_s": 4.16
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              1050.6302242729562
+            ],
+            "episodes": {
+              "k": 7,
+              "n": 12,
+              "pfa": 0.5833333333333334,
+              "ci": [
+                0.2766696856821058,
+                0.8483477701915698
+              ]
+            },
+            "delay": {
+              "median_s": 2.2,
+              "mean_s": 1.9428571428571428
+            },
+            "by_event_type": {}
+          }
+        },
+        "0.2": {
+          "B5_G0_bonferroni": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              1050.6302242729562
+            ],
+            "episodes": {
+              "k": 7,
+              "n": 12,
+              "pfa": 0.5833333333333334,
+              "ci": [
+                0.2766696856821058,
+                0.8483477701915698
+              ]
+            },
+            "delay": {
+              "median_s": 2.36,
+              "mean_s": 2.302857142857143
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 12,
+            "null_primary": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 3,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.7075982261787133
+              ]
+            },
+            "false_alarms": 4,
+            "normal_hours": 0.0035111111111111116,
+            "fa_per_hour": 1139.2405063291137,
+            "fa_per_hour_ci": [
+              310.40469502015577,
+              2916.9081670453556
+            ],
+            "episodes": {
+              "k": 11,
+              "n": 12,
+              "pfa": 0.9166666666666666,
+              "ci": [
+                0.6152038348490559,
+                0.9978924067681397
+              ]
+            },
+            "delay": {
+              "median_s": 0.56,
+              "mean_s": 1.1672727272727272
+            },
+            "by_event_type": {}
+          }
+        }
+      },
+      "avenue": {
+        "0.05": {
+          "B5_G0_bonferroni": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              31.9383502520687
+            ],
+            "episodes": {
+              "k": 1,
+              "n": 74,
+              "pfa": 0.013513513513513514,
+              "ci": [
+                0.0003420740196647972,
+                0.07300738850966484
+              ]
+            },
+            "delay": {
+              "median_s": 10.2,
+              "mean_s": 10.2
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              31.9383502520687
+            ],
+            "episodes": {
+              "k": 2,
+              "n": 74,
+              "pfa": 0.02702702702702703,
+              "ci": [
+                0.003290022718106618,
+                0.09424433948451921
+              ]
+            },
+            "delay": {
+              "median_s": 10.96,
+              "mean_s": 10.96
+            },
+            "by_event_type": {}
+          }
+        },
+        "0.1": {
+          "B5_G0_bonferroni": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              31.9383502520687
+            ],
+            "episodes": {
+              "k": 1,
+              "n": 74,
+              "pfa": 0.013513513513513514,
+              "ci": [
+                0.0003420740196647972,
+                0.07300738850966484
+              ]
+            },
+            "delay": {
+              "median_s": 10.0,
+              "mean_s": 10.0
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              31.9383502520687
+            ],
+            "episodes": {
+              "k": 3,
+              "n": 74,
+              "pfa": 0.04054054054054054,
+              "ci": [
+                0.008439756370764473,
+                0.11393725674656267
+              ]
+            },
+            "delay": {
+              "median_s": 9.44,
+              "mean_s": 7.36
+            },
+            "by_event_type": {}
+          }
+        },
+        "0.2": {
+          "B5_G0_bonferroni": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 16,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.2059072142078227
+              ]
+            },
+            "false_alarms": 0,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 0.0,
+            "fa_per_hour_ci": [
+              0.0,
+              31.9383502520687
+            ],
+            "episodes": {
+              "k": 3,
+              "n": 74,
+              "pfa": 0.04054054054054054,
+              "ci": [
+                0.008439756370764473,
+                0.11393725674656267
+              ]
+            },
+            "delay": {
+              "median_s": 8.4,
+              "mean_s": 7.653333333333333
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 4,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 34.63203463203463,
+            "fa_per_hour_ci": [
+              9.43606384092056,
+              88.6717634234086
+            ],
+            "episodes": {
+              "k": 17,
+              "n": 74,
+              "pfa": 0.22972972972972974,
+              "ci": [
+                0.1398886539586487,
+                0.3421406765105264
+              ]
+            },
+            "delay": {
+              "median_s": 1.84,
+              "mean_s": 2.0752941176470587
+            },
+            "by_event_type": {}
+          }
+        }
+      },
+      "avenue_patchcore": {
+        "0.05": {
+          "B5_G0_bonferroni": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "false_alarms": 22,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 190.47619047619045,
+            "fa_per_hour_ci": [
+              119.37041447817845,
+              288.38324144697174
+            ],
+            "episodes": {
+              "k": 6,
+              "n": 74,
+              "pfa": 0.08108108108108109,
+              "ci": [
+                0.030337572127597034,
+                0.1681712369092363
+              ]
+            },
+            "delay": {
+              "median_s": 1.28,
+              "mean_s": 2.1933333333333334
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "false_alarms": 10,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 86.58008658008657,
+            "fa_per_hour_ci": [
+              41.51851684963145,
+              159.22386183565175
+            ],
+            "episodes": {
+              "k": 5,
+              "n": 74,
+              "pfa": 0.06756756756756757,
+              "ci": [
+                0.02230151232923524,
+                0.15067872854307848
+              ]
+            },
+            "delay": {
+              "median_s": 3.56,
+              "mean_s": 3.344
+            },
+            "by_event_type": {}
+          }
+        },
+        "0.1": {
+          "B5_G0_bonferroni": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "false_alarms": 24,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 207.7922077922078,
+            "fa_per_hour_ci": [
+              133.13638835226374,
+              309.17833414504946
+            ],
+            "episodes": {
+              "k": 8,
+              "n": 74,
+              "pfa": 0.10810810810810811,
+              "ci": [
+                0.04784399039492812,
+                0.201950136231846
+              ]
+            },
+            "delay": {
+              "median_s": 1.3,
+              "mean_s": 1.855
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 1,
+              "n": 16,
+              "pfa": 0.0625,
+              "ci": [
+                0.0015811117227658871,
+                0.3023207384345319
+              ]
+            },
+            "false_alarms": 10,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 86.58008658008657,
+            "fa_per_hour_ci": [
+              41.51851684963145,
+              159.22386183565175
+            ],
+            "episodes": {
+              "k": 9,
+              "n": 74,
+              "pfa": 0.12162162162162163,
+              "ci": [
+                0.05714955432267517,
+                0.21836109666944126
+              ]
+            },
+            "delay": {
+              "median_s": 0.96,
+              "mean_s": 2.32
+            },
+            "by_event_type": {}
+          }
+        },
+        "0.2": {
+          "B5_G0_bonferroni": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 34,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 294.37229437229433,
+            "fa_per_hour_ci": [
+              203.86137129499798,
+              411.355775716044
+            ],
+            "episodes": {
+              "k": 11,
+              "n": 74,
+              "pfa": 0.14864864864864866,
+              "ci": [
+                0.07661057265066147,
+                0.25042666868302416
+              ]
+            },
+            "delay": {
+              "median_s": 0.96,
+              "mean_s": 2.429090909090909
+            },
+            "by_event_type": {}
+          },
+          "thin": {
+            "n_videos": 21,
+            "null_primary": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 0,
+              "n": 0,
+              "pfa": null,
+              "ci": [
+                null,
+                null
+              ]
+            },
+            "null_pre_onset": {
+              "k": 2,
+              "n": 16,
+              "pfa": 0.125,
+              "ci": [
+                0.015513603815413885,
+                0.38347623684926346
+              ]
+            },
+            "false_alarms": 23,
+            "normal_hours": 0.1155,
+            "fa_per_hour": 199.13419913419912,
+            "fa_per_hour_ci": [
+              126.23400032073313,
+              298.7990726825371
+            ],
+            "episodes": {
+              "k": 15,
+              "n": 74,
+              "pfa": 0.20270270270270271,
+              "ci": [
+                0.11812409898639026,
+                0.31219502823361156
+              ]
+            },
+            "delay": {
+              "median_s": 0.92,
+              "mean_s": 2.317333333333333
+            },
+            "by_event_type": {}
+          }
+        }
+      },
+      "mivia_flow": {
+        "0.05": {
+          "B5_G0_bonferroni": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 3,
+              "n": 50,
+              "pfa": 0.06,
+              "ci": [
+                0.01254858783533406,
+                0.16548194660377288
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 3,
+              "n": 50,
+              "pfa": 0.06,
+              "ci": [
+                0.01254858783533406,
+                0.16548194660377288
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 49,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.07251926366427738
+              ]
+            },
+            "false_alarms": 4,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 8.936328658309543,
+            "fa_per_hour_ci": [
+              2.4348487930090412,
+              22.88055059665713
+            ],
+            "episodes": {
+              "k": 0,
+              "n": 50,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.07112173646419764
+              ]
+            },
+            "delay": {
+              "median_s": null,
+              "mean_s": null
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              }
+            }
+          },
+          "thin": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 1,
+              "n": 50,
+              "pfa": 0.02,
+              "ci": [
+                0.000506227983040829,
+                0.1064695457114999
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 1,
+              "n": 50,
+              "pfa": 0.02,
+              "ci": [
+                0.000506227983040829,
+                0.1064695457114999
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 49,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.07251926366427738
+              ]
+            },
+            "false_alarms": 1,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 2.234082164577386,
+            "fa_per_hour_ci": [
+              0.056562063263896956,
+              12.44750912708206
+            ],
+            "episodes": {
+              "k": 0,
+              "n": 50,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.07112173646419764
+              ]
+            },
+            "delay": {
+              "median_s": null,
+              "mean_s": null
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              }
+            }
+          }
+        },
+        "0.1": {
+          "B5_G0_bonferroni": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 3,
+              "n": 50,
+              "pfa": 0.06,
+              "ci": [
+                0.01254858783533406,
+                0.16548194660377288
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 3,
+              "n": 50,
+              "pfa": 0.06,
+              "ci": [
+                0.01254858783533406,
+                0.16548194660377288
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 49,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.07251926366427738
+              ]
+            },
+            "false_alarms": 4,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 8.936328658309543,
+            "fa_per_hour_ci": [
+              2.4348487930090412,
+              22.88055059665713
+            ],
+            "episodes": {
+              "k": 0,
+              "n": 50,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.07112173646419764
+              ]
+            },
+            "delay": {
+              "median_s": null,
+              "mean_s": null
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              }
+            }
+          },
+          "thin": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 4,
+              "n": 50,
+              "pfa": 0.08,
+              "ci": [
+                0.02222796365492976,
+                0.19234278359596277
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 4,
+              "n": 50,
+              "pfa": 0.08,
+              "ci": [
+                0.02222796365492976,
+                0.19234278359596277
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 49,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.07251926366427738
+              ]
+            },
+            "false_alarms": 7,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 15.638575152041703,
+            "fa_per_hour_ci": [
+              6.287518298046119,
+              32.221441791068976
+            ],
+            "episodes": {
+              "k": 0,
+              "n": 50,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.07112173646419764
+              ]
+            },
+            "delay": {
+              "median_s": null,
+              "mean_s": null
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              }
+            }
+          }
+        },
+        "0.2": {
+          "B5_G0_bonferroni": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 4,
+              "n": 50,
+              "pfa": 0.08,
+              "ci": [
+                0.02222796365492976,
+                0.19234278359596277
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 4,
+              "n": 50,
+              "pfa": 0.08,
+              "ci": [
+                0.02222796365492976,
+                0.19234278359596277
+              ]
+            },
+            "null_pre_onset": {
+              "k": 0,
+              "n": 49,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.07251926366427738
+              ]
+            },
+            "false_alarms": 8,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 17.872657316619087,
+            "fa_per_hour_ci": [
+              7.716144865517317,
+              35.216259893692396
+            ],
+            "episodes": {
+              "k": 0,
+              "n": 50,
+              "pfa": 0.0,
+              "ci": [
+                0.0,
+                0.07112173646419764
+              ]
+            },
+            "delay": {
+              "median_s": null,
+              "mean_s": null
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              }
+            }
+          },
+          "thin": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 11,
+              "n": 50,
+              "pfa": 0.22,
+              "ci": [
+                0.11526582603784859,
+                0.3596118885657894
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 11,
+              "n": 50,
+              "pfa": 0.22,
+              "ci": [
+                0.11526582603784859,
+                0.3596118885657894
+              ]
+            },
+            "null_pre_onset": {
+              "k": 3,
+              "n": 49,
+              "pfa": 0.061224489795918366,
+              "ci": [
+                0.012808421318278853,
+                0.16865890070230113
+              ]
+            },
+            "false_alarms": 52,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 116.17227255802408,
+            "fa_per_hour_ci": [
+              86.76300975652254,
+              152.34447950052277
+            ],
+            "episodes": {
+              "k": 2,
+              "n": 50,
+              "pfa": 0.04,
+              "ci": [
+                0.004881433426164382,
+                0.1371376256039674
+              ]
+            },
+            "delay": {
+              "median_s": 3.05,
+              "mean_s": 3.05
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 2,
+                "detection": {
+                  "k": 2,
+                  "n": 25,
+                  "pfa": 0.08,
+                  "ci": [
+                    0.00983959001879751,
+                    0.2603058421052142
+                  ]
+                },
+                "median_s": 3.05,
+                "mean_s": 3.05
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 0,
+                "detection": {
+                  "k": 0,
+                  "n": 25,
+                  "pfa": 0.0,
+                  "ci": [
+                    0.0,
+                    0.1371851715307125
+                  ]
+                },
+                "median_s": null,
+                "mean_s": null
+              }
+            }
+          }
+        }
+      },
+      "mivia_patchcore": {
+        "0.05": {
+          "B5_G0_bonferroni": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 2,
+              "n": 50,
+              "pfa": 0.04,
+              "ci": [
+                0.004881433426164382,
+                0.1371376256039674
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 2,
+              "n": 50,
+              "pfa": 0.04,
+              "ci": [
+                0.004881433426164382,
+                0.1371376256039674
+              ]
+            },
+            "null_pre_onset": {
+              "k": 1,
+              "n": 49,
+              "pfa": 0.02040816326530612,
+              "ci": [
+                0.0005165564975932861,
+                0.10854176396840694
+              ]
+            },
+            "false_alarms": 9,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 20.106739481196474,
+            "fa_per_hour_ci": [
+              9.194081637434529,
+              38.168854676125726
+            ],
+            "episodes": {
+              "k": 4,
+              "n": 50,
+              "pfa": 0.08,
+              "ci": [
+                0.02222796365492976,
+                0.19234278359596277
+              ]
+            },
+            "delay": {
+              "median_s": 0.9,
+              "mean_s": 1.025
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 1,
+                "detection": {
+                  "k": 1,
+                  "n": 25,
+                  "pfa": 0.04,
+                  "ci": [
+                    0.0010121996993108446,
+                    0.203516913922414
+                  ]
+                },
+                "median_s": 0.4,
+                "mean_s": 0.4
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 3,
+                "detection": {
+                  "k": 3,
+                  "n": 25,
+                  "pfa": 0.12,
+                  "ci": [
+                    0.025465396647733195,
+                    0.31219030728623537
+                  ]
+                },
+                "median_s": 1.4,
+                "mean_s": 1.2333333333333334
+              }
+            }
+          },
+          "thin": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 3,
+              "n": 50,
+              "pfa": 0.06,
+              "ci": [
+                0.01254858783533406,
+                0.16548194660377288
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 3,
+              "n": 50,
+              "pfa": 0.06,
+              "ci": [
+                0.01254858783533406,
+                0.16548194660377288
+              ]
+            },
+            "null_pre_onset": {
+              "k": 1,
+              "n": 49,
+              "pfa": 0.02040816326530612,
+              "ci": [
+                0.0005165564975932861,
+                0.10854176396840694
+              ]
+            },
+            "false_alarms": 5,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 11.17041082288693,
+            "fa_per_hour_ci": [
+              3.6270019885976876,
+              26.068012588780945
+            ],
+            "episodes": {
+              "k": 4,
+              "n": 50,
+              "pfa": 0.08,
+              "ci": [
+                0.02222796365492976,
+                0.19234278359596277
+              ]
+            },
+            "delay": {
+              "median_s": 3.5,
+              "mean_s": 3.25
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 1,
+                "detection": {
+                  "k": 1,
+                  "n": 25,
+                  "pfa": 0.04,
+                  "ci": [
+                    0.0010121996993108446,
+                    0.203516913922414
+                  ]
+                },
+                "median_s": 3.0,
+                "mean_s": 3.0
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 3,
+                "detection": {
+                  "k": 3,
+                  "n": 25,
+                  "pfa": 0.12,
+                  "ci": [
+                    0.025465396647733195,
+                    0.31219030728623537
+                  ]
+                },
+                "median_s": 4.0,
+                "mean_s": 3.3333333333333335
+              }
+            }
+          }
+        },
+        "0.1": {
+          "B5_G0_mean2": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 6,
+              "n": 50,
+              "pfa": 0.12,
+              "ci": [
+                0.04533532077366385,
+                0.24310131670556254
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 6,
+              "n": 50,
+              "pfa": 0.12,
+              "ci": [
+                0.04533532077366385,
+                0.24310131670556254
+              ]
+            },
+            "null_pre_onset": {
+              "k": 7,
+              "n": 49,
+              "pfa": 0.14285714285714285,
+              "ci": [
+                0.05942150569031297,
+                0.27242151269559745
+              ]
+            },
+            "false_alarms": 35,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 78.19287576020851,
+            "fa_per_hour_ci": [
+              54.46420295958244,
+              108.74736162883148
+            ],
+            "episodes": {
+              "k": 8,
+              "n": 50,
+              "pfa": 0.16,
+              "ci": [
+                0.07170076718328619,
+                0.2911263065951108
+              ]
+            },
+            "delay": {
+              "median_s": 3.4,
+              "mean_s": 4.2125
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 3,
+                "detection": {
+                  "k": 3,
+                  "n": 25,
+                  "pfa": 0.12,
+                  "ci": [
+                    0.025465396647733195,
+                    0.31219030728623537
+                  ]
+                },
+                "median_s": 1.9,
+                "mean_s": 2.566666666666667
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 5,
+                "detection": {
+                  "k": 5,
+                  "n": 25,
+                  "pfa": 0.2,
+                  "ci": [
+                    0.06831146401248402,
+                    0.4070374322786773
+                  ]
+                },
+                "median_s": 4.9,
+                "mean_s": 5.2
+              }
+            }
+          },
+          "thin": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 9,
+              "n": 50,
+              "pfa": 0.18,
+              "ci": [
+                0.08576207810966364,
+                0.31436941128565027
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 9,
+              "n": 50,
+              "pfa": 0.18,
+              "ci": [
+                0.08576207810966364,
+                0.31436941128565027
+              ]
+            },
+            "null_pre_onset": {
+              "k": 9,
+              "n": 49,
+              "pfa": 0.1836734693877551,
+              "ci": [
+                0.08759033531284728,
+                0.32022121442886853
+              ]
+            },
+            "false_alarms": 45,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 100.53369740598237,
+            "fa_per_hour_ci": [
+              73.32996874621078,
+              134.52199689031383
+            ],
+            "episodes": {
+              "k": 10,
+              "n": 50,
+              "pfa": 0.2,
+              "ci": [
+                0.10030223747257107,
+                0.33718310838348775
+              ]
+            },
+            "delay": {
+              "median_s": 2.75,
+              "mean_s": 6.15
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 5,
+                "detection": {
+                  "k": 5,
+                  "n": 25,
+                  "pfa": 0.2,
+                  "ci": [
+                    0.06831146401248402,
+                    0.4070374322786773
+                  ]
+                },
+                "median_s": 3.5,
+                "mean_s": 8.16
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 5,
+                "detection": {
+                  "k": 5,
+                  "n": 25,
+                  "pfa": 0.2,
+                  "ci": [
+                    0.06831146401248402,
+                    0.4070374322786773
+                  ]
+                },
+                "median_s": 2.0,
+                "mean_s": 4.14
+              }
+            }
+          }
+        },
+        "0.2": {
+          "B5_G0_bonferroni": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 4,
+              "n": 50,
+              "pfa": 0.08,
+              "ci": [
+                0.02222796365492976,
+                0.19234278359596277
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 4,
+              "n": 50,
+              "pfa": 0.08,
+              "ci": [
+                0.02222796365492976,
+                0.19234278359596277
+              ]
+            },
+            "null_pre_onset": {
+              "k": 5,
+              "n": 49,
+              "pfa": 0.10204081632653061,
+              "ci": [
+                0.03397170498395576,
+                0.22227669628262678
+              ]
+            },
+            "false_alarms": 21,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 46.91572545612511,
+            "fa_per_hour_ci": [
+              29.04157350296281,
+              71.71567000483819
+            ],
+            "episodes": {
+              "k": 6,
+              "n": 50,
+              "pfa": 0.12,
+              "ci": [
+                0.04533532077366385,
+                0.24310131670556254
+              ]
+            },
+            "delay": {
+              "median_s": 3.15,
+              "mean_s": 3.15
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 3,
+                "detection": {
+                  "k": 3,
+                  "n": 25,
+                  "pfa": 0.12,
+                  "ci": [
+                    0.025465396647733195,
+                    0.31219030728623537
+                  ]
+                },
+                "median_s": 3.9,
+                "mean_s": 3.4
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 3,
+                "detection": {
+                  "k": 3,
+                  "n": 25,
+                  "pfa": 0.12,
+                  "ci": [
+                    0.025465396647733195,
+                    0.31219030728623537
+                  ]
+                },
+                "median_s": 2.4,
+                "mean_s": 2.9
+              }
+            }
+          },
+          "thin": {
+            "n_videos": 100,
+            "null_primary": {
+              "k": 12,
+              "n": 50,
+              "pfa": 0.24,
+              "ci": [
+                0.13060991619745735,
+                0.3816907481040382
+              ]
+            },
+            "null_no_anomaly": {
+              "k": 12,
+              "n": 50,
+              "pfa": 0.24,
+              "ci": [
+                0.13060991619745735,
+                0.3816907481040382
+              ]
+            },
+            "null_pre_onset": {
+              "k": 11,
+              "n": 49,
+              "pfa": 0.22448979591836735,
+              "ci": [
+                0.1177434205541909,
+                0.3662430188592764
+              ]
+            },
+            "false_alarms": 74,
+            "normal_hours": 0.4476111111111111,
+            "fa_per_hour": 165.32208017872657,
+            "fa_per_hour_ci": [
+              129.8133911356755,
+              207.54673241084018
+            ],
+            "episodes": {
+              "k": 13,
+              "n": 50,
+              "pfa": 0.26,
+              "ci": [
+                0.1463005843965545,
+                0.40344767872806564
+              ]
+            },
+            "delay": {
+              "median_s": 2.0,
+              "mean_s": 2.846153846153846
+            },
+            "by_event_type": {
+              "dynamic dumping": {
+                "n_episodes": 25,
+                "n_detected": 5,
+                "detection": {
+                  "k": 5,
+                  "n": 25,
+                  "pfa": 0.2,
+                  "ci": [
+                    0.06831146401248402,
+                    0.4070374322786773
+                  ]
+                },
+                "median_s": 2.5,
+                "mean_s": 4.8
+              },
+              "static dumping": {
+                "n_episodes": 25,
+                "n_detected": 8,
+                "detection": {
+                  "k": 8,
+                  "n": 25,
+                  "pfa": 0.32,
+                  "ci": [
+                    0.14949542261356955,
+                    0.5350007174973723
+                  ]
+                },
+                "median_s": 1.75,
+                "mean_s": 1.625
+              }
+            }
+          }
+        }
+      }
+    },
+    "exp_r3_thin_crosscheck": {
+      "ped2": {
+        "0.05": true,
+        "0.1": true,
+        "0.2": true
+      },
+      "ped2_patchcore": {
+        "0.05": true,
+        "0.1": true,
+        "0.2": true
+      },
+      "avenue": {
+        "0.05": true,
+        "0.1": true,
+        "0.2": true
+      },
+      "avenue_patchcore": {
+        "0.05": true,
+        "0.1": true,
+        "0.2": true
+      },
+      "mivia_flow": {
+        "0.05": true,
+        "0.1": true,
+        "0.2": true
+      },
+      "mivia_patchcore": {
+        "0.05": true,
+        "0.1": true,
+        "0.2": true
+      }
+    },
+    "runtime_s": 12.244052410125732,
+    "protocol": {
+      "alphas": [
+        0.05,
+        0.1,
+        0.2
+      ],
+      "headline_alpha": 0.1,
+      "diag_alpha": 0.1,
+      "cond_threshold": 0.1,
+      "calibration": "pooled, thinned at exp_r3 L*(alpha)",
+      "selection": "smallest B+G with LOVO FA <= alpha; ties: |E-0.5|, then combiner order",
+      "fold_scheme": "lovo (Ped2, Avenue), mod10 (Mivia-IWDD)"
+    }
+  }
+}

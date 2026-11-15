@@ -1,0 +1,49 @@
+\begin{table}[t]
+\centering
+\caption{Block betting against thinned SENTINEL-E on the test videos, each monitored alone, at each nominal $\alpha$. The block configuration is selected on training videos only (smallest $B+G$ with LOVO per-video false-alarm proportion at most $\alpha$, ties broken by the training conditional mean closest to 0.5). Calibration on all training videos, thinned at $L^\ast(\alpha)$ from exp_r3. Test videos: UCSD Ped2 (flow): 12; UCSD Ped2 (PatchCore): 12; CUHK Avenue (flow): 21; CUHK Avenue (PatchCore): 21; Mivia-IWDD (flow): 100; Mivia-IWDD (PatchCore): 100.}
+\label{tab:r5_block_test}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llrlrrrrr}
+\toprule
+dataset & $\alpha$ & $L^\ast$ & betting & LOVO FA (k/n) & test per-video FA [95\% CI] (k/n) & FA / hour [95\% CI] & episode detection [95\% CI] (k/n) & median delay (s) \\
+\midrule
+UCSD Ped2 (flow) & 0.05 & 10 & block $B$=5, $G$=0, mean2 & 0/16 & 0.000 [0.000, 0.708] (0/3) & 0.00 [0.00, 1050.63] & 0.42 [0.15, 0.72] (5/12) & 4.4 \\
+UCSD Ped2 (flow) & 0.05 & 10 & thinned (exp_r3 path) & 0/16 & 0.000 [0.000, 0.708] (0/3) & 0.00 [0.00, 1050.63] & 0.42 [0.15, 0.72] (5/12) & 4.8 \\
+UCSD Ped2 (flow) & 0.1 & 5 & block $B$=5, $G$=0, bonferroni & 0/16 & 0.000 [0.000, 0.708] (0/3) & 0.00 [0.00, 1050.63] & 0.42 [0.15, 0.72] (5/12) & 4.6 \\
+UCSD Ped2 (flow) & 0.1 & 5 & thinned (exp_r3 path) & 1/16 & 0.333 [0.008, 0.906] (1/3) & 284.81 [7.21, 1586.86] & 0.92 [0.62, 1.00] (11/12) & 2.7 \\
+UCSD Ped2 (flow) & 0.2 & 1 & block $B$=5, $G$=0, bonferroni & 1/16 & 0.000 [0.000, 0.708] (0/3) & 0.00 [0.00, 1050.63] & 0.83 [0.52, 0.98] (10/12) & 2.8 \\
+UCSD Ped2 (flow) & 0.2 & 1 & thinned (exp_r3 path) & 3/16 & 1.000 [0.292, 1.000] (3/3) & 3987.34 [2179.92, 6690.08] & 1.00 [0.74, 1.00] (12/12) & 0.6 \\
+UCSD Ped2 (PatchCore) & 0.05 & 15 & block $B$=5, $G$=0, bonferroni & 0/16 & 0.000 [0.000, 0.708] (0/3) & 0.00 [0.00, 1050.63] & 0.00 [0.00, 0.26] (0/12) & -- \\
+UCSD Ped2 (PatchCore) & 0.05 & 15 & thinned (exp_r3 path) & 0/16 & 0.000 [0.000, 0.708] (0/3) & 0.00 [0.00, 1050.63] & 0.00 [0.00, 0.26] (0/12) & -- \\
+UCSD Ped2 (PatchCore) & 0.1 & 5 & block $B$=5, $G$=0, bonferroni & 1/16 & 0.000 [0.000, 0.708] (0/3) & 0.00 [0.00, 1050.63] & 0.42 [0.15, 0.72] (5/12) & 4.4 \\
+UCSD Ped2 (PatchCore) & 0.1 & 5 & thinned (exp_r3 path) & 1/16 & 0.000 [0.000, 0.708] (0/3) & 0.00 [0.00, 1050.63] & 0.58 [0.28, 0.85] (7/12) & 2.2 \\
+UCSD Ped2 (PatchCore) & 0.2 & 1 & block $B$=5, $G$=0, bonferroni & 1/16 & 0.000 [0.000, 0.708] (0/3) & 0.00 [0.00, 1050.63] & 0.58 [0.28, 0.85] (7/12) & 2.4 \\
+UCSD Ped2 (PatchCore) & 0.2 & 1 & thinned (exp_r3 path) & 3/16 & 0.000 [0.000, 0.708] (0/3) & 1139.24 [310.40, 2916.91] & 0.92 [0.62, 1.00] (11/12) & 0.6 \\
+CUHK Avenue (flow) & 0.05 & 20 & block $B$=5, $G$=0, bonferroni & 0/16 & 0.000 [0.000, 0.206] (0/16) & 0.00 [0.00, 31.94] & 0.01 [0.00, 0.07] (1/74) & 10.2 \\
+CUHK Avenue (flow) & 0.05 & 20 & thinned (exp_r3 path) & 0/16 & 0.000 [0.000, 0.206] (0/16) & 0.00 [0.00, 31.94] & 0.03 [0.00, 0.09] (2/74) & 11.0 \\
+CUHK Avenue (flow) & 0.1 & 20 & block $B$=5, $G$=0, bonferroni & 0/16 & 0.000 [0.000, 0.206] (0/16) & 0.00 [0.00, 31.94] & 0.01 [0.00, 0.07] (1/74) & 10.0 \\
+CUHK Avenue (flow) & 0.1 & 20 & thinned (exp_r3 path) & 1/16 & 0.000 [0.000, 0.206] (0/16) & 0.00 [0.00, 31.94] & 0.04 [0.01, 0.11] (3/74) & 9.4 \\
+CUHK Avenue (flow) & 0.2 & 10 & block $B$=5, $G$=0, bonferroni & 2/16 & 0.000 [0.000, 0.206] (0/16) & 0.00 [0.00, 31.94] & 0.04 [0.01, 0.11] (3/74) & 8.4 \\
+CUHK Avenue (flow) & 0.2 & 10 & thinned (exp_r3 path) & 3/16 & 0.125 [0.016, 0.383] (2/16) & 34.63 [9.44, 88.67] & 0.23 [0.14, 0.34] (17/74) & 1.8 \\
+CUHK Avenue (PatchCore) & 0.05 & 30 & block $B$=5, $G$=0, bonferroni & 0/16 & 0.062 [0.002, 0.302] (1/16) & 190.48 [119.37, 288.38] & 0.08 [0.03, 0.17] (6/74) & 1.3 \\
+CUHK Avenue (PatchCore) & 0.05 & 30 & thinned (exp_r3 path) & 0/16 & 0.062 [0.002, 0.302] (1/16) & 86.58 [41.52, 159.22] & 0.07 [0.02, 0.15] (5/74) & 3.6 \\
+CUHK Avenue (PatchCore) & 0.1 & 30 & block $B$=5, $G$=0, bonferroni & 0/16 & 0.062 [0.002, 0.302] (1/16) & 207.79 [133.14, 309.18] & 0.11 [0.05, 0.20] (8/74) & 1.3 \\
+CUHK Avenue (PatchCore) & 0.1 & 30 & thinned (exp_r3 path) & 0/16 & 0.062 [0.002, 0.302] (1/16) & 86.58 [41.52, 159.22] & 0.12 [0.06, 0.22] (9/74) & 1.0 \\
+CUHK Avenue (PatchCore) & 0.2 & 20 & block $B$=5, $G$=0, bonferroni & 2/16 & 0.125 [0.016, 0.383] (2/16) & 294.37 [203.86, 411.36] & 0.15 [0.08, 0.25] (11/74) & 1.0 \\
+CUHK Avenue (PatchCore) & 0.2 & 20 & thinned (exp_r3 path) & 3/16 & 0.125 [0.016, 0.383] (2/16) & 199.13 [126.23, 298.80] & 0.20 [0.12, 0.31] (15/74) & 0.9 \\
+Mivia-IWDD (flow) & 0.05 & 20 & block $B$=5, $G$=0, bonferroni & 8/200 & 0.060 [0.013, 0.165] (3/50) & 8.94 [2.43, 22.88] & 0.00 [0.00, 0.07] (0/50) & -- \\
+Mivia-IWDD (flow) & 0.05 & 20 & thinned (exp_r3 path) & 3/200 & 0.020 [0.001, 0.106] (1/50) & 2.23 [0.06, 12.45] & 0.00 [0.00, 0.07] (0/50) & -- \\
+Mivia-IWDD (flow) & 0.1 & 10 & block $B$=5, $G$=0, bonferroni & 8/200 & 0.060 [0.013, 0.165] (3/50) & 8.94 [2.43, 22.88] & 0.00 [0.00, 0.07] (0/50) & -- \\
+Mivia-IWDD (flow) & 0.1 & 10 & thinned (exp_r3 path) & 15/200 & 0.080 [0.022, 0.192] (4/50) & 15.64 [6.29, 32.22] & 0.00 [0.00, 0.07] (0/50) & -- \\
+Mivia-IWDD (flow) & 0.2 & 3 & block $B$=5, $G$=0, bonferroni & 10/200 & 0.080 [0.022, 0.192] (4/50) & 17.87 [7.72, 35.22] & 0.00 [0.00, 0.07] (0/50) & -- \\
+Mivia-IWDD (flow) & 0.2 & 3 & thinned (exp_r3 path) & 40/200 & 0.220 [0.115, 0.360] (11/50) & 116.17 [86.76, 152.34] & 0.04 [0.00, 0.14] (2/50) & 3.0 \\
+Mivia-IWDD (PatchCore) & 0.05 & 20 & block $B$=5, $G$=0, bonferroni & 2/200 & 0.040 [0.005, 0.137] (2/50) & 20.11 [9.19, 38.17] & 0.08 [0.02, 0.19] (4/50) & 0.9 \\
+Mivia-IWDD (PatchCore) & 0.05 & 20 & thinned (exp_r3 path) & 6/200 & 0.060 [0.013, 0.165] (3/50) & 11.17 [3.63, 26.07] & 0.08 [0.02, 0.19] (4/50) & 3.5 \\
+Mivia-IWDD (PatchCore) & 0.1 & 7 & block $B$=5, $G$=0, mean2 & 14/200 & 0.120 [0.045, 0.243] (6/50) & 78.19 [54.46, 108.75] & 0.16 [0.07, 0.29] (8/50) & 3.4 \\
+Mivia-IWDD (PatchCore) & 0.1 & 7 & thinned (exp_r3 path) & 20/200 & 0.180 [0.086, 0.314] (9/50) & 100.53 [73.33, 134.52] & 0.20 [0.10, 0.34] (10/50) & 2.8 \\
+Mivia-IWDD (PatchCore) & 0.2 & 5 & block $B$=5, $G$=0, bonferroni & 7/200 & 0.080 [0.022, 0.192] (4/50) & 46.92 [29.04, 71.72] & 0.12 [0.05, 0.24] (6/50) & 3.1 \\
+Mivia-IWDD (PatchCore) & 0.2 & 5 & thinned (exp_r3 path) & 31/200 & 0.240 [0.131, 0.382] (12/50) & 165.32 [129.81, 207.55] & 0.26 [0.15, 0.40] (13/50) & 2.0 \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Null-trial definitions follow exp_r3 (Ped2, Avenue: no-anomaly videos and pre-onset segments; Mivia-IWDD: negative videos). Thinned rows reproduce exp_r3's SENTINEL-E test results; the check is recorded in the supporting JSON. Exact Clopper--Pearson and Poisson intervals.\end{minipage}
+\end{table}
