@@ -1,0 +1,56 @@
+\begin{table}[p]
+\centering
+\footnotesize
+\caption{Descriptive detection--false-alarm frontier on the test videos (each video monitored alone; calibration on all training videos). The knobs here are read off the TEST set and are NOT a deployable selection: the deployable comparison is Table~\ref{tab:r3_test}. Baselines run at $L^\ast(0.1)$; SENTINEL-E runs at each of its alphas at its own $L^\ast(\alpha)$, with $L^\ast$ chosen on training videos. UCSD Ped2 has only 3 null test segments (pre-onset segments of the 12 test videos), so its per-video FA proportion takes the values 0, 1/3, 2/3 or 1, and FA $\le 0.1$ means zero false alarms. pAUC$_{0.2}$ is the area under the empirical detection-versus-FA envelope on FA $\in[0,0.2]$, divided by 0.2; it is 0 where no knob reaches a given FA.}
+\label{tab:r3b_frontier}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%
+\begin{tabular}{llllllc}
+\toprule
+dataset & method & knob with highest detection at FA $\le 0.1$ & test per-video FA (k/n) & detection [95\% CI] (k/n) & pAUC$_{0.2}$ & SENTINEL-E dominated at $\alpha=0.1$? \\
+\midrule
+UCSD Ped2 (flow) & SENTINEL-E & $0.05$ ($L=10$) & 0.000 (0/3) & 0.42 [0.15, 0.72] (5/12) & 0.417 & no \\
+UCSD Ped2 (flow) & Fixed threshold & $3\times 10^{-4}$ ($L=5$) & 0.000 (0/3) & 0.92 [0.62, 1.00] (11/12) & 0.917 & -- \\
+UCSD Ped2 (flow) & p-value threshold & $0.01$ ($L=5$) & 0.000 (0/3) & 0.00 [0.00, 0.26] (0/12) & 0.000 & -- \\
+UCSD Ped2 (flow) & CUSUM & none & -- & -- & 0.000 & -- \\
+UCSD Ped2 (flow) & Shiryaev--Roberts & none & -- & -- & 0.000 & -- \\
+UCSD Ped2 (flow) & Parametric e-detector & none & -- & -- & 0.000 & -- \\
+UCSD Ped2 (flow) & E-SHIFT & none & -- & -- & 0.000 & -- \\
+UCSD Ped2 (PatchCore) & SENTINEL-E & $0.2$ ($L=1$) & 0.000 (0/3) & 0.92 [0.62, 1.00] (11/12) & 0.917 & yes (32 knob(s), e.g.\ Fixed threshold $0.03$) \\
+UCSD Ped2 (PatchCore) & Fixed threshold & $0.03$ ($L=5$) & 0.000 (0/3) & 0.67 [0.35, 0.90] (8/12) & 0.667 & -- \\
+UCSD Ped2 (PatchCore) & p-value threshold & $0.03$ ($L=5$) & 0.000 (0/3) & 0.58 [0.28, 0.85] (7/12) & 0.583 & -- \\
+UCSD Ped2 (PatchCore) & CUSUM & $2$ ($L=5$) & 0.000 (0/3) & 0.92 [0.62, 1.00] (11/12) & 0.917 & -- \\
+UCSD Ped2 (PatchCore) & Shiryaev--Roberts & $100$ ($L=5$) & 0.000 (0/3) & 0.92 [0.62, 1.00] (11/12) & 0.917 & -- \\
+UCSD Ped2 (PatchCore) & Parametric e-detector & $0.5$ ($L=5$) & 0.000 (0/3) & 0.92 [0.62, 1.00] (11/12) & 0.917 & -- \\
+UCSD Ped2 (PatchCore) & E-SHIFT & $0.5$ ($L=5$) & 0.000 (0/3) & 0.92 [0.62, 1.00] (11/12) & 0.917 & -- \\
+CUHK Avenue (flow) & SENTINEL-E & $0.1$ ($L=20$) & 0.000 (0/16) & 0.04 [0.01, 0.11] (3/74) & 0.111 & yes (13 knob(s), e.g.\ CUSUM $10$) \\
+CUHK Avenue (flow) & Fixed threshold & $0.003$ ($L=20$) & 0.000 (0/16) & 0.04 [0.01, 0.11] (3/74) & 0.041 & -- \\
+CUHK Avenue (flow) & p-value threshold & $0.01$ ($L=20$) & 0.000 (0/16) & 0.03 [0.00, 0.09] (2/74) & 0.103 & -- \\
+CUHK Avenue (flow) & CUSUM & $10$ ($L=20$) & 0.000 (0/16) & 0.15 [0.08, 0.25] (11/74) & 0.174 & -- \\
+CUHK Avenue (flow) & Shiryaev--Roberts & $10000$ ($L=20$) & 0.062 (1/16) & 0.16 [0.09, 0.27] (12/74) & 0.180 & -- \\
+CUHK Avenue (flow) & Parametric e-detector & $0.2$ ($L=20$) & 0.062 (1/16) & 0.18 [0.10, 0.28] (13/74) & 0.197 & -- \\
+CUHK Avenue (flow) & E-SHIFT & $0.5$ ($L=20$) & 0.000 (0/16) & 0.03 [0.00, 0.09] (2/74) & 0.027 & -- \\
+CUHK Avenue (PatchCore) & SENTINEL-E & $0.002$ ($L=20$) & 0.062 (1/16) & 0.16 [0.09, 0.27] (12/74) & 0.127 & no \\
+CUHK Avenue (PatchCore) & Fixed threshold & none & -- & -- & 0.137 & -- \\
+CUHK Avenue (PatchCore) & p-value threshold & $0.01$ ($L=30$) & 0.000 (0/16) & 0.00 [0.00, 0.05] (0/74) & 0.091 & -- \\
+CUHK Avenue (PatchCore) & CUSUM & none & -- & -- & 0.088 & -- \\
+CUHK Avenue (PatchCore) & Shiryaev--Roberts & none & -- & -- & 0.085 & -- \\
+CUHK Avenue (PatchCore) & Parametric e-detector & none & -- & -- & 0.020 & -- \\
+CUHK Avenue (PatchCore) & E-SHIFT & none & -- & -- & 0.000 & -- \\
+Mivia-IWDD (flow) & SENTINEL-E & $0.002$ ($L=30$) & 0.000 (0/50) & 0.00 [0.00, 0.07] (0/50) & 0.000 & no \\
+Mivia-IWDD (flow) & Fixed threshold & $10^{-4}$ ($L=10$) & 0.000 (0/50) & 0.00 [0.00, 0.07] (0/50) & 0.000 & -- \\
+Mivia-IWDD (flow) & p-value threshold & $0.001$ ($L=10$) & 0.000 (0/50) & 0.00 [0.00, 0.07] (0/50) & 0.002 & -- \\
+Mivia-IWDD (flow) & CUSUM & $16$ ($L=10$) & 0.100 (5/50) & 0.00 [0.00, 0.07] (0/50) & 0.006 & -- \\
+Mivia-IWDD (flow) & Shiryaev--Roberts & $10^{6}$ ($L=10$) & 0.100 (5/50) & 0.02 [0.00, 0.11] (1/50) & 0.010 & -- \\
+Mivia-IWDD (flow) & Parametric e-detector & none & -- & -- & 0.008 & -- \\
+Mivia-IWDD (flow) & E-SHIFT & $0.1$ ($L=10$) & 0.100 (5/50) & 0.02 [0.00, 0.11] (1/50) & 0.010 & -- \\
+Mivia-IWDD (PatchCore) & SENTINEL-E & $0.05$ ($L=20$) & 0.060 (3/50) & 0.08 [0.02, 0.19] (4/50) & 0.080 & yes (1 knob(s), e.g.\ CUSUM $20$) \\
+Mivia-IWDD (PatchCore) & Fixed threshold & $0.003$ ($L=7$) & 0.040 (2/50) & 0.08 [0.02, 0.19] (4/50) & 0.076 & -- \\
+Mivia-IWDD (PatchCore) & p-value threshold & $0.01$ ($L=7$) & 0.040 (2/50) & 0.08 [0.02, 0.19] (4/50) & 0.076 & -- \\
+Mivia-IWDD (PatchCore) & CUSUM & none & -- & -- & 0.022 & -- \\
+Mivia-IWDD (PatchCore) & Shiryaev--Roberts & none & -- & -- & 0.000 & -- \\
+Mivia-IWDD (PatchCore) & Parametric e-detector & none & -- & -- & 0.000 & -- \\
+Mivia-IWDD (PatchCore) & E-SHIFT & none & -- & -- & 0.000 & -- \\
+\bottomrule
+\end{tabular}}
+\begin{minipage}{\linewidth}\vspace{2pt}\footnotesize Per-video FA is over no-anomaly test videos and the pre-onset segments (at least 2\,s) of anomalous test videos for UCSD Ped2 and CUHK Avenue, and over the negative test videos for Mivia-IWDD, as in Table~\ref{tab:r3_test}. Detection is the proportion of labelled episodes detected (one per positive video for Mivia-IWDD). The highest-detection knob is chosen among knobs with test FA $\le 0.1$; ties go to lower FA. Dominated: some baseline knob at $L^\ast(0.1)$ has test FA no higher and detection strictly higher than SENTINEL-E at $\alpha=0.1$. The Ped2 FA column counts 3 segments, so it is coarse.\end{minipage}
+\end{table}
